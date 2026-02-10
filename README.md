@@ -3,7 +3,7 @@
 **Streamline Your Siemens TIA Portal Workflow**
 
 [![Website](https://img.shields.io/badge/Website-tiaopenessmanager.ch-blue)](https://tiaopenessmanager.ch/)
-[![Version](https://img.shields.io/badge/Version-1.2.10-green)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-1.2.11-green)](CHANGELOG.md)
 [![TIA Portal](https://img.shields.io/badge/TIA%20Portal-V15--V20-orange)]()
 [![Platform](https://img.shields.io/badge/Platform-Windows%20x64-lightgrey)]()
 

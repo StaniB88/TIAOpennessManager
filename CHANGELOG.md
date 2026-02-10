@@ -1,5 +1,11 @@
 # TIA Openness Manager - Changelog
 
+## v1.2.11 (2026-02-10)
+
+- General bug fixes and improvements
+
+---
+
 ## v1.2.10 (2026-01-29)
 
 - Reduced subscription prices (Pro CHF 9.99/mo, Enterprise CHF 29.99/mo)
