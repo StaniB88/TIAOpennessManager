@@ -1,5 +1,20 @@
 # TIA Openness Manager - Changelog
 
+## v1.2.12 (2026-02-11)
+
+### New Features
+- **Connect Dialog** - New "Connect to TIA Portal" dialog replaces the old Browse and Attach buttons. Two tabs: "Attach to Running" lists running TIA instances, "Open Project" lets you browse for a project file
+- **Folder Path Overlay** - Shows the selected right folder path at the bottom of the right panel
+
+### Changes
+- Removed TIA Project path bar from toolbar
+- Removed Browse and Attach buttons from toolbar (replaced by Connect dialog)
+
+### Bug Fixes
+- **Headless TIA Portal cleanup** - Disconnecting from a headless project now fully closes the TIA Portal process, preventing it from interfering with subsequent Attach operations
+
+---
+
 ## v1.2.11 (2026-02-10)
 
 - General bug fixes and improvements
