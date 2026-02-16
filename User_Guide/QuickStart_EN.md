@@ -18,23 +18,23 @@
 
 ## First Launch
 
-### 1. Open TIA Portal Project
+### 1. Connect to TIA Portal Project
 
-There are two ways to open a project:
+Click the **Connect** button in the center of the project tree area. A dialog opens with two tabs:
 
-**Option A: Open New Project**
-1. Click **Open Project**
-2. Navigate to your TIA Portal project file (`.ap15`, `.ap16`, `.ap17`, `.ap18`, `.ap19`, `.ap20`, `.apx`)
-3. Select the file and click **Open**
-
-> **Note:** The TIA Portal version is detected automatically from your project file.
-
-**Option B: Attach to Running TIA Portal**
-1. Open your project in TIA Portal
-2. In TIA Openness Manager, click **Attach to Portal**
-3. Select the running TIA Portal instance
+**Option A: Attach to Running TIA Portal (recommended)**
+1. Select the **Attach to Running** tab (selected by default)
+2. Choose your running TIA Portal instance from the list
+3. Click **Connect**
 
 > **Tip:** The Attach function is faster since the project doesn't need to be reloaded.
+
+**Option B: Open Project File**
+1. Select the **Open Project** tab
+2. Click **Browse...** and navigate to your TIA Portal project file (`.ap15` to `.ap20`, `.apx`)
+3. Click **Connect**
+
+> **Note:** The TIA Portal version is detected automatically from your project file.
 
 ### 2. Set Export Directory
 

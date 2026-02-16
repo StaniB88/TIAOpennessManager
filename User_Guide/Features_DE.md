@@ -21,6 +21,7 @@ Der **TIA Openness Manager** ist ein leistungsstarkes Werkzeug für Siemens TIA 
 - **Optionaler Source-Ordner** - Source-Ordner im Export aktivieren/deaktivieren
 - **Versionskontroll-Optionen** - Saubere Exports für Git/SVN (Timestamps normalisieren, Metadaten entfernen)
 - **Export Fingerprints** - Optionale Fingerprint-Extraktion für Änderungserkennung (Preview Diff)
+- **Geschützte Dateien exportieren** - Geschützte Elemente beim Export optional überspringen, Ordnerstruktur bleibt erhalten
 - **Fault Tolerant Import** - Import fortsetzen auch wenn einzelne Dateien fehlschlagen
 
 ### HMI Export/Import
@@ -69,10 +70,12 @@ Der **TIA Openness Manager** ist ein leistungsstarkes Werkzeug für Siemens TIA 
 - **Grafische Ansicht** - LAD/FBD/GRAPH-Blöcke grafisch anzeigen (erfordert SIMATIC Automation Compare Tool)
 - **Block-Details** - Zeigt Metadaten wie Nummer, Sprache, Autor
 - **Schnelle Navigation** - Suche im Projektbaum
+- **Neue Blöcke erstellen** - FC, FB, DB, UDT oder Tag Table direkt aus SCL-Code erstellen
+- **Speichern/Verwerfen** - Bestehende Blöcke bearbeiten und Änderungen speichern oder verwerfen
 
 ### Schutz-System (Protected Items)
 
-- **Block-Schutz** - Schützen Sie wichtige Blöcke vor versehentlichem Überschreiben
+- **Inline-Schutz** - Blöcke direkt im Projektbaum über Checkboxen schützen
 - **Profile** - Speichern und laden Sie Schutz-Konfigurationen
 - **Visuelle Markierung** - Geschützte Blöcke sind klar mit Schloss-Symbol gekennzeichnet
 - **Hierarchischer Schutz** - Schützen Sie ganze Ordner oder einzelne Blöcke

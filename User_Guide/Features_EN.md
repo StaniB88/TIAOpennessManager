@@ -21,6 +21,7 @@ The **TIA Openness Manager** is a powerful tool for Siemens TIA Portal developer
 - **Optional Source Folder** - Enable/disable the Source folder wrapper in exports
 - **Version Control Options** - Clean exports for Git/SVN (normalize timestamps, remove metadata)
 - **Export Fingerprints** - Optional fingerprint extraction for change detection (Preview Diff)
+- **Export Protected Files** - Optionally skip protected items during export while preserving folder structure
 - **Fault Tolerant Import** - Continue importing even if some files fail
 
 ### HMI Export/Import
@@ -69,10 +70,12 @@ The **TIA Openness Manager** is a powerful tool for Siemens TIA Portal developer
 - **Graphical View** - View LAD/FBD/GRAPH blocks graphically (requires SIMATIC Automation Compare Tool)
 - **Block Details** - Shows metadata like number, language, author
 - **Quick Navigation** - Search in project tree
+- **Create New Blocks** - Create FC, FB, DB, UDT, or Tag Table directly from SCL code
+- **Save/Discard** - Edit existing blocks and save or discard changes
 
 ### Protection System (Protected Items)
 
-- **Block Protection** - Protect important blocks from accidental overwriting
+- **Inline Protection** - Protect blocks directly in the project tree via checkboxes
 - **Profiles** - Save and load protection configurations
 - **Visual Marking** - Protected blocks are clearly marked with lock icon
 - **Hierarchical Protection** - Protect entire folders or individual blocks

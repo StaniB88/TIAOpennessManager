@@ -1,5 +1,35 @@
 # TIA Openness Manager - Changelog
 
+## v1.3.0 (2026-02-14)
+
+### New Features
+- **Export Protected Files** - New checkbox in Import/Export Settings to control whether protected items are included in export. When disabled, protected items are skipped but the folder structure is preserved
+- **Fingerprint Cache Section** - Export Fingerprints option now has its own dedicated section in Import/Export Settings with a clear description of what fingerprint caching does
+- **Export Type Mutual Exclusion** - Data Blocks, UDTs, and Tags export options (None / With Defaults / With ReadOnly) now enforce single-selection per row
+
+### Improved Defaults
+All Import/Export Settings now ship with sensible defaults for first-time users:
+- **Import Options** - All three options enabled by default (Ignore Structural Changes, Ignore Missing References, Fault Tolerant)
+- **Export Options** - All three types default to "None" (Data Blocks, UDTs, Tags)
+- **Version Control** - Normalize Timestamps, Clear Installed Products, Remove Object List, and Normalize Whitespace enabled by default
+- **Log File Directory** - Defaults to `AppData\Local\TiaOpennessManager\Logs` instead of empty
+
+### UI Improvements
+- **Profile Bar** - Redesigned from two-row GroupBox to compact single-row inline bar
+- **MCP Tab** - Moved Start/Stop button from bottom status bar into MCP tab header
+- **MCP Status Bar** - Moved "MCP Server" label and status indicator to right corner
+- **Toolbar Cleanup** - Removed "Delete Selection" button from Tree Controls toolbar and Import/Export tab
+
+### Bug Fixes
+- **Connect Dialog: Duplicate Instances** - Fixed dialog showing 2 entries when only 1 TIA Portal is running (filtered out helper processes without window title)
+- **Connect Dialog: Wrong Instance** - Fixed disconnect + reconnect always attaching to the same TIA Portal instance regardless of selection. The selected process ID is now passed through the entire attach chain
+- **Browse Empty Folder** - Fixed "Select Working Folder" overlay not disappearing when selecting an empty folder. Overlay now hides as soon as any directory is chosen
+- **Browse Button Tooltip** - Fixed garbled tooltip on profile folder browse button caused by icon font inheritance
+- **HMI Export: Version Control Settings Ignored** - Fixed Version Control settings (Normalize Timestamps, Clear Installed Products, Normalize Whitespace) not being applied to HMI exports. Both UI mode and headless mode now correctly post-process exported XML files
+- **HMI Export: Headless Mode Missing Details** - Fixed headless HMI export not tracking which items were skipped due to path length, missing per-item success logging, and missing WinCC Unified check for screen templates
+
+---
+
 ## v1.2.12 (2026-02-11)
 
 ### New Features

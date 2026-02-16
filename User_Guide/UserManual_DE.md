@@ -13,7 +13,7 @@
 4. [Projekt-Management](#4-projekt-management)
 5. [Import/Export/Compare Tab](#5-importexportcompare-tab)
 6. [Project Tab](#6-project-tab)
-7. [Protected Items Tab](#7-protected-items-tab)
+7. [Schutz-System](#7-schutz-system)
 8. [MCP Tab (KI-Integration)](#8-mcp-tab-ki-integration)
 9. [Hardware Tab](#9-hardware-tab)
 10. [Find Unused Blocks](#10-find-unused-blocks)
@@ -71,11 +71,11 @@ Die Anwendung ist in mehrere Bereiche unterteilt:
 
 ```
 ┌───────────────────────────────────────────────────────────────────────────────┐
-│  [Browse] [Attach] [Archive] [Disconnect] [Rescan] [Save] [Compile] [Safety]   │
+│  TIA Openness Manager - V20       [Benutzerhandbuch] [About] [Settings] [_][□][X] │
 ├───────────────────────────────────────────────────────────────────────────────┤
-│                                        [Benutzerhandbuch] [About] [Settings]   │
+│  [Archive] [Disconnect] [Rescan] [Save] [Compile] [Safety Login] [Safety Logoff]   │
 ├─────────────┬─────────────────────────────────────────────────────────────────┤
-│             │  [Editor] [Import/Export/Compare] [Find Unused] [MCP] [Hardware] │
+│             │  [Project] [Import/Export] [Find Unused] [MCP] [Hardware]       │
 │  Projekt-   ├─────────────────────────────────────────────────────────────────┤
 │  Baum       │                                                                 │
 │             │              Tab-Inhalt                                         │
@@ -88,16 +88,26 @@ Die Anwendung ist in mehrere Bereiche unterteilt:
 
 ### Linker Bereich - Projektbaum
 
-- Zeigt die Struktur des geöffneten TIA Portal Projekts
+Der Projektbaum unterstützt zwei Modi, auswählbar über Radio-Buttons oben:
+
+- **TIA Projekt Modus** - Zeigt die Struktur des verbundenen TIA Portal Projekts
+- **Offline-Ordner Modus** - Durchsuchen eines lokalen Ordners mit exportierten XML-Dateien
+
+**Baum-Funktionen:**
 - Hierarchie: Projekt → Hardware → Source → PLC → Blocks/Datatypes/Tags
-- Checkboxen ermöglichen Mehrfachauswahl für Export
+- Grüne Checkboxen für Export-Auswahl (links von jedem Element)
+- Schutz-Checkboxen für Import-Schutz (rechts von jedem Element)
+- "Selected"-Badge zeigt Anzahl der für Export ausgewählten Elemente
+- "Protect"-Badge zeigt Anzahl der geschützten Elemente
+- Suchleiste mit Vorwärts-/Rückwärts-Navigation
+- Aktualisieren-Button um den Baum aus TIA Portal neu zu laden
 
 ### Rechter Bereich - Tabs
 
-- **Editor** - Code-Editor für ausgewählte Blöcke
-- **Import/Export/Compare** - Haupt-Arbeitsbereich für Datei-Operationen
+- **Project** - Code-Editor für ausgewählte Blöcke, mit Block-Details
+- **Import/Export** - Haupt-Arbeitsbereich für Datei-Operationen mit Kategorie-Tabs
 - **Find Unused** - Dead-Code-Erkennung und Aufräumen
-- **MCP** - KI-Integrations-Status
+- **MCP** - KI-Integrations-Status und Tools
 - **Hardware** - Geräteliste mit PROFINET-Namen und IP-Konfiguration
 
 ## 4. Projekt-Management
@@ -106,35 +116,37 @@ Die Anwendung ist in mehrere Bereiche unterteilt:
 
 | Button | Funktion |
 |--------|----------|
-| **Browse...** | Projektdatei öffnen (Headless Mode) |
-| **Attach** | Mit laufender TIA Portal Instanz verbinden |
 | **Archive Project** | Komprimiertes Archiv (.zap) erstellen |
 | **Disconnect** | Aktuelle Projektverbindung trennen |
 | **Rescan PLC** | Projektbaum aktualisieren |
 | **Save** | Projekt speichern |
 | **Compile** | Projekt kompilieren |
 | **Safety Login** | Mit Safety-Anmeldedaten für F-Blöcke einloggen |
+| **Safety Logoff** | Safety-Modus abmelden |
 
-### Browse (Headless Mode)
+### Mit TIA Portal verbinden
 
-1. Klicken Sie auf **Browse...**
-2. Navigieren Sie zu Ihrer TIA Portal Projektdatei (`.ap15`, `.ap16`, `.ap17`, `.ap18`, `.ap19`, `.ap20`, `.apx`)
-3. Klicken Sie auf **Öffnen**
+Wenn kein Projekt verbunden ist, erscheint im Projektbaum-Bereich ein leerer Zustand mit einem **Connect**-Button. Ein Klick darauf öffnet den Verbindungs-Dialog.
 
-Die TIA Portal Version wird automatisch aus der Projektdatei-Erweiterung erkannt.
+Der Verbindungs-Dialog bietet zwei Möglichkeiten über Tab-Buttons:
 
-Der Headless Mode startet TIA Portal im Hintergrund ohne sichtbare Benutzeroberfläche.
-
-### Attach (Mit laufendem TIA Portal verbinden)
-
-1. Öffnen Sie zuerst Ihr Projekt in TIA Portal
-2. Klicken Sie im TIA Openness Manager auf **Attach**
-3. Wählen Sie das gewünschte Projekt aus der Liste der laufenden TIA Portal Instanzen
+**Tab 1: Attach to Running**
+1. Der Dialog zeigt eine Liste der aktuell laufenden TIA Portal Instanzen
+2. Wählen Sie die gewünschte Instanz aus der Liste
+3. Klicken Sie auf **Connect**
+4. Verwenden Sie den **Refresh**-Button um die Liste zu aktualisieren
 
 **Vorteile des Attach Mode:**
 - Schnellere Verbindung (kein Projekt-Laden erforderlich)
 - Sie können gleichzeitig in TIA Portal arbeiten
 - Änderungen sind sofort in beiden Anwendungen sichtbar
+
+**Tab 2: Open Project**
+1. Klicken Sie auf **Browse...** um zu Ihrer TIA Portal Projektdatei zu navigieren
+2. Wählen Sie die Datei (`.ap15`, `.ap16`, `.ap17`, `.ap18`, `.ap19`, `.ap20`, `.apx`)
+3. Klicken Sie auf **Connect**
+
+Die TIA Portal Version wird automatisch aus der Projektdatei-Erweiterung erkannt. Open Project startet TIA Portal im Hintergrund ohne sichtbare Benutzeroberfläche (Headless Mode).
 
 ### Projekt archivieren
 
@@ -157,6 +169,10 @@ Generiert einen Safety-Dokumentations-Ausdruck für F-Blöcke:
 
 **Hinweis:** Diese Funktion erfordert einen aktiven Safety-Login und ist nur für Projekte mit F-Blöcken verfügbar.
 
+### Safety Logoff
+
+Klicken Sie auf **Safety Logoff**, um sich vom Safety-Modus abzumelden. Dies ist erforderlich, nachdem Sie die Arbeit mit Safety-Blöcken abgeschlossen haben.
+
 ### Projekt schließen
 
 Klicken Sie auf **Disconnect**, um die Projektverbindung zu trennen.
@@ -169,19 +185,41 @@ Der Import/Export/Compare Tab ist das Herzstück der Anwendung.
 
 ### Layout
 
+Der Import/Export Tab ist mit einer vertikalen Toolbar links und einem Datei-Browser rechts organisiert:
+
 ```
-┌──────────────────┬──────────────────┬───────────────────────┐
-│   TIA Projekt    │    Aktionen      │   Working Directory   │
-│   (Links)        │    (Mitte)       │   (Rechts)            │
-├──────────────────┼──────────────────┼───────────────────────┤
-│ □ Blocks         │ Export Selected→ │ [Refresh] [Pfad: ...] │
-│   □ Main [OB1]   │ Export All →     │ □ Main.xml            │
-│   □ Motor [FB1]  │                  │ □ Motor.xml           │
-│   □ Calc [FC1]   │ ← Import Selected│ □ Calc.xml            │
-│ □ Datatypes      │ ← Import All     │                       │
-│ □ Tags           │                  │                       │
-└──────────────────┴──────────────────┴───────────────────────┘
+┌───────────────┬──────────────────────────────────────┐
+│  Auswahl: 5   │  Right Folder: C:\Export\...         │
+│  [Cancel]     │  [Refresh] [Preview Diff] [Compare] [⚙] │
+│               │                                      │
+│  ┌─────────┐  │  🔍 [Suche___________] [×] [↑] [↓]  │
+│  │Software │  │                                      │
+│  │HMI      │  │  □ Blocks/                           │
+│  │Safety   │  │    □ Main [OB1].xml                  │
+│  │Watch    │  │    □ Motor [FB1].xml                  │
+│  │Hardware │  │  □ Datatypes/                         │
+│  ├─────────┤  │  □ Tags/                              │
+│  │Export → │  │                                      │
+│  │Export All│  │                                      │
+│  │← Import │  │                                      │
+│  │← Import All│                                      │
+│  └─────────┘  │                                      │
+└───────────────┴──────────────────────────────────────┘
 ```
+
+### Kategorie-Tabs
+
+Die linke Toolbar organisiert Operationen in Kategorie-Pill-Tabs:
+
+| Kategorie | Operationen |
+|-----------|-------------|
+| **Software** | Export Selected, Export All, Import Selected, Import All |
+| **HMI** | Export HMI Selected, Export HMI All, Import HMI Selected, Import HMI All |
+| **Safety** | Export F-Signatures |
+| **Watch/Force** | Export Watch Tables, Export Force Tables, Import Tables |
+| **Hardware** | AML Export, AML Import |
+
+Wählen Sie einen Kategorie-Tab um die relevanten Export-/Import-Buttons zu sehen.
 
 ### Right Directory (Export-/Import-Verzeichnis)
 
@@ -258,6 +296,18 @@ Diese Einstellungen steuern, wie verschiedene Blocktypen exportiert werden. Jede
 | **None** | Variablentabellen ohne Standardwerte oder schreibgeschützte Attribute exportieren |
 | **With Defaults** | Standardwerte in Variablentabellen-Exporte einschließen |
 | **With ReadOnly** | Schreibgeschützte Eigenschaften in Variablentabellen-Exporte einschließen |
+
+#### Geschützte Dateien exportieren
+
+| Option | Was es bewirkt |
+|--------|----------------|
+| **Export Protected Files** | Wenn aktiviert (Standard), werden alle Elemente einschließlich geschützter Elemente exportiert. Wenn deaktiviert, werden geschützte Elemente beim Export übersprungen, aber die Ordnerstruktur bleibt erhalten. |
+
+Diese Option arbeitet zusammen mit dem Schutz-System (siehe [Schutz-System](#7-schutz-system)). Wenn Sie Blöcke als geschützt markiert haben und nur ungeschützte Blöcke exportieren möchten (z.B. um sie ohne proprietäre geschützte Blöcke an externe Partner weiterzugeben), deaktivieren Sie diese Option.
+
+**Verhalten:**
+- **Aktiviert (Standard):** Alle Blöcke werden exportiert, unabhängig vom Schutzstatus
+- **Deaktiviert:** Geschützte Blöcke, Datentypen, Variablentabellen und Technologieobjekte werden übersprungen. Ordnerverzeichnisse werden trotzdem erstellt, um die Projektstruktur beizubehalten.
 
 #### Zusätzlicher S7DCL Export (nur V20+)
 
@@ -369,11 +419,11 @@ Hardware-Konfiguration als AML/XML exportieren:
 
 ---
 
-## 6. Editor Tab
+## 6. Project Tab
 
 ### Code-Anzeige
 
-Wenn Sie einen Block im Projektbaum auswählen, wird sein Quellcode im Code-Editor angezeigt.
+Wenn Sie einen Block im Projektbaum auswählen, wird sein Quellcode im Project Tab im Code-Editor angezeigt.
 
 **Unterstützte Sprachen:**
 - SCL (Structured Control Language)
@@ -413,26 +463,53 @@ Nutzen Sie das Suchfeld über dem Projektbaum, um Blöcke schnell zu finden:
 - Suche nach Nummer
 - Groß-/Kleinschreibung wird ignoriert
 
+### Neuen Block erstellen
+
+Der Code-Editor unterstützt das Erstellen neuer SCL-Blöcke:
+
+1. Klicken Sie auf den **+ New** Button in der Code-Editor Toolbar
+2. Schreiben Sie Ihren SCL-Code im Editor
+3. Klicken Sie auf einen der Erstellen-Buttons:
+   - **Create FC** - Funktion erstellen
+   - **Create FB** - Funktionsbaustein erstellen
+   - **Create DB** - Datenbaustein erstellen
+   - **Create UDT** - Benutzerdefinierter Datentyp erstellen
+   - **Create Tag Table** - Variablentabelle erstellen
+4. Klicken Sie auf **Cancel** um abzubrechen
+
+### Speichern und Verwerfen
+
+Wenn Sie den Code eines bestehenden Blocks bearbeiten, erscheinen die Buttons Speichern und Verwerfen:
+
+- **Save** - Geänderten Code zurück in TIA Portal schreiben
+- **Discard** - Zum Originalcode zurückkehren
+
 ---
 
-## 7. Protected Items Tab
+## 7. Schutz-System
 
 ### Konzept
 
-Das Schutz-System verhindert, dass wichtige Blöcke während Import-Operationen versehentlich überschrieben werden.
+Das Schutz-System verhindert, dass wichtige Blöcke während Import-Operationen versehentlich überschrieben werden. Der Schutz wird direkt im Projektbaum verwaltet - es gibt keinen separaten Tab.
 
 ### Blöcke schützen
 
-1. Wechseln Sie zum **Protected Items** Tab
-2. Navigieren Sie zum gewünschten Block
-3. Setzen Sie ein Häkchen beim Block
+Im Projektbaum hat jeder Block eine Schutz-Checkbox auf der rechten Seite:
 
-Geschützte Blöcke werden:
-- Beim Import übersprungen
-- Mit einem Schloss-Symbol (🔒) markiert
-- In der Schutzliste angezeigt
+1. Klicken Sie auf die Schutz-Checkbox neben einem Block, Datentyp oder einer Variablentabelle
+2. Die Checkbox verwendet drei Zustände:
+   - **Nicht aktiviert** - Kein Schutz
+   - **Aktiviert** - Geschützt (Block wird beim Import übersprungen)
+   - **Unbestimmt** - Einige Unterelemente sind geschützt (für Ordner-Knoten)
 
-### Schutz-Optionen für Organisation Blocks (OBs)
+### Schutz-Badges
+
+Der Projektbaum-Header zeigt zwei Badges:
+
+- **"Selected: N"** (grün) - Anzahl der für Export ausgewählten Elemente
+- **"Protect: N"** (orange) - Anzahl der geschützten Elemente, mit einem Löschen-Button (×) um allen Schutz zu entfernen
+
+### Schutz-Optionen für Organisationsbausteine (OBs)
 
 Wenn Sie einen OB (Organization Block) schützen, erscheinen zusätzliche Checkboxen daneben:
 
@@ -451,16 +528,22 @@ Wenn Sie einen OB (Organization Block) schützen, erscheinen zusätzliche Checkb
 
 ### Profile
 
-Profile speichern Ihre Schutz-Konfiguration:
+Profile speichern Ihre Schutz- und Export-Auswahl-Konfiguration. Die Profil-Leiste befindet sich über dem Projektbaum.
 
 **Profil speichern:**
-1. Konfigurieren Sie Ihre geschützten Blöcke
-2. Klicken Sie auf **Save Profile**
-3. Geben Sie einen Namen ein
+1. Konfigurieren Sie Ihre geschützten Blöcke und Export-Auswahl
+2. Geben Sie einen Namen im Feld Profilname ein
+3. Klicken Sie auf **Save Profile**
 
 **Profil laden:**
-1. Klicken Sie auf **Load Profile**
-2. Wählen Sie ein gespeichertes Profil
+1. Wählen Sie ein Profil aus dem Dropdown
+2. Klicken Sie auf **Apply**
+
+**Profil löschen:**
+- Wählen Sie ein Profil und klicken Sie auf **Delete**
+
+**Profile neu laden:**
+- Klicken Sie auf **Reload** um die Profilliste zu aktualisieren
 
 **Profile-Ordner öffnen:**
 - Klicken Sie auf das Ordner-Symbol um den Profile-Ordner im Explorer zu öffnen
