@@ -1,5 +1,14 @@
 # TIA Openness Manager - Changelog
 
+## v3.0.2 (Unreleased)
+
+### Bug Fixes
+- **Exit button not working in license dialog** - Clicking Exit/Close had no effect
+- **Manage Subscription button text truncated** - Button text was cut off in the license dialog
+- **License status shows Free on startup** - Status bar showed "Free" despite active license until dialog was opened
+
+---
+
 ## v3.0.1 (2026-03-22)
 
 ### Improvements
