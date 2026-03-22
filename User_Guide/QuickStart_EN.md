@@ -3,16 +3,15 @@
 ## System Requirements
 
 - **Operating System:** Windows 10/11 (64-bit)
-- **TIA Portal:** Version 15, 16, 17, 18, 19, or 20 installed
-- **.NET Framework:** 4.8 or higher
+- **TIA Portal:** Version 15 through 21 installed
 - **Memory:** Minimum 4 GB RAM (8 GB recommended)
 - **Disk Space:** 500 MB for the application
 
 ## Installation
 
 1. Extract the TiaOpennessManager archive to a folder of your choice
-2. Run `TiaOpennessManager.exe`
-3. On first launch, a 30-day trial license is automatically activated
+2. Run `TiaOpennessManager.V3.exe`
+3. On first launch, you can start a 30-day trial with all features unlocked
 
 > **Note:** TIA Portal must be installed but does not need to be running.
 
@@ -20,21 +19,21 @@
 
 ### 1. Connect to TIA Portal Project
 
-Click the **Connect** button in the center of the project tree area. A dialog opens with two tabs:
+There are two ways to connect:
 
-**Option A: Attach to Running TIA Portal (recommended)**
-1. Select the **Attach to Running** tab (selected by default)
-2. Choose your running TIA Portal instance from the list
-3. Click **Connect**
+**Option A: Open Project File**
+1. Select **File → Connect**
+2. In the Connect Dialog, switch to the **Open Project** tab
+3. Click **Browse** and select your `.ap15`/`.ap16`/`.ap17`/`.ap18`/`.ap19`/`.ap20`/`.ap21` project file
+4. The connection starts automatically
 
-> **Tip:** The Attach function is faster since the project doesn't need to be reloaded.
+**Option B: Attach to Running TIA Portal**
+1. Open your project in TIA Portal
+2. Select **File → Connect**
+3. In the Connect Dialog, switch to the **Attach to Running** tab
+4. Click **Refresh List**, select the running instance, click **Connect**
 
-**Option B: Open Project File**
-1. Select the **Open Project** tab
-2. Click **Browse...** and navigate to your TIA Portal project file (`.ap15` to `.ap20`, `.apx`)
-3. Click **Connect**
-
-> **Note:** The TIA Portal version is detected automatically from your project file.
+> **Tip:** Attaching is faster since the project doesn't need to be reloaded.
 
 ### 2. Set Export Directory
 
@@ -85,4 +84,4 @@ The software is provided "as is". The provider assumes no liability for damages.
 
 **Support:** For questions, contact support or consult the detailed User Manual.
 
-**© 2026 AnyAutomation.**
+**© 2025-2026 AnyAutomation.**

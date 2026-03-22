@@ -3,16 +3,15 @@
 ## Systemvoraussetzungen
 
 - **Betriebssystem:** Windows 10/11 (64-bit)
-- **TIA Portal:** Version 15, 16, 17, 18, 19 oder 20 installiert
-- **.NET Framework:** 4.8 oder höher
+- **TIA Portal:** Version 15 bis 21 installiert
 - **Arbeitsspeicher:** Mindestens 4 GB RAM (8 GB empfohlen)
 - **Festplatte:** 500 MB für die Anwendung
 
 ## Installation
 
 1. Entpacken Sie das TiaOpennessManager-Archiv in einen Ordner Ihrer Wahl
-2. Starten Sie `TiaOpennessManager.exe`
-3. Beim ersten Start wird automatisch eine 30-tägige Testlizenz aktiviert
+2. Starten Sie `TiaOpennessManager.V3.exe`
+3. Beim ersten Start können Sie eine 30-tägige Testversion mit allen Funktionen starten
 
 > **Hinweis:** TIA Portal muss installiert sein, aber muss nicht geöffnet sein.
 
@@ -20,21 +19,21 @@
 
 ### 1. Mit TIA Portal Projekt verbinden
 
-Klicken Sie auf den **Connect**-Button in der Mitte des Projektbaum-Bereichs. Ein Dialog öffnet sich mit zwei Tabs:
+Es gibt zwei Möglichkeiten, sich zu verbinden:
 
-**Option A: Mit laufendem TIA Portal verbinden (empfohlen)**
-1. Wählen Sie den **Attach to Running** Tab (standardmäßig ausgewählt)
-2. Wählen Sie Ihre laufende TIA Portal Instanz aus der Liste
-3. Klicken Sie auf **Connect**
+**Option A: Projektdatei öffnen**
+1. Wählen Sie **File → Connect**
+2. Wechseln Sie im Connect-Dialog zum Tab **Open Project**
+3. Klicken Sie auf **Browse** und wählen Sie Ihre `.ap15`/`.ap16`/`.ap17`/`.ap18`/`.ap19`/`.ap20`/`.ap21` Projektdatei
+4. Die Verbindung startet automatisch
 
-> **Tipp:** Die Attach-Funktion ist schneller, da das Projekt nicht erneut geladen werden muss.
+**Option B: Mit laufendem TIA Portal verbinden**
+1. Öffnen Sie Ihr Projekt in TIA Portal
+2. Wählen Sie **File → Connect**
+3. Wechseln Sie im Connect-Dialog zum Tab **Attach to Running**
+4. Klicken Sie auf **Refresh List**, wählen Sie die laufende Instanz, klicken Sie auf **Connect**
 
-**Option B: Projektdatei öffnen**
-1. Wählen Sie den **Open Project** Tab
-2. Klicken Sie auf **Browse...** und navigieren Sie zu Ihrer TIA Portal Projektdatei (`.ap15` bis `.ap20`, `.apx`)
-3. Klicken Sie auf **Connect**
-
-> **Hinweis:** Die TIA Portal Version wird automatisch aus Ihrer Projektdatei erkannt.
+> **Tipp:** Das Verbinden ist schneller, da das Projekt nicht erneut geladen werden muss.
 
 ### 2. Export-Verzeichnis festlegen
 
@@ -85,4 +84,4 @@ Die Software wird „as is" geliefert. Der Anbieter übernimmt keine Haftung fü
 
 **Support:** Bei Fragen wenden Sie sich an den Support oder konsultieren Sie das ausführliche Benutzerhandbuch.
 
-**© 2026 AnyAutomation.**
+**© 2025-2026 AnyAutomation.**

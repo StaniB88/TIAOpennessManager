@@ -1,163 +1,32 @@
 # TIA Openness Manager - Changelog
 
-## v1.3.0 (2026-02-14)
+## v3.0.0 (2026-03-02)
 
-### New Features
-- **Export Protected Files** - New checkbox in Import/Export Settings to control whether protected items are included in export. When disabled, protected items are skipped but the folder structure is preserved
-- **Fingerprint Cache Section** - Export Fingerprints option now has its own dedicated section in Import/Export Settings with a clear description of what fingerprint caching does
-- **Export Type Mutual Exclusion** - Data Blocks, UDTs, and Tags export options (None / With Defaults / With ReadOnly) now enforce single-selection per row
+### Major Release - Complete Rewrite
 
-### Improved Defaults
-All Import/Export Settings now ship with sensible defaults for first-time users:
-- **Import Options** - All three options enabled by default (Ignore Structural Changes, Ignore Missing References, Fault Tolerant)
-- **Export Options** - All three types default to "None" (Data Blocks, UDTs, Tags)
-- **Version Control** - Normalize Timestamps, Clear Installed Products, Remove Object List, and Normalize Whitespace enabled by default
-- **Log File Directory** - Defaults to `AppData\Local\TiaOpennessManager\Logs` instead of empty
+#### New User Interface
+- **Modern Dark Theme** - Completely redesigned UI with dark theme
+- **Faster Performance** - New architecture for improved responsiveness and stability
+- **Self-Contained Installer** - No separate .NET installation required
 
-### UI Improvements
-- **Profile Bar** - Redesigned from two-row GroupBox to compact single-row inline bar
-- **MCP Tab** - Moved Start/Stop button from bottom status bar into MCP tab header
-- **MCP Status Bar** - Moved "MCP Server" label and status indicator to right corner
-- **Toolbar Cleanup** - Removed "Delete Selection" button from Tree Controls toolbar and Import/Export tab
+#### New Features
+- **TIA Portal V21 Support** - Full support for the latest TIA Portal version
+- **OPC UA Client** - Connect to any OPC UA server, browse address spaces, read/write variables, live subscriptions with configurable intervals, struct support, save/load watch configurations, CSV/JSON export
+- **AI Chat** - Built-in AI assistant with context folders, git integration, custom skills and agent configs, file/image attachments, clipboard paste, chat session history, and embedded PowerShell terminal
+- **Password Vault** - AES-256-GCM encrypted vault for TIA Portal know-how protection passwords, master password, bulk protect/unprotect, automatic crash recovery
+- **Project Library Management** - Create master copies, export type versions, organize folders, rename/delete items, clean up unused types, full MCP integration
+- **Watch/Force Table Export** - Export watch tables and force tables for debugging
+- **Hardware Export** - Export device, module, and network configuration as XML
+- **WinCC Unified Support** - Full support for WinCC Unified HMI panels
+- **S7DCL Export (V20+)** - Text-based export format for better version control
+- **Software Units (V18+)** - Support for Software Unit containers
+- **Technology Objects** - Export Motion Control, PID Controllers, Counters, etc.
 
-### Bug Fixes
-- **Connect Dialog: Duplicate Instances** - Fixed dialog showing 2 entries when only 1 TIA Portal is running (filtered out helper processes without window title)
-- **Connect Dialog: Wrong Instance** - Fixed disconnect + reconnect always attaching to the same TIA Portal instance regardless of selection. The selected process ID is now passed through the entire attach chain
-- **Browse Empty Folder** - Fixed "Select Working Folder" overlay not disappearing when selecting an empty folder. Overlay now hides as soon as any directory is chosen
-- **Browse Button Tooltip** - Fixed garbled tooltip on profile folder browse button caused by icon font inheritance
-- **HMI Export: Version Control Settings Ignored** - Fixed Version Control settings (Normalize Timestamps, Clear Installed Products, Normalize Whitespace) not being applied to HMI exports. Both UI mode and headless mode now correctly post-process exported XML files
-- **HMI Export: Headless Mode Missing Details** - Fixed headless HMI export not tracking which items were skipped due to path length, missing per-item success logging, and missing WinCC Unified check for screen templates
-
----
-
-## v1.2.12 (2026-02-11)
-
-### New Features
-- **Connect Dialog** - New "Connect to TIA Portal" dialog replaces the old Browse and Attach buttons. Two tabs: "Attach to Running" lists running TIA instances, "Open Project" lets you browse for a project file
-- **Folder Path Overlay** - Shows the selected right folder path at the bottom of the right panel
-
-### Changes
-- Removed TIA Project path bar from toolbar
-- Removed Browse and Attach buttons from toolbar (replaced by Connect dialog)
-
-### Bug Fixes
-- **Headless TIA Portal cleanup** - Disconnecting from a headless project now fully closes the TIA Portal process, preventing it from interfering with subsequent Attach operations
-
----
-
-## v1.2.11 (2026-02-10)
-
-- General bug fixes and improvements
-
----
-
-## v1.2.10 (2026-01-29)
-
-- Reduced subscription prices (Pro CHF 9.99/mo, Enterprise CHF 29.99/mo)
-
----
-
-## v1.2.9 (2026-01-27)
-
-### New Features
-- **User Guide Button** - Added "User Guide" button in toolbar to open built-in documentation
-- **Indeterminate Progress Bar** - Progress bar now shows marquee animation during Browse/Attach until project tree is fully loaded
-
-### Bug Fixes
-- **Language Change Crash** - Fixed application crash when changing language in Settings
-- **Tooltip Correction** - Fixed TIA Project tooltip referencing non-existent "Open Project" button (now "Browse")
-- **Project Path Behavior** - TIA Project path no longer persists between sessions; shows only currently connected project
-
----
-
-## v1.2.8 (2026-01-23)
-
-### New Features
-- **Protection Checkboxes for OBs** - AllowCodeUpdates and AllowAttributeUpdates options for protected Organization Blocks
-- **Browse Profiles Folder** - Button to open profiles folder for easy sharing
-
----
-
-## v1.2.7 (2026-01-21)
-
-### Bug Fixes
-- **Protection Logic** - Fixed path-based protection matching to prevent false positives
-  - Removed name fallback that could incorrectly protect unrelated items with same name
-  - Protection now uses strict path-only matching
-- **Settings Persistence** - Fixed settings not being saved correctly
-- **Compare Window Format Matching** - Fixed file format mismatch in manual compare
-  - Left side (TIA export) now matches the format of the right side file (SCL↔SCL, XML↔XML, AWL↔AWL)
-  - Fixed issue where selecting an XML file would silently load SCL content if both existed
-
-### New Features
-- **Export Fingerprints Option** - New setting to toggle fingerprint extraction during export
-  - Disable to speed up exports when change detection is not needed
-
----
-
-## v1.2.6 (2026-01-20)
-
-### New Features
-- **Per-Type Export Options** - Export settings (WithDefaults, WithReadOnly, None) now configurable separately for:
-  - Data Blocks (DBs)
-  - User Defined Types (UDTs)
-  - Tags
-  - Provides granular control over export behavior per element type
-
-### Improvements
-- **SCL Comment Normalization** - NormalizeWhitespace setting now also normalizes SCL source files
-  - Ensures exactly one space after `//` in VAR section comments
-  - Reduces Git diff noise from inconsistent comment formatting
-  - Only processes VAR/VAR_INPUT/VAR_OUTPUT/VAR_IN_OUT/VAR_TEMP sections (code comments unchanged)
-- **Uninstall License Cleanup** - Installer now prompts during uninstall whether to remove license data
-  - Choosing "No" preserves license activation for easy reinstallation
-  - Choosing "Yes" performs a clean removal including Trial and License registry keys
-
----
-
-## v1.2.5 (2026-01-18)
-
-### Bug Fixes
-- **Instance DB Folder Placement** - Fixed Instance DBs landing in wrong folder during Import All
-  - Instance DBs now correctly placed in their original subfolder structure
-- **Folder Name Detection** - Improved detection of block folder names
-  - Now uses configured folder names from Settings instead of hardcoded fallbacks
-  - Supports projects with localized folder names (Program blocks, Programmbausteine, etc.)
-- **HMI Item Deletion** - Fixed "Delete" context menu for all HMI item types
-- **AML Import Performance** - Fixed performance issue where project tree was rebuilt after each file
-
-### Improvements
-- **Extended Trial Period** - Trial period increased from 7 days to 30 days
-- **Project Library Tree** - Added Project Library (Master Copies & Types) to tree building
-- **UI Tooltips** - Added helpful tooltips throughout the application:
-  - Preview Diff button: Clarifies that exported fingerprints are required
-  - Offline Folder path: Explains offline browsing mode
-  - And many more tooltips for better discoverability
-
----
-
-## v1.2.4 (2026-01-17)
-
-### New Features
-- **Compare Files** - Added file comparison feature for exported projects (same-side comparison)
-- **Open Exported Project** - Left tree now supports opening exported project folders
-
-### Bug Fixes
-- **Instance DB Import** - Fixed import errors ("Element cannot be found") when importing Instance DBs after SCL compilation
-
-### Improvements
-- **Compare Tab** - Removed auto-tab-jump behavior, added green highlight for Graphic tab selection
-
----
-
-## v1.2.3 (2026-01-16)
-
-### Security
-- **Enhanced Clock Manipulation Detection** - Now detects both backward and forward system clock manipulation attempts
-- **Server-Time Validation** - Additional check compares local time against server expiry date to prevent bypass attempts
-
-### Improvements
-- **Installer: Extended TIA Version Check** - Installer now checks for TIA Portal V15-V20 (previously only V18-V20)
+#### Improved Features
+- **MCP Server** - Extended with library tools (7) and OPC UA tools (8) for AI assistants
+- **Localization** - Runtime language switching (EN, DE, FR, IT) without restart
+- **Auto-Updates** - In-app update check with silent background installation
+- **Code Signed** - Installer and all binaries are digitally signed (trusted publisher)
 
 ---
 
@@ -171,19 +40,50 @@ All Import/Export Settings now ship with sensible defaults for first-time users:
 ## v1.2.1 (2026-01-01)
 
 ### New Features
-- **Legal Document Access** - Quick access to Privacy Policy and EULA directly from the About Window
-- **Website Link** - Clickable website link in About Window opens [tiaopenessmanager.ch](https://tiaopenessmanager.ch)
+- **Privacy Policy & EULA Integration** - Added direct access to legal documents from About Window
+  - New "Privacy Policy" button opens Privacy.md
+  - New "EULA" button opens EULA.md
+  - Documents automatically included in installer and build output
+- **Website Link in About Window** - Added clickable website link (https://tiaopenessmanager.ch)
+  - Opens in default browser when clicked
+  - Matches existing GitHub link functionality
 
-### Bug Fixes
-- **Find Unused** - Fixed incorrect detection of Instance DBs
+### Changes
+- About Window now displays three buttons: "View Full Licenses", "Privacy Policy", and "EULA"
+- Privacy.md and EULA.md copied from Software Dokumente folder to project root for distribution
 
-### Improvements
-- About Window redesigned with action buttons for better usability
-- Updated User Guides with latest documentation 
+### Technical
+- AboutWindow.xaml: Added Privacy and EULA buttons in horizontal stack panel
+- AboutWindow.xaml.cs: Added `BtnViewPrivacy_Click()` and `BtnViewEula_Click()` handlers
+- TiaOpennessManager.csproj: Configured Privacy.md and EULA.md to copy to output directory
+- Software Dokumente folder now tracked in repository (11 legal/product documentation files)
+
+---
 
 ## v1.2.0 (2025-12-30)
 
-Various bugfixes, performance optimizations, and stability improvements.
+### New Features
+- **Swiss Franc (CHF) Currency Support** - Automatic IP-based region detection for Switzerland
+  - Swiss users automatically see CHF prices (Professional: CHF 25/250, Enterprise: CHF 40/400)
+  - IP geolocation service (ip-api.com) detects user location on startup
+  - All other regions continue to see EUR prices
+- **Centralized Pricing Configuration** - New `PricingConfiguration.cs` with single source of truth for all prices and payment links
+- **8 Stripe Payment Links** - Complete coverage for EUR/CHF, Professional/Enterprise, Monthly/Yearly combinations
+
+### Changes
+- **Enterprise Price Reduction** - EUR Enterprise pricing reduced from €50/€500 to €40/€400 (CHF 40/CHF 400)
+- **Removed Manual Currency Toggle** - Currency is now fully automatic based on IP location (no user override)
+- **Updated EULA Files** - VERSION line now automatically updated during releases
+
+### Fixed
+- **EUR Price Flash** - Fixed brief EUR price display on dialog open (removed hardcoded XAML defaults)
+- **IP Detection Always Runs** - Ignores cached currency preference to ensure fresh detection
+
+### Technical
+- New `RegionService.cs` - IP geolocation singleton with 5-second timeout and caching
+- New `Currency` enum (EUR, CHF) and `LicenseTier` enum (Professional, Enterprise)
+- Enhanced debug logging for currency detection troubleshooting
+- Release script now updates `LICENSE_EN.txt` and `LICENSE_DE.txt` version numbers automatically
 
 ---
 
@@ -196,9 +96,12 @@ Various bugfixes, performance optimizations, and stability improvements.
 - **Import Options** - Ignore structural changes and missing references during import
 
 ### Improvements
+- **V21 Infrastructure** - Prepared codebase for future TIA Portal V21 support
+- **MCP Server** - Updated code generation tools for V21 compatibility
 - **Safety Block Detection** - Improved detection of Safety blocks in S7DCL format (V20 Update 4+)
 
 ### Technical
+- Enhanced TiaPortalApiResolver with V21 assembly resolution logic
 - Added ExportBlockToSplAsync method for SIMATIC Source Document export
 - Updated documentation with V21 references for future releases
 
@@ -208,9 +111,102 @@ Various bugfixes, performance optimizations, and stability improvements.
 
 ### New Features
 - **7-Day Full Trial** - New users get a 7-day trial with ALL features unlocked (Enterprise-level)
+- **Server-Side Trial Tracking** - Trial period is tracked on our server using hardware fingerprint
+- **Anti-Reinstall Protection** - Reinstalling the app does NOT reset your trial period
+
+### Changes
+- **Trial = Enterprise** - During trial, all features are available: Safety blocks, Bulk Import, Protection Profiles, MCP Server, Find Unused
+- **After Trial** - Falls back to Basic tier (limited features) or purchase a license to continue
+
+### Technical
+- New backend endpoint for trial registration and status checking
+- Hardware-ID based tracking prevents trial abuse
+
+---
 
 ## v1.1.5 (2025-12-21)
 
 ### Bug Fixes
 - **Language Switching Fixed** - Language switching now works correctly in the installed version
-  - Added missing language satellite assemblies to installer
+  - Fixed ConfuserEx obfuscation encrypting resource files
+  - Added missing language satellite assemblies (de/, fr/, it/) to installer
+
+### Improvements
+- **Settings Dialog Translations** - Added missing translations for Folder Names and License Information sections in all languages (DE/FR/IT)
+- **Smaller Installer** - Reduced installer size by ~3MB (removed bundled Siemens.Engineering DLLs that are loaded from TIA Portal at runtime)
+
+---
+
+## v1.1.4 (2025-12-21)
+
+### New Features
+- **Online License Activation** - New activation system using activation codes (ACT-XXXX-XXXX-XXXX format)
+- **Hardware-Bound Licenses** - Licenses are now bound to your machine for added security
+- **Free Basic Tier** - Basic tier is now permanently free (no trial expiration)
+- **Monthly/Yearly Toggle** - Switch between monthly and yearly billing directly in the app
+- **Direct Stripe Checkout** - Subscribe buttons now open Stripe checkout directly (no website redirect)
+
+### Improvements
+- **Simplified Activation** - Enter your activation code received via email to unlock Pro/Enterprise features
+- **License Server Integration** - Licenses are validated against our secure server
+- **Manage Subscription Button** - Improved visibility with accent color styling
+- **Dynamic Pricing Display** - Prices update automatically when switching between monthly/yearly
+
+---
+
+## v1.1.3 (2025-12-20)
+
+### Bug Fixes
+- **Auto-Update not working** - Added missing AutoUpdater.NET.dll to installer package (update feature was broken since v1.1.0)
+
+---
+
+## v1.1.2 (2025-12-20)
+
+### Bug Fixes
+- **FindUnused false positives on some machines** - Removed debug code that caused XML parsing to fail silently on machines without a specific folder structure
+
+---
+
+## v1.1.1 (2025-12-20)
+
+### New Features
+- **Clear Code Button** - New button to clear the code editor content
+- **Clear Results Button** - New button to clear Find Unused results
+- **Auto-Clear on Project Close** - Code editor and Find Unused results are automatically cleared when project is closed
+
+### Bug Fixes
+- **Instance DBs marked as unused** - FindUnused now correctly detects Instance DB references from FB calls (prevents false positives)
+- **ObjectDisposedException after detach** - Fixed stale facade reference when detaching from attached TIA Portal instance
+
+### Improvements
+- **Import Progress Display** - Progress label now shows current file name being imported
+- **About Dialog** - Added clickable GitHub link for easy access to the repository
+- **Third-Party Licenses** - Added AutoUpdater.NET to the licenses list in About dialog and THIRD_PARTY_NOTICES.txt
+
+---
+
+## v1.1.0 (2025-12-20)
+
+### New Features
+- **Auto-Update Check** - Application now checks for updates at startup and notifies when a new version is available
+- **Update Settings** - New checkbox in Settings to enable/disable automatic update checks
+
+### Bug Fixes
+- **Progress bar not fully filled** - Progress bar now shows 100% when operations complete (Analysis, Export, HMI Export)
+
+---
+
+## v1.0.1 (2025-12-18)
+
+### Bug Fixes
+
+- **Checkbox state lost during search/filter** - Checkboxes in left and right tree now persist when filtering or searching multiple times
+- **Selection count incorrect with filter** - Import/Export selection count now correctly reflects checked items even when filter is active
+- **Delete Selection fails with filter** - Delete operation now works correctly when tree is filtered
+- **Single block import progress bar** - Progress bar now updates correctly for imports with less than 5 files
+- **Right-click doesn't select item** - Right-clicking on a tree item now selects it before showing context menu
+- **Missing Import button in right tree** - Added Import option to right tree context menu
+- **FindUnused false positives** - Fixed reference detection for FC calls with direct Component pattern in XML
+- **Fingerprint export progress** - Progress bar now includes fingerprint cache update phase after export
+- **MCP Generate FC fails** - Fixed VAR section removal regex to only remove standalone VAR, not VAR_INPUT/VAR_OUTPUT/VAR_TEMP

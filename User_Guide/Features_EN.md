@@ -13,16 +13,11 @@ The **TIA Openness Manager** is a powerful tool for Siemens TIA Portal developer
 - **Bulk Export** - Export hundreds of blocks with a single click
 - **Selective Export** - Choose exactly the blocks you need
 - **XML & SCL Support** - Full support for Simatic ML and SCL files
-- **S7DCL Export (V20+)** - Convert blocks to text-based S7DCL format for better version control
-- **Per-Type Export Options** - Configure export settings (None/WithDefaults/WithReadOnly) separately for DBs, UDTs, and Tags
+- **S7DCL Export (V20+)** - Additional text-based export format (.s7dcl) for better version control
 - **Folder Structure Preservation** - TIA Portal folder structure is maintained
 - **Automatic Compilation** - Automatically compiles and saves after import
 - **Configurable Folder Names** - Customize export folder names (Source, Blocks, Tags, etc.)
 - **Optional Source Folder** - Enable/disable the Source folder wrapper in exports
-- **Version Control Options** - Clean exports for Git/SVN (normalize timestamps, remove metadata)
-- **Export Fingerprints** - Optional fingerprint extraction for change detection (Preview Diff)
-- **Export Protected Files** - Optionally skip protected items during export while preserving folder structure
-- **Fault Tolerant Import** - Continue importing even if some files fail
 
 ### HMI Export/Import
 
@@ -56,6 +51,17 @@ The **TIA Openness Manager** is a powerful tool for Siemens TIA Portal developer
 - **Variable Lists** - Export monitored variable configurations
 - **Debug Support** - Preserve debugging setups across projects
 
+### Project Library Management
+
+- **Create Master Copy** - Copy blocks to Project Library for reuse
+- **Instantiate from Library** - Create blocks from Master Copies
+- **Export Type Versions** - Export committed Library Type versions as XML
+- **Folder Organization** - Create folders in library for better structure
+- **Rename Items** - Rename Master Copies, Types, and folders
+- **Delete Items** - Remove library items with confirmation
+- **Clean Up Library** - Remove unused types and versions automatically
+- **MCP Integration** - 7 library tools available for AI assistants
+
 ### Difference Comparison (Preview Diff)
 
 - **Fingerprint-based** - Fast comparison without full export
@@ -67,20 +73,26 @@ The **TIA Openness Manager** is a powerful tool for Siemens TIA Portal developer
 
 - **Integrated Editor** - View and edit block code directly
 - **Syntax Highlighting** - For SCL, STL, and other languages
-- **Graphical View** - View LAD/FBD/GRAPH blocks graphically (requires SIMATIC Automation Compare Tool)
 - **Block Details** - Shows metadata like number, language, author
 - **Quick Navigation** - Search in project tree
-- **Create New Blocks** - Create FC, FB, DB, UDT, or Tag Table directly from SCL code
-- **Save/Discard** - Edit existing blocks and save or discard changes
 
 ### Protection System (Protected Items)
 
-- **Inline Protection** - Protect blocks directly in the project tree via checkboxes
+- **Block Protection** - Protect important blocks from accidental overwriting
+- **Export Protection** - Optionally exclude protected blocks from export while preserving folder structure
 - **Profiles** - Save and load protection configurations
-- **Visual Marking** - Protected blocks are clearly marked with lock icon
+- **Visual Marking** - Protected blocks are clearly marked with a green shield
 - **Hierarchical Protection** - Protect entire folders or individual blocks
-- **OB Protection Options** - Additional checkboxes for OBs: Allow SCL code updates (C) and Allow Attribute updates (A)
-- **Browse Profiles Folder** - Quick access to profiles folder for sharing between team members
+
+### Password Vault
+
+- **Secure Storage** - AES-256-GCM encrypted vault for TIA Portal know-how protection passwords
+- **Master Password** - Single master password protects all vault entries (PBKDF2 key derivation)
+- **Block Assignment** - Assign vault passwords to blocks or folders via context menu or vault toggle checkboxes
+- **Bulk Protect/Unprotect** - Apply or remove know-how protection on all assigned blocks at once
+- **Crash Recovery** - Blocks left unprotected due to a crash are automatically re-protected on next project open
+- **CSV Export** - Export all vault entries to CSV for backup (includes plaintext passwords, available when vault is unlocked)
+- **Localized** - Available in English, German, French, and Italian
 
 ### Find Unused Blocks
 
@@ -101,20 +113,51 @@ The **TIA Openness Manager** is a powerful tool for Siemens TIA Portal developer
 - **Auto Import** - Generated code can be automatically imported into TIA Portal
 - **Block Analysis** - AI can read and analyze existing blocks
 
+### AI Chat
+
+- **Context Folders** - Register folders the AI can browse using file read and search tools
+- **Instruction Files** - Inject Markdown files into the AI's system prompt automatically at session start
+- **Git Integration** - AI is aware of your git repository, branch, and changes; can view status, stage files, commit, push, and pull (mutating operations require user approval)
+- **Commit Templates** - Define commit message templates; the AI follows the active template when generating commits
+- **Skills** - Place `.md` files in `%LocalAppData%\TiaOpennessManager\skills\` to create reusable prompt commands accessible via the `/` command palette in the chat input
+- **Agent Configs** - Place `.json` files in `%LocalAppData%\TiaOpennessManager\agents\` to define AI personas with custom system prompts and tool access; three built-in agents included (General Assistant, Git Assistant, SCL Expert)
+- **File Attachments** - Drag and drop images (`.png`, `.jpg`, `.bmp`, `.gif`, `.webp`) or text files (`.cs`, `.xml`, `.json`, `.txt`, `.md`, `.yaml`, `.csv`, `.log`, `.scl`, `.cfg`) into the chat; images are resized and sent as multimodal content
+- **Clipboard Paste** - Press Ctrl+V to paste a screenshot from the clipboard directly into the chat; also available via the attach menu
+- **Chat Sessions** - Conversations are saved automatically; create new chats, switch between sessions, and resume previous conversations from the history panel
+- **Session Archive** - Archive old sessions to keep the session list clean; restore or permanently delete archived sessions
+- **Terminal Mode** - Embedded PowerShell terminal with MCP integration; auto-configures `.mcp.json` and optionally writes `CLAUDE.md` with project context for Claude CLI; terminal opens in the TIA Portal project directory
+- **CLAUDE.md Setting** - Toggle whether a `CLAUDE.md` file is written to the project directory on terminal start (AI Chat Settings → Context); disable if not using Claude CLI
+
+### OPC UA Client
+
+- **Direct Connection** - Connect to any OPC UA server by endpoint URL (e.g., `opc.tcp://192.168.0.1:4840`)
+- **Auto-Discovery** - Automatically detect PLC OPC UA endpoints from the connected TIA Portal project
+- **Authentication Modes** - Anonymous, Username/Password, and Certificate-based authentication
+- **Address Space Browser** - Browse the full OPC UA address space in a TreeView with node class icons
+- **Node Search** - Filter address space nodes by name to quickly locate variables
+- **Watch Table** - Add variables via double-click or drag-and-drop; view Name, Node ID, Data Type, Value, Status, and Timestamp per row
+- **Read Values** - Read all watch table variables with a single server request, or read individual rows on demand
+- **Write Values** - Write values directly to PLC variables by editing watch table cells
+- **Live Subscriptions** - Subscribe to value changes with a configurable interval (in milliseconds); values update automatically without polling
+- **Per-Variable Subscribe** - Subscribe to a selection of rows independently of the full watch table
+- **Save/Load Configuration** - Save and restore watch table configurations (endpoint URL + variable list) as `.opcua-watch` JSON files
+- **CSV Export** - Export watch table data to CSV with all columns (Name, Node ID, Data Type, Value, Status, Timestamp)
+- **JSON Export** - Export watch table data to structured JSON with full metadata
+- **MCP Integration** - 8 OPC UA tools available for AI assistants: `opcua_connect`, `opcua_disconnect`, `opcua_browse`, `opcua_read`, `opcua_read_complex`, `opcua_write`, `opcua_get_types`, `opcua_subscribe`
+
 ---
 
 ## Supported TIA Portal Versions
 
 | Version | Status |
 |---------|--------|
-| TIA Portal V15 | Attach mode only |
-| TIA Portal V16 | Attach mode only |
-| TIA Portal V17 | Attach mode only |
+| TIA Portal V15 | Supported |
+| TIA Portal V16 | Supported |
+| TIA Portal V17 | Supported |
 | TIA Portal V18 | Fully supported |
 | TIA Portal V19 | Fully supported |
 | TIA Portal V20 | Fully supported |
-
-> **Note:** TIA Portal version is detected automatically when you open a project or attach to a running instance.
+| TIA Portal V21 | Fully supported |
 
 ---
 
@@ -148,13 +191,13 @@ The **TIA Openness Manager** is a powerful tool for Siemens TIA Portal developer
 
 ### Basic (FREE)
 - **Free forever** - No trial period, no expiration
-- 1 file export/import
+- 1 file export/import per operation
 - Block Compare
 - Code Editor
 - Hardware Overview
 
-### Professional (€25/month or €250/year)
-- **1,000 files** export/import
+### Professional (CHF 9.99/month or CHF 99.99/year)
+- **1,000 files** export/import per operation
 - **Annual plan saves 17%** (2 months free)
 - Everything in Basic, plus:
 - Find Unused Blocks
@@ -163,7 +206,7 @@ The **TIA Openness Manager** is a powerful tool for Siemens TIA Portal developer
 - MCP Server Integration
 - Priority Support
 
-### Enterprise (€40/month or €400/year)
+### Enterprise (CHF 29.99/month or CHF 299.99/year)
 - **Unlimited files**
 - **Annual plan saves 17%** (2 months free)
 - Everything in Professional
@@ -171,14 +214,19 @@ The **TIA Openness Manager** is a powerful tool for Siemens TIA Portal developer
 - Dedicated support
 - Volume discounts
 
+### Trial Period
+- **30-day free trial** with all Enterprise-level features
+- No credit card required
+- After 30 days, falls back to Basic (free)
+
 ---
 
 ## Activation
 
 ### Online Activation
 1. Purchase subscription at: https://www.tiaopenessmanager.ch
-2. Receive activation code via email
-3. Enter code in the program under "License" → "Activate"
+2. Receive activation code via email (format: `ACT-XXXX-XXXX-XXXX`)
+3. Enter code in the program under **View → Settings → Manage License**
 4. License is bound to your hardware
 
 ### Manage Subscription
@@ -199,4 +247,4 @@ The software is provided "as is". The provider assumes no liability for damages 
 
 **Contact:** For questions, contact us at [tiaopenessmanager@outlook.com]
 
-**© 2026 AnyAutomation. All rights reserved.**
+**© 2025-2026 AnyAutomation. All rights reserved.**
