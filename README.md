@@ -143,7 +143,7 @@ TIA Openness Manager is a powerful tool for Siemens TIA Portal developers that r
 
 4. Connect to your TIA Portal project (Open or Attach)
 
-**Free Trial:** New users get a 7-day trial with all features unlocked.
+**Free Trial:** New users get a 30-day trial with all features unlocked.
 
 
 ## Quick Start
