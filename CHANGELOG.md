@@ -1,32 +1,31 @@
 # TIA Openness Manager - Changelog
 
+## v3.0.1 (2026-03-22)
+
+### Improvements
+- **License status in status bar** - Clickable license indicator shows current tier (Free/Trial/Professional/Enterprise) with color coding
+- **License access in Help menu** - "Manage License" is now directly accessible from the Help menu
+
+### Bug Fixes
+- **Trial button text truncated** - "Start 30-Day Trial" button in the license dialog was cut off
+
+---
+
 ## v3.0.0 (2026-03-02)
 
 ### Major Release - Complete Rewrite
 
-#### New User Interface
-- **Modern Dark Theme** - Completely redesigned UI with dark theme
-- **Faster Performance** - New architecture for improved responsiveness and stability
-- **Self-Contained Installer** - No separate .NET installation required
-
-#### New Features
-- **TIA Portal V21 Support** - Full support for the latest TIA Portal version
-- **OPC UA Client** - Connect to any OPC UA server, browse address spaces, read/write variables, live subscriptions with configurable intervals, struct support, save/load watch configurations, CSV/JSON export
-- **AI Chat** - Built-in AI assistant with context folders, git integration, custom skills and agent configs, file/image attachments, clipboard paste, chat session history, and embedded PowerShell terminal
-- **Password Vault** - AES-256-GCM encrypted vault for TIA Portal know-how protection passwords, master password, bulk protect/unprotect, automatic crash recovery
-- **Project Library Management** - Create master copies, export type versions, organize folders, rename/delete items, clean up unused types, full MCP integration
-- **Watch/Force Table Export** - Export watch tables and force tables for debugging
-- **Hardware Export** - Export device, module, and network configuration as XML
-- **WinCC Unified Support** - Full support for WinCC Unified HMI panels
-- **S7DCL Export (V20+)** - Text-based export format for better version control
-- **Software Units (V18+)** - Support for Software Unit containers
-- **Technology Objects** - Export Motion Control, PID Controllers, Counters, etc.
-
-#### Improved Features
-- **MCP Server** - Extended with library tools (7) and OPC UA tools (8) for AI assistants
-- **Localization** - Runtime language switching (EN, DE, FR, IT) without restart
-- **Auto-Updates** - In-app update check with silent background installation
-- **Code Signed** - Installer and all binaries are digitally signed (trusted publisher)
+- **New Architecture** - Two-process design: .NET 10 Avalonia UI app + .NET 4.8 Bridge (COM proxy) via Named Pipes
+- **Cross-Platform UI** - Migrated from WPF to Avalonia 11.x with dark theme
+- **MediatR Pipeline** - Command/Query separation for all business logic
+- **MCP Server** - Built-in Model Context Protocol server for AI assistant integration
+- **OPC UA Client** - Browse and read OPC UA server address spaces with struct support
+- **Improved Localization** - Runtime language switching (EN, DE, FR, IT) without restart
+- **Velopack Auto-Updates** - In-app update mechanism via GitHub Releases
+- **Password Vault** - Encrypted credential storage for TIA Portal connections
+- **Enhanced Export** - Source code generation, structured export paths, fingerprint caching
+- **.NET Reactor Obfuscation** - Three-tier protection (App, Bridge, MCP Bridge)
+- **Code Signing** - Certum SHA-256 signed binaries and installer
 
 ---
 
