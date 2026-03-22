@@ -1,6 +1,6 @@
 # TIA Openness Manager - Changelog
 
-## v3.0.2 (Unreleased)
+## v3.0.2 (2026-03-22)
 
 ### Bug Fixes
 - **Exit button not working in license dialog** - Clicking Exit/Close had no effect
