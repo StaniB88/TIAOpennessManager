@@ -1,5 +1,70 @@
 # TIA Openness Manager - Changelog
 
+## v3.0.3 (2026-03-25)
+
+### Git — New Features
+- **Stash Changes dialog** - Full stash dialog with message, mode selection (Discard/Keep Index/Keep All), selective file stash, staged-only option
+- **Apply Patch dialog** - Apply .patch/.diff files with whitespace handling options (No Warn, Warn, Error, Error All)
+- **Archive dialog** - Create zip or tar.gz archives from any commit
+- **Interactive Rebase dialog** - Reorder commits and assign actions (Pick, Reword, Edit, Squash, Fixup, Drop) with drag-and-drop
+- **Conventional Commit builder** - Structured commit message helper with type, scope, breaking change, body, and footer fields
+- **Add to .gitignore** - Right-click files to add ignore patterns (by file, extension, folder)
+- **Assume Unchanged manager** - Mark/unmark files as assume-unchanged, list dialog to manage entries
+- **Repository Settings dialog** - Per-repo configuration for user name, email, HTTP proxy, GPG signing, fetch prune
+- **Worktree Remove/Prune** - Remove individual worktrees (with force option) and prune stale entries
+- **Submodule management** - Add, Update (init/recursive), and Remove submodules with dedicated dialogs
+- **GitFlow support** - Initialize GitFlow, Start/Finish Feature/Release/Hotfix branches with sidebar integration
+- **LFS management** - Track patterns, Fetch, Pull, Push, Prune, and manage Locks via toolbar dropdown
+- **Commit context menu icons** - All menu items now show SourceGit-style SVG icons
+- **Copy submenu** - Commit context menu Copy with SHA-Subject, SHA, Subject, Message, Author, Committer
+- **Git Working Copy context menus** - Right-click on staged/unstaged files for Stage, Discard, Stash, Save as Patch, Open in Editor, Reveal in Explorer, Copy Path
+- **Discard Changes dialog** - Confirmation dialog with options to include untracked/ignored files and "can't undo" warning
+- **Discard All button** - One-click discard of all local changes in the unstaged header
+- **Commit History context menu** - Right-click on commits for Create Branch, Create Tag, Reset, Rebase, Merge, Cherry-Pick, Revert, Checkout, Save as Patch, Copy SHA
+- **Checkout Commit dialog** - Double-click a commit to checkout with Stash & Reapply or Discard options and detached HEAD warning
+- **Commit Detail tabs** - INFORMATION, CHANGES, and FILES tabs for inspecting commits
+- **Information tab** - Author/Committer with avatar, SHA with copy button, clickable parent commits, Refs badges, full message, inline changed files list
+- **Files tab** - Browse all files of a commit as tree with syntax-highlighted content viewer
+- **Changes tab with diff** - Changed files list with search, embedded diff viewer that auto-scrolls to first change
+- **Branch context menu extensions** - Pull, Push, Fast-Forward, and Create Tag actions directly from branch right-click
+- **Branch tooltip** - Hover over branches to see tracking remote, ahead/behind status, and invalid upstream warnings
+- **Tag context menu extensions** - Push Tag to remote and Create Branch from Tag
+- **Commit detail file menu** - Open in Editor, Reveal in Explorer, Copy Path on changed files in commit detail view
+- **Multi-branch commit graph** - All branches, remotes, and tags shown with colored merge lines
+- **Commit decorator badges** - Icons for HEAD, Branch, Remote, and Tag with colored borders
+- **Compare with HEAD / Worktree** - Right-click a commit to compare changes against HEAD or working tree
+- **Operation dialogs** - Proper dialogs for Create/Delete/Rename Branch, Merge (mode selection), Rebase (auto-stash), Reset (Soft/Mixed/Hard), Cherry-Pick, Revert, Checkout Branch (stash/discard options), Fetch (remote/prune), Pull (rebase option), Push (force push), Create/Delete Tag
+
+### Git — Improvements
+- **ChangeCollectionView in Working Copy** - Unstaged/Staged file lists now use the rich ChangeCollectionView with tree/list/grid modes and search
+- **CommitSubjectPresenter** - Rich commit subject rendering with highlighted conventional commit prefixes, issue links, and inline code
+- **GitFlow branch detection** - Right-click GitFlow branches to finish them directly
+- **Resizable history columns** - Drag column headers in commit history to resize (Graph, Author, SHA, Commit Time)
+- **Full date+time in history** - Commit time column shows date and time instead of date only
+- **Multi-selection in Working Copy** - Select multiple files for bulk Stage, Discard, or Stash operations
+- **File search/filter** - Filter staged and unstaged file lists by filename
+- **Keyboard shortcuts** - Enter/Space to stage/unstage, Delete to discard, Ctrl+C to copy path
+- **Push error display** - Failed push operations now show error messages in the commit area
+- **Stash context menu** - Copy stash message to clipboard
+- **Navigate from Information to Changes** - Double-click a changed file in Information tab to jump to its diff
+
+### AI Chat — New Features
+- **Inline Diff Preview** - When AI modifies code via the editor, changes are shown as an inline diff (red/green highlighting) with Accept/Reject buttons instead of being applied directly. Keyboard shortcuts: Tab to accept, Escape to reject
+- **Follow-up Suggestions** - AI responses now include 2-3 clickable follow-up suggestions as pill-shaped buttons below each response
+- **Code Block Copy & Apply** - Each code block in AI responses gets individual Copy and Apply buttons (previously only one Apply button per message)
+- **Inline Chat (Ctrl+I)** - VS Code-style inline chat directly in the code editor. Select code, press Ctrl+I, type a question or request — AI responds and proposes changes inline
+- **Embedded Diff Viewer in Chat** - When AI suggests code that differs from the current editor content, an inline diff view is shown in the chat message
+- **Implicit Context Chip** - When a block is opened in the editor, it automatically appears as a context chip above the chat input. Click to add/remove it from AI context (VS Code-style)
+- **Question Carousel** - AI can present multi-step questionnaires with text input, single-select, and multi-select questions for guided interactions
+- **Context shortcuts** - Type `@` in chat input to open the attachment menu, `#editor` to share the current editor with AI
+
+### AI Chat — Improvements
+- **Rotating Thinking Indicator** - Thinking display now cycles through "Thinking...", "Analyzing...", "Reasoning..." with animated pulse dots
+- **Streaming Progress** - Live elapsed time counter and prominent Stop button during AI response generation
+- **Per-code-block language labels** - When AI response contains multiple code blocks, each shows its language tag
+
+---
+
 ## v3.0.2 (2026-03-22)
 
 ### Bug Fixes
