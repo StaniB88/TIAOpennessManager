@@ -52,9 +52,9 @@
 - **Inline Diff Preview** - When AI modifies code via the editor, changes are shown as an inline diff (red/green highlighting) with Accept/Reject buttons instead of being applied directly. Keyboard shortcuts: Tab to accept, Escape to reject
 - **Follow-up Suggestions** - AI responses now include 2-3 clickable follow-up suggestions as pill-shaped buttons below each response
 - **Code Block Copy & Apply** - Each code block in AI responses gets individual Copy and Apply buttons (previously only one Apply button per message)
-- **Inline Chat (Ctrl+I)** - VS Code-style inline chat directly in the code editor. Select code, press Ctrl+I, type a question or request — AI responds and proposes changes inline
+- **Inline Chat (Ctrl+I)** - Inline chat directly in the code editor. Select code, press Ctrl+I, type a question or request — AI responds and proposes changes inline
 - **Embedded Diff Viewer in Chat** - When AI suggests code that differs from the current editor content, an inline diff view is shown in the chat message
-- **Implicit Context Chip** - When a block is opened in the editor, it automatically appears as a context chip above the chat input. Click to add/remove it from AI context (VS Code-style)
+- **Implicit Context Chip** - When a block is opened in the editor, it automatically appears as a context chip above the chat input. Click to add/remove it from AI context
 - **Question Carousel** - AI can present multi-step questionnaires with text input, single-select, and multi-select questions for guided interactions
 - **Context shortcuts** - Type `@` in chat input to open the attachment menu, `#editor` to share the current editor with AI
 
