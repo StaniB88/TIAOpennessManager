@@ -1,5 +1,52 @@
 # TIA Openness Manager - Changelog
 
+## v3.0.4 (2026-03-26)
+
+### New Features
+- **Multi-select in project tree and file tree** — Ctrl+Click toggles selection, Shift+Click selects a range. Works in both the left project tree and the right import/export file tree. Selected items can be exported, dragged, or deleted in bulk — no checkboxes required.
+
+### Git — New Features
+- **Auto-refresh local changes** — File changes are now detected automatically via FileSystemWatcher. No more manual refresh needed — changes appear within ~1 second, just like in SourceGit.
+- **Auto-fetch from remotes** — Enable in Repository Settings with configurable interval (minutes). Fetches from the default remote automatically in the background.
+- **Merge conflict resolution** — Use Theirs / Use Mine per conflicted file directly from the Working Copy context menu. Full 3-way merge editor for line-by-line conflict resolution with Ours/Theirs/Result panels.
+- **In-progress operation handling** — Cherry-pick, Rebase, Revert, and Merge in-progress states are now detected and shown in the Working Copy. Continue, Skip, or Abort directly from the UI.
+- **Reword HEAD** — Edit the most recent commit message without changing the code. Auto-stashes staged changes if needed.
+- **Squash / Fixup HEAD** — Combine HEAD commit with a previous commit. Choose between squash (edit message) or fixup (discard message).
+- **Drop HEAD** — Remove the most recent commit entirely. Working copy changes are auto-stashed and restored.
+- **Stash detail view** — Selecting a stash now shows its changed files with diff preview. Search stashes by message. Clear all stashes with one click.
+- **Add Remote dialog** — Dedicated dialog with name/URL validation, SSH key support, and automatic fetch after adding.
+- **Edit Remote dialog** — Rename, change URL, and configure SSH key for existing remotes.
+- **Submodule: De-initialize** — De-init submodules with optional force flag.
+- **Submodule: Change URL** — Change the remote URL of a submodule with URL validation.
+- **Submodule: Set Branch** — Set the tracking branch for a submodule.
+- **Submodule: Move** — Move a submodule to a different directory path.
+- **Reset branch without checkout** — Move a non-current branch pointer to a different commit without switching to it.
+- **Edit branch description** — Add or edit a branch description note via git config.
+- **Delete multiple tags** — Batch delete tags with optional push-delete to all remotes.
+- **Push specific revision** — Push a specific commit SHA to a remote branch with optional force push.
+- **Directory history** — View commit history filtered to a specific directory.
+- **Revision file browser** — Browse all files of any commit as a tree with search, content viewer, and binary file detection.
+- **Command palettes** — Quick keyboard-driven access to Checkout Branch, Merge Branch, Blame File, File History, and Open File operations with instant search filtering.
+- **Commit message history** — Last 10 commit messages are saved and can be reused. Messages persist across sessions.
+- **Commit template variables** — Templates now support `${branch_name}`, `${files}`, `${pure_files}`, slicing (`${files:3}`), and regex transforms.
+
+### Git — Improvements
+- **Amend loads previous message** — Toggling Amend now automatically loads the last commit message into the editor.
+- **Settings are persisted** — Auto-fetch, interval, default remote, and other repository settings are saved to `.git/sourcegit.settings` and restored when reopening.
+- **Sidebar state remembered** — Which sidebar sections (Branches, Remotes, Tags, Submodules, Worktrees) are expanded is saved per repository and restored on next open.
+- **Last commit message preserved** — Your uncommitted commit message is saved when switching tabs and restored when you return.
+- **Cherry-pick extended** — Now supports multi-commit cherry-pick, merge commit handling with parent selection, and "Append source to message" option.
+
+### Bug Fixes
+- **Connect dialog shows all running TIA Portal versions** — Previously only the highest version was shown when multiple TIA Portal versions were running simultaneously (e.g., V19 + V20). Now all instances are listed.
+- **Improved error messages when connecting to TIA Portal** — The generic "Exception has been thrown by the target of an invocation" error is now unwrapped to show the actual Siemens error message, making connection issues easier to diagnose.
+- **Tree scrolling fixed** — Scrolling in the project tree and file tree no longer conflicts with drag & drop.
+- **Drag & drop works with filtered tree items** — Blocks found via tree search can now be dragged as expected; checkbox selections are preserved during filtering.
+- **Log and Git Output now support text selection and copy** — Text in the Application Log and Git Output panels can be selected with the mouse and copied via Ctrl+C.
+- **Drag & drop to Compare no longer blocks subsequent drags** — Previously, dragging a block to Compare caused it to stay selected, preventing other blocks from being dragged. Now dragging always uses the block under the cursor unless it is part of a checked group.
+- **Folder checkboxes in file tree** — Folders now show checkboxes for selection. Checking or unchecking a folder cascades to all children, matching the project tree behavior.
+- **Folder selection state consistent** — In both trees, unchecking a parent now correctly unchecks all children. Previously the file tree did not cascade deselection.
+
 ## v3.0.3 (2026-03-25)
 
 ### Git — New Features

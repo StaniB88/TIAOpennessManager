@@ -4,6 +4,7 @@
 
 - **Betriebssystem:** Windows 10/11 (64-bit)
 - **TIA Portal:** Version 15 bis 21 installiert
+- **TIA Portal Openness:** Ihr Windows-Benutzer muss Mitglied der Gruppe **"Siemens TIA Openness"** sein (siehe Einrichtung unten)
 - **Arbeitsspeicher:** Mindestens 4 GB RAM (8 GB empfohlen)
 - **Festplatte:** 500 MB für die Anwendung
 
@@ -14,6 +15,22 @@
 3. Beim ersten Start können Sie eine 30-tägige Testversion mit allen Funktionen starten
 
 > **Hinweis:** TIA Portal muss installiert sein, aber muss nicht geöffnet sein.
+
+### Windows-Benutzer zur Gruppe "Siemens TIA Openness" hinzufügen
+
+TIA Portal erfordert, dass Ihr Windows-Benutzer Mitglied der Gruppe "Siemens TIA Openness" ist. Ohne diese Berechtigung wird die Verbindung verweigert.
+
+1. Drücken Sie `Win + R`, geben Sie `lusrmgr.msc` ein, drücken Sie Enter
+2. Klicken Sie links auf **Gruppen**
+3. Doppelklicken Sie auf **"Siemens TIA Openness"**
+4. Prüfen Sie, ob Ihr Benutzer aufgelistet ist. Falls nicht, klicken Sie auf **Hinzufügen**, geben Sie Ihren Benutzernamen ein, klicken Sie auf **Namen überprüfen** → **OK**
+5. Klicken Sie auf **Übernehmen** → **OK**
+6. **Melden Sie sich ab und wieder an**, damit die Änderung wirksam wird
+
+> **Windows 11 Home:** `lusrmgr.msc` ist nicht verfügbar. Verwenden Sie stattdessen eine Eingabeaufforderung als Administrator:
+> ```
+> net localgroup "Siemens TIA Openness" %USERNAME% /add
+> ```
 
 ## Erster Start
 

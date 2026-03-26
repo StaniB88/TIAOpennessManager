@@ -51,6 +51,7 @@ TIA Openness Manager is a desktop application that uses the Siemens TIA Portal O
 |-----------|-------------|
 | Operating System | Windows 10/11 (64-bit) |
 | TIA Portal | V15, V16, V17, V18, V19, V20, or V21 |
+| TIA Portal Openness | Windows user must be in "Siemens TIA Openness" group |
 | .NET | .NET 10 Runtime (bundled with installer) |
 | RAM | Minimum 4 GB (8 GB recommended) |
 | Disk Space | 500 MB |
@@ -62,6 +63,22 @@ TIA Openness Manager is a desktop application that uses the Siemens TIA Portal O
 3. Run `TiaOpennessManager.V3.exe`
 
 > **Note:** No separate installation is required. The application is portable and includes all necessary runtimes. TIA Portal must be installed on the system.
+
+### TIA Portal Openness Setup
+
+Your Windows user must be a member of the **"Siemens TIA Openness"** user group. Without this, TIA Portal will deny the connection.
+
+1. Press `Win + R`, type `lusrmgr.msc`, press Enter
+2. Click **Groups** on the left side
+3. Double-click **"Siemens TIA Openness"**
+4. Check if your user is listed. If not, click **Add**, type your username, click **Check Names** → **OK**
+5. Click **Apply** → **OK**
+6. **Log off and log back in** for the change to take effect
+
+> **Windows 11 Home:** `lusrmgr.msc` is not available. Use an elevated command prompt instead:
+> ```
+> net localgroup "Siemens TIA Openness" %USERNAME% /add
+> ```
 
 ---
 
