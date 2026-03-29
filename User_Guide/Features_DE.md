@@ -127,6 +127,8 @@ Der **TIA Openness Manager** ist ein leistungsstarkes Werkzeug für Siemens TIA 
 - **Sitzungsarchiv** - Archivieren Sie alte Sitzungen, um die Sitzungsliste übersichtlich zu halten; archivierte Sitzungen wiederherstellen oder dauerhaft löschen
 - **Terminal-Modus** - Eingebettetes PowerShell-Terminal mit MCP-Integration; konfiguriert automatisch `.mcp.json` und schreibt optional eine `CLAUDE.md` mit Projektkontext für Claude CLI; Terminal öffnet im TIA Portal-Projektverzeichnis
 - **CLAUDE.md-Einstellung** - Steuert, ob beim Terminal-Start eine `CLAUDE.md`-Datei ins Projektverzeichnis geschrieben wird (AI Chat Settings → Context); deaktivieren, wenn Claude CLI nicht verwendet wird
+- **Agenten-Gedächtnis** - Jeder Agent hat einen eigenen, sitzungsübergreifenden Gedächtnisspeicher; der Agent speichert automatisch wichtige Fakten und fügt relevante Erinnerungen beim Sitzungsstart in den Kontext ein; unterstützt die Tools `memory_store`, `memory_search`, `memory_list` und `memory_delete`; konfigurierbarer Embedding-Anbieter (OpenAI, Google, Ollama, LM Studio) für semantische Suche mit Schlüsselwort-Fallback; Gedächtnis-Einstellungen zum Anzeigen, Löschen, Exportieren (JSON), Importieren und Aufräumen alter Erinnerungen
+- **Subagenten-Steuerung** - Agent kann Teilaufgaben an unabhängige Subagenten delegieren (`run_subagent`); bis zu 5 gleichzeitige Subagenten; laufende Subagenten verwalten mit `manage_subagents list/kill/steer`; nicht-blockierender Modus ermöglicht dem Hauptagenten, weiterzuarbeiten, während Teilaufgaben im Hintergrund laufen
 
 ### OPC UA Client
 

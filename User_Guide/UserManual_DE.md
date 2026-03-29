@@ -382,6 +382,16 @@ Für Projekte mit HMI-Geräten (WinCC Unified, Comfort Panels, etc.):
 - Textlisten
 - Grafiklisten
 
+#### WinCC Unified Screen Export/Import
+
+WinCC Unified Screens werden als JSON-Dateien exportiert (nicht XML wie bei Classic HMI). Der Export umfasst alle Bildschirmelemente mit ihren Eigenschaften, Positionen, Farben, Schriften, Texten, Kompositionen (z.B. ListBox-Einträge), Dynamisierungen und Ereignissen.
+
+- **Export Selected:** Bildschirme im HMI-Baum auswählen, Export HMI Selected klicken
+- **Export All:** Export HMI All klicken — exportiert automatisch alle Screens unter Beibehaltung der Ordnerstruktur (z.B. `Screens/Device PopUp/DCM.json`)
+- **Import:** JSON-Dateien im Dateibaum auswählen, Import HMI Selected klicken. Bestehende Screens mit gleichem Namen werden gelöscht und neu erstellt.
+
+> **Hinweis:** Bei WinCC Unified Screens werden nach dem Import alle Elemente in **Layer 0** platziert. Die Siemens TIA Portal Openness API bietet keine Möglichkeit, Layer-Zuordnungen zu lesen oder zu schreiben. Positionen und alle anderen Eigenschaften bleiben korrekt erhalten.
+
 ### Hardware-Export
 
 Hardware-Konfiguration als AML/XML exportieren:
@@ -797,6 +807,71 @@ Konversationen werden automatisch als Sitzungen gespeichert. Sie können neue Ch
 - Der Archiv-Bereich zeigt einen Zähler und lässt sich per Klick aufklappen
 
 Sitzungen werden als JSON-Dateien in `%LocalAppData%\TiaOpennessManager\ChatSessions\` gespeichert.
+
+### Agenten-Gedächtnis
+
+Der KI-Agent kann Informationen über Chat-Sitzungen hinweg speichern und abrufen. Jeder Agent hat seinen eigenen privaten Gedächtnisspeicher, der zwischen Gesprächen erhalten bleibt.
+
+**Funktionsweise:**
+- Der Agent speichert während einer Konversation automatisch wichtige Fakten, Entscheidungen und Präferenzen (Auto-Gedächtnis)
+- Zu Beginn jeder Sitzung werden semantisch relevante Erinnerungen automatisch in den Kontext des Agenten eingefügt
+- Sie können den Agenten auch ausdrücklich bitten, bestimmte Informationen zu merken oder zu vergessen
+
+**Verfügbare Gedächtnis-Tools:**
+
+| Tool | Beschreibung |
+|------|--------------|
+| `memory_store` | Einen Fakt, eine Entscheidung oder Präferenz für spätere Abfrage speichern |
+| `memory_search` | Gespeicherte Erinnerungen per Stichwort oder semantischer Ähnlichkeit suchen |
+| `memory_list` | Alle für den aktuellen Agenten gespeicherten Erinnerungen auflisten |
+| `memory_delete` | Eine bestimmte Erinnerung löschen |
+
+**Gedächtnis-Einstellungen:**
+
+Öffnen Sie **View → AI Chat Settings** und navigieren Sie zum Abschnitt **Memory** für den ausgewählten Agenten:
+
+- **Erinnerungen anzeigen** — Alle gespeicherten Erinnerungen des aktuellen Agenten durchsuchen
+- **Erinnerungen löschen** — Einzelne Einträge entfernen oder alle Erinnerungen löschen
+- **Exportieren (JSON)** — Alle Erinnerungen zur Sicherung in eine JSON-Datei exportieren
+- **Importieren** — Erinnerungen aus einer zuvor exportierten JSON-Datei wiederherstellen
+- **Alte Erinnerungen aufräumen** — Erinnerungen älter als ein konfigurierbares Alter entfernen
+
+**Embedding-Anbieter (semantische Suche):**
+
+Jeder Agent kann mit einem Embedding-Anbieter für semantische Gedächtnissuche konfiguriert werden. Wenn konfiguriert, findet der Agent Erinnerungen nach Bedeutung statt Schlüsselwortübereinstimmung:
+
+| Anbieter | Einrichtung |
+|----------|-------------|
+| OpenAI | API-Schlüssel erforderlich |
+| Google | API-Schlüssel erforderlich |
+| Ollama | Lokale Ollama-Instanz |
+| LM Studio | Lokale LM Studio-Instanz |
+
+Wenn kein Embedding-Anbieter konfiguriert ist, wechselt der Agent automatisch zur schlüsselwortbasierten Suche.
+
+### Subagenten-Steuerung
+
+Der KI-Agent kann Teilaufgaben an unabhängige Subagenten delegieren und diese während einer Konversation verwalten. Dies ermöglicht dem Agenten, parallele oder langwierige Aufgaben auszuführen, ohne den Hauptdialog zu blockieren.
+
+**Verfügbare Subagenten-Tools:**
+
+| Tool | Beschreibung |
+|------|--------------|
+| `run_subagent` | Eine Teilaufgabe an einen neuen Agenten delegieren (blockierend oder nicht-blockierend) |
+| `manage_subagents list` | Alle aktuell laufenden Subagenten und ihren Status anzeigen |
+| `manage_subagents kill` | Einen laufenden Subagenten beenden |
+| `manage_subagents steer` | Einen laufenden Subagenten mit neuen Anweisungen umlenken |
+
+**Wichtige Verhaltensweisen:**
+- Bis zu 5 Subagenten können gleichzeitig laufen
+- Nicht-blockierende Subagenten laufen im Hintergrund; der Hauptagent kann weiterarbeiten und Ergebnisse später prüfen
+- Blockierende Subagenten pausieren den Hauptagenten, bis die Teilaufgabe abgeschlossen ist
+- Der Hauptagent kann einen laufenden Subagenten mit neuen Anweisungen umlenken
+
+**Beispiel-Anwendungsfälle:**
+- Mehrere SPS-Bausteine parallel analysieren
+- Einen langen Exportvorgang im Hintergrund ausführen, während Fragen beantwortet werden
+- Dokumentationserstellung an einen Subagenten delegieren, während Code überprüft wird
 
 ### Terminal-Modus
 

@@ -382,6 +382,16 @@ For projects with HMI devices (WinCC Unified, Comfort Panels, etc.):
 - Text Lists
 - Graphic Lists
 
+#### WinCC Unified Screen Export/Import
+
+WinCC Unified screens are exported as JSON files (not XML like Classic HMI). The export includes all screen items with their properties, positions, colors, fonts, texts, compositions (e.g., ListBox entries), dynamizations, and events.
+
+- **Export Selected:** Select screens in the HMI tree, click Export HMI Selected
+- **Export All:** Click Export HMI All — automatically exports all screens preserving the folder structure (e.g., `Screens/Device PopUp/DCM.json`)
+- **Import:** Select JSON files in the file tree, click Import HMI Selected. Existing screens with the same name are deleted and recreated.
+
+> **Note:** For WinCC Unified screens, all elements will be placed in **Layer 0** after import. The Siemens TIA Portal Openness API does not support reading or writing layer assignments. Positions and all other properties are preserved correctly.
+
 ### Hardware Export
 
 Export hardware configuration as AML/XML:
@@ -797,6 +807,71 @@ Conversations are saved automatically as sessions. You can create new chats, swi
 - The archived section shows a count badge and expands on click
 
 Sessions are stored as JSON files in `%LocalAppData%\TiaOpennessManager\ChatSessions\`.
+
+### Agent Memory
+
+The AI agent can store and recall information across chat sessions. Each agent has its own private memory store that persists between conversations.
+
+**How it works:**
+- The agent automatically saves important facts, decisions, and preferences during a conversation (auto-memory)
+- At the start of each session, memories that are semantically relevant to the current question are injected into the agent's context automatically
+- You can also ask the agent explicitly to remember or forget specific information
+
+**Memory tools available to the agent:**
+
+| Tool | Description |
+|------|-------------|
+| `memory_store` | Save a fact, decision, or preference for later recall |
+| `memory_search` | Find stored memories by keyword or semantic similarity |
+| `memory_list` | List all memories stored for the current agent |
+| `memory_delete` | Delete a specific memory |
+
+**Memory Settings panel:**
+
+Open **View → AI Chat Settings** and navigate to the **Memory** section for the selected agent:
+
+- **View memories** — Browse all stored memories for the current agent
+- **Delete memories** — Remove individual entries or clear all memories
+- **Export (JSON)** — Export all memories to a JSON file for backup
+- **Import** — Restore memories from a previously exported JSON file
+- **Cleanup old memories** — Remove memories older than a configurable age
+
+**Embedding provider (semantic search):**
+
+Each agent can be configured with an embedding provider for semantic memory search. When configured, the agent finds memories by meaning rather than keyword matching:
+
+| Provider | Setup |
+|----------|-------|
+| OpenAI | API key required |
+| Google | API key required |
+| Ollama | Local Ollama instance |
+| LM Studio | Local LM Studio instance |
+
+If no embedding provider is configured, the agent falls back to keyword-based search automatically.
+
+### Sub-Agent Steering
+
+The AI agent can dispatch sub-tasks to independent sub-agents and manage them during a conversation. This allows the agent to run parallel or long-running tasks without blocking the main conversation.
+
+**Sub-agent tools available to the agent:**
+
+| Tool | Description |
+|------|-------------|
+| `run_subagent` | Dispatch a sub-task to a new agent (blocking or non-blocking) |
+| `manage_subagents list` | View all currently running sub-agents and their status |
+| `manage_subagents kill` | Terminate a running sub-agent |
+| `manage_subagents steer` | Redirect a running sub-agent with new instructions |
+
+**Key behaviors:**
+- Up to 5 sub-agents can run concurrently
+- Non-blocking sub-agents run in the background; the main agent can continue working and check results later
+- Blocking sub-agents pause the main agent until the sub-task completes
+- The main agent can redirect a running sub-agent with new instructions using `manage_subagents steer`
+
+**Example use cases:**
+- Analyzing multiple PLC blocks in parallel
+- Running a long export operation in the background while answering questions
+- Delegating documentation generation to a sub-agent while reviewing code
 
 ### Terminal Mode
 

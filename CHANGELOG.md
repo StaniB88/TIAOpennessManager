@@ -1,5 +1,50 @@
 # TIA Openness Manager - Changelog
 
+## v3.0.5 (2026-03-29)
+
+### AI Chat — Complete Redesign
+The AI Chat has been rebuilt from the ground up with a new architecture based on Semantic Kernel.
+- **New provider system** — Switch between Anthropic, OpenAI, Google, Ollama, OpenRouter, and GitHub Copilot with provider icons and per-provider settings (temperature, top-p, timeout, custom endpoints)
+- **Skills** — Quick-access prompt templates with the scroll icon in the chat input bar. Includes built-in skills (Explore Project, Explain Block, Generate SCL, Compare Blocks) and supports custom user-created skills
+- **File attachments** — Drag and drop files directly into the chat. The AI reads text files (Markdown, JSON, source code) via the built-in file read tool
+- **Visual Context** — The AI can see and interact with your screen: list windows, capture UI elements, read visual trees, and automate clicks and keyboard input
+- **AI Connect** — The AI can connect to TIA Portal on its own via `tia_connect`, running the exact same connection flow as the manual Connect button (tree refresh, profile loading, HMI detection)
+- **Chat history** — Conversations are persisted in a local SQLite database with branching (edit/retry), session list, and token usage stats
+- **Database cleanup** — Configurable retention period (30/60/90 days) in Settings → Storage. Automatic cleanup on startup, manual "Cleanup Now" button with database size display
+- **Reasoning model support** — Models with reasoning/thinking tokens (e.g. DeepSeek, QwQ) are now displayed correctly with collapsible thinking sections
+
+### AI Chat — Essential Tools
+- **To-Do List** — The AI can create and manage a task checklist during complex multi-step operations, tracking progress with status icons
+- **Sub-Agent Dispatching** — The AI can delegate focused sub-tasks to an isolated agent with its own conversation context, preventing context pollution during complex workflows
+- **MCP Server Connections** — Connect external MCP (Model Context Protocol) servers to extend the AI with additional tools. Supports Stdio and HTTP transports. Configure, start/stop, and manage servers in Settings → MCP Servers
+
+### AI Canvas
+- **Interactive Canvas** — The AI can create interactive HTML/JavaScript canvases with live previews. Build dashboards, visualizations, and custom UIs directly in the app.
+- **Real-time OPC UA binding** — The AI can bind OPC UA variables to canvas elements using `canvas_bind_opcua`. Values update live, enabling real-time process visualization dashboards.
+- **TIA custom Web Components** — Five ready-to-use components for automation: SignalChart (live trending), Gauge (radial indicator), VariableDisplay (tag monitor), BlockDiagram (process flow), and AlarmTable (alarm list).
+- **Popout window** — Detach the canvas to a separate window for multi-monitor setups.
+- **Save & Load** — Export canvas content as JSONL files and reload them later.
+
+### WinCC Unified — Screen Editor
+- **Visual Screen Editor** — New canvas-based editor for WinCC Unified screens. Drag, resize, and inspect screen items visually with a property grid. Zoom with Ctrl+Scroll or Ctrl+/-, pan with middle mouse button.
+- **AI-powered screen creation** — The AI Chat can create, modify, and manage WinCC Unified screens using dedicated MCP tools. Ask the AI to build screens with buttons, I/O fields, text boxes, and other elements — it creates them directly in the canvas editor.
+- **Export to TIA / Import from TIA** — Transfer screens between the canvas editor and TIA Portal in both directions.
+
+### New Features
+- **WinCC Unified screen export/import** — Full export and import of WinCC Unified HMI screens via the TIA Portal Openness property-level API. Exports all screen items (buttons, I/O fields, text boxes, graphics, list boxes, etc.) with positions, colors, fonts, texts, compositions, dynamizations, and events as JSON files. Import recreates screens with all properties. Supports TIA Portal V19 and later.
+- **WinCC Unified HMI Tags and Scripts** — Export and import HMI tag tables (YAML format via Siemens directory-based API) and export JavaScript script modules from WinCC Unified devices. Each tag table and script module exports to its own folder.
+- **WinCC Unified extended project tree** — The project tree now shows HMI Alarms (Discrete/Analog), Alarm Classes, Scripts, Logs (Data Logs/Alarm Logs), Text Lists, and Graphic Lists for WinCC Unified devices — matching WinCC Classic's coverage.
+- **OPC UA multi-select and multi-drag** — Select multiple OPC UA nodes in the tree and drag them to the Watch Table in one operation.
+- **OPC UA settings** — New gear icon for OPC UA configuration with logging toggle.
+- **Openness Firewall auto-whitelist** — The installer automatically registers the application in the Siemens TIA Portal Openness Firewall whitelist (V15–V21). No more manual confirmation dialog when connecting to TIA Portal.
+
+### Bug Fixes
+- **GitHub Copilot provider** — Sign-in, model fetching, and token handling for GitHub Copilot now work correctly.
+- **Ollama timeout** — Default request timeout increased from 20s to 120s, fixing cold start timeouts with large Ollama models.
+- **Connect dialog resizable** — The Connect to TIA Portal dialog can now be resized, preventing cut-off text with long instance names.
+- **Import All: Safety deletion now stops immediately** — When deleting a group containing safety elements fails, the import now stops immediately and rolls back the transaction. Previously, the operation continued after the safety error, causing TIA Portal to become exposed.
+- **Error dialogs no longer cut off** — Message dialogs (e.g. Git fetch/pull errors) now resize to fit their content instead of using a fixed height. The OK button is always visible and clickable.
+
 ## v3.0.4 (2026-03-26)
 
 ### New Features
