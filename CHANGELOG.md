@@ -1,5 +1,10 @@
 # TIA Openness Manager - Changelog
 
+## v3.0.6 (2026-03-30)
+
+### Hotfix
+- **Canvas crash on installed version** — Fixed a crash when opening the AI Canvas in the installed application.
+
 ## v3.0.5 (2026-03-29)
 
 ### AI Chat — Complete Redesign
