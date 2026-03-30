@@ -657,11 +657,17 @@ Four default skills are included and automatically deployed on first launch:
 | Generate SCL | ⌨️ | Generates SCL code following Siemens programming standards |
 | Compare Blocks | 🔄 | Compares block versions between project and export folder |
 
-Built-in skills can be edited. To restore them to their original content, use the **Restore Default Skills** option in the AI Chat settings.
+Built-in skills can be edited. To restore them to their original content, click **Open Skills Folder**, delete the modified files, and use the **Reload** button (↻) — the defaults will be re-deployed automatically.
 
 #### Creating Custom Skills
 
-Each `.md` file is a skill. Include YAML frontmatter at the top to set the name, description, icon, and optional actions:
+To create a new skill, place a `.md` file in the skills folder. The simplest skill is just a plain text file:
+
+```markdown
+Please analyze the current PLC program and suggest improvements.
+```
+
+For more control, add YAML frontmatter at the top to set a name, description, and icon:
 
 ```markdown
 ---
@@ -673,13 +679,17 @@ icon: 📊
 Please summarize the blocks that were exported in the last operation, including counts by type.
 ```
 
+All frontmatter fields are optional. If no `name` is specified, the filename is used. If no `icon` is specified, a default icon (📄) is shown.
+
+After adding or editing skill files, click the **Reload** button (↻) in the Skills palette header to refresh the list.
+
 **Frontmatter fields:**
 
 | Field | Required | Description |
 |-------|----------|-------------|
 | `name` | No | Display name (defaults to filename if omitted) |
 | `description` | No | Short description shown in the command palette |
-| `icon` | No | Emoji icon displayed next to the skill name |
+| `icon` | No | Emoji icon displayed next to the skill name (defaults to 📄) |
 | `action` | No | Comma-separated action IDs for automated behavior (see below) |
 | `save-path` | No | File path where the AI response is saved (used with `save-response` action) |
 

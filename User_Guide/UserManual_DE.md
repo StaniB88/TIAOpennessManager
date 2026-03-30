@@ -657,11 +657,17 @@ Vier Standard-Skills werden mitgeliefert und beim ersten Start automatisch berei
 | Generate SCL | ⌨️ | Generiert SCL-Code nach Siemens-Programmierstandards |
 | Compare Blocks | 🔄 | Vergleicht Bausteinversionen zwischen Projekt und Exportordner |
 
-Eingebaute Skills können bearbeitet werden. Um sie auf den Originalinhalt zurückzusetzen, verwenden Sie die Option **Standard-Skills wiederherstellen** in den KI-Chat-Einstellungen.
+Eingebaute Skills können bearbeitet werden. Um sie auf den Originalinhalt zurückzusetzen, klicken Sie auf **Skills-Ordner öffnen**, löschen Sie die geänderten Dateien und klicken Sie auf den **Neu laden**-Button (↻) — die Standards werden automatisch neu bereitgestellt.
 
 #### Eigene Skills erstellen
 
-Jede `.md`-Datei ist ein Skill. Fügen Sie YAML-Frontmatter oben ein, um Name, Beschreibung, Icon und optionale Aktionen festzulegen:
+Um einen neuen Skill zu erstellen, legen Sie eine `.md`-Datei im Skills-Ordner ab. Der einfachste Skill ist eine reine Textdatei:
+
+```markdown
+Bitte analysiere das aktuelle SPS-Programm und schlage Verbesserungen vor.
+```
+
+Für mehr Kontrolle fügen Sie YAML-Frontmatter oben ein, um Name, Beschreibung und Icon festzulegen:
 
 ```markdown
 ---
@@ -673,13 +679,17 @@ icon: 📊
 Bitte fassen Sie die Bausteine zusammen, die beim letzten Export ausgegeben wurden, einschliesslich der Anzahl nach Typ.
 ```
 
+Alle Frontmatter-Felder sind optional. Wenn kein `name` angegeben ist, wird der Dateiname verwendet. Wenn kein `icon` angegeben ist, wird ein Standard-Icon (📄) angezeigt.
+
+Nach dem Hinzufügen oder Bearbeiten von Skill-Dateien klicken Sie auf den **Neu laden**-Button (↻) im Skills-Palette-Header, um die Liste zu aktualisieren.
+
 **Frontmatter-Felder:**
 
 | Feld | Pflicht | Beschreibung |
 |------|---------|--------------|
 | `name` | Nein | Anzeigename (Standard: Dateiname ohne Erweiterung) |
 | `description` | Nein | Kurzbeschreibung in der Befehlspalette |
-| `icon` | Nein | Emoji-Icon neben dem Skill-Namen |
+| `icon` | Nein | Emoji-Icon neben dem Skill-Namen (Standard: 📄) |
 | `action` | Nein | Kommagetrennte Aktions-IDs für automatisches Verhalten (siehe unten) |
 | `save-path` | Nein | Dateipfad zum Speichern der KI-Antwort (mit `save-response`-Aktion) |
 

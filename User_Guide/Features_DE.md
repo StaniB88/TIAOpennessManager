@@ -119,7 +119,7 @@ Der **TIA Openness Manager** ist ein leistungsstarkes Werkzeug für Siemens TIA 
 - **Anweisungsdateien** - Markdown-Dateien werden automatisch zu Sitzungsbeginn in den System-Prompt der KI eingefügt
 - **Git-Integration** - Die KI kennt Ihr Git-Repository, den aktuellen Branch und Änderungen; kann Status anzeigen, Dateien stagen, committen, pushen und pullen (schreibende Operationen erfordern Benutzerbestätigung)
 - **Commit-Vorlagen** - Definieren Sie Commit-Message-Vorlagen; die KI folgt der aktiven Vorlage beim Erstellen von Commits
-- **Skills** - Legen Sie `.md`-Dateien in `%LocalAppData%\TiaOpennessManager\skills\` ab, um wiederverwendbare Prompt-Befehle zu erstellen, die über die `/`-Befehlspalette in der Chat-Eingabe aufrufbar sind
+- **Skills** - Legen Sie `.md`-Dateien in `%LocalAppData%\TiaOpennessManager\skills\` ab, um wiederverwendbare Prompt-Befehle zu erstellen, die über die `/`-Befehlspalette in der Chat-Eingabe aufrufbar sind; kein Frontmatter nötig (reiner Text genügt), optionales YAML-Frontmatter für Name, Beschreibung und Icon
 - **Agent-Konfigurationen** - Legen Sie `.json`-Dateien in `%LocalAppData%\TiaOpennessManager\agents\` ab, um KI-Personas mit eigenen System-Prompts und Tool-Zugriff zu definieren; drei eingebaute Agenten (General Assistant, Git Assistant, SCL Expert)
 - **Dateianhänge** - Ziehen Sie Bilder (`.png`, `.jpg`, `.bmp`, `.gif`, `.webp`) oder Textdateien (`.cs`, `.xml`, `.json`, `.txt`, `.md`, `.yaml`, `.csv`, `.log`, `.scl`, `.cfg`) per Drag & Drop in den Chat; Bilder werden skaliert und als multimodaler Inhalt gesendet
 - **Zwischenablage einfügen** - Drücken Sie Strg+V, um einen Screenshot aus der Zwischenablage direkt in den Chat einzufügen; auch über das Anhang-Menü verfügbar

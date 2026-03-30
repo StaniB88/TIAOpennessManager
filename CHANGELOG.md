@@ -1,5 +1,13 @@
 # TIA Openness Manager - Changelog
 
+## v3.0.7 (2026-03-31)
+
+### AI Chat
+- **Context Compaction** — Long conversations no longer crash with "context length exceeded" errors. When the chat approaches the model's context limit, the AI automatically summarizes older messages into a structured summary and continues seamlessly. A token usage indicator (~12K / 128K) is now shown in the chat stats.
+- **Session Memory** — When switching or clearing chats, the AI automatically saves a summary of the conversation to long-term memory. Configurable in Settings → Memory: enable/disable, number of messages to include (default 15), and optional LLM-generated summaries instead of raw message logs.
+- **Collapsible memory entries** — Memory entries in Settings → Memory are now collapsed by default, showing only a one-line preview. Click the chevron to expand the full content.
+- **Tool call fix for parameterless tools** — Fixed an "invalid request body" error (HTTP 400) when the AI used tools without parameters (e.g. listing canvas surfaces). The tool input was sent as null instead of an empty object.
+
 ## v3.0.6 (2026-03-30)
 
 ### Hotfix
