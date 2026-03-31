@@ -1,5 +1,19 @@
 # TIA Openness Manager - Changelog
 
+## v3.0.8 (2026-04-01)
+
+### AI Chat
+- **Auto-Save Settings** — All settings in the AI Chat Settings dialog now save immediately on change. No more Save/Cancel buttons — just change a setting and close the window.
+- **Per-tool toggles** — Individual tools within a category remember their enabled/disabled state independently. Toggling a category off and back on restores each tool's individual setting.
+- **Tool auto-approve persistence** — The auto-approve toggle for individual tools now persists across app restarts.
+- **MCP Server stop fix** — Stopping an MCP server in Settings now properly prevents it from restarting on the next message or app launch.
+
+### AI Canvas
+- **Panel resize fix** — Canvas panel no longer disappears when collapsed after resizing. Minimum width prevents dragging to invisible size.
+
+### File Explorer
+- **Save support** — Ctrl+S saves the active file. Closing a tab with unsaved changes shows a Save / Don't Save / Cancel dialog.
+
 ## v3.0.7 (2026-03-31)
 
 ### AI Chat
