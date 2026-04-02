@@ -18,6 +18,7 @@
 9. [MCP Tab (AI Integration)](#9-mcp-tab-ai-integration)
 9a. [AI Chat](#9a-ai-chat)
 9b. [OPC UA Tab](#9b-opc-ua-tab)
+9c. [AI Canvas](#9c-ai-canvas)
 10. [Project Library Management](#10-project-library-management)
 11. [Hardware Tab](#11-hardware-tab)
 12. [Find Unused Blocks](#12-find-unused-blocks)
@@ -1043,7 +1044,7 @@ Export the current watch table values for documentation or further analysis:
 
 ### OPC UA MCP Tools (AI Integration)
 
-When the MCP server is running, AI assistants have access to 8 OPC UA tools:
+When the MCP server is running, AI assistants have access to 13 OPC UA and Canvas tools:
 
 | Tool | Description |
 |------|-------------|
@@ -1053,8 +1054,13 @@ When the MCP server is running, AI assistants have access to 8 OPC UA tools:
 | `opcua_read` | Read the current value of one or more variables by Node ID |
 | `opcua_read_complex` | Read structured/complex data types (e.g., UDTs, arrays) |
 | `opcua_write` | Write a value to a variable by Node ID |
+| `opcua_write_complex` | Write individual fields of a data block (read-modify-write) |
 | `opcua_get_types` | Retrieve data type definitions from the server |
 | `opcua_subscribe` | Create a monitored item subscription for one or more nodes |
+| `canvas_bind_opcua` | Poll OPC UA values and update the Canvas dashboard in real-time |
+| `canvas_unbind_opcua` | Stop all Canvas OPC UA read bindings |
+| `canvas_bind_opcua_write` | Map Canvas button clicks and slider changes to OPC UA writes |
+| `canvas_unbind_opcua_write` | Stop all Canvas OPC UA write bindings |
 
 **Example AI Chat usage:**
 
@@ -1070,6 +1076,61 @@ Ask the AI assistant in the chat panel things like:
 - The PLC must have OPC UA enabled in its hardware configuration (General → OPC UA → Server)
 - For S7-1500 PLCs, ensure the OPC UA server is activated and the relevant PLC tags are marked as "Accessible from HMI/OPC UA"
 - Certificate-based authentication requires exchanging certificates between the client and the PLC
+
+### 9c. AI Canvas with OPC UA Live Data
+
+The AI Canvas can display interactive dashboards that connect to live OPC UA data. The AI creates visual dashboards (gauges, buttons, sliders, animations) using `canvas_eval`, and OPC UA values are bound to the dashboard for real-time updates.
+
+#### How It Works
+
+1. **The AI creates a dashboard** using `canvas_eval` (HTML/CSS/JavaScript rendered in the Canvas WebView)
+2. **Read bindings** (`canvas_bind_opcua`) poll OPC UA values and push them to the dashboard via `window.__tiaUpdateDashboard()`
+3. **Write bindings** (`canvas_bind_opcua_write`) map Canvas button clicks and slider changes to OPC UA write operations
+4. All updates happen automatically — no manual polling or subscription setup needed
+
+#### Canvas OPC UA Tools
+
+| Tool | Direction | Description |
+|------|-----------|-------------|
+| `canvas_bind_opcua` | PLC → Canvas | Polls OPC UA values and updates the dashboard in real-time |
+| `canvas_unbind_opcua` | — | Stops all read bindings |
+| `canvas_bind_opcua_write` | Canvas → PLC | Maps button clicks and slider changes to OPC UA writes |
+| `canvas_unbind_opcua_write` | — | Stops all write bindings |
+| `opcua_write_complex` | Canvas → PLC | Writes individual fields of a data block (read-modify-write) |
+
+#### Example: Process Control Dashboard
+
+Ask the AI to create an interactive dashboard:
+
+> "Create a process control dashboard on the Canvas with Start/Stop buttons, a speed slider (0-3000 RPM), and live gauges for Speed, Temperature, Pressure, and FlowRate. Bind it to the data block `Data_block_1` via OPC UA."
+
+The AI will:
+1. Create the visual dashboard with `canvas_eval`
+2. Set up read bindings with `canvas_bind_opcua` for live value display
+3. Set up write bindings with `canvas_bind_opcua_write` so buttons and sliders control the PLC
+
+#### Saving and Loading Dashboards with OPC UA Bindings
+
+Canvas dashboards can be saved to JSONL files and loaded later. **OPC UA binding configurations are included in the saved file.**
+
+**Save:**
+1. Click the **Save** button in the Canvas toolbar
+2. The JSONL file contains the dashboard layout, JavaScript, and OPC UA binding configuration
+
+**Load:**
+1. Connect to the OPC UA server first
+2. Click the **Load** button in the Canvas toolbar and select the saved JSONL file
+3. The dashboard is restored and OPC UA bindings are automatically re-applied
+4. Live data starts flowing immediately (if OPC UA is connected)
+
+> **Note:** OPC UA bindings are also preserved when the Canvas is docked/undocked within the same session.
+
+#### Important Notes
+
+- An active OPC UA connection is required before bindings can deliver data
+- `canvas_bind_opcua` uses polling (not OPC UA subscriptions) — this is more stable and avoids overloading the OPC UA server
+- All values from OPC UA arrive as **strings** in the JavaScript callback (use `parseFloat()` for numbers, compare with `"True"`/`"False"` for booleans)
+- The Canvas `Reset` button stops all OPC UA bindings (both read and write)
 
 ---
 

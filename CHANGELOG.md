@@ -1,5 +1,30 @@
 # TIA Openness Manager - Changelog
 
+## v3.0.9 (2026-04-02)
+
+### AI Chat
+- **Task Panel** — The AI now shows a live task list when working on complex tasks. Displays progress (e.g. 3/10), collapses to a compact header, and auto-hides when all tasks are completed.
+- **Plan Mode** — New toggle: the AI must submit a plan for approval before writing files. Approve or reject with optional feedback.
+- **Prompt Templates** — Skills now support agent dispatch and a `/` shortcut in the chat input for quick access.
+- **Instructions** — Context Folders replaced by a hierarchical instructions system (global → project → settings) with `@include` support.
+- **Auto-Dream** — The AI automatically consolidates memories across sessions. Configurable in Settings → Memory.
+- **Sub-Agent Improvements** — Sub-agents inherit conversation context (fork), communicate with each other, and remember results from prior agents.
+- **Context Compaction** — Improved summaries for long conversations with structured boundary markers.
+- **Tool Optimization** — Sub-agents only receive the tools they need. Shorter tool descriptions and tooltips in the UI.
+
+### AI Canvas
+- **Canvas → OPC UA Write Bridge** — Canvas buttons and sliders can now write values directly to OPC UA nodes. Use `canvas_bind_opcua_write` to map UI actions (onClick, onChange) to PLC variables. Supports fixed values (buttons) and dynamic payload values (sliders).
+- **Canvas Reset** now also stops all write bindings alongside read bindings.
+
+### OPC UA
+- **Write Complex Tool** — New `opcua_write_complex` tool for writing individual fields of a data block or struct via OPC UA. Uses read-modify-write pattern to update specific fields without overwriting the entire struct.
+
+### Bug Fixes
+
+- Fixed text file attachments (`.md`, `.txt`, `.json`, `.cs`, etc.) being unreadable by the AI when dropped into the chat
+- Fixed inability to send file attachments without typing a text message first
+- Fixed PLC export losing the device name folder (e.g. PLC_1) when "Create Source Folder" setting was disabled
+
 ## v3.0.8 (2026-04-01)
 
 ### AI Chat

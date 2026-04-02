@@ -18,6 +18,7 @@
 9. [MCP Tab (KI-Integration)](#9-mcp-tab-ki-integration)
 9a. [KI-Chat](#9a-ki-chat)
 9b. [OPC UA Tab](#9b-opc-ua-tab)
+9c. [AI Canvas](#9c-ai-canvas)
 10. [Projektbibliothek-Verwaltung](#10-projektbibliothek-verwaltung)
 11. [Hardware Tab](#11-hardware-tab)
 12. [Find Unused Blocks](#12-find-unused-blocks)
@@ -1043,7 +1044,7 @@ Exportieren Sie die aktuellen Beobachtungstabellen-Werte für Dokumentation oder
 
 ### OPC UA MCP-Tools (KI-Integration)
 
-Wenn der MCP-Server läuft, haben KI-Assistenten Zugriff auf 8 OPC UA Tools:
+Wenn der MCP-Server läuft, haben KI-Assistenten Zugriff auf 13 OPC UA und Canvas Tools:
 
 | Tool | Beschreibung |
 |------|--------------|
@@ -1053,8 +1054,13 @@ Wenn der MCP-Server läuft, haben KI-Assistenten Zugriff auf 8 OPC UA Tools:
 | `opcua_read` | Aktuellen Wert einer oder mehrerer Variablen anhand der Knoten-ID lesen |
 | `opcua_read_complex` | Strukturierte/komplexe Datentypen lesen (z.B. UDTs, Arrays) |
 | `opcua_write` | Einen Wert anhand der Knoten-ID in eine Variable schreiben |
+| `opcua_write_complex` | Einzelne Felder eines Datenbausteins schreiben (Read-Modify-Write) |
 | `opcua_get_types` | Datentypendefinitionen vom Server abrufen |
 | `opcua_subscribe` | Überwachte Element-Abonnements für einen oder mehrere Knoten erstellen |
+| `canvas_bind_opcua` | OPC-UA-Werte pollen und das Canvas-Dashboard in Echtzeit aktualisieren |
+| `canvas_unbind_opcua` | Alle Canvas OPC UA Lese-Bindings stoppen |
+| `canvas_bind_opcua_write` | Canvas-Button-Klicks und Slider-Änderungen mit OPC-UA-Schreiboperationen verbinden |
+| `canvas_unbind_opcua_write` | Alle Canvas OPC UA Schreib-Bindings stoppen |
 
 **Beispiele für KI-Chat-Verwendung:**
 
@@ -1070,6 +1076,61 @@ Fragen Sie den KI-Assistenten im Chat-Panel z.B.:
 - Die SPS muss OPC UA in ihrer Hardware-Konfiguration aktiviert haben (Allgemein → OPC UA → Server)
 - Bei S7-1500 SPSen: Stellen Sie sicher, dass der OPC UA Server aktiviert ist und die relevanten PLC-Tags als "Aus HMI/OPC UA zugreifbar" markiert sind
 - Zertifikatsbasierte Authentifizierung erfordert den Austausch von Zertifikaten zwischen Client und SPS
+
+### 9c. AI Canvas mit OPC UA Live-Daten
+
+Das AI Canvas kann interaktive Dashboards anzeigen, die mit Live-OPC-UA-Daten verbunden sind. Die KI erstellt visuelle Dashboards (Anzeigen, Buttons, Slider, Animationen) mit `canvas_eval`, und OPC-UA-Werte werden für Echtzeit-Updates an das Dashboard gebunden.
+
+#### Funktionsweise
+
+1. **Die KI erstellt ein Dashboard** mit `canvas_eval` (HTML/CSS/JavaScript im Canvas-WebView)
+2. **Lese-Bindings** (`canvas_bind_opcua`) pollen OPC-UA-Werte und aktualisieren das Dashboard über `window.__tiaUpdateDashboard()`
+3. **Schreib-Bindings** (`canvas_bind_opcua_write`) verbinden Canvas-Button-Klicks und Slider-Änderungen mit OPC-UA-Schreiboperationen
+4. Alle Updates erfolgen automatisch — kein manuelles Polling oder Subscription-Setup nötig
+
+#### Canvas OPC UA Tools
+
+| Tool | Richtung | Beschreibung |
+|------|----------|-------------|
+| `canvas_bind_opcua` | SPS → Canvas | Pollt OPC-UA-Werte und aktualisiert das Dashboard in Echtzeit |
+| `canvas_unbind_opcua` | — | Stoppt alle Lese-Bindings |
+| `canvas_bind_opcua_write` | Canvas → SPS | Verbindet Button-Klicks und Slider-Änderungen mit OPC-UA-Schreiboperationen |
+| `canvas_unbind_opcua_write` | — | Stoppt alle Schreib-Bindings |
+| `opcua_write_complex` | Canvas → SPS | Schreibt einzelne Felder eines Datenbausteins (Read-Modify-Write) |
+
+#### Beispiel: Prozesssteuerungs-Dashboard
+
+Bitten Sie die KI, ein interaktives Dashboard zu erstellen:
+
+> "Erstelle ein Prozesssteuerungs-Dashboard auf dem Canvas mit Start/Stop-Buttons, einem Drehzahl-Slider (0-3000 RPM) und Live-Anzeigen für Speed, Temperature, Pressure und FlowRate. Verbinde es mit dem Datenbaustein `Data_block_1` über OPC UA."
+
+Die KI wird:
+1. Das visuelle Dashboard mit `canvas_eval` erstellen
+2. Lese-Bindings mit `canvas_bind_opcua` für die Live-Anzeige einrichten
+3. Schreib-Bindings mit `canvas_bind_opcua_write` einrichten, damit Buttons und Slider die SPS steuern
+
+#### Dashboards mit OPC UA Bindings speichern und laden
+
+Canvas-Dashboards können als JSONL-Dateien gespeichert und später geladen werden. **OPC-UA-Binding-Konfigurationen werden in der gespeicherten Datei eingeschlossen.**
+
+**Speichern:**
+1. Klicken Sie auf die **Speichern**-Schaltfläche in der Canvas-Toolbar
+2. Die JSONL-Datei enthält das Dashboard-Layout, JavaScript und die OPC-UA-Binding-Konfiguration
+
+**Laden:**
+1. Verbinden Sie sich zuerst mit dem OPC-UA-Server
+2. Klicken Sie auf die **Laden**-Schaltfläche in der Canvas-Toolbar und wählen Sie die gespeicherte JSONL-Datei
+3. Das Dashboard wird wiederhergestellt und OPC-UA-Bindings werden automatisch neu angewendet
+4. Live-Daten fließen sofort (wenn OPC UA verbunden ist)
+
+> **Hinweis:** OPC-UA-Bindings bleiben auch beim Andocken/Abdocken des Canvas innerhalb derselben Sitzung erhalten.
+
+#### Wichtige Hinweise
+
+- Eine aktive OPC-UA-Verbindung ist erforderlich, bevor Bindings Daten liefern können
+- `canvas_bind_opcua` verwendet Polling (keine OPC-UA-Subscriptions) — das ist stabiler und vermeidet eine Überlastung des OPC-UA-Servers
+- Alle Werte von OPC UA kommen als **Strings** im JavaScript-Callback an (verwenden Sie `parseFloat()` für Zahlen, vergleichen Sie mit `"True"`/`"False"` für Booleans)
+- Die Canvas-Schaltfläche **Reset** stoppt alle OPC-UA-Bindings (Lesen und Schreiben)
 
 ---
 
