@@ -24,6 +24,7 @@
 12. [Find Unused Blocks](#12-find-unused-blocks)
 13. [Settings](#13-settings)
 14. [Licensing](#14-licensing)
+14a. [Git Client](#14a-git-client)
 15. [Troubleshooting & FAQ](#15-troubleshooting--faq)
 
 ---
@@ -821,12 +822,23 @@ Sessions are stored as JSON files in `%LocalAppData%\TiaOpennessManager\ChatSess
 
 ### Agent Memory
 
-The AI agent can store and recall information across chat sessions. Each agent has its own private memory store that persists between conversations.
+The AI agent can store and recall information across chat sessions. Each agent has its own private memory store that persists between conversations, with scope isolation to control memory visibility.
 
 **How it works:**
 - The agent automatically saves important facts, decisions, and preferences during a conversation (auto-memory)
 - At the start of each session, memories that are semantically relevant to the current question are injected into the agent's context automatically
-- You can also ask the agent explicitly to remember or forget specific information
+- Sub-agent results are automatically stored as memories for future reference
+- You can also ask the agent explicitly to remember, update, or forget specific information
+
+**Memory Scopes:**
+
+| Scope | Description |
+|-------|-------------|
+| **Local** (default) | Only this agent sees its memories |
+| **Project** | Memories tied to a specific project (shared across agents with the same scope) |
+| **User** | Global memories visible to all agents |
+
+Configure the memory scope in each agent's configuration file.
 
 **Memory tools available to the agent:**
 
@@ -835,7 +847,21 @@ The AI agent can store and recall information across chat sessions. Each agent h
 | `memory_store` | Save a fact, decision, or preference for later recall |
 | `memory_search` | Find stored memories by keyword or semantic similarity |
 | `memory_list` | List all memories stored for the current agent |
+| `memory_update` | Update the content of an existing memory |
 | `memory_delete` | Delete a specific memory |
+
+**Memory Snapshots (Team Initialization):**
+
+You can pre-seed agents with shared knowledge by placing a JSON file named `{agent-id}.memories.json` in the agents directory (`%LocalAppData%/TiaOpennessManager/agents/`). The file is automatically imported on the agent's first use:
+
+```json
+[
+  { "content": "Project uses ExclusiveAccess for bulk imports", "tags": "project,import" },
+  { "content": "PLC_1 runs firmware V4.5", "tags": "plc,hardware" }
+]
+```
+
+When the snapshot file is updated, the new version is imported automatically at the next agent start.
 
 **Memory Settings panel:**
 
@@ -910,6 +936,102 @@ The AI Chat can paste commands or code into the terminal. When the AI suggests a
 
 **Keyboard shortcut:**
 - **Ctrl+Shift+V** — Paste clipboard content into the terminal
+
+### Hooks
+
+Hooks are event-driven interceptors that run before or after AI tool calls. They allow you to add custom validation, formatting, logging, or control flow to the AI's tool execution.
+
+**Built-in hooks** (always active):
+- **Safety Confirmation** — Blocks AI modification of safety blocks (F_-prefix) automatically
+- **Compile After Import** — Reminds the AI to compile after importing blocks
+- **Audit Log** — Logs all TIA Portal tool operations
+
+**User-configurable hooks:**
+
+You can add custom hooks in `ai_chat_settings.json` under the `Hooks` array:
+
+```json
+{
+  "Hooks": [
+    {
+      "Event": "PreToolUse",
+      "Matcher": "tia_delete_*",
+      "Type": "command",
+      "Command": "node validate-delete.js",
+      "TimeoutSeconds": 30,
+      "IsBackground": false,
+      "Enabled": true
+    },
+    {
+      "Event": "PostToolUse",
+      "Matcher": "tia_export_*",
+      "Type": "http",
+      "Url": "http://localhost:8080/hooks/post-export",
+      "TimeoutSeconds": 10,
+      "IsBackground": true,
+      "Enabled": true
+    }
+  ]
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `Event` | When to run: `PreToolUse`, `PostToolUse`, `Stop`, `UserPromptSubmit` |
+| `Matcher` | Tool name pattern (e.g. `tia_*`, `tia_delete_*\|tia_import_*`, `Bash(git *)`) |
+| `Type` | `command` (shell) or `http` (POST callback) |
+| `Command` | Shell command to execute (receives JSON on stdin, returns JSON on stdout) |
+| `Url` | HTTP endpoint for `http` type hooks |
+| `TimeoutSeconds` | Maximum execution time (default 60s) |
+| `IsBackground` | If `true`, runs fire-and-forget (PostToolUse only) |
+| `Enabled` | Set to `false` to disable without removing |
+
+**Shell hook protocol:** The hook receives a JSON object on stdin with `tool_name`, `tool_input`, `tool_output`, `session_id`, and `agent_id`. It should return JSON on stdout with `decision` (`allow`/`deny`/`ask`), optional `reason`, `additionalContext`, or `updatedInput`. Exit code 2 blocks execution.
+
+### Command Queue
+
+You can type and send messages while the AI agent is actively processing. Instead of blocking input during streaming, messages are placed into a priority queue and processed automatically after each turn completes.
+
+**Sending while busy:** Simply type your message and press Enter while the agent is streaming. The message appears as "queued" and the input field clears so you can continue typing. A small indicator next to the input area shows how many messages are waiting (e.g. "2 messages queued").
+
+**Priority levels:**
+
+| Priority | When used | Behavior |
+|----------|-----------|----------|
+| Next | User messages (default) | Processed after current turn ends |
+| Later | Agent notifications | Processed after user messages |
+
+**ESC behavior:**
+
+- **While streaming:** Cancels the current AI response and clears all queued messages
+- **While idle with queued messages:** Pops all editable messages from the queue back into the input field, so you can edit or discard them before sending
+
+**Queue processing:** After each AI turn completes, the system automatically checks the queue and processes the next message. If multiple messages are queued, they are processed one at a time in priority order (higher priority first, FIFO within the same priority).
+
+---
+
+### Multi-Session
+
+Run multiple AI chat sessions simultaneously. Each session has its own conversation context, canvas state, and model override.
+
+**Agent Sidebar:** Click the sidebar toggle icon (PanelLeftOpen/PanelLeftClose) in the chat header to toggle the Agent Sidebar. It slides out as an overlay from the left without pushing the chat content. It shows all sessions grouped by status:
+
+- **In Progress** — Sessions where the AI is actively streaming or has been interacted with
+- **Completed** — Sessions that finished successfully or with errors
+
+**Creating sessions:** Click the **+** button in the sidebar header to create a new session. The sidebar opens automatically when a second session is created.
+
+**Switching sessions:** Click any session in the sidebar to switch to it. The chat context, canvas, and model override all switch to the selected session.
+
+**Closing sessions:** Click the **X** button on a session item. If the session is still running, a confirmation dialog appears. Closing cancels active streaming, kills sub-agents, and cleans up the session context.
+
+**Unread badges:** When another session receives a message while you are viewing a different session, an unread badge appears on the session item with a brief blink animation.
+
+**Renaming sessions:** Double-click a session name to edit it. Press Enter or click away to save.
+
+**Canvas per session:** Each session maintains its own canvas state. When switching sessions, the WebView is reset and the target session's canvas content is automatically replayed.
+
+**Live model switch:** Use the model picker button in the chat header to change the AI model for the current session only. Other sessions and the global setting are not affected.
 
 ---
 
@@ -1044,23 +1166,23 @@ Export the current watch table values for documentation or further analysis:
 
 ### OPC UA MCP Tools (AI Integration)
 
-When the MCP server is running, AI assistants have access to 13 OPC UA and Canvas tools:
+When the MCP server is running, AI assistants have access to OPC UA and Canvas tools via two consolidated tools:
 
-| Tool | Description |
-|------|-------------|
-| `opcua_connect` | Connect to an OPC UA endpoint with specified authentication |
-| `opcua_disconnect` | Disconnect from the current OPC UA server |
-| `opcua_browse` | Browse the address space starting from a given node |
-| `opcua_read` | Read the current value of one or more variables by Node ID |
-| `opcua_read_complex` | Read structured/complex data types (e.g., UDTs, arrays) |
-| `opcua_write` | Write a value to a variable by Node ID |
-| `opcua_write_complex` | Write individual fields of a data block (read-modify-write) |
-| `opcua_get_types` | Retrieve data type definitions from the server |
-| `opcua_subscribe` | Create a monitored item subscription for one or more nodes |
-| `canvas_bind_opcua` | Poll OPC UA values and update the Canvas dashboard in real-time |
-| `canvas_unbind_opcua` | Stop all Canvas OPC UA read bindings |
-| `canvas_bind_opcua_write` | Map Canvas button clicks and slider changes to OPC UA writes |
-| `canvas_unbind_opcua_write` | Stop all Canvas OPC UA write bindings |
+| Tool | `what` subcommand | Description |
+|------|-------------------|-------------|
+| `opcua` | `connect` | Connect to an OPC UA endpoint with specified authentication |
+| `opcua` | `disconnect` | Disconnect from the current OPC UA server |
+| `opcua` | `browse` | Browse the address space starting from a given node |
+| `opcua` | `read` | Read the current value of one or more variables by Node ID |
+| `opcua` | `read_complex` | Read structured/complex data types (e.g., UDTs, arrays) |
+| `opcua` | `write` | Write a value to a variable by Node ID |
+| `opcua` | `write_complex` | Write individual fields of a data block (read-modify-write) |
+| `opcua` | `get_types` | Retrieve data type definitions from the server |
+| `opcua` | `subscribe` | Create a monitored item subscription for one or more nodes |
+| `canvas` | `bind_opcua` | Poll OPC UA values and update the Canvas dashboard in real-time |
+| `canvas` | `unbind_opcua` | Stop all Canvas OPC UA read bindings |
+| `canvas` | `bind_opcua_write` | Map Canvas button clicks and slider changes to OPC UA writes |
+| `canvas` | `unbind_opcua_write` | Stop all Canvas OPC UA write bindings |
 
 **Example AI Chat usage:**
 
@@ -1079,24 +1201,24 @@ Ask the AI assistant in the chat panel things like:
 
 ### 9c. AI Canvas with OPC UA Live Data
 
-The AI Canvas can display interactive dashboards that connect to live OPC UA data. The AI creates visual dashboards (gauges, buttons, sliders, animations) using `canvas_eval`, and OPC UA values are bound to the dashboard for real-time updates.
+The AI Canvas can display interactive dashboards that connect to live OPC UA data. The AI creates visual dashboards (gauges, buttons, sliders, animations) using `canvas` (what: `eval`), and OPC UA values are bound to the dashboard for real-time updates.
 
 #### How It Works
 
-1. **The AI creates a dashboard** using `canvas_eval` (HTML/CSS/JavaScript rendered in the Canvas WebView)
-2. **Read bindings** (`canvas_bind_opcua`) poll OPC UA values and push them to the dashboard via `window.__tiaUpdateDashboard()`
-3. **Write bindings** (`canvas_bind_opcua_write`) map Canvas button clicks and slider changes to OPC UA write operations
+1. **The AI creates a dashboard** using `canvas` (what: `eval`) (HTML/CSS/JavaScript rendered in the Canvas WebView)
+2. **Read bindings** (`canvas` with what: `bind_opcua`) poll OPC UA values and push them to the dashboard via `window.__tiaUpdateDashboard()`
+3. **Write bindings** (`canvas` with what: `bind_opcua_write`) map Canvas button clicks and slider changes to OPC UA write operations
 4. All updates happen automatically — no manual polling or subscription setup needed
 
 #### Canvas OPC UA Tools
 
-| Tool | Direction | Description |
-|------|-----------|-------------|
-| `canvas_bind_opcua` | PLC → Canvas | Polls OPC UA values and updates the dashboard in real-time |
-| `canvas_unbind_opcua` | — | Stops all read bindings |
-| `canvas_bind_opcua_write` | Canvas → PLC | Maps button clicks and slider changes to OPC UA writes |
-| `canvas_unbind_opcua_write` | — | Stops all write bindings |
-| `opcua_write_complex` | Canvas → PLC | Writes individual fields of a data block (read-modify-write) |
+| Tool | `what` subcommand | Direction | Description |
+|------|-------------------|-----------|-------------|
+| `canvas` | `bind_opcua` | PLC → Canvas | Polls OPC UA values and updates the dashboard in real-time |
+| `canvas` | `unbind_opcua` | — | Stops all read bindings |
+| `canvas` | `bind_opcua_write` | Canvas → PLC | Maps button clicks and slider changes to OPC UA writes |
+| `canvas` | `unbind_opcua_write` | — | Stops all write bindings |
+| `opcua` | `write_complex` | Canvas → PLC | Writes individual fields of a data block (read-modify-write) |
 
 #### Example: Process Control Dashboard
 
@@ -1105,9 +1227,9 @@ Ask the AI to create an interactive dashboard:
 > "Create a process control dashboard on the Canvas with Start/Stop buttons, a speed slider (0-3000 RPM), and live gauges for Speed, Temperature, Pressure, and FlowRate. Bind it to the data block `Data_block_1` via OPC UA."
 
 The AI will:
-1. Create the visual dashboard with `canvas_eval`
-2. Set up read bindings with `canvas_bind_opcua` for live value display
-3. Set up write bindings with `canvas_bind_opcua_write` so buttons and sliders control the PLC
+1. Create the visual dashboard with `canvas` (what: `eval`)
+2. Set up read bindings with `canvas` (what: `bind_opcua`) for live value display
+3. Set up write bindings with `canvas` (what: `bind_opcua_write`) so buttons and sliders control the PLC
 
 #### Saving and Loading Dashboards with OPC UA Bindings
 
@@ -1128,7 +1250,7 @@ Canvas dashboards can be saved to JSONL files and loaded later. **OPC UA binding
 #### Important Notes
 
 - An active OPC UA connection is required before bindings can deliver data
-- `canvas_bind_opcua` uses polling (not OPC UA subscriptions) — this is more stable and avoids overloading the OPC UA server
+- `canvas` (what: `bind_opcua`) uses polling (not OPC UA subscriptions) — this is more stable and avoids overloading the OPC UA server
 - All values from OPC UA arrive as **strings** in the JavaScript callback (use `parseFloat()` for numbers, compare with `"True"`/`"False"` for booleans)
 - The Canvas `Reset` button stops all OPC UA bindings (both read and write)
 
@@ -1312,6 +1434,28 @@ Results are organized in 8 tabs:
 - **Export to Text** - Exports the list as a text file
 - **Copy All** - Copies all items to clipboard
 
+### Settings
+
+Click the **gear icon** in the left toolbar to open the Find Unused Settings dialog.
+
+**Analysis Scope:**
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| Include Blocks (FC/FB) | On | Include functions and function blocks in the analysis |
+| Include Data Blocks (DB) | On | Include global and array data blocks. Instance DBs are always linked to their parent FB |
+| Include UDTs | On | Include user-defined data types. UDTs referenced by used blocks are marked as used |
+| Analyze Tags | On | Include PLC tags in the call graph analysis |
+| Reuse Existing Exports | On | Reuse previously exported XML files for faster repeated analysis |
+
+**Exclusions:**
+
+| Setting | Description |
+|---------|-------------|
+| Excluded Patterns | Semicolon-separated wildcard patterns. Items matching any pattern are excluded from results. Use `*` for any characters, `?` for a single character. Example: `FB_Test*;DB_Temp*;FC_Debug*` |
+
+All settings are saved automatically and persist across application restarts.
+
 ### Notes
 
 - OBs (Organization Blocks) are never marked as "unused" since they are entry points
@@ -1432,6 +1576,90 @@ In the License dialog, you can see:
 - Current period expiry date
 - Hardware ID
 - Activation code
+
+---
+
+## 14a. Git Client
+
+The Git Client is a built-in version control interface for managing repositories directly within TIA Openness Manager. It provides a visual Git workflow without leaving the application.
+
+### Opening a Repository
+
+1. Click the **Git** tab in the main navigation
+2. On the welcome page, click **Open Repository** and select a folder, or drag a repository folder onto the welcome page
+3. Recently used repositories are shown in the list for quick access
+
+### History View
+
+The History view shows the commit graph with branch and tag badges.
+
+**Issue Tracker Links in Commit Subjects**
+
+If your repository is configured with issue tracker rules, commit subject lines automatically display clickable links for matching patterns (e.g. `#123`, `PROJ-456`). Clicking a link opens the corresponding issue page in your browser.
+
+To configure issue tracker patterns:
+1. Open the repository settings via the toolbar gear icon
+2. Go to the **Issue Tracker** tab
+3. Add a rule: enter a regular expression (e.g. `#(\d+)`) and a URL template (e.g. `https://github.com/org/repo/issues/$1`)
+4. Choose from built-in presets (GitHub, GitLab, JIRA, etc.) or define a custom rule
+
+### Commit Detail View
+
+Selecting a commit in the History view opens the Commit Detail panel on the right.
+
+The full commit message is displayed with rich formatting:
+
+- **Issue Tracker Links** — References matching your configured issue tracker rules are shown as clickable links. Clicking opens the issue in your browser.
+- **URLs** — HTTP(S) and FTP URLs are automatically detected and underlined. Clicking opens the URL in your browser.
+- **Commit SHA References** — If the message contains a commit SHA (6–64 hex characters), it is shown as an orange underlined link. Clicking navigates to that commit in the history graph. Hovering shows the commit subject as a tooltip.
+- **Inline Code** — Text in backticks (`` `like this` ``) is rendered in monospace with a distinct background.
+
+**Right-click context menu on links:**
+- **Copy Link** — Copies the URL to the clipboard
+- **Open in Browser** — Opens the URL in the default browser
+- **Navigate to Commit** — Navigates to the referenced commit (SHA links only)
+- **Copy SHA** — Copies the SHA to the clipboard (SHA links only)
+
+### Working Copy
+
+The Working Copy view shows staged and unstaged changes.
+
+- Stage or unstage individual files or the entire changeset
+- Write your commit message and click **Commit**
+- Use **Commit Options** checkboxes for Sign-Off, No-Verify (skip hooks), and Reset-Author
+- File change states are shown as colored, rounded badges (Modified, Added, Deleted, Renamed, etc.) for quick visual identification
+- Right-click any unstaged file for **LFS** operations: Track by filename or extension, and Lock/Unlock. For repositories with multiple remotes, Lock/Unlock shows a submenu per remote
+
+### Branches, Tags, and Remotes
+
+The sidebar on the left shows all local branches, remote branches, tags, worktrees, and submodules. Right-click any item for context menu operations (checkout, merge, push, delete, etc.).
+
+### Command Palette
+
+Press **Ctrl+Shift+P** while working in the Git workspace to open the Command Palette. It provides quick keyboard-driven access to the most common Git operations without navigating menus.
+
+**Available commands:**
+
+| Command | What it does |
+|---------|-------------|
+| Checkout | Switch to a branch |
+| Merge | Merge a branch into the current branch |
+| Compare | Compare a branch or tag against the current branch |
+| Blame | Open the blame view for a file |
+| File History | Open the history for a specific file |
+| Open File | Open a file from the repository in the editor |
+| Create Branch | Create a new branch |
+| Create Tag | Create a new tag |
+| Fetch | Fetch from a remote |
+| Pull | Pull from a remote |
+| Push | Push to a remote |
+| Stash | Stash current changes |
+| Apply Patch | Apply a patch file |
+| Configure | Open repository settings |
+
+**Sub-palettes:** Commands that require a branch, tag, or file selection open a secondary picker. Type to fuzzy-filter the list. Press **Backspace** on an empty filter to return to the main palette.
+
+**Closing:** Press **Escape** or click outside the palette to close it.
 
 ---
 

@@ -1,5 +1,101 @@
 # TIA Openness Manager - Changelog
 
+## v3.0.10 (2026-04-07)
+
+### AI Chat — Providers & Authentication
+- **Sign In via OAuth** — All major AI providers now supported via OAuth login in addition to API keys. Choose per agent: use your subscription, no more API keys required for these flows. One click "Sign in with X", tokens stored securely in Windows Credential Manager, automatic refresh, switch back to API key anytime.
+- **Full Enterprise Provider Coverage** — Added Mistral, Azure OpenAI, Google Vertex AI, and AWS Bedrock as first-class providers alongside the existing Anthropic/OpenAI/Google/Ollama/LMStudio/OpenRouter/GitHub Copilot options. Choose EU-based Mistral for GDPR workloads, Azure OpenAI with your own deployment name for compliance-bound data residency, Vertex in europe-west regions with GCP credentials, or Bedrock (Claude/Llama/Mistral/Titan/Nova) with AWS IAM.
+- **Prompt Caching** — Significant token cost reduction via stable system prompt architecture. Anthropic achieves 98–99% cache hit rate from the second request onward (~60% cost savings per session). OpenAI/Copilot benefit from automatic caching via stable prefix ordering.
+
+### AI Chat — Multi-Session & Agents
+- **Multi-Session Support** — Run multiple AI chat sessions simultaneously. A new Agent Sidebar (toggle with sidebar button) shows all active and completed sessions with live status, elapsed timers, and unread badges. Sub-agents appear indented under their parent session. Create new sessions anytime — even while the AI is working.
+- **Per-Session Agent & Provider** — Each session can use a different agent and provider independently. Switch agents mid-workflow without affecting other running sessions.
+- **Session Isolation** — Creating a new session during active AI generation no longer interferes with the running session. The old session continues generating in the background while the new session is immediately usable.
+- **Cross-Session Auto-Resume** — Sessions automatically resume where they left off when reopened.
+- **Inter-Agent Communication** — Sub-agents can send messages to each other and to the main agent bidirectionally, enabling collaborative multi-agent workflows.
+- **Named Sub-Agents** — Sub-agents now have display names for easier identification in the Agent Sidebar and session history.
+- **Fork Sub-Agent with Worktree Isolation** — Sub-agents can work in isolated git worktrees (separate branches), preventing file conflicts when multiple agents edit code simultaneously.
+- **Sub-Agent Permission Inheritance** — Sub-agents inherit tool permissions from the parent agent and can bubble new grants back up.
+
+### AI Chat — UX & Input
+- **Unified Skills & Slash Commands** — Skills and slash commands are now a single system. Type `/` to see all available commands and skills in a combined popup with Tab autocomplete. Clicking a skill in the palette or typing `/skill-name` invokes it the same way — the command name appears in accent color, while the AI receives the full skill instructions behind the scenes. The AI discovers available skills automatically and can invoke them proactively when a task matches. Supports both flat `.md` files and `SKILL.md` directory format.
+- **@-Mention File Picker** — Type `@` to open a directory-navigation file picker. Browse folders, click to attach files directly as context for the AI.
+- **Command Queue** — Send messages while the AI is still working. Messages are queued with priority (now/next/later) and processed automatically after the current response completes. No more waiting for the AI to finish before typing the next instruction.
+- **Voice Dictation** — Speak to the AI using Whisper speech recognition (local model or API). Choose push-to-talk or toggle mode. Configure language, model, and hotkey in Settings → Dictation.
+- **Skill Template Engine** — Skills now support `{{variables}}` and `{{#if}}` conditionals for dynamic prompt templates that adapt to context.
+- **Channel Notifications** — External systems (OPC UA subscriptions, MCP server notifications) push real-time events into active AI chat sessions. The AI can react to PLC alarms, value changes, and MCP events automatically — e.g., an OPC UA overtemperature alarm triggers AI diagnosis.
+
+### AI Chat — Context & Memory
+- **Agent Memory** — The AI remembers facts, preferences, and project context across sessions. Memory is stored locally and searchable.
+- **Per-Agent Memory Scope** — Memory can be scoped to local (this session), project, or user level. Different agents can have independent memory spaces.
+- **Context Window Guard** — A 4-tier visual warning system shows context usage with color-coded indicators: normal (gray), warning at 80% (yellow), error at 90% (red), auto-compact at 93%. The AI automatically compacts context before hitting the limit.
+- **Tool Loop Detection** — The AI automatically detects repetitive tool-call patterns (generic repeat, ping-pong, no-progress) and breaks out of infinite loops with a circuit-breaker mechanism.
+- **Compaction Improvements** — Context compaction now preserves more relevant information and updates summaries incrementally instead of replacing them.
+- **Tool Output Guard** — Large tool outputs (e.g., huge git logs or file reads) are automatically truncated to prevent context overflow from a single oversized response.
+
+### AI Chat — Agent Configuration
+- **Model Failover Chain** — Configure fallback models per agent in Settings → Agents. If the primary model fails (rate-limit, server error), the AI automatically tries the next fallback model. Supports cross-provider failover (e.g. Anthropic → OpenAI).
+- **Auth Rotation** — Add multiple API keys per agent in Settings → Agents. Keys are rotated automatically via round-robin; rate-limited keys receive a cooldown period. Increases effective rate limits without manual intervention.
+- **Per-Agent MCP Servers** — Each agent can have its own dedicated MCP server connections defined inline or by reference, enabling specialized tool sets per agent.
+- **Per-Agent Hooks** — Define event-driven automation rules per agent (e.g., auto-format after file edits, validation before commits). Supports event, pattern, and decision hooks.
+- **Deferred Tool Loading** — Tools are loaded on demand. Sub-agents only receive the tools they actually need, reducing token usage and improving response quality.
+
+### AI Chat — SCL & Code
+- **SCL Expert** — Enhanced SCL code generation with Siemens Programming Styleguide compliance, integrated code review, and direct editor integration for AI-generated code.
+- **AWL→SCL Converter** — New agent and skill for AI-assisted migration of STL (AWL) code to SCL. Drop AWL source files into the chat for automatic conversion.
+- **NF003 Block Headers** — AI-generated SCL code now includes standardized NF003-compliant block headers with title, version, author, and description fields.
+
+### Git Integration
+- **Colored Status Badges** — File change indicators in the Working Copy and Commit Detail views are now displayed as colored, rounded badges (Modified, Added, Deleted, Renamed, etc.) instead of plain text labels.
+- **Shared "Deal with Local Changes" Control** — Checkout Branch, Checkout & Fast-Forward, and Create Branch dialogs now use a consistent shared control for selecting how to handle local changes (Keep, Stash & Reapply, Discard), replacing duplicated radio button groups.
+- **LFS File Operations in Context Menus** — Right-clicking a file in the Working Copy now shows LFS Track (by filename or extension) and LFS Lock/Unlock options when LFS is enabled. For repositories with multiple remotes, Lock/Unlock shows a submenu per remote.
+- **Issue Tracker Links** — Commit messages now show clickable links for issue references (e.g. `#123`, `PROJ-456`). Configure patterns and URL templates per repository via Repository Settings → Issue Tracker tab. Supports multiple tracker rules simultaneously.
+- **Clickable URLs in Commit Messages** — HTTP(S) and FTP URLs in commit messages are automatically detected and open in the browser on click.
+- **Commit SHA Navigation** — Commit SHA references in full commit messages are clickable and navigate directly to that commit in the history graph. Right-click shows options to copy the SHA or navigate to it.
+- **Inline Code Formatting** — Backtick code spans (`` `like this` ``) in commit messages are rendered in monospace with a distinct background.
+- **Hunk Staging** — Stage, unstage, or discard individual change hunks directly in the diff view (unified and side-by-side).
+- **Stash Detail View** — Selecting a stash now shows its changes and a full diff preview in a 3-pane layout.
+- **Syntax Highlighting in Diff** — TextMate-powered language-aware coloring in the diff view.
+- **Commit Options** — Sign-Off, No-Verify, and Reset-Author checkboxes in the commit area.
+- **History Improvements** — Ahead/behind indicators per commit, bisect good/bad markers, show/hide tags toggle, scroll-to-top button, loading indicator, and empty state tips.
+- **Layout Switcher** — History view now supports horizontal (side-by-side) and vertical (top/bottom) layout.
+- **Keyboard Shortcuts** — Ctrl+Shift+Enter (auto-stage + commit), Ctrl+F (search), Ctrl+O (open file).
+- **Branch Descriptions** — Branch descriptions (via `git branch --edit-description`) now visible in tooltips.
+- **Compact Folders** — Tree views in the working copy can now display compact/collapsed folder paths.
+
+### Find Unused Blocks
+- **Settings Dialog** — New gear icon opens a settings dialog. Configure which item types to include (Blocks, DBs, UDTs, Tags), toggle export reuse, and define exclusion patterns with wildcards (e.g. `FB_Test*;DB_Temp*`). Settings persist across restarts.
+- **Compile + ExclusiveAccess** — Analysis now compiles the PLC first and runs snapshots + export inside ExclusiveAccess for data consistency and a native TIA Portal progress dialog.
+- **PLC Selector** — Dropdown to choose which PLC to analyze. Exports go to PLC-specific subfolders, so multi-PLC projects don't conflict.
+- **Project Save after Deletion** — TIA Portal project is automatically saved after deleting unused items.
+- **Deletion Progress** — Progress bar now shows per-item deletion progress instead of staying on "Preparing".
+- **Deletion Log** — Timestamped log file written to working directory after each deletion with success/failure per item.
+
+### Import
+- **Protected Block Options** — Import Selected and Import All now respect per-block AllowCodeUpdates and AllowAttributeUpdates settings from protection profiles. Protected blocks with AllowCodeUpdates can have their SCL code updated; protected OBs with AllowAttributeUpdates get CyclicTime/PhaseOffset updates via SetAttribute.
+- **SCL Folder Placement** — New blocks imported via SCL in Import Selected now land in the correct TIA Portal folder matching the disk structure, instead of always going to root "Program blocks" (V17+).
+
+### Explorer
+- **Split View** — Split editors horizontally or vertically, drag tabs between groups, dock and pin panels
+- **Auto-Completion** — IntelliSense for SCL: type 2+ characters to see keywords, data types, built-in functions, and document words. Works for all file types in the File Explorer.
+- **Code Folding** — Collapse and expand REGION, IF/FOR/WHILE blocks, VAR sections, and FUNCTION_BLOCK declarations. Brace-based folding for C#, JSON, and other languages.
+- **Built-in Search** — Ctrl+F opens find and replace with regex, match case, and whole word support (replaces the old search toolbar).
+- **SCL Snippets** — Type `if`, `for`, `while`, `case`, `fb`, `fc`, or `region` and press Tab to insert code templates with editable placeholders.
+- **Theme Switching** — Editor colors now automatically adapt when switching between Dark and Light themes.
+- **Current Line Highlight** — Visual indicator for the active cursor line.
+- **Column Rulers** — Vertical guidelines at 80 and 120 characters.
+
+### MCP Tools
+- **Tool Consolidation** — Reduced from 81 to 22 MCP tools with multi-category support and dynamic permissions. Less token usage, better AI tool selection.
+
+### Bug Fixes
+- Fixed Cancel button not working for Export, Import, and Find Unused operations — pressing Cancel now immediately stops the running operation
+- Fixed Import All ignoring AllowCodeUpdates for protected blocks — SCL files were incorrectly filtered out even when code updates were allowed
+- Fixed empty export folders created next to PLC folder instead of inside it when "Create Source Folder" was disabled
+- Fixed sub-agents unable to send messages back to the main AI agent — inter-agent messaging now works bidirectionally
+- Fixed instruction file @include not recognizing bare relative paths (e.g. `@docs/rules.md`)
+- Fixed long tool descriptions overflowing UI tooltips
+
 ## v3.0.9 (2026-04-02)
 
 ### AI Chat
@@ -20,7 +116,6 @@
 - **Write Complex Tool** — New `opcua_write_complex` tool for writing individual fields of a data block or struct via OPC UA. Uses read-modify-write pattern to update specific fields without overwriting the entire struct.
 
 ### Bug Fixes
-
 - Fixed text file attachments (`.md`, `.txt`, `.json`, `.cs`, etc.) being unreadable by the AI when dropped into the chat
 - Fixed inability to send file attachments without typing a text message first
 - Fixed PLC export losing the device name folder (e.g. PLC_1) when "Create Source Folder" setting was disabled
@@ -55,13 +150,13 @@
 ## v3.0.5 (2026-03-29)
 
 ### AI Chat — Complete Redesign
-The AI Chat has been rebuilt from the ground up with a new architecture based on Semantic Kernel.
+The AI Chat has been rebuilt from the ground up.
 - **New provider system** — Switch between Anthropic, OpenAI, Google, Ollama, OpenRouter, and GitHub Copilot with provider icons and per-provider settings (temperature, top-p, timeout, custom endpoints)
 - **Skills** — Quick-access prompt templates with the scroll icon in the chat input bar. Includes built-in skills (Explore Project, Explain Block, Generate SCL, Compare Blocks) and supports custom user-created skills
 - **File attachments** — Drag and drop files directly into the chat. The AI reads text files (Markdown, JSON, source code) via the built-in file read tool
 - **Visual Context** — The AI can see and interact with your screen: list windows, capture UI elements, read visual trees, and automate clicks and keyboard input
 - **AI Connect** — The AI can connect to TIA Portal on its own via `tia_connect`, running the exact same connection flow as the manual Connect button (tree refresh, profile loading, HMI detection)
-- **Chat history** — Conversations are persisted in a local SQLite database with branching (edit/retry), session list, and token usage stats
+- **Chat history** — Conversations are persisted locally with branching (edit/retry), session list, and token usage stats
 - **Database cleanup** — Configurable retention period (30/60/90 days) in Settings → Storage. Automatic cleanup on startup, manual "Cleanup Now" button with database size display
 - **Reasoning model support** — Models with reasoning/thinking tokens (e.g. DeepSeek, QwQ) are now displayed correctly with collapsible thinking sections
 
@@ -103,7 +198,7 @@ The AI Chat has been rebuilt from the ground up with a new architecture based on
 - **Multi-select in project tree and file tree** — Ctrl+Click toggles selection, Shift+Click selects a range. Works in both the left project tree and the right import/export file tree. Selected items can be exported, dragged, or deleted in bulk — no checkboxes required.
 
 ### Git — New Features
-- **Auto-refresh local changes** — File changes are now detected automatically via FileSystemWatcher. No more manual refresh needed — changes appear within ~1 second, just like in SourceGit.
+- **Auto-refresh local changes** — File changes are now detected automatically. No more manual refresh needed — changes appear within ~1 second.
 - **Auto-fetch from remotes** — Enable in Repository Settings with configurable interval (minutes). Fetches from the default remote automatically in the background.
 - **Merge conflict resolution** — Use Theirs / Use Mine per conflicted file directly from the Working Copy context menu. Full 3-way merge editor for line-by-line conflict resolution with Ours/Theirs/Result panels.
 - **In-progress operation handling** — Cherry-pick, Rebase, Revert, and Merge in-progress states are now detected and shown in the Working Copy. Continue, Skip, or Abort directly from the UI.
@@ -129,7 +224,7 @@ The AI Chat has been rebuilt from the ground up with a new architecture based on
 
 ### Git — Improvements
 - **Amend loads previous message** — Toggling Amend now automatically loads the last commit message into the editor.
-- **Settings are persisted** — Auto-fetch, interval, default remote, and other repository settings are saved to `.git/sourcegit.settings` and restored when reopening.
+- **Settings are persisted** — Auto-fetch, interval, default remote, and other repository settings are saved per repository and restored when reopening.
 - **Sidebar state remembered** — Which sidebar sections (Branches, Remotes, Tags, Submodules, Worktrees) are expanded is saved per repository and restored on next open.
 - **Last commit message preserved** — Your uncommitted commit message is saved when switching tabs and restored when you return.
 - **Cherry-pick extended** — Now supports multi-commit cherry-pick, merge commit handling with parent selection, and "Append source to message" option.
@@ -159,7 +254,7 @@ The AI Chat has been rebuilt from the ground up with a new architecture based on
 - **Submodule management** - Add, Update (init/recursive), and Remove submodules with dedicated dialogs
 - **GitFlow support** - Initialize GitFlow, Start/Finish Feature/Release/Hotfix branches with sidebar integration
 - **LFS management** - Track patterns, Fetch, Pull, Push, Prune, and manage Locks via toolbar dropdown
-- **Commit context menu icons** - All menu items now show SourceGit-style SVG icons
+- **Commit context menu icons** - All menu items now show SVG icons
 - **Copy submenu** - Commit context menu Copy with SHA-Subject, SHA, Subject, Message, Author, Committer
 - **Git Working Copy context menus** - Right-click on staged/unstaged files for Stage, Discard, Stash, Save as Patch, Open in Editor, Reveal in Explorer, Copy Path
 - **Discard Changes dialog** - Confirmation dialog with options to include untracked/ignored files and "can't undo" warning
@@ -180,8 +275,8 @@ The AI Chat has been rebuilt from the ground up with a new architecture based on
 - **Operation dialogs** - Proper dialogs for Create/Delete/Rename Branch, Merge (mode selection), Rebase (auto-stash), Reset (Soft/Mixed/Hard), Cherry-Pick, Revert, Checkout Branch (stash/discard options), Fetch (remote/prune), Pull (rebase option), Push (force push), Create/Delete Tag
 
 ### Git — Improvements
-- **ChangeCollectionView in Working Copy** - Unstaged/Staged file lists now use the rich ChangeCollectionView with tree/list/grid modes and search
-- **CommitSubjectPresenter** - Rich commit subject rendering with highlighted conventional commit prefixes, issue links, and inline code
+- **Improved file lists in Working Copy** — Unstaged/Staged file lists now support tree, list, and grid display modes with search
+- **Rich commit messages** — Commit subjects now render with highlighted conventional commit prefixes, issue links, and inline code
 - **GitFlow branch detection** - Right-click GitFlow branches to finish them directly
 - **Resizable history columns** - Drag column headers in commit history to resize (Graph, Author, SHA, Commit Time)
 - **Full date+time in history** - Commit time column shows date and time instead of date only
@@ -233,17 +328,13 @@ The AI Chat has been rebuilt from the ground up with a new architecture based on
 
 ### Major Release - Complete Rewrite
 
-- **New Architecture** - Two-process design: .NET 10 Avalonia UI app + .NET 4.8 Bridge (COM proxy) via Named Pipes
-- **Cross-Platform UI** - Migrated from WPF to Avalonia 11.x with dark theme
-- **MediatR Pipeline** - Command/Query separation for all business logic
+- **New UI** - Modern desktop application with dark theme
 - **MCP Server** - Built-in Model Context Protocol server for AI assistant integration
 - **OPC UA Client** - Browse and read OPC UA server address spaces with struct support
 - **Improved Localization** - Runtime language switching (EN, DE, FR, IT) without restart
-- **Velopack Auto-Updates** - In-app update mechanism via GitHub Releases
+- **Auto-Updates** - In-app update mechanism
 - **Password Vault** - Encrypted credential storage for TIA Portal connections
 - **Enhanced Export** - Source code generation, structured export paths, fingerprint caching
-- **.NET Reactor Obfuscation** - Three-tier protection (App, Bridge, MCP Bridge)
-- **Code Signing** - Certum SHA-256 signed binaries and installer
 
 ---
 
@@ -267,13 +358,6 @@ The AI Chat has been rebuilt from the ground up with a new architecture based on
 
 ### Changes
 - About Window now displays three buttons: "View Full Licenses", "Privacy Policy", and "EULA"
-- Privacy.md and EULA.md copied from Software Dokumente folder to project root for distribution
-
-### Technical
-- AboutWindow.xaml: Added Privacy and EULA buttons in horizontal stack panel
-- AboutWindow.xaml.cs: Added `BtnViewPrivacy_Click()` and `BtnViewEula_Click()` handlers
-- TiaOpennessManager.csproj: Configured Privacy.md and EULA.md to copy to output directory
-- Software Dokumente folder now tracked in repository (11 legal/product documentation files)
 
 ---
 
@@ -284,8 +368,7 @@ The AI Chat has been rebuilt from the ground up with a new architecture based on
   - Swiss users automatically see CHF prices (Professional: CHF 25/250, Enterprise: CHF 40/400)
   - IP geolocation service (ip-api.com) detects user location on startup
   - All other regions continue to see EUR prices
-- **Centralized Pricing Configuration** - New `PricingConfiguration.cs` with single source of truth for all prices and payment links
-- **8 Stripe Payment Links** - Complete coverage for EUR/CHF, Professional/Enterprise, Monthly/Yearly combinations
+- **Complete Payment Coverage** - All EUR/CHF, Professional/Enterprise, Monthly/Yearly combinations supported
 
 ### Changes
 - **Enterprise Price Reduction** - EUR Enterprise pricing reduced from €50/€500 to €40/€400 (CHF 40/CHF 400)
@@ -295,12 +378,6 @@ The AI Chat has been rebuilt from the ground up with a new architecture based on
 ### Fixed
 - **EUR Price Flash** - Fixed brief EUR price display on dialog open (removed hardcoded XAML defaults)
 - **IP Detection Always Runs** - Ignores cached currency preference to ensure fresh detection
-
-### Technical
-- New `RegionService.cs` - IP geolocation singleton with 5-second timeout and caching
-- New `Currency` enum (EUR, CHF) and `LicenseTier` enum (Professional, Enterprise)
-- Enhanced debug logging for currency detection troubleshooting
-- Release script now updates `LICENSE_EN.txt` and `LICENSE_DE.txt` version numbers automatically
 
 ---
 
@@ -317,11 +394,6 @@ The AI Chat has been rebuilt from the ground up with a new architecture based on
 - **MCP Server** - Updated code generation tools for V21 compatibility
 - **Safety Block Detection** - Improved detection of Safety blocks in S7DCL format (V20 Update 4+)
 
-### Technical
-- Enhanced TiaPortalApiResolver with V21 assembly resolution logic
-- Added ExportBlockToSplAsync method for SIMATIC Source Document export
-- Updated documentation with V21 references for future releases
-
 ---
 
 ## v1.1.6 (2025-12-22)
@@ -335,18 +407,12 @@ The AI Chat has been rebuilt from the ground up with a new architecture based on
 - **Trial = Enterprise** - During trial, all features are available: Safety blocks, Bulk Import, Protection Profiles, MCP Server, Find Unused
 - **After Trial** - Falls back to Basic tier (limited features) or purchase a license to continue
 
-### Technical
-- New backend endpoint for trial registration and status checking
-- Hardware-ID based tracking prevents trial abuse
-
 ---
 
 ## v1.1.5 (2025-12-21)
 
 ### Bug Fixes
 - **Language Switching Fixed** - Language switching now works correctly in the installed version
-  - Fixed ConfuserEx obfuscation encrypting resource files
-  - Added missing language satellite assemblies (de/, fr/, it/) to installer
 
 ### Improvements
 - **Settings Dialog Translations** - Added missing translations for Folder Names and License Information sections in all languages (DE/FR/IT)

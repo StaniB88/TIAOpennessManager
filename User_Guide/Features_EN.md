@@ -71,10 +71,27 @@ The **TIA Openness Manager** is a powerful tool for Siemens TIA Portal developer
 
 ### Code Editor
 
-- **Integrated Editor** - View and edit block code directly
-- **Syntax Highlighting** - For SCL, STL, and other languages
+The built-in code editor provides professional editing features for SCL and other file types.
+
+- **Split View** — Split editors horizontally or vertically, drag tabs between groups, dock and pin panels (file tree, markdown preview)
+- **Syntax Highlighting** — SCL, C#, XML, JSON, Python, and 60+ other languages
+- **Code Folding** — Collapse/expand code regions, IF/FOR blocks, and VAR sections
+- **Auto-Completion** — Type 2+ characters to see SCL keywords, data types, and functions
+- **Search** — Press Ctrl+F for find and replace with regex support
+- **Code Snippets** — Type `if`, `for`, `while`, `case`, `fb`, `fc`, or `region` and press Tab to insert templates
+- **Current Line Highlight** — Visual indicator for the current cursor line
+- **Theme Support** — Editor colors automatically adapt when switching between Dark and Light themes
 - **Block Details** - Shows metadata like number, language, author
 - **Quick Navigation** - Search in project tree
+
+#### Keyboard Shortcuts
+| Shortcut | Action |
+|----------|--------|
+| Ctrl+F | Find and Replace |
+| Ctrl+I | Inline AI Chat (SCL Editor only) |
+| Tab | Insert snippet (when trigger word is typed) |
+| Tab | Accept AI edit |
+| Escape | Reject AI edit |
 
 ### Protection System (Protected Items)
 
@@ -99,7 +116,12 @@ The **TIA Openness Manager** is a powerful tool for Siemens TIA Portal developer
 - **Dead Code Detection** - Finds unused blocks
 - **Call-Graph Analysis** - Based on actual calls, not just references
 - **Safety Block Support** - Also supports F-blocks (F_FB, F_FC, F_DB, F_OB)
-- **Export Function** - Export results as CSV
+- **Configurable Analysis Scope** - Toggle inclusion of Blocks (FC/FB), Data Blocks (DB), UDTs, and Tags individually
+- **Exclusion Patterns** - Define wildcard patterns (e.g. `FB_Test*;DB_Temp*`) to exclude items from results
+- **Reuse Exports** - Optionally reuse previous XML exports for faster repeated analysis
+- **Persistent Settings** - All analysis preferences saved via gear icon in toolbar
+- **Export Function** - Export results as text file
+- **Copy to Clipboard** - Copy all results for documentation
 - **Delete Function** - Remove unused blocks directly
 
 ### AI Integration (MCP Server)
@@ -127,8 +149,43 @@ The **TIA Openness Manager** is a powerful tool for Siemens TIA Portal developer
 - **Session Archive** - Archive old sessions to keep the session list clean; restore or permanently delete archived sessions
 - **Terminal Mode** - Embedded PowerShell terminal with MCP integration; auto-configures `.mcp.json` and optionally writes `CLAUDE.md` with project context for Claude CLI; terminal opens in the TIA Portal project directory
 - **CLAUDE.md Setting** - Toggle whether a `CLAUDE.md` file is written to the project directory on terminal start (AI Chat Settings → Context); disable if not using Claude CLI
-- **Agent Memory** - Each agent has its own persistent memory store across sessions; the agent automatically saves important facts and injects relevant memories into context at session start; supports `memory_store`, `memory_search`, `memory_list`, and `memory_delete` tools; configurable embedding provider (OpenAI, Google, Ollama, LM Studio) for semantic search, with keyword fallback; Memory Settings panel to view, delete, export (JSON), import, and clean up old memories
+- **Agent Memory** - Each agent has its own persistent memory store across sessions with scope isolation (Local, Project, or User); the agent automatically saves important facts and injects relevant memories into context at session start; supports `memory_store`, `memory_search`, `memory_list`, `memory_update`, and `memory_delete` tools; configurable embedding provider (OpenAI, Google, Ollama, LM Studio) for semantic search, with keyword fallback; Memory Settings panel to view, delete, export (JSON), import, and clean up old memories; Memory Snapshots allow pre-seeding agents with team-shared knowledge via JSON files
 - **Sub-Agent Steering** - Agent can dispatch sub-tasks to independent sub-agents (`run_subagent`); up to 5 concurrent sub-agents; manage running sub-agents via `manage_subagents list/kill/steer`; non-blocking mode allows the main agent to continue working while sub-tasks run in the background
+- **Hooks** - Configurable event hooks that run before/after AI tool calls; add custom hooks in AI Chat Settings as shell commands or HTTP callbacks; built-in hooks protect safety blocks and log TIA operations; hooks can modify tool input, block execution, or add context to results; configurable timeout per hook (default 60s)
+- **Command Queue** - Send messages while the AI agent is working; messages are queued with priority levels (Now/Next/Later) and processed automatically after each turn; queue indicator shows pending message count; ESC cancels the current operation and clears the queue, or pops queued messages back into the input field when idle
+- **Multi-Session** - Run multiple AI chat sessions simultaneously; the Agent Sidebar (toggle via PanelLeftOpen/PanelLeftClose icon) slides out as an overlay from the left and shows all sessions grouped by status (In Progress / Completed); each session has its own chat context, canvas, and agent/provider; sub-agents are routed to their parent session automatically; unread message badges with blink animation notify you of activity in other sessions; double-click a session name to rename it; close sessions via the X button (with confirmation if still running); the canvas state is preserved per session and replayed on switch; live preview text under each session name shows incoming messages and responses from other sessions
+- **Per-Session Agent** - Each session remembers its agent/provider/model selection independently; switch to a different provider in one session without affecting other sessions; the agent switches automatically when you change sessions
+- **Cross-Session Communication** - Agents can send messages to other sessions via send_agent_message; target sessions auto-resume without manual input; the AI sees all active sessions with their provider/model in the system prompt
+
+### Git Client
+
+- **Integrated Git UI** - Full visual Git workflow built into the application
+- **Commit History** - Visual commit graph with branch and tag badges, author, date, and subject
+- **Issue Tracker Links** - Commit messages show clickable links for issue references matching configurable patterns (e.g. `#123`, `PROJ-456`); opens the issue page in your browser; configure patterns per repository via Repository Settings → Issue Tracker tab; built-in presets for GitHub, GitLab, JIRA, and more
+- **Clickable URLs** - HTTP(S) and FTP URLs in commit messages are auto-detected and open in the browser on click
+- **Commit SHA Navigation** - SHA references in commit messages are clickable and navigate to the referenced commit in the history graph
+- **Inline Code Rendering** - Backtick code spans in commit messages rendered in monospace with a distinct background
+- **Rich Context Menus on Links** - Right-click links to: Copy Link, Open in Browser, Navigate to Commit, Copy SHA
+- **Working Copy** - Stage/unstage files, write commit messages, commit with Sign-Off / No-Verify / Reset-Author options
+- **Diff View** - Unified and side-by-side diff with TextMate syntax highlighting and hunk-level staging/discarding
+- **Stash** - Create, apply, pop, and drop stashes; stash detail view with diff preview
+- **Branches & Tags** - Visual branch tree, create/delete/rename/merge/rebase branches, push/pull tags
+- **Remotes** - Fetch, pull, push, manage remotes
+- **Submodules & Worktrees** - Full support for git submodules and worktrees
+- **GitFlow** - GitFlow workflow support (init, start, finish feature/release/hotfix)
+- **File History & Blame** - Per-file commit history and git blame view
+- **Interactive Rebase** - Visual interactive rebase with drag-and-drop commit ordering
+- **Branch Descriptions** - Branch descriptions visible in tooltips
+- **Bisect** - Good/bad markers per commit for binary search debugging
+- **Colored Status Badges** - File change states (Modified, Added, Deleted, Renamed, etc.) in the Working Copy and Commit Detail views are displayed as colored, rounded badges instead of plain text
+- **LFS File Operations** - Right-click any file in the Working Copy to access LFS Track (by filename or extension) and LFS Lock/Unlock; for repositories with multiple remotes, lock/unlock shows a submenu per remote
+- **Command Palette** - Press Ctrl+Shift+P to open a fuzzy-searchable palette with 14 quick actions (checkout, merge, compare, blame, file history, open file, create branch, create tag, fetch, pull, push, stash, apply patch, configure); commands requiring branch/tag/file selection open a secondary picker; Backspace on an empty filter returns to the main palette; Escape or backdrop click closes
+- **GPG Signature Verification** - Commits show a colored shield badge (green = good, orange = expired/revoked, red = bad) in the commit detail SHA row; hover the badge to see signer identity and key ID; configure GPG signing per repository in Repository Settings
+- **Rich Commit Message Editor** - AvaloniaEdit-based editor with subject line guide (dashed "SUBJECT END" line), subject character counter with warning when exceeding 72 characters, column position indicator, and auto-completion for 13 Git trailers (Signed-off-by, Co-authored-by, etc.); toolbar with commit template/history picker and conventional commit builder
+- **External Diff/Merge Tools** - Configure an external diff/merge tool per repository in Repository Settings → Diff / Merge Tool tab; supports 13 tools on Windows, 9 on macOS, 9 on Linux (VS Code, Visual Studio, KDiff3, Beyond Compare, WinMerge, Meld, and more); use from context menus on changed files in Working Copy and Commit Detail
+- **Stash Apply with Options** - Right-click a stash to apply or pop with options: "Restore index" (--index) re-stages previously staged changes, "Drop after apply" combines apply + drop into a pop operation
+- **Multi-Branch Merge** - Select multiple branches in the sidebar or multiple commits in the history, then merge them all at once with strategy selection (Default, Octopus, or Ours) and optional auto-commit
+- **Revision File Syntax Highlighting** - Files browsed at any commit in the "Files" tab are displayed with full TextMate syntax highlighting (consistent with the diff view)
 
 ### OPC UA Client
 
@@ -145,7 +202,7 @@ The **TIA Openness Manager** is a powerful tool for Siemens TIA Portal developer
 - **Save/Load Configuration** - Save and restore watch table configurations (endpoint URL + variable list) as `.opcua-watch` JSON files
 - **CSV Export** - Export watch table data to CSV with all columns (Name, Node ID, Data Type, Value, Status, Timestamp)
 - **JSON Export** - Export watch table data to structured JSON with full metadata
-- **MCP Integration** - 8 OPC UA tools available for AI assistants: `opcua_connect`, `opcua_disconnect`, `opcua_browse`, `opcua_read`, `opcua_read_complex`, `opcua_write`, `opcua_get_types`, `opcua_subscribe`
+- **MCP Integration** - Unified `opcua` tool with 9 subcommands for AI assistants: connect, disconnect, browse, read, read_complex, write, write_complex, get_types, subscribe
 
 ---
 

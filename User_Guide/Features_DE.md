@@ -69,12 +69,29 @@ Der **TIA Openness Manager** ist ein leistungsstarkes Werkzeug für Siemens TIA 
 - **Detaillierter Diff-Viewer** - Zeigt Unterschiede Zeile für Zeile
 - **Selektiver Re-Export** - Nur geänderte Blöcke exportieren
 
-### Code Editor
+### Code-Editor
 
-- **Integrierter Editor** - Betrachten und bearbeiten Sie Blockcode direkt
-- **Syntax-Highlighting** - Für SCL, STL und andere Sprachen
+Der integrierte Code-Editor bietet professionelle Bearbeitungsfunktionen für SCL und andere Dateitypen.
+
+- **Split View** — Editoren horizontal oder vertikal teilen, Tabs zwischen Gruppen ziehen, Panels andocken und anheften (Dateibaum, Markdown-Vorschau)
+- **Syntax-Hervorhebung** — SCL, C#, XML, JSON, Python und 60+ weitere Sprachen
+- **Code-Faltung** — Coderegionen, IF/FOR-Blöcke und VAR-Abschnitte ein-/ausklappen
+- **Auto-Vervollständigung** — Ab 2 Zeichen werden SCL-Schlüsselwörter, Datentypen und Funktionen vorgeschlagen
+- **Suche** — Strg+F für Suchen und Ersetzen mit Regex-Unterstützung
+- **Code-Snippets** — `if`, `for`, `while`, `case`, `fb`, `fc` oder `region` eingeben und Tab drücken
+- **Aktuelle Zeile** — Visuelle Hervorhebung der aktuellen Cursorzeile
+- **Theme-Unterstützung** — Editor-Farben passen sich automatisch beim Wechsel zwischen Dark und Light an
 - **Block-Details** - Zeigt Metadaten wie Nummer, Sprache, Autor
 - **Schnelle Navigation** - Suche im Projektbaum
+
+#### Tastenkürzel
+| Kürzel | Aktion |
+|--------|--------|
+| Strg+F | Suchen und Ersetzen |
+| Strg+I | Inline AI-Chat (nur SCL-Editor) |
+| Tab | Snippet einfügen (bei Triggerwort) |
+| Tab | AI-Änderung übernehmen |
+| Escape | AI-Änderung ablehnen |
 
 ### Schutz-System (Protected Items)
 
@@ -99,7 +116,12 @@ Der **TIA Openness Manager** ist ein leistungsstarkes Werkzeug für Siemens TIA 
 - **Dead Code Erkennung** - Findet nicht verwendete Bausteine
 - **Call-Graph Analyse** - Basiert auf tatsächlichen Aufrufen, nicht nur Referenzen
 - **Safety-Block Support** - Unterstützt auch F-Blöcke (F_FB, F_FC, F_DB, F_OB)
-- **Export-Funktion** - Ergebnisse als CSV exportieren
+- **Konfigurierbarer Analyse-Umfang** - Bausteine (FC/FB), Datenbausteine (DB), UDTs und Tags einzeln ein-/ausschalten
+- **Ausschlussmuster** - Platzhaltermuster definieren (z.B. `FB_Test*;DB_Temp*`) um Elemente auszuschließen
+- **Exporte wiederverwenden** - Vorherige XML-Exporte für schnellere wiederholte Analyse nutzen
+- **Persistente Einstellungen** - Alle Analyse-Einstellungen über Zahnrad-Symbol gespeichert
+- **Export-Funktion** - Ergebnisse als Textdatei exportieren
+- **In Zwischenablage kopieren** - Alle Ergebnisse für Dokumentation kopieren
 - **Lösch-Funktion** - Ungenutzte Blöcke direkt entfernen
 
 ### KI-Integration (MCP Server)
@@ -127,8 +149,43 @@ Der **TIA Openness Manager** ist ein leistungsstarkes Werkzeug für Siemens TIA 
 - **Sitzungsarchiv** - Archivieren Sie alte Sitzungen, um die Sitzungsliste übersichtlich zu halten; archivierte Sitzungen wiederherstellen oder dauerhaft löschen
 - **Terminal-Modus** - Eingebettetes PowerShell-Terminal mit MCP-Integration; konfiguriert automatisch `.mcp.json` und schreibt optional eine `CLAUDE.md` mit Projektkontext für Claude CLI; Terminal öffnet im TIA Portal-Projektverzeichnis
 - **CLAUDE.md-Einstellung** - Steuert, ob beim Terminal-Start eine `CLAUDE.md`-Datei ins Projektverzeichnis geschrieben wird (AI Chat Settings → Context); deaktivieren, wenn Claude CLI nicht verwendet wird
-- **Agenten-Gedächtnis** - Jeder Agent hat einen eigenen, sitzungsübergreifenden Gedächtnisspeicher; der Agent speichert automatisch wichtige Fakten und fügt relevante Erinnerungen beim Sitzungsstart in den Kontext ein; unterstützt die Tools `memory_store`, `memory_search`, `memory_list` und `memory_delete`; konfigurierbarer Embedding-Anbieter (OpenAI, Google, Ollama, LM Studio) für semantische Suche mit Schlüsselwort-Fallback; Gedächtnis-Einstellungen zum Anzeigen, Löschen, Exportieren (JSON), Importieren und Aufräumen alter Erinnerungen
+- **Agenten-Gedächtnis** - Jeder Agent hat einen eigenen, sitzungsübergreifenden Gedächtnisspeicher mit Scope-Isolierung (Lokal, Projekt oder Benutzer); der Agent speichert automatisch wichtige Fakten und fügt relevante Erinnerungen beim Sitzungsstart in den Kontext ein; unterstützt die Tools `memory_store`, `memory_search`, `memory_list`, `memory_update` und `memory_delete`; konfigurierbarer Embedding-Anbieter (OpenAI, Google, Ollama, LM Studio) für semantische Suche mit Schlüsselwort-Fallback; Gedächtnis-Einstellungen zum Anzeigen, Löschen, Exportieren (JSON), Importieren und Aufräumen alter Erinnerungen; Memory-Snapshots ermöglichen das Vorbefüllen von Agenten mit teamweit geteiltem Wissen über JSON-Dateien
 - **Subagenten-Steuerung** - Agent kann Teilaufgaben an unabhängige Subagenten delegieren (`run_subagent`); bis zu 5 gleichzeitige Subagenten; laufende Subagenten verwalten mit `manage_subagents list/kill/steer`; nicht-blockierender Modus ermöglicht dem Hauptagenten, weiterzuarbeiten, während Teilaufgaben im Hintergrund laufen
+- **Hooks** - Konfigurierbare Event-Hooks, die vor/nach KI-Tool-Aufrufen ausgeführt werden; eigene Hooks in den KI-Chat-Einstellungen als Shell-Befehle oder HTTP-Callbacks hinzufügen; eingebaute Hooks schützen Safety-Blöcke und protokollieren TIA-Operationen; Hooks können Tool-Input modifizieren, Ausführung blockieren oder Kontext zu Ergebnissen hinzufügen; konfigurierbarer Timeout pro Hook (Standard 60s)
+- **Befehlswarteschlange** - Nachrichten senden waehrend der KI-Agent arbeitet; Nachrichten werden mit Prioritaetsstufen (Jetzt/Naechstes/Spaeter) in eine Warteschlange gestellt und nach jedem Turn automatisch verarbeitet; Warteschlangen-Anzeige zeigt die Anzahl ausstehender Nachrichten; ESC bricht die aktuelle Operation ab und leert die Warteschlange, oder holt wartende Nachrichten zurueck ins Eingabefeld wenn der Agent untaetig ist
+- **Multi-Session** - Mehrere KI-Chat-Sessions gleichzeitig ausfuehren; die Agent-Sidebar (umschaltbar ueber PanelLeftOpen/PanelLeftClose-Icon) gleitet als Overlay von links heraus und zeigt alle Sessions gruppiert nach Status (In Bearbeitung / Abgeschlossen); jede Session hat eigenen Chat-Kontext, Canvas und Agent/Provider; Subagenten werden automatisch ihrer Eltern-Session zugeordnet; Ungelesene-Nachrichten-Badges mit Blink-Animation zeigen Aktivitaet in anderen Sessions; Doppelklick auf Session-Name zum Umbenennen; Sessions schliessen ueber X-Button (mit Bestaetigung wenn noch aktiv); Canvas-State wird pro Session gespeichert und beim Wechsel wiederhergestellt; Live-Vorschau unter dem Session-Namen zeigt eingehende Nachrichten und Antworten aus anderen Sessions
+- **Agent pro Session** - Jede Session merkt sich ihre Agent/Provider/Modell-Auswahl unabhaengig; in einer Session einen anderen Provider waehlen ohne andere Sessions zu beeinflussen; der Agent wechselt automatisch beim Session-Wechsel
+- **Cross-Session-Kommunikation** - Agents koennen Nachrichten an andere Sessions senden via send_agent_message; Ziel-Sessions starten automatisch ohne manuelles Eingreifen; die KI sieht alle aktiven Sessions mit Provider/Modell im System-Prompt
+
+### Git-Client
+
+- **Integrierte Git-Oberfläche** - Vollständiger visueller Git-Workflow direkt in der Anwendung
+- **Commit-History** - Visueller Commit-Graph mit Branch- und Tag-Abzeichen, Autor, Datum und Subject
+- **Issue-Tracker-Links** - Commit-Nachrichten zeigen anklickbare Links für Issue-Referenzen, die konfigurierbaren Mustern entsprechen (z.B. `#123`, `PROJ-456`); öffnet die Issue-Seite im Browser; Muster per Repository konfigurierbar über Repository-Einstellungen → Issue-Tracker-Tab; integrierte Vorlagen für GitHub, GitLab, JIRA u.v.m.
+- **Anklickbare URLs** - HTTP(S)- und FTP-URLs in Commit-Nachrichten werden automatisch erkannt und öffnen sich beim Klick im Browser
+- **Commit-SHA-Navigation** - SHA-Referenzen in Commit-Nachrichten sind anklickbar und navigieren zum referenzierten Commit im History-Graph
+- **Inline-Code-Darstellung** - Backtick-Code-Spans in Commit-Nachrichten werden in Monospace-Schrift mit eigenem Hintergrund gerendert
+- **Kontextmenüs auf Links** - Rechtsklick auf Links: Link kopieren, Im Browser öffnen, Zum Commit navigieren, SHA kopieren
+- **Working Copy** - Dateien stagen/entstagen, Commit-Messages schreiben, Commit mit Sign-Off / No-Verify / Reset-Author Optionen
+- **Diff-Ansicht** - Unified und Side-by-Side Diff mit TextMate-Syntax-Highlighting und Hunk-Level-Staging/Verwerfen
+- **Stash** - Stashes erstellen, anwenden, poppen und löschen; Stash-Detailansicht mit Diff-Vorschau
+- **Branches & Tags** - Visueller Branch-Baum, Branches erstellen/löschen/umbenennen/mergen/rebasen, Tags pushen/pullen
+- **Remotes** - Fetch, Pull, Push, Remotes verwalten
+- **Submodule & Worktrees** - Vollständige Unterstützung für Git-Submodule und Worktrees
+- **GitFlow** - GitFlow-Workflow-Unterstützung (Init, Start, Finish für Feature/Release/Hotfix)
+- **Datei-History & Blame** - Datei-spezifische Commit-History und Git-Blame-Ansicht
+- **Interactive Rebase** - Visuelles Interactive Rebase mit Drag-and-Drop Commit-Sortierung
+- **Branch-Beschreibungen** - Branch-Beschreibungen in Tooltips sichtbar
+- **Bisect** - Gut/Schlecht-Markierungen pro Commit für binäre Suche bei der Fehlersuche
+- **Farbige Status-Abzeichen** - Änderungszustände (Geändert, Hinzugefügt, Gelöscht, Umbenannt usw.) in der Working Copy und der Commit-Detailansicht werden als farbige, abgerundete Abzeichen statt als einfacher Text dargestellt
+- **LFS-Dateioperationen** - Rechtsklick auf eine Datei in der Working Copy bietet LFS Track (nach Dateiname oder Erweiterung) sowie LFS Lock/Unlock; bei Repositories mit mehreren Remotes erscheint für Lock/Unlock ein Untermenü pro Remote
+- **Befehlspalette** - Strg+Umschalt+P öffnet eine fuzzy-filterbare Palette mit 14 Schnellaktionen (Checkout, Merge, Compare, Blame, Datei-History, Datei öffnen, Branch erstellen, Tag erstellen, Fetch, Pull, Push, Stash, Patch anwenden, Konfigurieren); Befehle mit Branch-/Tag-/Dateiauswahl öffnen eine Unterpalette; Rücktaste bei leerem Filter kehrt zur Hauptpalette zurück; Escape oder Klick ausserhalb schliesst die Palette
+- **GPG-Signaturprüfung** - Commits zeigen ein farbiges Schild-Badge (grün = gut, orange = abgelaufen/widerrufen, rot = schlecht) in der SHA-Zeile der Commit-Detailansicht; Hover zeigt Signer-Identität und Schlüssel-ID; GPG-Signierung pro Repository in Repository-Einstellungen konfigurierbar
+- **Erweiterter Commit-Nachrichten-Editor** - AvaloniaEdit-basierter Editor mit Subject-Line-Guide (gestrichelte "SUBJECT END"-Linie), Subject-Zeichenzähler mit Warnung bei über 72 Zeichen, Spaltenpositions-Anzeige und Autovervollständigung für 13 Git-Trailer (Signed-off-by, Co-authored-by, etc.); Werkzeugleiste mit Commit-Vorlagen/Verlauf-Picker und Conventional-Commit-Builder
+- **Externe Diff/Merge-Tools** - Externes Diff/Merge-Tool pro Repository konfigurierbar unter Repository-Einstellungen → Diff / Merge Tool Tab; 13 Tools unter Windows, 9 unter macOS, 9 unter Linux vorkonfiguriert (VS Code, Visual Studio, KDiff3, Beyond Compare, WinMerge, Meld u.v.m.); Aufruf über Kontextmenüs auf geänderten Dateien in Working Copy und Commit-Detail
+- **Stash-Anwendung mit Optionen** - Rechtsklick auf einen Stash zum Anwenden oder Poppen mit Optionen: "Index wiederherstellen" (--index) stellt zuvor gestagede Änderungen wieder her, "Nach Anwendung löschen" kombiniert Anwenden + Löschen zu einer Pop-Operation
+- **Multi-Branch-Merge** - Mehrere Branches in der Seitenleiste oder mehrere Commits in der History auswählen, dann alle gleichzeitig mergen mit Strategie-Auswahl (Standard, Octopus oder Ours) und optionalem Auto-Commit
+- **Syntax-Highlighting für Revisions-Dateien** - Dateien, die bei einem bestimmten Commit im "Dateien"-Tab angezeigt werden, erhalten vollständiges TextMate-Syntax-Highlighting (konsistent mit der Diff-Ansicht)
 
 ### OPC UA Client
 
@@ -145,7 +202,7 @@ Der **TIA Openness Manager** ist ein leistungsstarkes Werkzeug für Siemens TIA 
 - **Konfiguration speichern/laden** - Beobachtungstabellen-Konfigurationen (Endpunkt-URL + Variablenliste) als `.opcua-watch` JSON-Dateien speichern und wiederherstellen
 - **CSV-Export** - Beobachtungstabellen-Daten mit allen Spalten (Name, Knoten-ID, Datentyp, Wert, Status, Zeitstempel) als CSV exportieren
 - **JSON-Export** - Beobachtungstabellen-Daten als strukturiertes JSON mit vollständigen Metadaten exportieren
-- **MCP-Integration** - 8 OPC UA Tools für KI-Assistenten: `opcua_connect`, `opcua_disconnect`, `opcua_browse`, `opcua_read`, `opcua_read_complex`, `opcua_write`, `opcua_get_types`, `opcua_subscribe`
+- **MCP-Integration** - Vereinheitlichtes `opcua`-Tool mit 9 Unterbefehlen für KI-Assistenten: connect, disconnect, browse, read, read_complex, write, write_complex, get_types, subscribe
 
 ---
 

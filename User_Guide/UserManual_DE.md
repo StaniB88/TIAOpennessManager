@@ -24,6 +24,7 @@
 12. [Find Unused Blocks](#12-find-unused-blocks)
 13. [Einstellungen](#13-einstellungen)
 14. [Lizenzierung](#14-lizenzierung)
+14a. [Git-Client](#14a-git-client)
 15. [Fehlerbehebung & FAQ](#15-fehlerbehebung--faq)
 
 ---
@@ -821,12 +822,23 @@ Sitzungen werden als JSON-Dateien in `%LocalAppData%\TiaOpennessManager\ChatSess
 
 ### Agenten-Gedächtnis
 
-Der KI-Agent kann Informationen über Chat-Sitzungen hinweg speichern und abrufen. Jeder Agent hat seinen eigenen privaten Gedächtnisspeicher, der zwischen Gesprächen erhalten bleibt.
+Der KI-Agent kann Informationen über Chat-Sitzungen hinweg speichern und abrufen. Jeder Agent hat seinen eigenen privaten Gedächtnisspeicher, der zwischen Gesprächen erhalten bleibt, mit Scope-Isolierung zur Steuerung der Sichtbarkeit.
 
 **Funktionsweise:**
 - Der Agent speichert während einer Konversation automatisch wichtige Fakten, Entscheidungen und Präferenzen (Auto-Gedächtnis)
 - Zu Beginn jeder Sitzung werden semantisch relevante Erinnerungen automatisch in den Kontext des Agenten eingefügt
-- Sie können den Agenten auch ausdrücklich bitten, bestimmte Informationen zu merken oder zu vergessen
+- Subagenten-Ergebnisse werden automatisch als Erinnerungen für zukünftige Referenz gespeichert
+- Sie können den Agenten auch ausdrücklich bitten, bestimmte Informationen zu merken, zu aktualisieren oder zu vergessen
+
+**Gedächtnis-Scopes:**
+
+| Scope | Beschreibung |
+|-------|--------------|
+| **Lokal** (Standard) | Nur dieser Agent sieht seine Erinnerungen |
+| **Projekt** | Erinnerungen an ein bestimmtes Projekt gebunden (geteilt mit Agenten gleichen Scopes) |
+| **Benutzer** | Globale Erinnerungen, sichtbar für alle Agenten |
+
+Konfigurieren Sie den Gedächtnis-Scope in der Konfigurationsdatei jedes Agenten.
 
 **Verfügbare Gedächtnis-Tools:**
 
@@ -835,7 +847,21 @@ Der KI-Agent kann Informationen über Chat-Sitzungen hinweg speichern und abrufe
 | `memory_store` | Einen Fakt, eine Entscheidung oder Präferenz für spätere Abfrage speichern |
 | `memory_search` | Gespeicherte Erinnerungen per Stichwort oder semantischer Ähnlichkeit suchen |
 | `memory_list` | Alle für den aktuellen Agenten gespeicherten Erinnerungen auflisten |
+| `memory_update` | Den Inhalt einer bestehenden Erinnerung aktualisieren |
 | `memory_delete` | Eine bestimmte Erinnerung löschen |
+
+**Memory-Snapshots (Team-Initialisierung):**
+
+Sie können Agenten mit geteiltem Wissen vorbefüllen, indem Sie eine JSON-Datei namens `{agent-id}.memories.json` im Agenten-Verzeichnis (`%LocalAppData%/TiaOpennessManager/agents/`) ablegen. Die Datei wird beim ersten Einsatz des Agenten automatisch importiert:
+
+```json
+[
+  { "content": "Projekt nutzt ExclusiveAccess für Massenimporte", "tags": "project,import" },
+  { "content": "PLC_1 läuft mit Firmware V4.5", "tags": "plc,hardware" }
+]
+```
+
+Wenn die Snapshot-Datei aktualisiert wird, wird die neue Version beim nächsten Agentenstart automatisch importiert.
 
 **Gedächtnis-Einstellungen:**
 
@@ -910,6 +936,102 @@ Der KI-Chat kann Befehle oder Code ins Terminal einfügen. Wenn die KI einen Bef
 
 **Tastenkürzel:**
 - **Strg+Umschalt+V** — Zwischenablage-Inhalt ins Terminal einfügen
+
+### Hooks
+
+Hooks sind ereignisgesteuerte Abfangmechanismen, die vor oder nach KI-Tool-Aufrufen ausgefuehrt werden. Sie ermoeglichen benutzerdefinierte Validierung, Formatierung, Protokollierung oder Steuerung der Tool-Ausfuehrung.
+
+**Eingebaute Hooks** (immer aktiv):
+- **Safety-Bestaetigung** — Blockiert automatisch die KI-Modifikation von Safety-Bausteinen (F_-Prefix)
+- **Kompilierung nach Import** — Erinnert die KI nach dem Import an die Kompilierung
+- **Audit-Log** — Protokolliert alle TIA Portal Tool-Operationen
+
+**Benutzerdefinierte Hooks:**
+
+Eigene Hooks koennen in `ai_chat_settings.json` unter dem `Hooks`-Array hinzugefuegt werden:
+
+```json
+{
+  "Hooks": [
+    {
+      "Event": "PreToolUse",
+      "Matcher": "tia_delete_*",
+      "Type": "command",
+      "Command": "node validate-delete.js",
+      "TimeoutSeconds": 30,
+      "IsBackground": false,
+      "Enabled": true
+    },
+    {
+      "Event": "PostToolUse",
+      "Matcher": "tia_export_*",
+      "Type": "http",
+      "Url": "http://localhost:8080/hooks/post-export",
+      "TimeoutSeconds": 10,
+      "IsBackground": true,
+      "Enabled": true
+    }
+  ]
+}
+```
+
+| Feld | Beschreibung |
+|------|-------------|
+| `Event` | Zeitpunkt: `PreToolUse`, `PostToolUse`, `Stop`, `UserPromptSubmit` |
+| `Matcher` | Tool-Namensmuster (z.B. `tia_*`, `tia_delete_*\|tia_import_*`, `Bash(git *)`) |
+| `Type` | `command` (Shell) oder `http` (POST-Callback) |
+| `Command` | Shell-Befehl (empfaengt JSON auf stdin, gibt JSON auf stdout zurueck) |
+| `Url` | HTTP-Endpunkt fuer `http`-Typ-Hooks |
+| `TimeoutSeconds` | Maximale Ausfuehrungszeit (Standard 60s) |
+| `IsBackground` | Bei `true` wird fire-and-forget ausgefuehrt (nur PostToolUse) |
+| `Enabled` | Auf `false` setzen um zu deaktivieren ohne zu loeschen |
+
+**Shell-Hook-Protokoll:** Der Hook empfaengt ein JSON-Objekt auf stdin mit `tool_name`, `tool_input`, `tool_output`, `session_id` und `agent_id`. Er sollte JSON auf stdout zurueckgeben mit `decision` (`allow`/`deny`/`ask`), optionalem `reason`, `additionalContext` oder `updatedInput`. Exit-Code 2 blockiert die Ausfuehrung.
+
+### Befehlswarteschlange
+
+Sie koennen Nachrichten eingeben und senden waehrend der KI-Agent aktiv arbeitet. Statt die Eingabe waehrend des Streamings zu blockieren, werden Nachrichten in eine Prioritaetswarteschlange gestellt und nach jedem abgeschlossenen Turn automatisch verarbeitet.
+
+**Senden waehrend der Agent arbeitet:** Geben Sie einfach Ihre Nachricht ein und druecken Sie Enter waehrend der Agent streamt. Die Nachricht wird als "in Warteschlange" angezeigt und das Eingabefeld wird geleert, damit Sie weitertippen koennen. Ein kleiner Indikator neben dem Eingabebereich zeigt an, wie viele Nachrichten warten (z.B. "2 Nachrichten in Warteschlange").
+
+**Prioritaetsstufen:**
+
+| Prioritaet | Verwendung | Verhalten |
+|------------|-----------|----------|
+| Naechstes | User-Nachrichten (Standard) | Verarbeitung nach aktuellem Turn |
+| Spaeter | Agenten-Benachrichtigungen | Verarbeitung nach User-Nachrichten |
+
+**ESC-Verhalten:**
+
+- **Waehrend Streaming:** Bricht die aktuelle KI-Antwort ab und leert alle wartenden Nachrichten
+- **Im Leerlauf mit wartenden Nachrichten:** Holt alle editierbaren Nachrichten aus der Warteschlange zurueck ins Eingabefeld, damit Sie sie bearbeiten oder verwerfen koennen
+
+**Warteschlangen-Verarbeitung:** Nach jedem abgeschlossenen KI-Turn prueft das System automatisch die Warteschlange und verarbeitet die naechste Nachricht. Bei mehreren wartenden Nachrichten werden diese einzeln in Prioritaetsreihenfolge verarbeitet (hoehere Prioritaet zuerst, FIFO innerhalb gleicher Prioritaet).
+
+---
+
+### Multi-Session
+
+Fuehren Sie mehrere KI-Chat-Sessions gleichzeitig aus. Jede Session hat einen eigenen Konversationskontext, Canvas-State und Modell-Override.
+
+**Agent-Sidebar:** Klicken Sie auf das Sidebar-Toggle-Icon (PanelLeftOpen/PanelLeftClose) im Chat-Header, um die Agent-Sidebar ein-/auszublenden. Sie gleitet als Overlay von links heraus, ohne den Chat-Inhalt zu verschieben. Sie zeigt alle Sessions gruppiert nach Status:
+
+- **In Bearbeitung** — Sessions, in denen die KI aktiv streamt oder mit denen interagiert wurde
+- **Abgeschlossen** — Sessions, die erfolgreich oder mit Fehlern beendet wurden
+
+**Sessions erstellen:** Klicken Sie auf den **+**-Button im Sidebar-Header, um eine neue Session zu erstellen. Die Sidebar oeffnet sich automatisch bei der zweiten Session.
+
+**Sessions wechseln:** Klicken Sie auf eine Session in der Sidebar, um zu ihr zu wechseln. Chat-Kontext, Canvas und Modell-Override wechseln zur gewaehlten Session.
+
+**Sessions schliessen:** Klicken Sie auf den **X**-Button eines Session-Eintrags. Bei laufenden Sessions erscheint ein Bestaetigungsdialog. Das Schliessen bricht aktives Streaming ab, beendet Subagenten und bereinigt den Session-Kontext.
+
+**Ungelesene-Badges:** Wenn eine andere Session eine Nachricht empfaengt waehrend Sie eine andere Session betrachten, erscheint ein Ungelesen-Badge mit kurzer Blink-Animation auf dem Session-Eintrag.
+
+**Sessions umbenennen:** Doppelklicken Sie auf einen Session-Namen zum Bearbeiten. Druecken Sie Enter oder klicken Sie ausserhalb zum Speichern.
+
+**Canvas pro Session:** Jede Session verwaltet ihren eigenen Canvas-State. Beim Wechsel wird das WebView zurueckgesetzt und der Canvas-Inhalt der Ziel-Session automatisch wiedergegeben.
+
+**Live-Modellwechsel:** Verwenden Sie den Modell-Picker-Button im Chat-Header, um das KI-Modell nur fuer die aktuelle Session zu wechseln. Andere Sessions und die globale Einstellung sind nicht betroffen.
 
 ---
 
@@ -1044,23 +1166,23 @@ Exportieren Sie die aktuellen Beobachtungstabellen-Werte für Dokumentation oder
 
 ### OPC UA MCP-Tools (KI-Integration)
 
-Wenn der MCP-Server läuft, haben KI-Assistenten Zugriff auf 13 OPC UA und Canvas Tools:
+Wenn der MCP-Server läuft, haben KI-Assistenten Zugriff auf OPC UA und Canvas Tools:
 
-| Tool | Beschreibung |
-|------|--------------|
-| `opcua_connect` | Verbindung zu einem OPC UA Endpunkt mit angegebener Authentifizierung herstellen |
-| `opcua_disconnect` | Verbindung zum aktuellen OPC UA Server trennen |
-| `opcua_browse` | Adressraum ab einem bestimmten Knoten durchsuchen |
-| `opcua_read` | Aktuellen Wert einer oder mehrerer Variablen anhand der Knoten-ID lesen |
-| `opcua_read_complex` | Strukturierte/komplexe Datentypen lesen (z.B. UDTs, Arrays) |
-| `opcua_write` | Einen Wert anhand der Knoten-ID in eine Variable schreiben |
-| `opcua_write_complex` | Einzelne Felder eines Datenbausteins schreiben (Read-Modify-Write) |
-| `opcua_get_types` | Datentypendefinitionen vom Server abrufen |
-| `opcua_subscribe` | Überwachte Element-Abonnements für einen oder mehrere Knoten erstellen |
-| `canvas_bind_opcua` | OPC-UA-Werte pollen und das Canvas-Dashboard in Echtzeit aktualisieren |
-| `canvas_unbind_opcua` | Alle Canvas OPC UA Lese-Bindings stoppen |
-| `canvas_bind_opcua_write` | Canvas-Button-Klicks und Slider-Änderungen mit OPC-UA-Schreiboperationen verbinden |
-| `canvas_unbind_opcua_write` | Alle Canvas OPC UA Schreib-Bindings stoppen |
+| Tool | `what` | Beschreibung |
+|------|--------|--------------|
+| `opcua` | `connect` | Verbindung zu einem OPC UA Endpunkt mit angegebener Authentifizierung herstellen |
+| `opcua` | `disconnect` | Verbindung zum aktuellen OPC UA Server trennen |
+| `opcua` | `browse` | Adressraum ab einem bestimmten Knoten durchsuchen |
+| `opcua` | `read` | Aktuellen Wert einer oder mehrerer Variablen anhand der Knoten-ID lesen |
+| `opcua` | `read_complex` | Strukturierte/komplexe Datentypen lesen (z.B. UDTs, Arrays) |
+| `opcua` | `write` | Einen Wert anhand der Knoten-ID in eine Variable schreiben |
+| `opcua` | `write_complex` | Einzelne Felder eines Datenbausteins schreiben (Read-Modify-Write) |
+| `opcua` | `get_types` | Datentypendefinitionen vom Server abrufen |
+| `opcua` | `subscribe` | Überwachte Element-Abonnements für einen oder mehrere Knoten erstellen |
+| `canvas` | `bind_opcua` | OPC-UA-Werte pollen und das Canvas-Dashboard in Echtzeit aktualisieren |
+| `canvas` | `unbind_opcua` | Alle Canvas OPC UA Lese-Bindings stoppen |
+| `canvas` | `bind_opcua_write` | Canvas-Button-Klicks und Slider-Änderungen mit OPC-UA-Schreiboperationen verbinden |
+| `canvas` | `unbind_opcua_write` | Alle Canvas OPC UA Schreib-Bindings stoppen |
 
 **Beispiele für KI-Chat-Verwendung:**
 
@@ -1079,24 +1201,24 @@ Fragen Sie den KI-Assistenten im Chat-Panel z.B.:
 
 ### 9c. AI Canvas mit OPC UA Live-Daten
 
-Das AI Canvas kann interaktive Dashboards anzeigen, die mit Live-OPC-UA-Daten verbunden sind. Die KI erstellt visuelle Dashboards (Anzeigen, Buttons, Slider, Animationen) mit `canvas_eval`, und OPC-UA-Werte werden für Echtzeit-Updates an das Dashboard gebunden.
+Das AI Canvas kann interaktive Dashboards anzeigen, die mit Live-OPC-UA-Daten verbunden sind. Die KI erstellt visuelle Dashboards (Anzeigen, Buttons, Slider, Animationen) mit `canvas` (what: `eval`), und OPC-UA-Werte werden für Echtzeit-Updates an das Dashboard gebunden.
 
 #### Funktionsweise
 
-1. **Die KI erstellt ein Dashboard** mit `canvas_eval` (HTML/CSS/JavaScript im Canvas-WebView)
-2. **Lese-Bindings** (`canvas_bind_opcua`) pollen OPC-UA-Werte und aktualisieren das Dashboard über `window.__tiaUpdateDashboard()`
-3. **Schreib-Bindings** (`canvas_bind_opcua_write`) verbinden Canvas-Button-Klicks und Slider-Änderungen mit OPC-UA-Schreiboperationen
+1. **Die KI erstellt ein Dashboard** mit `canvas` (what: `eval`) (HTML/CSS/JavaScript im Canvas-WebView)
+2. **Lese-Bindings** (`canvas` (what: `bind_opcua`)) pollen OPC-UA-Werte und aktualisieren das Dashboard über `window.__tiaUpdateDashboard()`
+3. **Schreib-Bindings** (`canvas` (what: `bind_opcua_write`)) verbinden Canvas-Button-Klicks und Slider-Änderungen mit OPC-UA-Schreiboperationen
 4. Alle Updates erfolgen automatisch — kein manuelles Polling oder Subscription-Setup nötig
 
 #### Canvas OPC UA Tools
 
-| Tool | Richtung | Beschreibung |
-|------|----------|-------------|
-| `canvas_bind_opcua` | SPS → Canvas | Pollt OPC-UA-Werte und aktualisiert das Dashboard in Echtzeit |
-| `canvas_unbind_opcua` | — | Stoppt alle Lese-Bindings |
-| `canvas_bind_opcua_write` | Canvas → SPS | Verbindet Button-Klicks und Slider-Änderungen mit OPC-UA-Schreiboperationen |
-| `canvas_unbind_opcua_write` | — | Stoppt alle Schreib-Bindings |
-| `opcua_write_complex` | Canvas → SPS | Schreibt einzelne Felder eines Datenbausteins (Read-Modify-Write) |
+| Tool | `what` | Richtung | Beschreibung |
+|------|--------|----------|-------------|
+| `canvas` | `bind_opcua` | SPS → Canvas | Pollt OPC-UA-Werte und aktualisiert das Dashboard in Echtzeit |
+| `canvas` | `unbind_opcua` | — | Stoppt alle Lese-Bindings |
+| `canvas` | `bind_opcua_write` | Canvas → SPS | Verbindet Button-Klicks und Slider-Änderungen mit OPC-UA-Schreiboperationen |
+| `canvas` | `unbind_opcua_write` | — | Stoppt alle Schreib-Bindings |
+| `opcua` | `write_complex` | Canvas → SPS | Schreibt einzelne Felder eines Datenbausteins (Read-Modify-Write) |
 
 #### Beispiel: Prozesssteuerungs-Dashboard
 
@@ -1105,9 +1227,9 @@ Bitten Sie die KI, ein interaktives Dashboard zu erstellen:
 > "Erstelle ein Prozesssteuerungs-Dashboard auf dem Canvas mit Start/Stop-Buttons, einem Drehzahl-Slider (0-3000 RPM) und Live-Anzeigen für Speed, Temperature, Pressure und FlowRate. Verbinde es mit dem Datenbaustein `Data_block_1` über OPC UA."
 
 Die KI wird:
-1. Das visuelle Dashboard mit `canvas_eval` erstellen
-2. Lese-Bindings mit `canvas_bind_opcua` für die Live-Anzeige einrichten
-3. Schreib-Bindings mit `canvas_bind_opcua_write` einrichten, damit Buttons und Slider die SPS steuern
+1. Das visuelle Dashboard mit `canvas` (what: `eval`) erstellen
+2. Lese-Bindings mit `canvas` (what: `bind_opcua`) für die Live-Anzeige einrichten
+3. Schreib-Bindings mit `canvas` (what: `bind_opcua_write`) einrichten, damit Buttons und Slider die SPS steuern
 
 #### Dashboards mit OPC UA Bindings speichern und laden
 
@@ -1128,7 +1250,7 @@ Canvas-Dashboards können als JSONL-Dateien gespeichert und später geladen werd
 #### Wichtige Hinweise
 
 - Eine aktive OPC-UA-Verbindung ist erforderlich, bevor Bindings Daten liefern können
-- `canvas_bind_opcua` verwendet Polling (keine OPC-UA-Subscriptions) — das ist stabiler und vermeidet eine Überlastung des OPC-UA-Servers
+- `canvas` (what: `bind_opcua`) verwendet Polling (keine OPC-UA-Subscriptions) — das ist stabiler und vermeidet eine Überlastung des OPC-UA-Servers
 - Alle Werte von OPC UA kommen als **Strings** im JavaScript-Callback an (verwenden Sie `parseFloat()` für Zahlen, vergleichen Sie mit `"True"`/`"False"` für Booleans)
 - Die Canvas-Schaltfläche **Reset** stoppt alle OPC-UA-Bindings (Lesen und Schreiben)
 
@@ -1312,6 +1434,28 @@ Ergebnisse sind in 8 Tabs organisiert:
 - **Export to Text** - Exportiert die Liste als Textdatei
 - **Copy All** - Kopiert alle Einträge in die Zwischenablage
 
+### Einstellungen
+
+Klicken Sie auf das **Zahnrad-Symbol** in der linken Toolbar, um den Einstellungsdialog zu öffnen.
+
+**Analyse-Umfang:**
+
+| Einstellung | Standard | Beschreibung |
+|-------------|----------|-------------|
+| Bausteine einbeziehen (FC/FB) | An | Funktionen und Funktionsbausteine in die Analyse einbeziehen |
+| Datenbausteine einbeziehen (DB) | An | Globale und Array-Datenbausteine einbeziehen. Instanz-DBs sind immer mit ihrem übergeordneten FB verknüpft |
+| UDTs einbeziehen | An | Benutzerdefinierte Datentypen einbeziehen. UDTs, die von verwendeten Bausteinen referenziert werden, gelten als verwendet |
+| Tags analysieren | An | PLC-Tags in die Aufrufgraph-Analyse einbeziehen |
+| Bestehende Exporte wiederverwenden | An | Zuvor exportierte XML-Dateien für schnellere wiederholte Analyse nutzen |
+
+**Ausschlüsse:**
+
+| Einstellung | Beschreibung |
+|-------------|-------------|
+| Ausschlussmuster | Semikolon-getrennte Platzhaltermuster. Elemente, die einem Muster entsprechen, werden aus den Ergebnissen ausgeschlossen. Verwenden Sie `*` für beliebige Zeichen, `?` für ein einzelnes Zeichen. Beispiel: `FB_Test*;DB_Temp*;FC_Debug*` |
+
+Alle Einstellungen werden automatisch gespeichert und bleiben nach dem Neustart der Anwendung erhalten.
+
 ### Hinweise
 
 - OBs (Organization Blocks) werden nie als "unused" markiert, da sie Einstiegspunkte sind
@@ -1432,6 +1576,90 @@ Im License-Dialog sehen Sie:
 - Ablaufdatum der aktuellen Periode
 - Hardware-ID
 - Aktivierungscode
+
+---
+
+## 14a. Git-Client
+
+Der Git-Client ist eine integrierte Versionsverwaltungs-Oberfläche für die Arbeit mit Repositories direkt in TIA Openness Manager. Er ermöglicht einen visuellen Git-Workflow, ohne die Anwendung zu verlassen.
+
+### Repository öffnen
+
+1. Klicken Sie auf den Tab **Git** in der Hauptnavigation
+2. Klicken Sie auf der Willkommensseite auf **Repository öffnen** und wählen Sie einen Ordner, oder ziehen Sie einen Repository-Ordner auf die Willkommensseite
+3. Zuletzt verwendete Repositories werden in der Liste für den schnellen Zugriff angezeigt
+
+### History-Ansicht
+
+Die History-Ansicht zeigt den Commit-Graph mit Branch- und Tag-Abzeichen.
+
+**Issue-Tracker-Links in Commit-Subjects**
+
+Wenn Ihr Repository mit Issue-Tracker-Regeln konfiguriert ist, werden passende Muster in Commit-Subject-Zeilen automatisch als anklickbare Links angezeigt (z. B. `#123`, `PROJ-456`). Ein Klick auf den Link öffnet die entsprechende Issue-Seite im Browser.
+
+Issue-Tracker konfigurieren:
+1. Öffnen Sie die Repository-Einstellungen über das Zahnrad-Symbol in der Toolbar
+2. Wechseln Sie zum Tab **Issue Tracker**
+3. Fügen Sie eine Regel hinzu: Geben Sie einen regulären Ausdruck ein (z. B. `#(\d+)`) und ein URL-Template (z. B. `https://github.com/org/repo/issues/$1`)
+4. Wählen Sie aus integrierten Vorlagen (GitHub, GitLab, JIRA usw.) oder definieren Sie eine eigene Regel
+
+### Commit-Detailansicht
+
+Durch Auswahl eines Commits in der History-Ansicht wird das Commit-Detail-Panel auf der rechten Seite geöffnet.
+
+Die vollständige Commit-Nachricht wird mit Rich-Text-Formatierung angezeigt:
+
+- **Issue-Tracker-Links** — Referenzen, die Ihren konfigurierten Issue-Tracker-Regeln entsprechen, werden als anklickbare Links dargestellt. Ein Klick öffnet das Issue im Browser.
+- **URLs** — HTTP(S)- und FTP-URLs werden automatisch erkannt und unterstrichen. Ein Klick öffnet die URL im Browser.
+- **Commit-SHA-Referenzen** — Enthält die Nachricht einen Commit-SHA (6–64 Hex-Zeichen), wird er als orangefarbener unterstrichener Link dargestellt. Ein Klick navigiert zu diesem Commit im History-Graph. Beim Hovern wird der Commit-Subject als Tooltip angezeigt.
+- **Inline-Code** — Text in Backticks (`` `so wie das` ``) wird in Monospace-Schrift mit einem eigenen Hintergrund gerendert.
+
+**Rechtsklick-Kontextmenü auf Links:**
+- **Link kopieren** — Kopiert die URL in die Zwischenablage
+- **Im Browser öffnen** — Öffnet die URL im Standard-Browser
+- **Zum Commit navigieren** — Navigiert zum referenzierten Commit (nur SHA-Links)
+- **SHA kopieren** — Kopiert den SHA in die Zwischenablage (nur SHA-Links)
+
+### Working Copy
+
+Die Working-Copy-Ansicht zeigt staged und unstaged Änderungen.
+
+- Einzelne Dateien oder den gesamten Änderungssatz stagen oder entstagen
+- Commit-Message eingeben und auf **Commit** klicken
+- **Commit-Optionen** Checkboxen für Sign-Off, No-Verify (Hooks überspringen) und Reset-Author
+- Änderungszustände werden als farbige, abgerundete Abzeichen angezeigt (Geändert, Hinzugefügt, Gelöscht, Umbenannt usw.) für eine schnelle visuelle Übersicht
+- Rechtsklick auf eine ungestagete Datei zeigt **LFS**-Operationen: Track nach Dateiname oder Erweiterung sowie Lock/Unlock. Bei Repositories mit mehreren Remotes erscheint für Lock/Unlock ein Untermenü pro Remote
+
+### Branches, Tags und Remotes
+
+Die Sidebar auf der linken Seite zeigt alle lokalen Branches, Remote-Branches, Tags, Worktrees und Submodule. Rechtsklick auf ein Element öffnet ein Kontextmenü mit Aktionen (Checkout, Merge, Push, Löschen usw.).
+
+### Befehlspalette (Command Palette)
+
+Drücken Sie **Strg+Umschalt+P** im Git-Arbeitsbereich, um die Befehlspalette zu öffnen. Sie bietet schnellen, tastaturgesteuerten Zugriff auf die häufigsten Git-Operationen, ohne durch Menüs navigieren zu müssen.
+
+**Verfügbare Befehle:**
+
+| Befehl | Aktion |
+|--------|--------|
+| Checkout | Zu einem Branch wechseln |
+| Merge | Einen Branch in den aktuellen Branch mergen |
+| Compare | Einen Branch oder Tag mit dem aktuellen Branch vergleichen |
+| Blame | Blame-Ansicht für eine Datei öffnen |
+| File History | History einer bestimmten Datei öffnen |
+| Open File | Eine Datei aus dem Repository im Editor öffnen |
+| Create Branch | Neuen Branch erstellen |
+| Create Tag | Neuen Tag erstellen |
+| Fetch | Von einem Remote abrufen |
+| Pull | Von einem Remote pullen |
+| Push | Zu einem Remote pushen |
+| Stash | Aktuelle Änderungen stashen |
+| Apply Patch | Eine Patch-Datei anwenden |
+| Configure | Repository-Einstellungen öffnen |
+
+**Unterpaletten:** Befehle, die eine Branch-, Tag- oder Dateiauswahl erfordern, öffnen eine sekundäre Auswahlliste. Tippen Sie, um die Liste fuzzy zu filtern. Drücken Sie **Rücktaste** bei leerem Filter, um zur Hauptpalette zurückzukehren.
+
+**Schliessen:** Drücken Sie **Escape** oder klicken Sie ausserhalb der Palette, um sie zu schliessen.
 
 ---
 
