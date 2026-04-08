@@ -1,5 +1,48 @@
 # TIA Openness Manager - Changelog
 
+## v3.0.11 (2026-04-09)
+
+### Improvements
+- Error and warning messages in the Application Log are now color-coded (red for errors, amber for warnings) for easier identification
+- **File Explorer: Git Status** — Opening a folder that contains a Git repository now shows file status directly in the tree: modified files appear yellow (M), new files green (U), deleted red (D). Folders show a small colored dot when they contain changed files. Status updates automatically after commits, checkouts, or other Git operations
+
+### Import
+- **Transaction Rollback on Error** — When "Fault Tolerant" is disabled in settings, import errors now trigger an automatic transaction rollback, restoring the project to its original state instead of leaving it in an inconsistent state
+- **Fault Tolerant Mode** — The "Fault Tolerant" checkbox now controls error behavior: disabled = abort and rollback on first error, enabled = continue importing remaining files
+
+### AI Chat — Skills
+- **Skills write to project folder** — Analysis results, documentation, and reports are now saved directly into the TIA Portal project folder instead of cluttering the chat with hundreds of lines of text
+- **One-click skill execution** — All skills now auto-send when clicked, matching the behavior of slash commands
+- **Automatic sub-agent dispatch** — Skills automatically route tasks to the best specialized AI agent (e.g., SCL Expert for code generation, TIA Analyzer for documentation)
+- **Skill version management** — Built-in skills update automatically when a new app version includes improved skill prompts
+
+### AI Chat — Sub-Agents
+- **Full tool access** — All sub-agents now have access to all available tools, preventing "missing tool" errors during complex tasks
+- **Mandatory agent routing** — The AI reliably delegates specialized tasks (SCL code, block analysis, AWL conversion) to the appropriate sub-agent instead of attempting them directly
+- **SCL Expert: UDT support** — The SCL Expert now creates UDTs for complex data structures instead of monolithic blocks with dozens of flat variables. UDTs are generated first, then blocks that reference them
+- **SCL Expert: Correct block structure** — Generated blocks now follow the exact TIA Portal import format. Block header comments are placed inside the BEGIN section where TIA Portal preserves them
+
+### AI Chat — Steering
+- **Send messages during generation** — You can now type and send messages while the AI is working. The Send button and Stop button appear side by side. Press Enter to steer the AI or add instructions without stopping the current generation
+
+### Code Editor
+- **Improved create templates** — New FB and FC templates now include all VAR sections (VAR_INPUT, VAR_OUTPUT, VAR_IN_OUT, VAR, VAR_TEMP, VAR CONSTANT)
+
+### Bug Fixes
+- Fixed skills showing full prompt text in chat instead of executing silently
+- Fixed skill invocations in one session leaking into other concurrent sessions
+- Fixed "Describe Project" overwriting its own generated documentation file with a short summary
+- Fixed sub-agents not receiving per-agent instruction files (e.g., Siemens Programming Styleguide for SCL Expert)
+- Fixed Send button and Enter key not working during AI generation — steering messages can now be sent at any time
+- Fixed Import All failing with "object already exists" error when the default tag table had a different filename than its block name (e.g., Safety Unit default tag tables)
+- Fixed operations (Export, Import, Find Unused, etc.) not starting again after cancelling — previously required an app restart
+- Fixed editor minimap staying visible with stale content after pressing Clear
+- Fixed TIA Portal connection showing false warning messages in the log on first Connect
+- Fixed Inline Chat (Ctrl+I) not opening — the shortcut now works reliably regardless of editor focus state
+- Fixed syntax highlighting not working in the Code Editor tab
+- Fixed AI Chat tool categories (Visual Context, Agent Memory, Skills) missing from Settings — toggling them in Settings now works the same as in the chat dropdown
+- Fixed AI tools found via "Search Tools" failing with "Function not found" when the AI tried to use them in the same response
+
 ## v3.0.10 (2026-04-07)
 
 ### AI Chat — Providers & Authentication

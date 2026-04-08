@@ -426,6 +426,28 @@ Neben dem Code werden Metadaten angezeigt:
 - **Autor:** Falls verfügbar
 - **Letzte Änderung:** Zeitstempel
 
+### Inline-Chat (Strg+I)
+
+Der Inline-Chat ermöglicht es, der KI direkt im Code-Editor Fragen zu stellen oder Codeänderungen anzufordern — ohne zur KI-Chat-Seitenleiste wechseln zu müssen.
+
+**Verwendung:**
+
+1. Öffnen Sie den **Project**-Tab mit einem ausgewählten Block (oder leerem Editor)
+2. Markieren Sie optional den Code, den Sie ändern oder über den Sie fragen möchten
+3. Drücken Sie **Strg+I** — ein kleines Chat-Eingabefeld erscheint oben im Editor
+4. Geben Sie Ihre Frage oder Anweisung ein (z.B. „Fehlerbehandlung hinzufügen", „Was macht dieser Abschnitt?")
+5. Drücken Sie **Enter** zum Senden
+
+**Umgang mit KI-Antworten:**
+
+- Die KI streamt ihre Antwort direkt im Inline-Chat-Widget
+- Wenn die KI eine Codeänderung vorschlägt, erscheinen **Übernehmen/Ablehnen**-Schaltflächen:
+  - Drücken Sie **Tab** oder klicken Sie auf **Übernehmen**, um die Änderung anzuwenden
+  - Drücken Sie **Escape** oder klicken Sie auf **Ablehnen**, um sie zu verwerfen
+- Drücken Sie **Escape** jederzeit, um den Inline-Chat zu schließen
+
+> **Tipp:** Der Inline-Chat funktioniert auch ohne geladenen Block — nützlich für allgemeine SCL-Fragen.
+
 ### Suche im Projektbaum
 
 Nutzen Sie das Suchfeld über dem Projektbaum, um Blöcke schnell zu finden:

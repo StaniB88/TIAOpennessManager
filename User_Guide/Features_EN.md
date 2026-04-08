@@ -81,6 +81,7 @@ The built-in code editor provides professional editing features for SCL and othe
 - **Code Snippets** — Type `if`, `for`, `while`, `case`, `fb`, `fc`, or `region` and press Tab to insert templates
 - **Current Line Highlight** — Visual indicator for the current cursor line
 - **Theme Support** — Editor colors automatically adapt when switching between Dark and Light themes
+- **Inline Chat (Ctrl+I)** — Press Ctrl+I to open an AI chat directly in the code editor. Optionally select code first, then type your question or request — the AI responds and can propose changes inline. Accept with Tab, reject with Escape
 - **Block Details** - Shows metadata like number, language, author
 - **Quick Navigation** - Search in project tree
 

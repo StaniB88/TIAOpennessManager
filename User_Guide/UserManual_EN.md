@@ -426,6 +426,28 @@ Metadata is displayed next to the code:
 - **Author:** If available
 - **Last Modified:** Timestamp
 
+### Inline Chat (Ctrl+I)
+
+The Inline Chat lets you ask the AI questions or request code changes directly in the code editor — without switching to the AI Chat sidebar.
+
+**How to use:**
+
+1. Open the **Project** tab with a block selected (or an empty editor)
+2. Optionally select the code you want to modify or ask about
+3. Press **Ctrl+I** — a small chat input appears at the top of the editor
+4. Type your question or instruction (e.g., "add error handling", "what does this section do?")
+5. Press **Enter** to send
+
+**Handling AI responses:**
+
+- The AI streams its response directly in the inline chat widget
+- If the AI proposes a code change, **Accept/Reject** buttons appear:
+  - Press **Tab** or click **Accept** to apply the change
+  - Press **Escape** or click **Reject** to discard it
+- Press **Escape** at any time to close the inline chat
+
+> **Tip:** The inline chat works even without a block loaded — useful for asking general SCL questions.
+
 ### Project Tree Search
 
 Use the search field above the project tree to quickly find blocks:

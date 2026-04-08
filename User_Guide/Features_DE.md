@@ -81,6 +81,7 @@ Der integrierte Code-Editor bietet professionelle Bearbeitungsfunktionen für SC
 - **Code-Snippets** — `if`, `for`, `while`, `case`, `fb`, `fc` oder `region` eingeben und Tab drücken
 - **Aktuelle Zeile** — Visuelle Hervorhebung der aktuellen Cursorzeile
 - **Theme-Unterstützung** — Editor-Farben passen sich automatisch beim Wechsel zwischen Dark und Light an
+- **Inline-Chat (Strg+I)** — Strg+I öffnet einen KI-Chat direkt im Code-Editor. Optional Code markieren, dann Frage oder Anweisung eingeben — die KI antwortet und kann Änderungen inline vorschlagen. Übernehmen mit Tab, Ablehnen mit Escape
 - **Block-Details** - Zeigt Metadaten wie Nummer, Sprache, Autor
 - **Schnelle Navigation** - Suche im Projektbaum
 

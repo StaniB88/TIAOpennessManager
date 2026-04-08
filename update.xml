@@ -1,103 +1,50 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>3.0.10</version>
-    <url>https://github.com/StaniB88/TIAOpenessManager/releases/download/v3.0.10/TiaOpennessManager_Setup_3.0.10.exe</url>
+    <version>3.0.11</version>
+    <url>https://github.com/StaniB88/TIAOpenessManager/releases/download/v3.0.11/TiaOpennessManager_Setup_3.0.11.exe</url>
     <changelog>https://github.com/StaniB88/TIAOpenessManager/blob/main/CHANGELOG.md</changelog>
-    <release_date>2026-04-07</release_date>
+    <release_date>2026-04-09</release_date>
     <body>## What&apos;s Changed
 
-### AI Chat â€” Providers &amp; Authentication
-- **Sign In via OAuth** â€” All major AI providers now supported via OAuth login in addition to API keys. Choose per agent: use your subscription, no more API keys required for these flows. One click &quot;Sign in with X&quot;, tokens stored securely in Windows Credential Manager, automatic refresh, switch back to API key anytime.
-- **Full Enterprise Provider Coverage** â€” Added Mistral, Azure OpenAI, Google Vertex AI, and AWS Bedrock as first-class providers alongside the existing Anthropic/OpenAI/Google/Ollama/LMStudio/OpenRouter/GitHub Copilot options. Choose EU-based Mistral for GDPR workloads, Azure OpenAI with your own deployment name for compliance-bound data residency, Vertex in europe-west regions with GCP credentials, or Bedrock (Claude/Llama/Mistral/Titan/Nova) with AWS IAM.
-- **Prompt Caching** â€” Significant token cost reduction via stable system prompt architecture. Anthropic achieves 98â€“99% cache hit rate from the second request onward (~60% cost savings per session). OpenAI/Copilot benefit from automatic caching via stable prefix ordering.
-
-### AI Chat â€” Multi-Session &amp; Agents
-- **Multi-Session Support** â€” Run multiple AI chat sessions simultaneously. A new Agent Sidebar (toggle with sidebar button) shows all active and completed sessions with live status, elapsed timers, and unread badges. Sub-agents appear indented under their parent session. Create new sessions anytime â€” even while the AI is working.
-- **Per-Session Agent &amp; Provider** â€” Each session can use a different agent and provider independently. Switch agents mid-workflow without affecting other running sessions.
-- **Session Isolation** â€” Creating a new session during active AI generation no longer interferes with the running session. The old session continues generating in the background while the new session is immediately usable.
-- **Cross-Session Auto-Resume** â€” Sessions automatically resume where they left off when reopened.
-- **Inter-Agent Communication** â€” Sub-agents can send messages to each other and to the main agent bidirectionally, enabling collaborative multi-agent workflows.
-- **Named Sub-Agents** â€” Sub-agents now have display names for easier identification in the Agent Sidebar and session history.
-- **Fork Sub-Agent with Worktree Isolation** â€” Sub-agents can work in isolated git worktrees (separate branches), preventing file conflicts when multiple agents edit code simultaneously.
-- **Sub-Agent Permission Inheritance** â€” Sub-agents inherit tool permissions from the parent agent and can bubble new grants back up.
-
-### AI Chat â€” UX &amp; Input
-- **Unified Skills &amp; Slash Commands** â€” Skills and slash commands are now a single system. Type `/` to see all available commands and skills in a combined popup with Tab autocomplete. Clicking a skill in the palette or typing `/skill-name` invokes it the same way â€” the command name appears in accent color, while the AI receives the full skill instructions behind the scenes. The AI discovers available skills automatically and can invoke them proactively when a task matches. Supports both flat `.md` files and `SKILL.md` directory format.
-- **@-Mention File Picker** â€” Type `@` to open a directory-navigation file picker. Browse folders, click to attach files directly as context for the AI.
-- **Command Queue** â€” Send messages while the AI is still working. Messages are queued with priority (now/next/later) and processed automatically after the current response completes. No more waiting for the AI to finish before typing the next instruction.
-- **Voice Dictation** â€” Speak to the AI using Whisper speech recognition (local model or API). Choose push-to-talk or toggle mode. Configure language, model, and hotkey in Settings â†’ Dictation.
-- **Skill Template Engine** â€” Skills now support `{{variables}}` and `{{#if}}` conditionals for dynamic prompt templates that adapt to context.
-- **Channel Notifications** â€” External systems (OPC UA subscriptions, MCP server notifications) push real-time events into active AI chat sessions. The AI can react to PLC alarms, value changes, and MCP events automatically â€” e.g., an OPC UA overtemperature alarm triggers AI diagnosis.
-
-### AI Chat â€” Context &amp; Memory
-- **Agent Memory** â€” The AI remembers facts, preferences, and project context across sessions. Memory is stored locally and searchable.
-- **Per-Agent Memory Scope** â€” Memory can be scoped to local (this session), project, or user level. Different agents can have independent memory spaces.
-- **Context Window Guard** â€” A 4-tier visual warning system shows context usage with color-coded indicators: normal (gray), warning at 80% (yellow), error at 90% (red), auto-compact at 93%. The AI automatically compacts context before hitting the limit.
-- **Tool Loop Detection** â€” The AI automatically detects repetitive tool-call patterns (generic repeat, ping-pong, no-progress) and breaks out of infinite loops with a circuit-breaker mechanism.
-- **Compaction Improvements** â€” Context compaction now preserves more relevant information and updates summaries incrementally instead of replacing them.
-- **Tool Output Guard** â€” Large tool outputs (e.g., huge git logs or file reads) are automatically truncated to prevent context overflow from a single oversized response.
-
-### AI Chat â€” Agent Configuration
-- **Model Failover Chain** â€” Configure fallback models per agent in Settings â†’ Agents. If the primary model fails (rate-limit, server error), the AI automatically tries the next fallback model. Supports cross-provider failover (e.g. Anthropic â†’ OpenAI).
-- **Auth Rotation** â€” Add multiple API keys per agent in Settings â†’ Agents. Keys are rotated automatically via round-robin; rate-limited keys receive a cooldown period. Increases effective rate limits without manual intervention.
-- **Per-Agent MCP Servers** â€” Each agent can have its own dedicated MCP server connections defined inline or by reference, enabling specialized tool sets per agent.
-- **Per-Agent Hooks** â€” Define event-driven automation rules per agent (e.g., auto-format after file edits, validation before commits). Supports event, pattern, and decision hooks.
-- **Deferred Tool Loading** â€” Tools are loaded on demand. Sub-agents only receive the tools they actually need, reducing token usage and improving response quality.
-
-### AI Chat â€” SCL &amp; Code
-- **SCL Expert** â€” Enhanced SCL code generation with Siemens Programming Styleguide compliance, integrated code review, and direct editor integration for AI-generated code.
-- **AWLâ†’SCL Converter** â€” New agent and skill for AI-assisted migration of STL (AWL) code to SCL. Drop AWL source files into the chat for automatic conversion.
-- **NF003 Block Headers** â€” AI-generated SCL code now includes standardized NF003-compliant block headers with title, version, author, and description fields.
-
-### Git Integration
-- **Colored Status Badges** â€” File change indicators in the Working Copy and Commit Detail views are now displayed as colored, rounded badges (Modified, Added, Deleted, Renamed, etc.) instead of plain text labels.
-- **Shared &quot;Deal with Local Changes&quot; Control** â€” Checkout Branch, Checkout &amp; Fast-Forward, and Create Branch dialogs now use a consistent shared control for selecting how to handle local changes (Keep, Stash &amp; Reapply, Discard), replacing duplicated radio button groups.
-- **LFS File Operations in Context Menus** â€” Right-clicking a file in the Working Copy now shows LFS Track (by filename or extension) and LFS Lock/Unlock options when LFS is enabled. For repositories with multiple remotes, Lock/Unlock shows a submenu per remote.
-- **Issue Tracker Links** â€” Commit messages now show clickable links for issue references (e.g. `#123`, `PROJ-456`). Configure patterns and URL templates per repository via Repository Settings â†’ Issue Tracker tab. Supports multiple tracker rules simultaneously.
-- **Clickable URLs in Commit Messages** â€” HTTP(S) and FTP URLs in commit messages are automatically detected and open in the browser on click.
-- **Commit SHA Navigation** â€” Commit SHA references in full commit messages are clickable and navigate directly to that commit in the history graph. Right-click shows options to copy the SHA or navigate to it.
-- **Inline Code Formatting** â€” Backtick code spans (`` `like this` ``) in commit messages are rendered in monospace with a distinct background.
-- **Hunk Staging** â€” Stage, unstage, or discard individual change hunks directly in the diff view (unified and side-by-side).
-- **Stash Detail View** â€” Selecting a stash now shows its changes and a full diff preview in a 3-pane layout.
-- **Syntax Highlighting in Diff** â€” TextMate-powered language-aware coloring in the diff view.
-- **Commit Options** â€” Sign-Off, No-Verify, and Reset-Author checkboxes in the commit area.
-- **History Improvements** â€” Ahead/behind indicators per commit, bisect good/bad markers, show/hide tags toggle, scroll-to-top button, loading indicator, and empty state tips.
-- **Layout Switcher** â€” History view now supports horizontal (side-by-side) and vertical (top/bottom) layout.
-- **Keyboard Shortcuts** â€” Ctrl+Shift+Enter (auto-stage + commit), Ctrl+F (search), Ctrl+O (open file).
-- **Branch Descriptions** â€” Branch descriptions (via `git branch --edit-description`) now visible in tooltips.
-- **Compact Folders** â€” Tree views in the working copy can now display compact/collapsed folder paths.
-
-### Find Unused Blocks
-- **Settings Dialog** â€” New gear icon opens a settings dialog. Configure which item types to include (Blocks, DBs, UDTs, Tags), toggle export reuse, and define exclusion patterns with wildcards (e.g. `FB_Test*;DB_Temp*`). Settings persist across restarts.
-- **Compile + ExclusiveAccess** â€” Analysis now compiles the PLC first and runs snapshots + export inside ExclusiveAccess for data consistency and a native TIA Portal progress dialog.
-- **PLC Selector** â€” Dropdown to choose which PLC to analyze. Exports go to PLC-specific subfolders, so multi-PLC projects don&apos;t conflict.
-- **Project Save after Deletion** â€” TIA Portal project is automatically saved after deleting unused items.
-- **Deletion Progress** â€” Progress bar now shows per-item deletion progress instead of staying on &quot;Preparing&quot;.
-- **Deletion Log** â€” Timestamped log file written to working directory after each deletion with success/failure per item.
+### Improvements
+- Error and warning messages in the Application Log are now color-coded (red for errors, amber for warnings) for easier identification
+- **File Explorer: Git Status** â€” Opening a folder that contains a Git repository now shows file status directly in the tree: modified files appear yellow (M), new files green (U), deleted red (D). Folders show a small colored dot when they contain changed files. Status updates automatically after commits, checkouts, or other Git operations
 
 ### Import
-- **Protected Block Options** â€” Import Selected and Import All now respect per-block AllowCodeUpdates and AllowAttributeUpdates settings from protection profiles. Protected blocks with AllowCodeUpdates can have their SCL code updated; protected OBs with AllowAttributeUpdates get CyclicTime/PhaseOffset updates via SetAttribute.
-- **SCL Folder Placement** â€” New blocks imported via SCL in Import Selected now land in the correct TIA Portal folder matching the disk structure, instead of always going to root &quot;Program blocks&quot; (V17+).
+- **Transaction Rollback on Error** â€” When &quot;Fault Tolerant&quot; is disabled in settings, import errors now trigger an automatic transaction rollback, restoring the project to its original state instead of leaving it in an inconsistent state
+- **Fault Tolerant Mode** â€” The &quot;Fault Tolerant&quot; checkbox now controls error behavior: disabled = abort and rollback on first error, enabled = continue importing remaining files
 
-### Explorer
-- **Split View** â€” Split editors horizontally or vertically, drag tabs between groups, dock and pin panels
-- **Auto-Completion** â€” IntelliSense for SCL: type 2+ characters to see keywords, data types, built-in functions, and document words. Works for all file types in the File Explorer.
-- **Code Folding** â€” Collapse and expand REGION, IF/FOR/WHILE blocks, VAR sections, and FUNCTION_BLOCK declarations. Brace-based folding for C#, JSON, and other languages.
-- **Built-in Search** â€” Ctrl+F opens find and replace with regex, match case, and whole word support (replaces the old search toolbar).
-- **SCL Snippets** â€” Type `if`, `for`, `while`, `case`, `fb`, `fc`, or `region` and press Tab to insert code templates with editable placeholders.
-- **Theme Switching** â€” Editor colors now automatically adapt when switching between Dark and Light themes.
-- **Current Line Highlight** â€” Visual indicator for the active cursor line.
-- **Column Rulers** â€” Vertical guidelines at 80 and 120 characters.
+### AI Chat â€” Skills
+- **Skills write to project folder** â€” Analysis results, documentation, and reports are now saved directly into the TIA Portal project folder instead of cluttering the chat with hundreds of lines of text
+- **One-click skill execution** â€” All skills now auto-send when clicked, matching the behavior of slash commands
+- **Automatic sub-agent dispatch** â€” Skills automatically route tasks to the best specialized AI agent (e.g., SCL Expert for code generation, TIA Analyzer for documentation)
+- **Skill version management** â€” Built-in skills update automatically when a new app version includes improved skill prompts
 
-### MCP Tools
-- **Tool Consolidation** â€” Reduced from 81 to 22 MCP tools with multi-category support and dynamic permissions. Less token usage, better AI tool selection.
+### AI Chat â€” Sub-Agents
+- **Full tool access** â€” All sub-agents now have access to all available tools, preventing &quot;missing tool&quot; errors during complex tasks
+- **Mandatory agent routing** â€” The AI reliably delegates specialized tasks (SCL code, block analysis, AWL conversion) to the appropriate sub-agent instead of attempting them directly
+- **SCL Expert: UDT support** â€” The SCL Expert now creates UDTs for complex data structures instead of monolithic blocks with dozens of flat variables. UDTs are generated first, then blocks that reference them
+- **SCL Expert: Correct block structure** â€” Generated blocks now follow the exact TIA Portal import format. Block header comments are placed inside the BEGIN section where TIA Portal preserves them
+
+### AI Chat â€” Steering
+- **Send messages during generation** â€” You can now type and send messages while the AI is working. The Send button and Stop button appear side by side. Press Enter to steer the AI or add instructions without stopping the current generation
+
+### Code Editor
+- **Improved create templates** â€” New FB and FC templates now include all VAR sections (VAR_INPUT, VAR_OUTPUT, VAR_IN_OUT, VAR, VAR_TEMP, VAR CONSTANT)
 
 ### Bug Fixes
-- Fixed Cancel button not working for Export, Import, and Find Unused operations â€” pressing Cancel now immediately stops the running operation
-- Fixed Import All ignoring AllowCodeUpdates for protected blocks â€” SCL files were incorrectly filtered out even when code updates were allowed
-- Fixed empty export folders created next to PLC folder instead of inside it when &quot;Create Source Folder&quot; was disabled
-- Fixed sub-agents unable to send messages back to the main AI agent â€” inter-agent messaging now works bidirectionally
-- Fixed instruction file @include not recognizing bare relative paths (e.g. `@docs/rules.md`)
-- Fixed long tool descriptions overflowing UI tooltips</body>
+- Fixed skills showing full prompt text in chat instead of executing silently
+- Fixed skill invocations in one session leaking into other concurrent sessions
+- Fixed &quot;Describe Project&quot; overwriting its own generated documentation file with a short summary
+- Fixed sub-agents not receiving per-agent instruction files (e.g., Siemens Programming Styleguide for SCL Expert)
+- Fixed Send button and Enter key not working during AI generation â€” steering messages can now be sent at any time
+- Fixed Import All failing with &quot;object already exists&quot; error when the default tag table had a different filename than its block name (e.g., Safety Unit default tag tables)
+- Fixed operations (Export, Import, Find Unused, etc.) not starting again after cancelling â€” previously required an app restart
+- Fixed editor minimap staying visible with stale content after pressing Clear
+- Fixed TIA Portal connection showing false warning messages in the log on first Connect
+- Fixed Inline Chat (Ctrl+I) not opening â€” the shortcut now works reliably regardless of editor focus state
+- Fixed syntax highlighting not working in the Code Editor tab
+- Fixed AI Chat tool categories (Visual Context, Agent Memory, Skills) missing from Settings â€” toggling them in Settings now works the same as in the chat dropdown
+- Fixed AI tools found via &quot;Search Tools&quot; failing with &quot;Function not found&quot; when the AI tried to use them in the same response</body>
     <mandatory>false</mandatory>
 </item>
