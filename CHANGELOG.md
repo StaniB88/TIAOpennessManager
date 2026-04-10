@@ -1,5 +1,29 @@
 # TIA Openness Manager - Changelog
 
+## v3.1.0 (2026-04-10)
+
+### AI Chat
+- **Inline Tool Approvals** — Tool-call approval buttons now appear directly inside the tool-call message in the chat, instead of a fullscreen popup. You can continue scrolling, reading messages, and working in other tabs while an approval is pending
+- **Permission Modes** — New permission mode toggle next to the send button cycles between three levels: Default (ask for every write), Accept Edits (auto-approve file edits, still ask for shell commands), and Auto (auto-approve all non-dangerous tools). The current mode is shown with a colored icon
+- **Inline Plan Approval** — Execution plans submitted by the AI now appear inline in the chat with an editable text box, instead of a blocking popup
+- **AI sees the editor automatically** — You no longer need to attach a block to the chat for the AI to read it. Ask "Can you see the current block?" and the AI reads the active editor tab directly. Attaching still works if you want the code embedded in the conversation history
+- **AI sees all open tabs** — When you have multiple blocks open, the AI can list them, read any specific one by name, and edit any of them without you having to switch tabs first. Ask "What blocks do I have open?" or "Compare FB_Motor and FB_Pump and suggest a refactor"
+- **Non-disruptive multi-block edits** — When the AI edits multiple blocks in one response, your current tab stays focused. Edited tabs show a dirty indicator (●) in the tab header so you know they're waiting for review. Switch to each tab to see the inline diff and accept or reject
+- **Per-tab Inline Chat (Ctrl+I)** — Each editor tab has its own inline chat. Open the inline chat in one tab, switch to another, open a separate chat there, switch back — both conversations are preserved
+
+### Bug Fixes
+- Fixed auto-update installing a corrupted file when the download was interrupted — the app now verifies the download is complete before installing and allows retrying instead of entering a restart loop
+- Fixed session and sub-agent elapsed-time counters in the AI Chat sidebar continuing to count after the AI response was finished or when a sub-agent failed to start
+
+### Code Editor
+- **Tabbed Editor** — Opening blocks or files now creates individual tabs that can be closed, rearranged, and split side by side. Multiple blocks and files stay open simultaneously without losing context
+- **Unified Editor** — Files from File Explorer and SCL blocks from TIA Project now open in the same editor area. Switch between TIA Project and File Explorer using the Activity Bar — open tabs persist across sidebar switches
+- **Enhanced Status Bar** — The editor status bar now shows cursor position (Ln/Col), a language selector dropdown, and a Word Wrap toggle alongside the existing line and character counts
+
+### Project Explorer
+- **Integrated Toolbar** — Project actions (Rescan, Save, Compile, Safety Login/Logoff) and Protection Profiles are now located directly in the Project Explorer sidebar, keeping them closer to the project tree they operate on
+- **File Explorer as sidebar** — Clicking File Explorer in the Activity Bar now swaps only the sidebar (TIA Project Tree ↔ Folder Tree) while keeping all open editor tabs visible. No more losing your editor context when browsing files
+
 ## v3.0.11 (2026-04-09)
 
 ### Improvements

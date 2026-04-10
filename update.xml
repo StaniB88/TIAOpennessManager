@@ -1,50 +1,33 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>3.0.11</version>
-    <url>https://github.com/StaniB88/TIAOpenessManager/releases/download/v3.0.11/TiaOpennessManager_Setup_3.0.11.exe</url>
+    <version>3.1.0</version>
+    <url>https://github.com/StaniB88/TIAOpenessManager/releases/download/v3.1.0/TiaOpennessManager_Setup_3.1.0.exe</url>
     <changelog>https://github.com/StaniB88/TIAOpenessManager/blob/main/CHANGELOG.md</changelog>
-    <release_date>2026-04-09</release_date>
+    <release_date>2026-04-10</release_date>
     <body>## What&apos;s Changed
 
-### Improvements
-- Error and warning messages in the Application Log are now color-coded (red for errors, amber for warnings) for easier identification
-- **File Explorer: Git Status** â€” Opening a folder that contains a Git repository now shows file status directly in the tree: modified files appear yellow (M), new files green (U), deleted red (D). Folders show a small colored dot when they contain changed files. Status updates automatically after commits, checkouts, or other Git operations
-
-### Import
-- **Transaction Rollback on Error** â€” When &quot;Fault Tolerant&quot; is disabled in settings, import errors now trigger an automatic transaction rollback, restoring the project to its original state instead of leaving it in an inconsistent state
-- **Fault Tolerant Mode** â€” The &quot;Fault Tolerant&quot; checkbox now controls error behavior: disabled = abort and rollback on first error, enabled = continue importing remaining files
-
-### AI Chat â€” Skills
-- **Skills write to project folder** â€” Analysis results, documentation, and reports are now saved directly into the TIA Portal project folder instead of cluttering the chat with hundreds of lines of text
-- **One-click skill execution** â€” All skills now auto-send when clicked, matching the behavior of slash commands
-- **Automatic sub-agent dispatch** â€” Skills automatically route tasks to the best specialized AI agent (e.g., SCL Expert for code generation, TIA Analyzer for documentation)
-- **Skill version management** â€” Built-in skills update automatically when a new app version includes improved skill prompts
-
-### AI Chat â€” Sub-Agents
-- **Full tool access** â€” All sub-agents now have access to all available tools, preventing &quot;missing tool&quot; errors during complex tasks
-- **Mandatory agent routing** â€” The AI reliably delegates specialized tasks (SCL code, block analysis, AWL conversion) to the appropriate sub-agent instead of attempting them directly
-- **SCL Expert: UDT support** â€” The SCL Expert now creates UDTs for complex data structures instead of monolithic blocks with dozens of flat variables. UDTs are generated first, then blocks that reference them
-- **SCL Expert: Correct block structure** â€” Generated blocks now follow the exact TIA Portal import format. Block header comments are placed inside the BEGIN section where TIA Portal preserves them
-
-### AI Chat â€” Steering
-- **Send messages during generation** â€” You can now type and send messages while the AI is working. The Send button and Stop button appear side by side. Press Enter to steer the AI or add instructions without stopping the current generation
-
-### Code Editor
-- **Improved create templates** â€” New FB and FC templates now include all VAR sections (VAR_INPUT, VAR_OUTPUT, VAR_IN_OUT, VAR, VAR_TEMP, VAR CONSTANT)
+### AI Chat
+- **Inline Tool Approvals** â€” Tool-call approval buttons now appear directly inside the tool-call message in the chat, instead of a fullscreen popup. You can continue scrolling, reading messages, and working in other tabs while an approval is pending
+- **Permission Modes** â€” New permission mode toggle next to the send button cycles between three levels: Default (ask for every write), Accept Edits (auto-approve file edits, still ask for shell commands), and Auto (auto-approve all non-dangerous tools). The current mode is shown with a colored icon
+- **Inline Plan Approval** â€” Execution plans submitted by the AI now appear inline in the chat with an editable text box, instead of a blocking popup
+- **AI sees the editor automatically** â€” You no longer need to attach a block to the chat for the AI to read it. Ask &quot;Can you see the current block?&quot; and the AI reads the active editor tab directly. Attaching still works if you want the code embedded in the conversation history
+- **AI sees all open tabs** â€” When you have multiple blocks open, the AI can list them, read any specific one by name, and edit any of them without you having to switch tabs first. Ask &quot;What blocks do I have open?&quot; or &quot;Compare FB_Motor and FB_Pump and suggest a refactor&quot;
+- **Non-disruptive multi-block edits** â€” When the AI edits multiple blocks in one response, your current tab stays focused. Edited tabs show a dirty indicator (â—) in the tab header so you know they&apos;re waiting for review. Switch to each tab to see the inline diff and accept or reject
+- **Per-tab Inline Chat (Ctrl+I)** â€” Each editor tab has its own inline chat. Open the inline chat in one tab, switch to another, open a separate chat there, switch back â€” both conversations are preserved
 
 ### Bug Fixes
-- Fixed skills showing full prompt text in chat instead of executing silently
-- Fixed skill invocations in one session leaking into other concurrent sessions
-- Fixed &quot;Describe Project&quot; overwriting its own generated documentation file with a short summary
-- Fixed sub-agents not receiving per-agent instruction files (e.g., Siemens Programming Styleguide for SCL Expert)
-- Fixed Send button and Enter key not working during AI generation â€” steering messages can now be sent at any time
-- Fixed Import All failing with &quot;object already exists&quot; error when the default tag table had a different filename than its block name (e.g., Safety Unit default tag tables)
-- Fixed operations (Export, Import, Find Unused, etc.) not starting again after cancelling â€” previously required an app restart
-- Fixed editor minimap staying visible with stale content after pressing Clear
-- Fixed TIA Portal connection showing false warning messages in the log on first Connect
-- Fixed Inline Chat (Ctrl+I) not opening â€” the shortcut now works reliably regardless of editor focus state
-- Fixed syntax highlighting not working in the Code Editor tab
-- Fixed AI Chat tool categories (Visual Context, Agent Memory, Skills) missing from Settings â€” toggling them in Settings now works the same as in the chat dropdown
-- Fixed AI tools found via &quot;Search Tools&quot; failing with &quot;Function not found&quot; when the AI tried to use them in the same response</body>
+- Fixed auto-update installing a corrupted file when the download was interrupted â€” the app now verifies the download is complete before installing and allows retrying instead of entering a restart loop
+- Fixed session and sub-agent elapsed-time counters in the AI Chat sidebar continuing to count after the AI response was finished or when a sub-agent failed to start
+
+### Code Editor
+- **Tabbed Editor** â€” Opening blocks or files now creates individual tabs that can be closed, rearranged, and split side by side. Multiple blocks and files stay open simultaneously without losing context
+- **Unified Editor** â€” Files from File Explorer and SCL blocks from TIA Project now open in the same editor area. Switch between TIA Project and File Explorer using the Activity Bar â€” open tabs persist across sidebar switches
+- **Enhanced Status Bar** â€” The editor status bar now shows cursor position (Ln/Col), a language selector dropdown, and a Word Wrap toggle alongside the existing line and character counts
+
+### Project Explorer
+- **Integrated Toolbar** â€” Project actions (Rescan, Save, Compile, Safety Login/Logoff) and Protection Profiles are now located directly in the Project Explorer sidebar, keeping them closer to the project tree they operate on
+- **File Explorer as sidebar** â€” Clicking File Explorer in the Activity Bar now swaps only the sidebar (TIA Project Tree â†” Folder Tree) while keeping all open editor tabs visible. No more losing your editor context when browsing files</body>
     <mandatory>false</mandatory>
+    <size>250971904</size>
+    <sha256>CC458CD74568FC8F494B7EA1C3D649E6C82684D287A46F78D7F51472C119C881</sha256>
 </item>
