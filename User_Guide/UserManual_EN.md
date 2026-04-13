@@ -18,6 +18,7 @@
 9. [MCP Tab (AI Integration)](#9-mcp-tab-ai-integration)
 9a. [AI Chat](#9a-ai-chat)
 9b. [OPC UA Tab](#9b-opc-ua-tab)
+9c. [SCL Unit Testing (Enterprise)](#9c-scl-unit-testing-enterprise)
 9c. [AI Canvas](#9c-ai-canvas)
 10. [Project Library Management](#10-project-library-management)
 11. [Hardware Tab](#11-hardware-tab)
@@ -136,7 +137,7 @@ The application is divided into several areas:
 | File | Connect, Browse Folder, Archive Project, Disconnect, Exit |
 | Project | Rescan PLC, Save, Compile, Safety Login/Logoff |
 | View | Settings, Terminal, Import/Export Settings, Protection Profiles Folder |
-| Help | Documentation, Release Notes, About |
+| Help | Documentation, Release Notes, Report Issue, About |
 
 ### Toolbar
 
@@ -932,33 +933,6 @@ The AI agent can dispatch sub-tasks to independent sub-agents and manage them du
 - Running a long export operation in the background while answering questions
 - Delegating documentation generation to a sub-agent while reviewing code
 
-### Terminal Mode
-
-Terminal mode embeds a PowerShell terminal directly in the AI Chat panel. Use it to run CLI tools (e.g., Claude CLI, git, or any other command-line tool) with full access to MCP tools connected to TIA Portal.
-
-**Switching modes:**
-- Click the **Chat** / **Terminal** toggle in the header bar
-- The terminal opens PowerShell in the TIA Portal project directory (if a project is open)
-
-**MCP integration:**
-When terminal mode is activated, TIA Openness Manager automatically:
-1. Starts the MCP server (if not already running)
-2. Writes a `.mcp.json` file to the project directory so CLI tools can discover available MCP tools
-3. Optionally writes a `CLAUDE.md` file with project context (PLCs, architecture, AI analysis) — see setting below
-
-**CLAUDE.md generation:**
-By default, a `CLAUDE.md` file is written to the TIA Portal project directory whenever you switch to terminal mode. This file contains project context that Claude CLI reads automatically. If you are not using Claude CLI, you can disable this behavior:
-
-1. Open **View → AI Chat Settings**
-2. Navigate to the **Context** section
-3. Uncheck **Write CLAUDE.md to project directory on terminal start**
-
-**Paste to terminal:**
-The AI Chat can paste commands or code into the terminal. When the AI suggests a command, click the paste icon to send it directly to the terminal input.
-
-**Keyboard shortcut:**
-- **Ctrl+Shift+V** — Paste clipboard content into the terminal
-
 ### Hooks
 
 Hooks are event-driven interceptors that run before or after AI tool calls. They allow you to add custom validation, formatting, logging, or control flow to the AI's tool execution.
@@ -1275,6 +1249,124 @@ Canvas dashboards can be saved to JSONL files and loaded later. **OPC UA binding
 - `canvas` (what: `bind_opcua`) uses polling (not OPC UA subscriptions) — this is more stable and avoids overloading the OPC UA server
 - All values from OPC UA arrive as **strings** in the JavaScript callback (use `parseFloat()` for numbers, compare with `"True"`/`"False"` for booleans)
 - The Canvas `Reset` button stops all OPC UA bindings (both read and write)
+
+---
+
+## 9c. SCL Unit Testing (Enterprise)
+
+Integrated unit test framework for SCL blocks. Write, run and evaluate tests against a live PLCSIM Advanced instance without leaving the app.
+
+**Requirements:**
+- Enterprise license
+- PLCSIM Advanced V3.0+ installed (separate Siemens license)
+- A TIA project with at least one PLC open
+
+### Opening the Unit Testing Workspace
+
+1. Click the **SCL Unit Testing** entry in the left sidebar (or press `Ctrl+5`)
+2. The workspace has four dock panels:
+   - **Left (Analysis tools + Test Explorer):** Interface, Boundary Values, Dependencies, Test Explorer (as tabs)
+   - **Center (Document Dock):** Test suite editors (JSON, Visual, SCL modes)
+   - **Right (Results):** Test Results panel — live progress and per-assertion details
+   - **Toolbar:** PLC and block selector, Analyze, New Suite, Open Suite, Run/Stop
+
+### Test Explorer
+
+The Test Explorer auto-scans the `{WorkingDirectory}/.tia-tests/` folder and shows every `.json` file as a suite node with its test cases as children.
+
+**Status icons (loaded from SQLite on startup):**
+- ✓ **Pass** — green checkmark, test passed in the last run
+- ✗ **Fail** — red cross, test failed in the last run
+- ⚠ **Error** — orange warning, test errored (exception, timeout, S7 error)
+- ⊘ **Skipped** — grey slashed circle, test was filtered out of the last run (e.g. via "Run Single")
+- ○ **NotRun** — grey empty circle, no persisted result yet
+
+**Interactions:**
+
+| Action | Result |
+|--------|--------|
+| Double-click a suite | Opens the suite as a document tab in the center dock |
+| Right-click a suite → Run Suite | Runs this suite only |
+| Right-click a suite → Open | Same as double-click |
+| Right-click a test case → Run Test | Runs this single case via TestCaseFilter (other cases marked Skipped) |
+| Select a suite + **Run Selected** button | Runs this suite |
+| Select a case + **Run Selected** button | Runs only that case |
+| **Run All** button | Runs all visible suites sequentially |
+| Type in search box | Filters suites by name (suite + test case names, case-insensitive) |
+| Toggle `✗ Failed` button | Shows only suites with Fail/Error cases (button turns red when active) |
+
+### Live Progress During a Run
+
+While a test is running, the workspace shows:
+
+- **Status bar:** Current phase (e.g. "Creating PLCSIM instance", "Compiling PLC", "Running: TestCase_1")
+- **Test Explorer:** Status icons update live per test case (pass/fail appear as each case finishes)
+- **Results panel:** Test case list fills up incrementally as results come in
+- **Stop button:** Cancels the current run at the next safe point (S7 connection and PLCSIM instance are always cleaned up)
+
+### Results Panel
+
+After a run completes, the Results panel shows:
+
+- **Summary:** Total passed/failed/error counts + total duration
+- **Test case list:** Every case with status icon, name and duration
+- **Detail grid (on case selection):** Every assertion with Variable, Operator, Expected, Actual, ✓/✗
+
+Test results are persisted to `%LocalAppData%\TiaOpennessManager\db\test_results.db` — they survive app restarts and reappear in the Test Explorer automatically.
+
+### Block Analysis (before running tests)
+
+1. Select a PLC from the dropdown
+2. Select a block from the dropdown
+3. Click **Analyze**
+4. The three analysis tools update simultaneously (one TIA export, three analyses):
+   - **Interface:** All block parameters (Input, Output, InOut, Static, Temp) with types and default values
+   - **Boundary Values:** Auto-generated min/max/zero/one values per parameter type
+   - **Dependencies:** Called blocks, referenced DBs, referenced UDTs
+
+### Creating a New Test Suite
+
+1. Analyze a block first (see above) so the interface is known
+2. Click **New Suite** — a new suite JSON is created next to the block name
+3. The document opens with the default JSON skeleton (empty `testCases` array)
+4. Switch to the **Visual** editor to build test cases with drag-and-drop, or edit JSON directly
+5. Click **Save** (`Ctrl+S`) — the suite is written to `.tia-tests/{SuiteName}.json`
+
+### Opening an Existing Suite
+
+- **From Test Explorer:** Double-click the suite in the tree
+- **From menu:** **Open Suite** button in the toolbar → file picker
+
+### Running Tests
+
+1. Make sure PLCSIM Advanced V3.0+ is installed
+2. Open the suite (via Test Explorer or Open Suite button)
+3. Click **▶ Run** in the toolbar, or use a context menu action from the Test Explorer
+4. Watch the live progress in the status bar and Results panel
+5. When the run is complete, status icons in the Test Explorer update and results are persisted to SQLite
+
+The runner automatically:
+- Creates a PLCSIM Advanced instance (name configurable in the suite JSON)
+- Powers it on and compiles the current PLC project
+- Connects an S7 client to the instance
+- Writes the test inputs, waits the configured cycle count, reads the outputs, evaluates the assertions
+- Cleans up the S7 connection and unregisters the instance
+
+### Managing Suites and Test Cases
+
+- **Right-click a test suite** in the Test Explorer to rename or delete it. Deleting also removes the test run history for that suite.
+- **Right-click a test case** to edit its name or description, duplicate it, delete it, or move it up or down in the list.
+- A new **PLCSIM Settings** button in the toolbar lets you configure the PLCSIM instance name, IP address, cycle wait time, and auto-connect behaviour for the active suite. Tick *Save as default* to apply the same values to newly created suites.
+- Before running, the manager checks that every variable name in your suite exactly matches the block interface, including case. If any mismatches are found, a warning dialog shows the suggested corrections — you can still continue the run after acknowledging it.
+- When a test case fails, the affected variable is **underlined in red** directly in the generated SCL code, with the error message shown on hover. **Double-click a failed test case** in the Results panel to jump straight to that variable in the suite editor.
+- If a suite file is modified externally — or by one of the Rename / Delete / Edit commands above — the open editor automatically reloads, unless you have unsaved changes, in which case your edits are preserved.
+
+### Troubleshooting
+
+- **Status icons don't update after a run:** Make sure the suite file path is correct (absolute path under `.tia-tests/`). New unsaved suites get a unique path per click.
+- **"Run" button greyed out:** A TIA project must be open, and the active suite document must be valid JSON.
+- **Test Explorer is empty:** The working directory has no `.tia-tests/` folder yet. Click **New Suite** to create the first one — the folder is created automatically.
+- **PLCSIM errors:** Check that PLCSIM Advanced V3.0+ is installed and licensed. The exact version is auto-detected at runtime.
 
 ---
 
@@ -1756,6 +1848,11 @@ For further questions or problems, contact support:
 
 - **Email:** [tiaopenessmanager@outlook.com]
 - **Documentation:** See `Information/` folder
+- **Report a Bug or Feature Request:** Help → Report Issue inside the app
+
+### Help → Report Issue
+
+Opens a dialog to file a bug report or feature request directly on GitHub. Fill in a title and description; the app automatically attaches the app version, OS, .NET runtime, active TIA Portal version, language, and license tier. For bug reports you can also include the last 50 lines of recent logs (default: on). Clicking "Open in Browser" launches GitHub with the issue pre-filled — you only need to click "Submit new issue".
 
 ---
 

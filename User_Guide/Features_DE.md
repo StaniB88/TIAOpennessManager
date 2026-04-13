@@ -148,8 +148,6 @@ Der integrierte Code-Editor bietet professionelle Bearbeitungsfunktionen für SC
 - **Zwischenablage einfügen** - Drücken Sie Strg+V, um einen Screenshot aus der Zwischenablage direkt in den Chat einzufügen; auch über das Anhang-Menü verfügbar
 - **Chat-Sitzungen** - Konversationen werden automatisch gespeichert; erstellen Sie neue Chats, wechseln Sie zwischen Sitzungen und setzen Sie frühere Gespräche über das Verlauf-Panel fort
 - **Sitzungsarchiv** - Archivieren Sie alte Sitzungen, um die Sitzungsliste übersichtlich zu halten; archivierte Sitzungen wiederherstellen oder dauerhaft löschen
-- **Terminal-Modus** - Eingebettetes PowerShell-Terminal mit MCP-Integration; konfiguriert automatisch `.mcp.json` und schreibt optional eine `CLAUDE.md` mit Projektkontext für Claude CLI; Terminal öffnet im TIA Portal-Projektverzeichnis
-- **CLAUDE.md-Einstellung** - Steuert, ob beim Terminal-Start eine `CLAUDE.md`-Datei ins Projektverzeichnis geschrieben wird (AI Chat Settings → Context); deaktivieren, wenn Claude CLI nicht verwendet wird
 - **Agenten-Gedächtnis** - Jeder Agent hat einen eigenen, sitzungsübergreifenden Gedächtnisspeicher mit Scope-Isolierung (Lokal, Projekt oder Benutzer); der Agent speichert automatisch wichtige Fakten und fügt relevante Erinnerungen beim Sitzungsstart in den Kontext ein; unterstützt die Tools `memory_store`, `memory_search`, `memory_list`, `memory_update` und `memory_delete`; konfigurierbarer Embedding-Anbieter (OpenAI, Google, Ollama, LM Studio) für semantische Suche mit Schlüsselwort-Fallback; Gedächtnis-Einstellungen zum Anzeigen, Löschen, Exportieren (JSON), Importieren und Aufräumen alter Erinnerungen; Memory-Snapshots ermöglichen das Vorbefüllen von Agenten mit teamweit geteiltem Wissen über JSON-Dateien
 - **Subagenten-Steuerung** - Agent kann Teilaufgaben an unabhängige Subagenten delegieren (`run_subagent`); bis zu 5 gleichzeitige Subagenten; laufende Subagenten verwalten mit `manage_subagents list/kill/steer`; nicht-blockierender Modus ermöglicht dem Hauptagenten, weiterzuarbeiten, während Teilaufgaben im Hintergrund laufen
 - **Hooks** - Konfigurierbare Event-Hooks, die vor/nach KI-Tool-Aufrufen ausgeführt werden; eigene Hooks in den KI-Chat-Einstellungen als Shell-Befehle oder HTTP-Callbacks hinzufügen; eingebaute Hooks schützen Safety-Blöcke und protokollieren TIA-Operationen; Hooks können Tool-Input modifizieren, Ausführung blockieren oder Kontext zu Ergebnissen hinzufügen; konfigurierbarer Timeout pro Hook (Standard 60s)
@@ -207,6 +205,29 @@ Der integrierte Code-Editor bietet professionelle Bearbeitungsfunktionen für SC
 - **CSV-Export** - Beobachtungstabellen-Daten mit allen Spalten (Name, Knoten-ID, Datentyp, Wert, Status, Zeitstempel) als CSV exportieren
 - **JSON-Export** - Beobachtungstabellen-Daten als strukturiertes JSON mit vollständigen Metadaten exportieren
 - **MCP-Integration** - Vereinheitlichtes `opcua`-Tool mit 9 Unterbefehlen für KI-Assistenten: connect, disconnect, browse, read, read_complex, write, write_complex, get_types, subscribe
+
+### SCL Unit Testing (Enterprise)
+
+Integriertes Unit-Test-Framework für SCL-Bausteine — schreiben, ausführen und auswerten ohne TIA Portal Test Suite. Erfordert PLCSIM Advanced V3.0+.
+
+- **Test Explorer** — Baum aller Test-Suites im Projektordner `.tia-tests/`, automatisches Erkennen neuer/gelöschter/geänderter Dateien per FileSystemWatcher (500 ms Debounce)
+- **Live-Status-Icons** — Jeder Test-Case zeigt seinen aktuellen Status während und nach der Ausführung: ✓ Bestanden, ✗ Fehlgeschlagen, ⊘ Übersprungen, ⚠ Fehler
+- **Persistente Ergebnisse** — Letzte Test-Ergebnisse werden in SQLite gespeichert und erscheinen beim nächsten App-Start automatisch im Explorer
+- **Kontext-Menü pro Suite** — Run Suite (Suite ausführen), Open (als Dokument-Tab öffnen)
+- **Kontext-Menü pro Test-Case** — Run Test (einzelnen Test ausführen, via TestCaseFilter — restliche Cases werden als Skipped markiert)
+- **Doppelklick auf Suite** — Öffnet die Suite als Dokument-Tab im Editor
+- **Run All / Run Selected** — Batch-Ausführung mehrerer Suites sequentiell (PLCSIM-Einzelinstanz-Limitation)
+- **Search-Filter** — Live-Textsuche in Suite- und Test-Case-Namen (case-insensitive Substring)
+- **Nur-Fehler-Toggle** — Button `✗ Fehler` blendet alle bestandenen Suites aus und zeigt nur solche mit Fail/Error-Cases — nützlich bei großen Test-Historien
+- **Live-Progress** — Während ein Test läuft werden Phase, aktueller Test-Case und Completed/Total-Zähler in Echtzeit angezeigt
+- **Ergebnis-Detail-Grid** — Pro Test-Case werden alle Assertions mit Variable, Operator, Erwartet, Tatsächlich und Pass/Fail-Markierung dargestellt
+- **Stop mid-run** — Laufende Test-Ausführung kann jederzeit abgebrochen werden
+- **Automatische Block-Analyse** — Interface, Boundary-Werte und Dependencies werden mit einem Klick aus dem TIA-Projekt extrahiert
+- **Dock-Layout** — Test Explorer, Analyse-Tools, Test-Editoren und Ergebnis-Panel sind frei verschiebbare Dock-Tools
+
+### Problem-Meldung
+
+Melde Bugs und schlage neue Funktionen vor, ohne die App zu verlassen. Der Help-Menü-Eintrag „Problem melden" öffnet einen Dialog, in dem du das Problem beschreibst; die App sammelt System-Informationen (App-Version, Betriebssystem, .NET-Runtime, aktive TIA-Portal-Version, Sprache, Lizenz-Tier) und aktuelle Logs und öffnet dann GitHub im Browser mit dem vorausgefüllten Issue. Kein GitHub-Login innerhalb der App nötig — die eigentliche Einreichung machst du selbst auf GitHub.
 
 ---
 

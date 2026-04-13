@@ -18,6 +18,7 @@
 9. [MCP Tab (KI-Integration)](#9-mcp-tab-ki-integration)
 9a. [KI-Chat](#9a-ki-chat)
 9b. [OPC UA Tab](#9b-opc-ua-tab)
+9c. [SCL Unit Testing (Enterprise)](#9c-scl-unit-testing-enterprise)
 9c. [AI Canvas](#9c-ai-canvas)
 10. [Projektbibliothek-Verwaltung](#10-projektbibliothek-verwaltung)
 11. [Hardware Tab](#11-hardware-tab)
@@ -136,7 +137,7 @@ Die Anwendung ist in mehrere Bereiche unterteilt:
 | File | Connect, Browse Folder, Archive Project, Disconnect, Exit |
 | Project | Rescan PLC, Save, Compile, Safety Login/Logoff |
 | View | Settings, Terminal, Import/Export Settings, Protection Profiles Folder |
-| Help | Documentation, Release Notes, About |
+| Help | Documentation, Release Notes, Problem melden, About |
 
 ### Symbolleiste
 
@@ -932,33 +933,6 @@ Der KI-Agent kann Teilaufgaben an unabhängige Subagenten delegieren und diese w
 - Einen langen Exportvorgang im Hintergrund ausführen, während Fragen beantwortet werden
 - Dokumentationserstellung an einen Subagenten delegieren, während Code überprüft wird
 
-### Terminal-Modus
-
-Der Terminal-Modus bettet ein PowerShell-Terminal direkt in das KI-Chat-Panel ein. Verwenden Sie es, um CLI-Tools (z.B. Claude CLI, git oder andere Kommandozeilen-Tools) mit vollem Zugriff auf MCP-Tools auszuführen, die mit TIA Portal verbunden sind.
-
-**Modus wechseln:**
-- Klicken Sie auf den **Chat** / **Terminal** Umschalter in der Kopfzeile
-- Das Terminal öffnet PowerShell im TIA Portal-Projektverzeichnis (wenn ein Projekt geöffnet ist)
-
-**MCP-Integration:**
-Beim Aktivieren des Terminal-Modus führt TIA Openness Manager automatisch folgende Schritte durch:
-1. Startet den MCP-Server (falls nicht bereits aktiv)
-2. Schreibt eine `.mcp.json`-Datei ins Projektverzeichnis, damit CLI-Tools die verfügbaren MCP-Tools erkennen können
-3. Schreibt optional eine `CLAUDE.md`-Datei mit Projektkontext (SPSen, Architektur, KI-Analyse) — siehe Einstellung unten
-
-**CLAUDE.md-Generierung:**
-Standardmässig wird beim Wechsel in den Terminal-Modus eine `CLAUDE.md`-Datei ins TIA Portal-Projektverzeichnis geschrieben. Diese Datei enthält Projektkontext, den Claude CLI automatisch liest. Wenn Sie Claude CLI nicht verwenden, können Sie dieses Verhalten deaktivieren:
-
-1. Öffnen Sie **View → AI Chat Settings**
-2. Navigieren Sie zum Abschnitt **Context**
-3. Deaktivieren Sie **CLAUDE.md beim Terminal-Start ins Projektverzeichnis schreiben**
-
-**In Terminal einfügen:**
-Der KI-Chat kann Befehle oder Code ins Terminal einfügen. Wenn die KI einen Befehl vorschlägt, klicken Sie auf das Einfüge-Symbol, um ihn direkt an die Terminal-Eingabe zu senden.
-
-**Tastenkürzel:**
-- **Strg+Umschalt+V** — Zwischenablage-Inhalt ins Terminal einfügen
-
 ### Hooks
 
 Hooks sind ereignisgesteuerte Abfangmechanismen, die vor oder nach KI-Tool-Aufrufen ausgefuehrt werden. Sie ermoeglichen benutzerdefinierte Validierung, Formatierung, Protokollierung oder Steuerung der Tool-Ausfuehrung.
@@ -1275,6 +1249,124 @@ Canvas-Dashboards können als JSONL-Dateien gespeichert und später geladen werd
 - `canvas` (what: `bind_opcua`) verwendet Polling (keine OPC-UA-Subscriptions) — das ist stabiler und vermeidet eine Überlastung des OPC-UA-Servers
 - Alle Werte von OPC UA kommen als **Strings** im JavaScript-Callback an (verwenden Sie `parseFloat()` für Zahlen, vergleichen Sie mit `"True"`/`"False"` für Booleans)
 - Die Canvas-Schaltfläche **Reset** stoppt alle OPC-UA-Bindings (Lesen und Schreiben)
+
+---
+
+## 9c. SCL Unit Testing (Enterprise)
+
+Integriertes Unit-Test-Framework für SCL-Bausteine. Schreiben, ausführen und auswerten von Tests gegen eine laufende PLCSIM Advanced Instanz direkt in der App.
+
+**Voraussetzungen:**
+- Enterprise-Lizenz
+- PLCSIM Advanced V3.0+ installiert (separate Siemens-Lizenz)
+- Ein TIA-Projekt mit mindestens einer geöffneten SPS
+
+### Unit-Testing-Workspace öffnen
+
+1. Klicken Sie auf **SCL Unit Testing** in der linken Seitenleiste (oder drücken Sie `Strg+5`)
+2. Der Workspace besteht aus vier Dock-Panels:
+   - **Links (Analyse-Tools + Test Explorer):** Interface, Boundary Values, Dependencies, Test Explorer (als Tabs)
+   - **Mitte (Document Dock):** Test-Suite-Editoren (JSON, Visual, SCL Modi)
+   - **Rechts (Ergebnisse):** Test-Results-Panel — Live-Progress und Assertion-Details
+   - **Toolbar:** SPS- und Block-Auswahl, Analyze, New Suite, Open Suite, Run/Stop
+
+### Test Explorer
+
+Der Test Explorer scannt automatisch den Ordner `{WorkingDirectory}/.tia-tests/` und zeigt jede `.json`-Datei als Suite-Knoten mit ihren Test-Cases als Kinder.
+
+**Status-Icons (beim App-Start aus SQLite geladen):**
+- ✓ **Bestanden** — grünes Häkchen, Test erfolgreich im letzten Lauf
+- ✗ **Fehlgeschlagen** — rotes Kreuz, Test fehlgeschlagen
+- ⚠ **Fehler** — orange Warnung, Test hatte einen Fehler (Exception, Timeout, S7-Fehler)
+- ⊘ **Übersprungen** — grauer durchgestrichener Kreis, Test wurde aus dem letzten Lauf herausgefiltert (z.B. via „Run Single")
+- ○ **Nicht ausgeführt** — grauer leerer Kreis, kein gespeichertes Ergebnis
+
+**Interaktionen:**
+
+| Aktion | Ergebnis |
+|--------|----------|
+| Doppelklick auf Suite | Öffnet die Suite als Dokument-Tab im mittleren Dock |
+| Rechtsklick auf Suite → Run Suite | Führt nur diese Suite aus |
+| Rechtsklick auf Suite → Open | Gleich wie Doppelklick |
+| Rechtsklick auf Test Case → Run Test | Führt nur diesen einzelnen Case aus (andere werden als Skipped markiert) |
+| Suite auswählen + **Run Selected** Button | Führt diese Suite aus |
+| Test Case auswählen + **Run Selected** Button | Führt nur diesen Case aus |
+| **Run All** Button | Führt alle sichtbaren Suites sequentiell aus |
+| In das Suchfeld tippen | Filtert Suites nach Namen (Suite- + Test-Case-Namen, Groß-/Kleinschreibung wird ignoriert) |
+| `✗ Fehler` Button einschalten | Zeigt nur Suites mit Fail/Error-Cases (Button wird rot wenn aktiv) |
+
+### Live-Progress während eines Laufs
+
+Während ein Test läuft zeigt der Workspace:
+
+- **Statusbar:** Aktuelle Phase (z.B. „Creating PLCSIM instance", „Compiling PLC", „Running: TestCase_1")
+- **Test Explorer:** Status-Icons werden live pro Test-Case aktualisiert (Pass/Fail erscheinen während der Lauf läuft)
+- **Ergebnis-Panel:** Test-Case-Liste füllt sich inkrementell mit jedem abgeschlossenen Test
+- **Stop-Button:** Bricht den laufenden Run am nächsten sicheren Punkt ab (S7-Verbindung und PLCSIM-Instanz werden immer aufgeräumt)
+
+### Ergebnis-Panel
+
+Nach einem Lauf zeigt das Ergebnis-Panel:
+
+- **Zusammenfassung:** Gesamt Bestanden/Fehlgeschlagen/Fehler-Zähler + Gesamtdauer
+- **Test-Case-Liste:** Jeder Case mit Status-Icon, Name und Dauer
+- **Detail-Grid (bei Case-Auswahl):** Alle Assertions mit Variable, Operator, Erwartet, Tatsächlich, ✓/✗
+
+Test-Ergebnisse werden in `%LocalAppData%\TiaOpennessManager\db\test_results.db` persistiert — sie überleben App-Neustarts und erscheinen automatisch wieder im Test Explorer.
+
+### Baustein-Analyse (vor dem Testen)
+
+1. SPS aus dem Dropdown wählen
+2. Baustein aus dem Dropdown wählen
+3. **Analyze** klicken
+4. Die drei Analyse-Tools werden gleichzeitig aktualisiert (ein TIA-Export, drei Analysen):
+   - **Interface:** Alle Baustein-Parameter (Input, Output, InOut, Static, Temp) mit Typen und Defaultwerten
+   - **Boundary Values:** Automatisch generierte Min/Max/Null/Eins-Werte pro Parametertyp
+   - **Dependencies:** Aufgerufene Bausteine, referenzierte DBs, referenzierte UDTs
+
+### Neue Test-Suite erstellen
+
+1. Zuerst einen Baustein analysieren (siehe oben), damit das Interface bekannt ist
+2. **New Suite** klicken — eine neue Suite-JSON wird mit dem Baustein-Namen erzeugt
+3. Das Dokument öffnet sich mit dem Default-JSON-Skeleton (leeres `testCases`-Array)
+4. In den **Visual**-Editor wechseln um Test-Cases per Drag-and-Drop zu bauen, oder direkt JSON bearbeiten
+5. **Save** klicken (`Strg+S`) — die Suite wird nach `.tia-tests/{SuiteName}.json` geschrieben
+
+### Vorhandene Suite öffnen
+
+- **Aus dem Test Explorer:** Doppelklick auf die Suite im Baum
+- **Aus dem Menü:** **Open Suite** Button in der Toolbar → Datei-Auswahl
+
+### Tests ausführen
+
+1. Sicherstellen dass PLCSIM Advanced V3.0+ installiert ist
+2. Suite öffnen (via Test Explorer oder Open Suite Button)
+3. **▶ Run** in der Toolbar klicken, oder eine Kontextmenü-Aktion im Test Explorer verwenden
+4. Den Live-Progress in der Statusbar und im Ergebnis-Panel verfolgen
+5. Nach dem Lauf aktualisieren sich die Status-Icons im Test Explorer und Ergebnisse werden in SQLite gespeichert
+
+Der Runner erledigt automatisch:
+- Erstellt eine PLCSIM Advanced Instanz (Name konfigurierbar in der Suite-JSON)
+- Schaltet sie ein und kompiliert das aktuelle SPS-Projekt
+- Verbindet einen S7-Client mit der Instanz
+- Schreibt die Test-Inputs, wartet die konfigurierten Zyklen, liest die Outputs, evaluiert die Assertions
+- Räumt die S7-Verbindung auf und deregistriert die Instanz
+
+### Suites und Testfälle verwalten
+
+- **Rechtsklick auf eine Test-Suite** im Test Explorer, um sie umzubenennen oder zu löschen. Beim Löschen wird auch die Testlauf-Historie dieser Suite entfernt.
+- **Rechtsklick auf einen Testfall**, um Name oder Beschreibung zu ändern, ihn zu duplizieren, zu löschen oder in der Liste nach oben bzw. unten zu verschieben.
+- Ein neuer **PLCSIM Settings**-Button in der Toolbar erlaubt die Konfiguration von PLCSIM-Instanzname, IP-Adresse, Zyklus-Wartezeit und Auto-Connect für die aktive Suite. Setzen Sie den Haken bei *Als Default speichern*, damit neu erstellte Suites dieselben Werte übernehmen.
+- Vor jedem Lauf prüft der Manager, dass jeder Variablenname in Ihrer Suite exakt dem Baustein-Interface entspricht — inklusive Gross-/Kleinschreibung. Werden Abweichungen gefunden, zeigt ein Warndialog die Korrekturvorschläge an; Sie können den Lauf nach Bestätigung trotzdem starten.
+- Schlägt ein Testfall fehl, wird die betroffene Variable direkt im generierten SCL-Code **rot unterstrichen**, die Fehlermeldung erscheint als Tooltip. **Doppelklicken Sie einen fehlgeschlagenen Testfall** im Ergebnis-Panel, um direkt zu der Variable im Suite-Editor zu springen.
+- Wird eine Suite-Datei extern geändert — oder durch eine der Rename- / Delete- / Edit-Aktionen oben — lädt der offene Editor sie automatisch neu. Sind jedoch noch ungespeicherte Änderungen vorhanden, bleiben diese erhalten.
+
+### Fehlerbehebung
+
+- **Status-Icons aktualisieren sich nicht nach einem Lauf:** Prüfen ob der Suite-Dateipfad korrekt ist (absoluter Pfad unter `.tia-tests/`). Neue ungespeicherte Suites bekommen pro Klick einen eindeutigen Pfad.
+- **„Run" Button ist ausgegraut:** Ein TIA-Projekt muss geöffnet sein, und das aktive Suite-Dokument muss valides JSON sein.
+- **Test Explorer ist leer:** Das Arbeitsverzeichnis hat noch keinen `.tia-tests/` Ordner. **New Suite** klicken um die erste Suite zu erstellen — der Ordner wird automatisch angelegt.
+- **PLCSIM-Fehler:** Prüfen ob PLCSIM Advanced V3.0+ installiert und lizenziert ist. Die genaue Version wird zur Laufzeit automatisch erkannt.
 
 ---
 
@@ -1756,6 +1848,11 @@ Bei weiteren Fragen oder Problemen kontaktieren Sie den Support:
 
 - **E-Mail:** [tiaopenessmanager@outlook.com]
 - **Dokumentation:** Siehe `Information/` Ordner
+- **Bug oder Funktionswunsch melden:** Help → Problem melden in der App
+
+### Help → Problem melden
+
+Öffnet einen Dialog zum Melden eines Fehlers oder Funktionswunschs direkt auf GitHub. Trage einen Titel und eine Beschreibung ein; die App fügt automatisch App-Version, Betriebssystem, .NET-Runtime, aktive TIA-Portal-Version, Sprache und Lizenz-Tier an. Bei Fehlerberichten kannst du außerdem die letzten 50 Log-Zeilen anhängen (Standard: an). Ein Klick auf „Im Browser öffnen" startet GitHub mit dem vorausgefüllten Issue — du musst nur noch auf „Submit new issue" klicken.
 
 ---
 

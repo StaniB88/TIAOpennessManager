@@ -1,33 +1,62 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>3.1.0</version>
-    <url>https://github.com/StaniB88/TIAOpenessManager/releases/download/v3.1.0/TiaOpennessManager_Setup_3.1.0.exe</url>
+    <version>3.2.0</version>
+    <url>https://github.com/StaniB88/TIAOpenessManager/releases/download/v3.2.0/TiaOpennessManager_Setup_3.2.0.exe</url>
     <changelog>https://github.com/StaniB88/TIAOpenessManager/blob/main/CHANGELOG.md</changelog>
-    <release_date>2026-04-10</release_date>
+    <release_date>2026-04-14</release_date>
     <body>## What&apos;s Changed
 
-### AI Chat
-- **Inline Tool Approvals** â€” Tool-call approval buttons now appear directly inside the tool-call message in the chat, instead of a fullscreen popup. You can continue scrolling, reading messages, and working in other tabs while an approval is pending
-- **Permission Modes** â€” New permission mode toggle next to the send button cycles between three levels: Default (ask for every write), Accept Edits (auto-approve file edits, still ask for shell commands), and Auto (auto-approve all non-dangerous tools). The current mode is shown with a colored icon
-- **Inline Plan Approval** â€” Execution plans submitted by the AI now appear inline in the chat with an editable text box, instead of a blocking popup
-- **AI sees the editor automatically** â€” You no longer need to attach a block to the chat for the AI to read it. Ask &quot;Can you see the current block?&quot; and the AI reads the active editor tab directly. Attaching still works if you want the code embedded in the conversation history
-- **AI sees all open tabs** â€” When you have multiple blocks open, the AI can list them, read any specific one by name, and edit any of them without you having to switch tabs first. Ask &quot;What blocks do I have open?&quot; or &quot;Compare FB_Motor and FB_Pump and suggest a refactor&quot;
-- **Non-disruptive multi-block edits** â€” When the AI edits multiple blocks in one response, your current tab stays focused. Edited tabs show a dirty indicator (â—) in the tab header so you know they&apos;re waiting for review. Switch to each tab to see the inline diff and accept or reject
-- **Per-tab Inline Chat (Ctrl+I)** â€” Each editor tab has its own inline chat. Open the inline chat in one tab, switch to another, open a separate chat there, switch back â€” both conversations are preserved
+### SCL Unit Testing (BETA)
+- **New feature** â€” Integrated unit test framework for SCL blocks. Write, run and evaluate tests against a live PLCSIM Advanced instance without leaving the app. Requires PLCSIM Advanced V3.0+ (separate Siemens license)
+- **Test Explorer** â€” Tree of all test suites in the project&apos;s `.tia-tests/` folder with live status icons (Pass / Fail / Error / Skipped). The explorer auto-detects new, deleted and modified suite files
+- **Run tests** â€” Run Suite, Run Test (single case), Run All, Run Selected from the Test Explorer context menu or the Run button. Live progress streams through phase updates and per-test-case status icons while the run is active
+- **Persistent results** â€” Test results are saved locally and reappear automatically when you reopen the app
+- **Search and filter** â€” Text filter across suite and test case names, plus a &quot;Failed only&quot; toggle that hides all passing suites
+- **Test suite editor** â€” Create test suites with the JSON, Visual or SCL editor modes. Block interface, boundary values and dependencies are extracted from the TIA project with a single click
+- **Results panel** â€” Per-test-case detail grid with Variable, Operator, Expected, Actual and Pass/Fail markers for every assertion
+- **Rename and delete suites** â€” Right-click a test suite in the Test Explorer to rename or delete it. Deleting also clears the run history for that suite
+- **Manage test cases** â€” Right-click a test case to edit its name and description, duplicate it, delete it, or move it up and down in the list
+- **PLCSIM Settings dialog** â€” New toolbar button opens a dialog for per-suite PLCSIM configuration (instance name, IP address, cycle wait time, auto-connect), with an option to save the values as defaults for new suites
+- **Failed variable highlighting** â€” When a test case fails, the affected variable is underlined in red directly in the generated SCL code, with the error message shown on hover
+- **Click-to-navigate from results** â€” Double-clicking a test case in the Results panel jumps to the corresponding position in the suite editor
+- **Variable name check before running** â€” Before a run starts, the manager warns about variable names in the suite that don&apos;t exactly match the block interface, including case differences. You can still run the suite after acknowledging the warning
+- **Auto-reload of open suites** â€” Suite files are now automatically reloaded in the editor when they&apos;re modified externally, unless there are unsaved local changes
 
-### Bug Fixes
-- Fixed auto-update installing a corrupted file when the download was interrupted â€” the app now verifies the download is complete before installing and allows retrying instead of entering a restart loop
-- Fixed session and sub-agent elapsed-time counters in the AI Chat sidebar continuing to count after the AI response was finished or when a sub-agent failed to start
+### AI Chat
+- **Removed Terminal Mode from AI Chat**
+- **More accurate AI responses** â€” Built-in agents and skills have been refined to give more reliable results when working with TIA Portal projects
+- **Automatic context window sizes** â€” AI Chat now picks the right context window for every supported model, including brand-new models released after your app version. No more guessing or waiting for an app update when a new model launches
+- **Context window override** â€” Advanced agent settings have a new &quot;Context Window Override&quot; field for setting a custom context window per agent, plus an &quot;Enable 1M context (Anthropic Beta)&quot; toggle that opts Anthropic models into the 1M-token context beta
+- **Live sub-agent info in the chat bubble** â€” Dispatched sub-agents now show their name, current activity, tool count, token usage, elapsed time and a stop button directly in the chat bubble, right where the agent was started. No more jumping between chat and a separate panel to check progress
+- **Jump-back button when sub-agents run off-screen** â€” If you scroll up while a sub-agent is still working, a small pill at the bottom of the chat shows how many agents are running and jumps you back to the first running one when clicked
+- **Mouse wheel unsticks auto-scroll reliably** â€” Scrolling up with the mouse wheel during a streaming response now always stops the chat from auto-scrolling back to the bottom
+
+### Help &amp; Support
+- **Report Issue from inside the app** â€” New Help â†’ Report Issue entry. Pick Bug Report or Feature Request, fill in a title and description, and the app opens GitHub in your browser with the issue pre-filled. System information (app version, OS, TIA Portal version, language) is attached automatically so you don&apos;t have to look it up. Bug reports can optionally include recent log lines to help with diagnosis
 
 ### Code Editor
-- **Tabbed Editor** â€” Opening blocks or files now creates individual tabs that can be closed, rearranged, and split side by side. Multiple blocks and files stay open simultaneously without losing context
-- **Unified Editor** â€” Files from File Explorer and SCL blocks from TIA Project now open in the same editor area. Switch between TIA Project and File Explorer using the Activity Bar â€” open tabs persist across sidebar switches
-- **Enhanced Status Bar** â€” The editor status bar now shows cursor position (Ln/Col), a language selector dropdown, and a Word Wrap toggle alongside the existing line and character counts
+- **Syntax Highlighting Persistence** â€” Fixed syntax highlighting disappearing when switching between editor tabs or rapidly opening blocks. Highlighting now survives tab switches reliably
+- **AI inline edits on SCL with special characters** â€” Fixed AI inline edits failing to match code containing characters like `&lt;`, `&gt;`, `+`, `Â°`, and quotes. AI edits now work reliably on all SCL code regardless of formatting quirks
 
-### Project Explorer
-- **Integrated Toolbar** â€” Project actions (Rescan, Save, Compile, Safety Login/Logoff) and Protection Profiles are now located directly in the Project Explorer sidebar, keeping them closer to the project tree they operate on
-- **File Explorer as sidebar** â€” Clicking File Explorer in the Activity Bar now swaps only the sidebar (TIA Project Tree â†” Folder Tree) while keeping all open editor tabs visible. No more losing your editor context when browsing files</body>
+### Import / Export
+- **Auto-Compile before Export Selected** â€” Pressing &quot;Export Selected&quot; now automatically compiles the PLC before exporting, so blocks are always up-to-date. If compilation fails, the export continues and skips any still-inconsistent blocks
+
+### Bug Fixes
+- Fixed GitHub Copilot chat returning &quot;Misdirected Request&quot; errors for Business and Enterprise Copilot accounts â€” chat requests are now sent to the account&apos;s correct host
+- Fixed Project Explorer Disconnect leaving the &quot;Protect: N&quot; badge and the selected protection profile visible after closing the project â€” both now clear together with the project tree
+- Fixed &quot;Clear Protection&quot; leaving the code and attribute toggles visible on blocks â€” clearing the protection selection now also resets the protection mark and options
+- Fixed Project Explorer still showing the project tree after disconnecting while a search filter was active
+- Fixed AI Chat responses sometimes appearing with missing code blocks at the end of a message
+- Fixed Import/Export settings opened from the View menu showing default values instead of your saved settings, and changes made there being silently discarded
+- Fixed MCP Server &quot;Allow Write Operations&quot; toggle resetting to off on every app restart â€” the setting is now remembered
+- Fixed AI Chat Memory settings always showing &quot;0 memories&quot; â€” the panel now displays memories for the active agent
+- Fixed AI Chat agent URLs being silently reset on every app start and whenever the Settings dialog was opened or closed â€” your configured endpoints are now stable across sessions
+- Fixed Git Preferences: date format, 24-hour clock, and &quot;Ignore CR at EOL&quot; settings had no effect â€” changes are now applied immediately
+- Fixed Git Preferences: &quot;Max History Commits&quot; slider had no effect â€” history now respects the configured limit
+- Fixed Git Preferences: &quot;Open in Terminal&quot; always opened cmd.exe instead of the shell configured in Integration settings
+- Fixed Git Preferences showing empty Install Path and version 0.0.0 after startup
+- Fixed crash when selecting certain protection profiles from the dropdown</body>
     <mandatory>false</mandatory>
-    <size>250971904</size>
-    <sha256>CC458CD74568FC8F494B7EA1C3D649E6C82684D287A46F78D7F51472C119C881</sha256>
+    <size>251522288</size>
+    <sha256>004618DFD2F3F2B1C1444DB03061222E7CD015C5D3AA32B07FADBB12DCC51C38</sha256>
 </item>

@@ -148,8 +148,6 @@ The built-in code editor provides professional editing features for SCL and othe
 - **Clipboard Paste** - Press Ctrl+V to paste a screenshot from the clipboard directly into the chat; also available via the attach menu
 - **Chat Sessions** - Conversations are saved automatically; create new chats, switch between sessions, and resume previous conversations from the history panel
 - **Session Archive** - Archive old sessions to keep the session list clean; restore or permanently delete archived sessions
-- **Terminal Mode** - Embedded PowerShell terminal with MCP integration; auto-configures `.mcp.json` and optionally writes `CLAUDE.md` with project context for Claude CLI; terminal opens in the TIA Portal project directory
-- **CLAUDE.md Setting** - Toggle whether a `CLAUDE.md` file is written to the project directory on terminal start (AI Chat Settings → Context); disable if not using Claude CLI
 - **Agent Memory** - Each agent has its own persistent memory store across sessions with scope isolation (Local, Project, or User); the agent automatically saves important facts and injects relevant memories into context at session start; supports `memory_store`, `memory_search`, `memory_list`, `memory_update`, and `memory_delete` tools; configurable embedding provider (OpenAI, Google, Ollama, LM Studio) for semantic search, with keyword fallback; Memory Settings panel to view, delete, export (JSON), import, and clean up old memories; Memory Snapshots allow pre-seeding agents with team-shared knowledge via JSON files
 - **Sub-Agent Steering** - Agent can dispatch sub-tasks to independent sub-agents (`run_subagent`); up to 5 concurrent sub-agents; manage running sub-agents via `manage_subagents list/kill/steer`; non-blocking mode allows the main agent to continue working while sub-tasks run in the background
 - **Hooks** - Configurable event hooks that run before/after AI tool calls; add custom hooks in AI Chat Settings as shell commands or HTTP callbacks; built-in hooks protect safety blocks and log TIA operations; hooks can modify tool input, block execution, or add context to results; configurable timeout per hook (default 60s)
@@ -207,6 +205,29 @@ The built-in code editor provides professional editing features for SCL and othe
 - **CSV Export** - Export watch table data to CSV with all columns (Name, Node ID, Data Type, Value, Status, Timestamp)
 - **JSON Export** - Export watch table data to structured JSON with full metadata
 - **MCP Integration** - Unified `opcua` tool with 9 subcommands for AI assistants: connect, disconnect, browse, read, read_complex, write, write_complex, get_types, subscribe
+
+### SCL Unit Testing (Enterprise)
+
+Integrated unit test framework for SCL blocks — write, run and evaluate tests without TIA Portal Test Suite. Requires PLCSIM Advanced V3.0+.
+
+- **Test Explorer** — Tree of all test suites in the project's `.tia-tests/` folder, auto-detects new/deleted/modified files via FileSystemWatcher (500 ms debounce)
+- **Live status icons** — Each test case shows its current status during and after execution: ✓ Pass, ✗ Fail, ⊘ Skipped, ⚠ Error
+- **Persistent results** — Latest test results are stored in SQLite and reappear automatically in the Explorer on next app start
+- **Suite context menu** — Run Suite, Open (as document tab)
+- **Test case context menu** — Run Test (single-case execution via TestCaseFilter — remaining cases are marked Skipped)
+- **Double-click on suite** — Opens the suite as a document tab in the editor
+- **Run All / Run Selected** — Sequential batch execution of multiple suites (PLCSIM single-instance limitation)
+- **Search filter** — Live text search across suite and test case names (case-insensitive substring match)
+- **Failed-only toggle** — `✗ Failed` button hides all passing suites and shows only those with Fail/Error cases — useful for large test histories
+- **Live progress** — While a test is running, phase, current test case and completed/total counters update in real time
+- **Result detail grid** — For each test case, all assertions are shown with variable, operator, expected, actual and pass/fail marker
+- **Stop mid-run** — Active test execution can be cancelled at any time
+- **Automatic block analysis** — Interface, boundary values and dependencies are extracted from the TIA project with a single click
+- **Dock layout** — Test Explorer, analysis tools, test editors and results panel are freely movable dock tools
+
+### Issue Reporting
+
+Report bugs and request features without leaving the app. The Help menu's "Report Issue" entry opens a dialog where you describe the problem; the app collects system information (app version, OS, .NET runtime, active TIA Portal version, language, license tier) and recent logs, then opens GitHub in your browser with the issue pre-filled. No GitHub account login is required from inside the app — you submit on GitHub yourself.
 
 ---
 
