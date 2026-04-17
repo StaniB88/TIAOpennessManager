@@ -11,7 +11,7 @@
 
 ## See it in Action
 
-<video src="videos/ImportExport.mp4" controls></video>
+<video src="https://github.com/StaniB88/TIAOpennessManager/raw/main/videos/ImportExport.mp4" controls></video>
 
 *Bulk import and export of PLC blocks — hundreds of blocks with a single click.*
 
@@ -38,19 +38,11 @@ TIA Openness Manager is a productivity tool for Siemens TIA Portal developers th
 
 ### Import & Export
 
-![Import / Export](screenshots/ImportExport.png)
-
 - **Bulk Operations** — export or import hundreds of blocks at once
 - **XML, SCL, and S7DCL** — all standard TIA Portal formats supported
 - **S7DCL (V20+)** — text-based format for clean version control
 - **Folder Structure Preserved** — your TIA hierarchy stays intact
 - **Auto-Compile & Save** — automatic compilation after import
-
-### Project Explorer
-
-![Project Explorer](screenshots/ProjectExplorer.png)
-
-Navigate your PLC blocks, HMI screens, tag tables, library types, and hardware in a single tree view. Quick filtering, multi-select, drag & drop.
 
 ### Find Unused Blocks
 
@@ -138,9 +130,7 @@ Define test cases for SCL blocks with expected inputs and outputs. Run tests aga
 
 ### AI Chat & MCP Integration
 
-<video src="videos/TIAManagerAIPresentation.mp4" controls></video>
-
-![AI Chat](screenshots/AIAssistant.png)
+<video src="https://github.com/StaniB88/TIAOpennessManager/raw/main/videos/TIAManagerAIPresentation.mp4" controls></video>
 
 - **Built-in AI Chat** with context folders, file attachments, and session history
 - **MCP Server** — connect any MCP-compatible AI assistant to your TIA Portal project
