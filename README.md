@@ -9,17 +9,6 @@
 
 ---
 
-## See it in Action
-
-<video width="800" controls>
-  <source src="https://github.com/StaniB88/TIAOpennessManager/releases/download/v3.2.0/ImportExport.mp4" type="video/mp4">
-  Your browser does not support the video tag. <a href="https://github.com/StaniB88/TIAOpennessManager/releases/download/v3.2.0/ImportExport.mp4">Download the video</a>.
-</video>
-
-*Bulk import and export of PLC blocks — hundreds of blocks with a single click.*
-
----
-
 ## What is TIA Openness Manager?
 
 TIA Openness Manager is a productivity tool for Siemens TIA Portal developers that transforms how you export, import, compare, and protect PLC program blocks. Hour-long manual tasks become single-click operations — and you get AI, OPC UA, encrypted vaults, and version control on top.
@@ -132,11 +121,6 @@ Define test cases for SCL blocks with expected inputs and outputs. Run tests aga
 - **Save / Load Configurations** and export watch data as CSV or JSON
 
 ### AI Chat & MCP Integration
-
-<video width="800" controls>
-  <source src="https://github.com/StaniB88/TIAOpennessManager/releases/download/v3.2.0/TIAManagerAIPresentation.mp4" type="video/mp4">
-  Your browser does not support the video tag. <a href="https://github.com/StaniB88/TIAOpennessManager/releases/download/v3.2.0/TIAManagerAIPresentation.mp4">Download the video</a>.
-</video>
 
 - **Built-in AI Chat** with context folders, file attachments, and session history
 - **MCP Server** — connect any MCP-compatible AI assistant to your TIA Portal project
