@@ -9,111 +9,160 @@
 
 ---
 
+## See it in Action
+
+<video src="videos/ImportExport.mp4" controls></video>
+
+*Bulk import and export of PLC blocks — hundreds of blocks with a single click.*
+
+---
+
 ## What is TIA Openness Manager?
 
-TIA Openness Manager is a powerful tool for Siemens TIA Portal developers that revolutionizes the export, import, and management of PLC program blocks. With an intuitive user interface and advanced features like difference comparison, protection profiles, and AI integration, it significantly increases productivity and reduces errors in project management.
+TIA Openness Manager is a productivity tool for Siemens TIA Portal developers that transforms how you export, import, compare, and protect PLC program blocks. Hour-long manual tasks become single-click operations — and you get AI, OPC UA, encrypted vaults, and version control on top.
 
-**V3 Highlights:**
-- Complete rewrite with modern two-process architecture (.NET 10 + .NET 4.8 Bridge)
-- New Avalonia 11.x dark-theme UI (replacing WPF)
-- Built-in OPC UA Client for live PLC data access
-- AI Chat with context folders, git integration, skills, and agent configs
-- Password Vault for encrypted know-how protection credentials
-- Project Library Management with full MCP integration
+**V3 Highlights**
+
+- Process-separated design — a UI crash never takes down your TIA Portal connection
+- Modern dark-theme UI built from the ground up
+- Built-in **OPC UA Client** for live PLC data
+- **AI Chat** with context folders, git integration, skills, and custom agents
+- **Password Vault** for encrypted know-how protection credentials
+- **Project Library Management** with full MCP integration
+- **SCL Unit Testing** (Beta, requires PLCSIM Advanced V3.0+)
 - TIA Portal V21 support
-
-**Key Benefits:**
-- Export/import hundreds of blocks with a single click
-- Find and remove unused (dead) code from your projects
-- Compare block changes with fingerprint-based diff detection
-- Protect critical blocks from accidental overwrites
-- AI-powered code generation via MCP Server integration
-- Browse and write OPC UA variables directly from the app
 
 ---
 
 ## Features
 
 ### Import & Export
-- **Bulk Operations** - Export/import hundreds of blocks at once
-- **XML & SCL Support** - Full support for Simatic ML and SCL files
-- **S7DCL Export (V20+)** - Text-based export format for better version control
-- **Configurable Settings** - Import/Export options dialog
-- **Folder Structure** - TIA Portal folder hierarchy is preserved
-- **Auto Compile & Save** - Automatic compilation after import
+
+![Import / Export](screenshots/ImportExport.png)
+
+- **Bulk Operations** — export or import hundreds of blocks at once
+- **XML, SCL, and S7DCL** — all standard TIA Portal formats supported
+- **S7DCL (V20+)** — text-based format for clean version control
+- **Folder Structure Preserved** — your TIA hierarchy stays intact
+- **Auto-Compile & Save** — automatic compilation after import
+
+### Project Explorer
+
+![Project Explorer](screenshots/ProjectExplorer.png)
+
+Navigate your PLC blocks, HMI screens, tag tables, library types, and hardware in a single tree view. Quick filtering, multi-select, drag & drop.
 
 ### Find Unused Blocks
-- **Dead Code Detection** - Identifies blocks not called by any OB
-- **Call-Graph Analysis** - Based on actual calls, not just references
-- **Safety Block Support** - Full support for F_FB, F_FC, F_DB, F_OB
-- **Export/Delete** - Export results as CSV or delete unused blocks directly
+
+![Find Unused](screenshots/FindUnused.png)
+
+- **Dead Code Detection** — blocks not called by any OB
+- **Call-Graph Analysis** — based on actual calls, not just references
+- **Safety Block Support** — F_FB, F_FC, F_DB, F_OB all included
+- **Export or Delete** — CSV report or direct cleanup in TIA Portal
 
 ### Difference Comparison
-- **Fingerprint-Based** - Fast comparison without full re-export
-- **Change Detection** - Detects modified, new, and deleted blocks
-- **Line-by-Line Diff** - Detailed difference viewer
-- **Selective Re-Export** - Export only what changed
+
+![Compare](screenshots/Compare.png)
+
+- **Fingerprint-Based** — fast diff without full re-export
+- Detects modified, new, and deleted blocks
+- **Line-by-Line Diff** viewer
+- **Selective Re-Export** — export only what changed
+
+### Code Editor
+
+![Editor](screenshots/Editor.png)
+
+Integrated SCL editor with syntax highlighting, search & replace, and inline diff view. Edit exported blocks without leaving the app.
 
 ### Protection System
-- **Block Protection** - Prevent accidental overwrites of critical blocks
-- **Protection Profiles** - Save and load protection configurations
-- **Visual Indicators** - Protected items clearly marked in tree
+
+![Protection](screenshots/Protection.png)
+
+- **Block Protection** prevents accidental overwrites of critical blocks
+- **Protection Profiles** — save and load configurations
+- **Visual Indicators** — protected items clearly marked in the tree
 
 ### Password Vault
-- **Secure Storage** - AES-256-GCM encrypted vault for TIA Portal know-how protection passwords
-- **Master Password** - Single master password protects all vault entries
-- **Bulk Protect/Unprotect** - Apply or remove know-how protection on all assigned blocks at once
-- **Crash Recovery** - Blocks left unprotected due to a crash are automatically re-protected
 
-### HMI Support
-- **Screens & Templates** - Export/import HMI screens
-- **HMI Tag Tables** - Full tag table support
-- **VB Scripts** - Export script functions
-- **Text & Graphic Lists** - Multi-language support
-- **WinCC Unified Support** - Full support for WinCC Unified HMI panels
+![Vault](screenshots/Vault.png)
+![Vault Protected](screenshots/Vault_Protected.png)
 
-### Hardware Management
-- **Device Overview** - PLCs, HMIs, Drives, Switches
-- **Network Info** - PROFINET names, IP addresses, firmware versions
-- **Hardware Export** - Export device/module/network configuration as XML
-- **CSV Export** - Document your hardware configuration
+- **AES-256-GCM encrypted vault** for TIA Portal know-how protection passwords
+- **Single Master Password** protects all vault entries
+- **Bulk Protect / Unprotect** — apply or remove know-how protection on all assigned blocks at once
+- **Crash Recovery** — blocks left unprotected during a crash are automatically re-protected on next launch
+
+### SCL Unit Testing (Beta)
+
+![Unit Testing](screenshots/UnitTesting.png)
+
+Define test cases for SCL blocks with expected inputs and outputs. Run tests against a live PLCSIM Advanced instance and see pass/fail at a glance. Catch regressions before they reach your PLC.
+
+> Requires **PLCSIM Advanced V3.0+** (separate Siemens license).
 
 ### Project Library Management
-- **Create Master Copy** - Copy blocks to Project Library for reuse
-- **Export Type Versions** - Export committed Library Type versions as XML
-- **Folder Organization** - Create, rename, and delete library items
-- **Clean Up Library** - Remove unused types and versions automatically
 
-### AI Integration (MCP Server)
-- **MCP Support** - Connect with any MCP-compatible AI assistant
-- **Code Generation** - AI generates SCL blocks, DBs, UDTs, Tag Tables
-- **Auto Import** - Generated code imports directly into TIA Portal
-- **Project Context** - AI understands your project structure
-- **Library Tools** - 7 library tools available for AI assistants
-- **OPC UA Tools** - 8 OPC UA tools for AI-driven live data access
+![File Explorer](screenshots/FileExplorer.png)
 
-### AI Chat
-- **Context Folders** - Register folders the AI can browse
-- **Git Integration** - AI-aware of your git repository (status, commit, push, pull)
-- **Skills & Agents** - Custom prompt commands and AI personas
-- **File Attachments** - Drag and drop images or text files into the chat
-- **Chat Sessions** - Automatic save, history, and session archive
-- **Terminal Mode** - Embedded PowerShell terminal with MCP integration
+- **Master Copy Creation** — copy blocks into the Project Library for reuse
+- **Export Library Types** — as versioned XML files
+- **Folder Organization** — create, rename, delete library items
+- **Automatic Cleanup** — remove unused types and versions
+
+### HMI Support
+
+- Export / import HMI screens and templates
+- Full HMI tag table support
+- VB Scripts and script functions
+- Text and graphic lists (multi-language)
+- **WinCC Unified** support
+
+### Hardware Management
+
+- Device overview — PLCs, HMIs, Drives, Switches
+- Network info — PROFINET names, IP addresses, firmware versions
+- Export device, module, and network configuration as XML
+- CSV export for documentation
 
 ### OPC UA Client
-- **Direct Connection** - Connect to any OPC UA server by endpoint URL
-- **Auto-Discovery** - Detect PLC OPC UA endpoints from the connected TIA Portal project
-- **Address Space Browser** - Browse the full OPC UA address space in a TreeView
-- **Watch Table** - Add variables, read/write values, live subscriptions
-- **Save/Load Configuration** - Save and restore watch table configurations
-- **CSV/JSON Export** - Export watch table data for documentation
+
+![OPC UA Client](screenshots/OPCUA.png)
+
+- **Direct Connection** to any OPC UA server by endpoint URL
+- **Auto-Discovery** — detects PLC OPC UA endpoints from the connected TIA Portal project
+- **Address Space Browser** — full tree view
+- **Watch Table** — read, write, and live-subscribe to variables
+- **Save / Load Configurations** and export watch data as CSV or JSON
+
+### AI Chat & MCP Integration
+
+<video src="videos/TIAManagerAIPresentation.mp4" controls></video>
+
+![AI Chat](screenshots/AIAssistant.png)
+
+- **Built-in AI Chat** with context folders, file attachments, and session history
+- **MCP Server** — connect any MCP-compatible AI assistant to your TIA Portal project
+- **Code Generation** — AI writes SCL blocks, DBs, UDTs, and tag tables, with direct import into TIA Portal
+- **Git Integration** — the AI is aware of your repo (status, commit, push, pull, diff)
+- **Skills & Agents** — custom prompt commands and AI personas
+- **Embedded Terminal** with MCP tooling
+- **Library Tools** — 7 dedicated AI tools for the Project Library
+- **OPC UA Tools** — 8 dedicated AI tools for live PLC data
+
+### Version Control
+
+![Version Control](screenshots/VersionControl.png)
+
+Inline git integration — browse project history, commit, push, pull, and diff without leaving the app.
 
 ---
 
-## Supported Versions
+## Supported TIA Portal Versions
 
-| TIA Portal Version | Status |
-|-------------------|--------|
+| Version | Status |
+|---------|--------|
 | V15 | Supported |
 | V16 | Supported |
 | V17 | Supported |
@@ -126,51 +175,46 @@ TIA Openness Manager is a powerful tool for Siemens TIA Portal developers that r
 
 ## System Requirements
 
-- **OS:** Windows 10/11 (64-bit)
-- **Runtime:** Self-contained (.NET 10 bundled, no separate install needed)
+- **OS:** Windows 10 / 11 (64-bit)
+- **Installer:** Self-contained — all dependencies bundled, no separate runtime to install
 - **TIA Portal:** V15, V16, V17, V18, V19, V20, or V21 installed
 - **Permissions:** TIA Portal Openness API access configured
+- **Optional:** PLCSIM Advanced V3.0+ for SCL Unit Testing
 
 ---
 
 ## Installation
 
 1. Download the latest installer from [Releases](https://github.com/StaniB88/TIAOpennessManager/releases)
-
 2. Run the installer and follow the setup wizard
-
 3. Launch TIA Openness Manager from the Start Menu
-
 4. Connect to your TIA Portal project (Open or Attach)
 
 **Free Trial:** New users get a 30-day trial with all features unlocked.
 
+---
 
 ## Quick Start
 
-1. **Open/Attach Project** - Connect to a TIA Portal project
-2. **Browse Tree** - Navigate your PLC blocks in the left panel
-3. **Select Items** - Check the blocks you want to export
-4. **Export** - Click "Export Selected" to save as XML/SCL
-5. **Import** - Select XML files in right panel and import back
+1. **Open or Attach** a TIA Portal project
+2. **Browse** your PLC blocks in the project tree
+3. **Select** the blocks you want to work on
+4. **Export** as XML, SCL, or S7DCL — or **Import** back with a single click
 
 See the [User Guide](User_Guide/) for detailed documentation.
 
+---
+
 ## Languages
 
-- English
-- Deutsch (German)
-- Francais (French)
-- Italiano (Italian)
+English · Deutsch · Français · Italiano
 
 ---
 
 ## Documentation
 
-- [User Manual (EN)](User_Guide/UserManual_EN.md)
-- [User Manual (DE)](User_Guide/UserManual_DE.md)
-- [Quick Start (EN)](User_Guide/QuickStart_EN.md)
-- [Quick Start (DE)](User_Guide/QuickStart_DE.md)
+- [User Manual (EN)](User_Guide/UserManual_EN.md) · [User Manual (DE)](User_Guide/UserManual_DE.md)
+- [Quick Start (EN)](User_Guide/QuickStart_EN.md) · [Quick Start (DE)](User_Guide/QuickStart_DE.md)
 - [Feature Overview](User_Guide/Features_EN.md)
 - [Changelog](CHANGELOG.md)
 
@@ -178,7 +222,7 @@ See the [User Guide](User_Guide/) for detailed documentation.
 
 ## Auto-Update
 
-TIA Openness Manager includes automatic update checking. When a new version is available, you'll be notified at startup. Updates can be disabled in Settings.
+TIA Openness Manager checks for updates on startup and notifies you when a new version is available. Updates can be disabled in Settings.
 
 ---
 
@@ -190,48 +234,12 @@ TIA Openness Manager includes automatic update checking. When a new version is a
 
 ---
 
-## Screenshots
-
-### Project Explorer
-![Project Explorer](screenshots/ProjectExplorer.png)
-
-### Import & Export
-![Import Export](screenshots/ImportExport.png)
-
-### Code Editor
-![Code Editor](screenshots/Editor.png)
-
-### Find Unused Blocks
-![Find Unused](screenshots/FindUnused.png)
-
-### Difference Comparison
-![Compare](screenshots/Compare.png)
-
-### Protection & Vault
-![Protection](screenshots/Protection.png)
-![Vault](screenshots/Vault.png)
-
-### OPC UA Client
-![OPC UA](screenshots/OPCUA.png)
-
-### AI Chat
-![AI Assistant](screenshots/AIAssistant.png)
-
-### Version Control
-![Version Control](screenshots/VersionControl.png)
-
----
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for version history and release notes.
-
-
 ## Disclaimer
 
 **The software is provided "as is" without warranty of any kind.**
 
 The provider assumes no liability for:
+
 - Damages caused by faulty LLM outputs or AI-generated code
 - Data loss, production downtime, or system failures
 - Engineering errors or faulty code generation
