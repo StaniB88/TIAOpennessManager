@@ -11,7 +11,7 @@
 
 ## See it in Action
 
-<video src="https://github.com/StaniB88/TIAOpennessManager/raw/main/videos/ImportExport.mp4" controls></video>
+<video src="https://github.com/StaniB88/TIAOpennessManager/releases/latest/download/ImportExport.mp4" controls></video>
 
 *Bulk import and export of PLC blocks — hundreds of blocks with a single click.*
 
@@ -130,7 +130,7 @@ Define test cases for SCL blocks with expected inputs and outputs. Run tests aga
 
 ### AI Chat & MCP Integration
 
-<video src="https://github.com/StaniB88/TIAOpennessManager/raw/main/videos/TIAManagerAIPresentation.mp4" controls></video>
+<video src="https://github.com/StaniB88/TIAOpennessManager/releases/latest/download/TIAManagerAIPresentation.mp4" controls></video>
 
 - **Built-in AI Chat** with context folders, file attachments, and session history
 - **MCP Server** — connect any MCP-compatible AI assistant to your TIA Portal project
