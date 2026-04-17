@@ -135,7 +135,7 @@ TIA Openness Manager is a powerful tool for Siemens TIA Portal developers that r
 
 ## Installation
 
-1. Download the latest installer from [Releases](https://github.com/StaniB88/TIAOpenessManager/releases)
+1. Download the latest installer from [Releases](https://github.com/StaniB88/TIAOpennessManager/releases)
 
 2. Run the installer and follow the setup wizard
 
@@ -185,8 +185,8 @@ TIA Openness Manager includes automatic update checking. When a new version is a
 ## Support
 
 - **Website:** [tiaopenessmanager.ch](https://tiaopenessmanager.ch/)
-- **Email:** TIAOpenessManager@outlook.com
-- **Issues:** [GitHub Issues](https://github.com/StaniB88/TIAOpenessManager/issues)
+- **Email:** support@tiaopenessmanager.ch
+- **Issues:** [GitHub Issues](https://github.com/StaniB88/TIAOpennessManager/issues)
 
 ---
 
