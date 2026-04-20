@@ -83,6 +83,12 @@ Your Windows user must be a member of the **"Siemens TIA Openness"** user group.
 > net localgroup "Siemens TIA Openness" %USERNAME% /add
 > ```
 
+### Launching the Application
+
+Only one instance of TIA Openness Manager runs per Windows session. Opening a file or folder from Windows Explorer while the application is already running activates the existing window and opens the item there, instead of starting a second copy. Double-clicking the application icon or launching the executable a second time also just brings the running window to the front.
+
+If another program has claimed the name the application uses internally, startup is refused with a warning. Close the other program (or sign out and back in) and try again.
+
 ---
 
 ## 3. User Interface
@@ -334,11 +340,17 @@ Select **View → Import/Export Settings** from the menu bar.
 The Preview Diff function shows differences between the TIA Portal project and the Working Directory:
 
 1. Click **Preview Diff**
-2. The application compares fingerprints (hashes) of blocks
-3. A window shows:
-   - **Changed** - Blocks whose content differs
-   - **New in TIA** - Blocks that only exist in the project
-   - **Deleted** - Blocks that only exist in the Working Directory
+2. The application compares TIA Portal fingerprints and file hashes against the cached state from the last export
+3. The Compare panel opens with a summary header (`X changed · Y added · Z protected · N unchanged`) and one row per differing block:
+   - **Changed** - Block content in TIA or source file differs
+   - **New in TIA** - Block only exists in the project
+   - **Deleted** - Block only exists in the Working Directory
+4. Tick the checkbox next to each block you want to push back into the PLC (Changed and Added rows are pre-selected, Protected blocks are disabled)
+5. Click **Import** to re-import the selected files
+
+Preview Diff detects both XML-side changes (block interface edits in TIA) and source-file changes (SCL, AWL, DB edits on disk). Re-imports run in a single transaction — if any block fails, all changes are rolled back so the project stays in its original state. Unticked rows and protected blocks are left untouched.
+
+**Prerequisite:** Run **Export All** with fingerprint extraction enabled at least once to populate the cache (`.fingerprint-cache.json` in the working directory). Without a cache there is nothing to compare against.
 
 ### Compare (Manual Comparison)
 
@@ -615,6 +627,40 @@ The tab shows:
 
 The built-in AI Chat panel provides a conversational interface to an AI assistant that is aware of your project and environment. Configure it via **View → AI Chat Settings**.
 
+### Chat Providers
+
+Choose a provider per agent in the provider dropdown. Each one uses its own API key, which you paste into the Settings dialog once.
+
+| Provider | How to get an API key |
+|----------|-----------------------|
+| xAI (Grok) | <https://console.x.ai/> |
+| Groq | <https://console.groq.com/keys> |
+| Cerebras | <https://cloud.cerebras.ai/> |
+| DeepSeek | <https://platform.deepseek.com/api_keys> |
+| Perplexity | <https://www.perplexity.ai/settings/api> |
+| Together AI | <https://api.together.ai/settings/api-keys> |
+| Hugging Face | <https://huggingface.co/settings/tokens> |
+| Z.AI | <https://z.ai/manage-apikey/apikey-list> |
+| MiniMax | <https://www.minimax.io/platform/user-center/basic-information/interface-key> |
+| Fireworks AI | <https://fireworks.ai/account/api-keys> |
+| Moonshot AI | <https://platform.moonshot.ai/console/api-keys> |
+| Vercel AI Gateway | <https://vercel.com/dashboard/ai-gateway/api-keys> |
+| SGLang (self-hosted) | No API key required by default — point the endpoint at your SGLang server (e.g. `http://localhost:30000/v1`) |
+| vLLM (self-hosted) | No API key required by default — point the endpoint at your vLLM server (e.g. `http://localhost:8000/v1`) |
+| Qwen | <https://home.qwencloud.com/api-keys> |
+| Alibaba Model Studio | <https://home.qwencloud.com/api-keys> |
+| Baidu Qianfan | <https://qianfan.baidubce.com/> |
+| Volcano Engine (Doubao) | <https://console.volcengine.com/ark> |
+| BytePlus (Doubao Global) | <https://console.byteplus.com/ark> |
+| Arcee AI | <https://app.arcee.ai/> |
+| Kimi Coding | <https://platform.moonshot.cn/console/api-keys> |
+
+**Cloudflare AI Gateway** works differently from the providers above: it is a proxy that routes chat requests through your own Cloudflare account. Select it in the provider dropdown, then enter your **Account ID**, **Gateway ID**, and pick a **Sub-Provider** (OpenAI, Anthropic, Groq, Mistral, Google, or Workers AI). Cloudflare caching, analytics, and rate limits apply in front of the chosen downstream LLM. Get started: <https://dash.cloudflare.com/?to=/:account/ai/ai-gateway>.
+
+**Region option for Qwen, Z.AI, MiniMax, and Moonshot** — When you select one of these four providers, the settings panel shows an additional **Region** picker. Pick **Global** to route through the international endpoint or **China** to route through the mainland-China endpoint; Qwen and Z.AI also offer **Global (Coding Plan)** and **China (Coding Plan)** for the dedicated coding-subscription endpoints. Leave it on **Auto** to keep the provider's default.
+
+Additional providers available out of the box: Anthropic, OpenAI, Google Gemini, Mistral, OpenRouter, GitHub Copilot, Azure OpenAI, Google Vertex, AWS Bedrock, Ollama (local), LM Studio (local), **Google Antigravity** (sign in with your Google account — same flow as Gemini CLI — to use Claude Opus/Sonnet, Gemini 3 Pro/Flash, and GPT-OSS 120B in the Antigravity sandbox).
+
 ### Context Folders
 
 Register folders on your file system that the AI is allowed to browse. Once registered, the AI can use the `fs_read_file`, `fs_list_directory`, and `fs_search_files` tools to inspect those folders on your behalf.
@@ -791,6 +837,8 @@ Place a `.json` file in `%LocalAppData%\TiaOpennessManager\agents\` with the fol
 }
 ```
 
+**Responses API for reasoning models (Azure):** If your Azure deployment hosts a reasoning model such as `o1`, `o3`, or `gpt-5`, enable the "Use Responses API (for reasoning models)" toggle in the agent's Azure section. This switches the request flow to Azure's Responses endpoint, which is required for `reasoning_effort` to take effect. Standard (non-reasoning) deployments should leave this off.
+
 ### File Attachments
 
 Drag and drop files directly into the AI Chat to attach them to your message. The AI can see the content of attached files and respond accordingly.
@@ -933,6 +981,8 @@ The AI agent can dispatch sub-tasks to independent sub-agents and manage them du
 - Running a long export operation in the background while answering questions
 - Delegating documentation generation to a sub-agent while reviewing code
 
+**Approval prompts from sub-agents.** When a sub-agent needs your permission to run a tool (for example, connecting to an OPC UA server or pushing a Git branch), the prompt now appears in the main chat flow — you don't have to expand the sub-agent panel to find it. Each prompt clearly shows which sub-agent triggered it. After you decide, the prompt shows one of three statuses: a green check ("Allowed"), a red X ("Denied" — you actively rejected the action), or an orange alert ("Interrupted" — the app closed or the request was cancelled before you could decide). Tool arguments named like `password`, `api_key` or `token` are shown as `[redacted]` so they aren't stored in the chat history on disk.
+
 ### Hooks
 
 Hooks are event-driven interceptors that run before or after AI tool calls. They allow you to add custom validation, formatting, logging, or control flow to the AI's tool execution.
@@ -986,7 +1036,7 @@ You can add custom hooks in `ai_chat_settings.json` under the `Hooks` array:
 
 ### Command Queue
 
-You can type and send messages while the AI agent is actively processing. Instead of blocking input during streaming, messages are placed into a priority queue and processed automatically after each turn completes.
+You can type and send messages while the AI agent is actively processing. Messages entered during streaming are placed into a priority queue and processed automatically after each turn completes.
 
 **Sending while busy:** Simply type your message and press Enter while the agent is streaming. The message appears as "queued" and the input field clears so you can continue typing. A small indicator next to the input area shows how many messages are waiting (e.g. "2 messages queued").
 
@@ -997,10 +1047,17 @@ You can type and send messages while the AI agent is actively processing. Instea
 | Next | User messages (default) | Processed after current turn ends |
 | Later | Agent notifications | Processed after user messages |
 
-**ESC behavior:**
+**Queue controls:**
 
-- **While streaming:** Cancels the current AI response and clears all queued messages
-- **While idle with queued messages:** Pops all editable messages from the queue back into the input field, so you can edit or discard them before sending
+- **ESC while streaming:** Cancels the current AI response and clears all queued messages
+- **UP-Arrow with an empty input field:** Pulls every queued message back into the input field so you can edit or discard them before sending. Any text already in the input stays — queued messages are appended after it.
+- **Stop button while idle with queued messages:** Same as UP-Arrow — pulls the queue back into the input field.
+
+**Queue indicator:** The text next to the input area shows how many messages are waiting and what the assistant is currently doing — for example "2 queued — running tia_import", "1 queued — running sub-agent scl-expert", or "3 queued — ESC to cancel last" when the assistant is idle.
+
+**Sub-agent approval prompts:** When a sub-agent wants to run a tool that requires your approval, the Allow/Deny buttons appear in the main conversation and are labeled "via sub-agent X" so you know which agent raised the request.
+
+**Moving a sub-agent to the background:** When a blocking sub-agent has the main assistant waiting, press **Ctrl+B**. The sub-agent is detached and keeps running in the background while the main assistant is free to answer new messages. A small "(background)" badge appears on the sub-agent block. When the backgrounded sub-agent finishes, its result arrives in the chat as a notification, and the main assistant picks up from there. If more than one sub-agent is currently blocking, Ctrl+B sends all of them to the background at once.
 
 **Queue processing:** After each AI turn completes, the system automatically checks the queue and processes the next message. If multiple messages are queued, they are processed one at a time in priority order (higher priority first, FIFO within the same priority).
 
@@ -1076,6 +1133,107 @@ The left panel of the OPC UA tab shows a TreeView of the server's address space:
 **Searching nodes:**
 Use the search field above the tree to filter nodes by name. The tree collapses to show only matching nodes and their parents.
 
+### Node Information
+
+Selecting a node in the address space fills the **Node Information** panel on the right with every OPC UA attribute of that node: Node Id, Browse Name, Display Name, Node Class, Description, Write Mask, and User Write Mask. Variables show additional rows — Data Type, Value Rank, Array Dimensions, Access Level, User Access Level, Minimum Sampling Interval, Historizing, current Value, Status Code, and Source / Server Timestamp. All cells are selectable with Ctrl+C.
+
+### References
+
+Next to Node Information, the **References** panel shows every incoming and outgoing reference of the selected node:
+
+| Column | Description |
+|--------|-------------|
+| Direction | In (inverse) or Out (forward) |
+| Reference Type | Resolved name of the reference type (e.g. `HasComponent`, `Organizes`, `HasTypeDefinition`) |
+| Browse Name | Browse name of the target node |
+| Node Class | Node class of the target node |
+| Target Node Id | Full node id of the referenced node |
+
+### Event Log
+
+The **Event Log** panel sits as a tab next to the Watch Table at the bottom of the OPC UA workspace. It receives live event notifications from a server-side notifier object.
+
+| Toolbar control | Purpose |
+|-----------------|---------|
+| Notifier Node | The Node Id of the OPC UA object that emits events. Defaults to `i=2253` (Server). Locked while a subscription is active. |
+| Severity range | Two number boxes that constrain incoming events by severity (0–1000). Events outside the range are dropped before reaching the grid. |
+| Subscribe to Events | Starts the subscription against the configured notifier. |
+| Stop Event Subscription | Cancels the active subscription. |
+| Export CSV | Saves the visible events to a CSV file. Cells whose content starts with `=`, `+`, `-`, `@`, tab, or carriage return are prefix-quoted to defang spreadsheet formula injection. |
+| Clear Event Log | Empties the grid without affecting the active subscription. |
+
+The grid keeps the most recent 5000 events with the newest at the top. Server-controlled fields are capped at 8 KB per cell to bound memory; under heavy event flood, additional events are silently discarded and a debug-log line records the dropped count once per second.
+
+### History Chart
+
+The **History Chart** panel sits as a third tab next to the Watch Table and Event Log at the bottom of the OPC UA workspace. It loads raw historical values for a variable node over a time range and plots them on a scatter chart with a date-time X-axis.
+
+| Toolbar control | Purpose |
+|-----------------|---------|
+| Source | Read-only label that tracks the currently selected variable node in the address space tree. |
+| Start | Start of the time range (UTC). Defaults to one hour ago. |
+| End | End of the time range (UTC). Defaults to now. |
+| 1h / 6h / 24h / 7d | Quick presets that set End to now and Start to now minus the chosen window. |
+| Read History | Fetches raw historical values for the source node between Start and End. The button is disabled while a read is in progress. |
+| Export CSV | Saves the loaded values to CSV (Source Timestamp / Server Timestamp / Value / Status Code). Formula-injection defanging is identical to the Event Log export. |
+| Clear Chart | Empties the chart and frees the in-memory buffer. |
+
+Non-numeric values, values with `Bad` status, and samples with out-of-range timestamps are omitted from the chart but remain in the CSV export. Reads are capped at 100,000 values per call and 1,000,000 values total; if the server returns more, the chart shows what fits and a warning is logged. The chart clears automatically on protocol switch or disconnect but keeps its content while you browse the address tree, so you do not lose loaded history just because you select a different node.
+
+The variable must have `Historizing = true` on the server, and the session must have HistoryRead access. Siemens S7-1500 CPUs do not enable historizing by default — most variables need to be flagged for historical access in the PLC configuration.
+
+### Call Method dialog
+
+Right-click a **Method node** in the Address Space Browser and pick **Call Method...** to open a modal dialog that drives an OPC UA method call end-to-end.
+
+The dialog first fetches the method's input and output argument list from the server and renders one editor per input:
+
+| Argument shape | Editor |
+|----------------|--------|
+| Scalar (boolean, integer, float, string, DateTime) | Single text box with the expected data type as watermark |
+| Array | A list of single-value rows with **+ Row** / **− Row** buttons to match the desired array length |
+
+Each card shows the argument's name, data type, and description (if provided by the server). After filling the inputs, click **Call** — the dialog invokes the server, clamps oversized payloads, and populates the Output arguments section with the returned values and a status line. Closing the dialog cancels any call still in flight.
+
+Method calls write to the PLC — make sure the method's effect is understood before calling on a running machine.
+
+### Edit Matrix dialog
+
+Right-click a **Variable node** whose value is a two-dimensional matrix (for example a `Double[3,4]` setpoint table or a calibration grid) in the Address Space Browser and pick **Edit Matrix...** to open a spreadsheet-style editor. The menu entry only appears when the selected variable actually has matrix shape on the server.
+
+The dialog loads the current value and renders every cell as an editable text box with row (`R0`, `R1`, ...) and column (`C0`, `C1`, ...) headers. Change values cell by cell — changed cells are tracked as dirty. Press **Save** to write the whole matrix back to the server (only cells you actually changed are re-parsed; untouched cells are preserved as-is) or **Reload** to throw away your edits and pull a fresh copy from the server.
+
+If the server declares the variable as read-only (no write access for your session), the dialog shows a **Read-only** badge and the Save button stays disabled. Matrices with more than two dimensions are not editable — the dialog reports "rank not supported" instead of silently flattening the data. Invalid cell values (for example text in a numeric matrix) are flagged when you press Save; fix the cell and try again.
+
+### Certificate Management
+
+Open the settings flyout (gear icon next to the endpoint URL in the connection bar) and click **Certificate Management...** to review and manage the OPC UA certificates this client uses and trusts. The dialog shows three tabs:
+
+| Tab | What it shows | Actions |
+|-----|---------------|---------|
+| Own | Your client certificate(s) — the one the PLC sees when you connect | Regenerate (creates a fresh keypair; ends all active OPC UA sessions), Remove |
+| Trusted | Server certificates this client has accepted | Reject (moves to the Rejected tab), Remove |
+| Rejected | Server certificates this client has refused or received while Auto-accept was off | Trust (moves to the Trusted tab), Remove |
+
+Each row shows Subject, Issuer (for server certs), Thumbprint, Valid from, Valid to. Select a row and use the tab's action buttons.
+
+Directly above the button sits the **Auto-accept server certificates** toggle:
+
+- **On (default)** — Any new server certificate is trusted on first connect. Fastest, most convenient; matches the previous behaviour.
+- **Off** — New server certificates are routed to the Rejected tab instead of being accepted automatically. You must open the dialog and click Trust before the next connect succeeds. Use this mode on networks where you want explicit per-server approval.
+
+### Connection Status Indicators (S7 Native)
+
+When connected to an S7-1200 or S7-1500 PLC over the native S7 Comm+ protocol, the PLC Online tab shows three live status indicators that react immediately to what the PLC is doing:
+
+- **Tab header dot** — a small coloured circle next to the tab title. Hover the dot to see what it means:
+  - **Grey** — not connected yet
+  - **Green** — online, CPU is running
+  - **Yellow** — online but the CPU is stopped (Stop, Startup, Hold, ...), or the app is currently reconnecting
+  - **Red** — the PLC is unreachable
+- **Reconnecting banner** — a yellow strip under the connection bar saying "Reconnecting..." appears while the app is trying to restore a lost connection. It clears automatically when the PLC comes back.
+- **Faded watch values** — when the PLC becomes unreachable, the values in the Watch Table fade to half opacity and switch to `???` to show they are no longer current. As soon as the PLC is back, new live values replace them on their own. No restart or manual reconnect needed.
+
 ### Watch Table
 
 The watch table on the right displays variables you have selected for monitoring.
@@ -1145,6 +1303,20 @@ Watch table configurations (the list of monitored variables and the endpoint URL
 1. Click **Load Watch Table** (folder icon)
 2. Select a previously saved `.opcua-watch` file
 3. The variables are restored; click **Connect** then **Read All** or **Subscribe** to resume monitoring
+
+### Saving and Restoring the Whole Workspace
+
+The entire OPC UA workspace — panel layout (which tabs are active), open connections (without passwords) and the watch table — is also captured automatically and restored the next time you open the app. No setup is needed; just close the app and reopen it.
+
+Every open connection tab now gets its own saved state — watches, subscriptions, event filter, and history range — not just the active tab. When you reopen the app or load a workspace file, each tab comes back with the variables, alarms and history range you left it with.
+
+For named snapshots that you can hand to a colleague or stash for a specific commissioning trip, use the **Workspace** menu in the dock toolbar at the top of the OPC UA tab:
+
+- **Save Workspace As…** writes the current state to a `.opcua-workspace` file you choose. Passwords are never written to the file — operators have to re-enter them on reconnect.
+- **Load Workspace…** opens any previous `.opcua-workspace` file and applies it. The picker also accepts the older `.json` watch-table files saved with the floppy-disk icon, so legacy workspaces keep loading.
+- **Reset Workspace** clears the auto-saved snapshot and the active connection's watch list after a confirmation prompt — useful before sharing your screen for a presentation, or when a stale workspace keeps restoring stale state.
+
+To keep a confidential endpoint out of the workspace entirely, open the connection's Settings flyout (the gear icon in the connected connection bar) and enable **Don't persist this connection in workspace**. While the toggle is on, that tab's endpoint, watches, subscriptions, event filter and history range stay out of the workspace file and the auto-restore. Turn it back off whenever you want the tab to be remembered again.
 
 ### Exporting Watch Table Data
 
@@ -1311,6 +1483,9 @@ After a run completes, the Results panel shows:
 - **Summary:** Total passed/failed/error counts + total duration
 - **Test case list:** Every case with status icon, name and duration
 - **Detail grid (on case selection):** Every assertion with Variable, Operator, Expected, Actual, ✓/✗
+- **Variable Timeline (on case selection):** A chart showing how each watch variable changed cycle by cycle during the run. The left column lists the variables as checkboxes — toggle one to hide or show its line in the chart. Numeric types (BOOL/INT/REAL/TIME/…) are plotted; non-numeric types still appear in the legend but aren't drawn. Hover the chart to snap a crosshair to the nearest data point with the variable name, cycle and value in the title
+
+To fill the timeline, add a `"watch": ["Var1", "Var2"]` array to a test case in the suite JSON and set `"cycles"` greater than 1. The timeline sampling is capped at 100,000 cycles per test case.
 
 Test results are persisted to `%LocalAppData%\TiaOpennessManager\db\test_results.db` — they survive app restarts and reappear in the Test Explorer automatically.
 
@@ -1337,6 +1512,12 @@ Test results are persisted to `%LocalAppData%\TiaOpennessManager\db\test_results
 - **From Test Explorer:** Double-click the suite in the tree
 - **From menu:** **Open Suite** button in the toolbar → file picker
 
+### Where are test suites stored?
+
+Test suites live in a hidden folder called `.tia-tests` directly next to your TIA project file (`*.ap21`, `*.ap20`, …). When you click **Open Suite**, the dialog opens at that folder; the AI assistant writes to the same folder. If you haven't opened a TIA project yet, the Test Explorer shows "No TIA Project connected" and Open Suite is disabled — connect a project first.
+
+The AI can read, list, and edit these test-suite files directly through the chat interface.
+
 ### Running Tests
 
 1. Make sure PLCSIM Advanced V3.0+ is installed
@@ -1352,11 +1533,55 @@ The runner automatically:
 - Writes the test inputs, waits the configured cycle count, reads the outputs, evaluates the assertions
 - Cleans up the S7 connection and unregisters the instance
 
+### Choosing a Transport
+
+The **Connection Settings** dialog lets you pick how test reads and writes travel between the app and the PLC:
+
+- **PLCSim Advanced** — Direct access via the Siemens PLCSim API, faster and does not need an active S7 session. Best for simulator-only testing.
+- **S7 Comm+** — Uses the S7 Communication driver over TCP/IP. Pick this when you want to run the tests against real hardware or against PLCSim through the virtual Ethernet adapter with user authentication.
+
+Both transports expose their own configuration section in the same dialog, so each suite can be targeted independently. For S7 Comm+, the suite owns its IP, port, rack, slot, TLS toggle, username, and password — no cross-tab lookup from the PLC Online view.
+
+### Simulation Workspace
+
+Inside the SCL Unit Testing tab, a **Simulation** sub-mode switcher at the top lets you toggle between the Test Suites view and a dedicated **Simulation** view for managing PLCSim Advanced instances. The Simulation view shows:
+
+- API version, online-access mode (PLCSim / TCP/IP single / TCP/IP multi), strict motion timing toggle, and Runtime Manager Port.
+- A **Virtual Adapter** row showing the permanent status of the Siemens PLCSIM virtual Ethernet adapter (Ready / APIPA / Disabled / Not Installed / No IPv4), its IPv4 address, and a refresh button. If the adapter is stuck in the 169.254.x.y APIPA range, downloads will be unreliable — assign a static IPv4 address in Windows network settings.
+- Every registered PLCSim instance with inline action buttons: Power On, Run, Stop, Memory Reset, Power Off, Settings, Network, Delete. Each row shows the configured IP address; if the instance has more than one interface with an IP, they are listed as `X1: 192.168.0.1, X2: 10.0.0.5`.
+- A **New Instance** button that prompts for a name and CPU type.
+- A **Tag Browser** pane that connects to any listed instance and shows all tags the running program exposes, filterable by name search, area (Input / Output / Marker / Data Block), and data type. Auto-refresh can be toggled for live value observation. Each writable tag has a **pencil button** that opens a type-aware write dialog (toggle for Bool, numeric input with type-specific range for integers and floats, one-character field for Char/WChar). String tags are read-only.
+- A **Saved Instances** section at the bottom listing every PLCSim Advanced instance persisted on the virtual SIMATIC memory card. Click **Load** to re-register and resume one — PLCSim picks up the stored CPU type, I/O image and program automatically. Click **Delete** (with confirmation) to remove the persisted folder.
+
+The sub-mode choice is remembered between sessions, and switching modes keeps any open suite documents intact.
+
+### PLCSIM Preparation Mode
+
+The **Connection Settings** dialog has a preparation-mode selector (inside the PLCSim section) that controls how the runner gets your project into the PLCSIM instance before the test run:
+
+- **I load it myself (recommended)** — The runner expects a PLCSIM instance that you have already started and loaded manually via TIA Portal. It skips compile and download and connects directly to run the tests. Fastest option if you're iterating on the same project.
+- **Automatic TCP download** — The runner compiles the project, starts a fresh PLCSIM instance and downloads via TCP over the PLCSIM Virtual Adapter. No manual TIA Portal interaction needed — just click Run.
+
+### Running Against a Protected Project
+
+If your TIA project has **"Protect confidential PLC configuration data"** enabled, the automatic TCP download mode shows an extra password field in the Connection Settings dialog:
+
+1. Open **Connection settings…**
+2. Select **Automatic TCP download** under PLCSIM preparation
+3. Enter the project's master-secret password
+4. Optional: tick **Remember password** to store it in the Windows Credential Manager, so every future run picks it up automatically without asking again. Leave unticked to use the password once and forget it after the run
+5. Click **OK**, then **▶ Run**
+
+A hint *"A password is stored for this user"* appears on the next dialog opening if you saved the password. Leave the password field blank to keep the stored value. Unticking **Remember password** and clicking OK deletes the stored entry.
+
+The password is never written to the suite file, to any log, or to any settings file. It lives only in Windows Credential Manager under the service name `com.tiaopennessmanager` and is transferred from the UI to the runner through a user-bound DPAPI channel so a different Windows account cannot read it.
+
 ### Managing Suites and Test Cases
 
 - **Right-click a test suite** in the Test Explorer to rename or delete it. Deleting also removes the test run history for that suite.
 - **Right-click a test case** to edit its name or description, duplicate it, delete it, or move it up or down in the list.
-- A new **PLCSIM Settings** button in the toolbar lets you configure the PLCSIM instance name, IP address, cycle wait time, and auto-connect behaviour for the active suite. Tick *Save as default* to apply the same values to newly created suites.
+- The **Connection settings…** button in the toolbar lets you configure the transport, PLCSim instance (selectable from the Simulation view's registry or typed by hand), IP address, cycle wait time, S7 Comm+ target (IP, port, rack, slot, TLS, user, password), and auto-connect behaviour for the active suite. Tick *Save as default* to apply the same values to newly created PLCSim suites. The dialog has a **Manage…** button on the PLCSim section that jumps to the Simulation sub-mode so you can create or tweak an instance without losing your current edits.
+- **Connection Settings are saved per suite.** Clicking **OK** writes your choices — transport, instance name, IP, S7 connection details and every other field — back into the suite file. The next time you open the suite, the dialog shows exactly what you picked last, instead of snapping back to defaults. Passwords continue to live in the Windows Credential Manager — the suite file only stores a reference, never a plaintext password.
 - Before running, the manager checks that every variable name in your suite exactly matches the block interface, including case. If any mismatches are found, a warning dialog shows the suggested corrections — you can still continue the run after acknowledging it.
 - When a test case fails, the affected variable is **underlined in red** directly in the generated SCL code, with the error message shown on hover. **Double-click a failed test case** in the Results panel to jump straight to that variable in the suite editor.
 - If a suite file is modified externally — or by one of the Rename / Delete / Edit commands above — the open editor automatically reloads, unless you have unsaved changes, in which case your edits are preserved.
@@ -1367,6 +1592,53 @@ The runner automatically:
 - **"Run" button greyed out:** A TIA project must be open, and the active suite document must be valid JSON.
 - **Test Explorer is empty:** The working directory has no `.tia-tests/` folder yet. Click **New Suite** to create the first one — the folder is created automatically.
 - **PLCSIM errors:** Check that PLCSIM Advanced V3.0+ is installed and licensed. The exact version is auto-detected at runtime.
+
+### AI-Authored Test Suites (Enterprise)
+
+AI Chat can draft, refine and (optionally) run full SCL unit-test suites for you. Requires an Enterprise license.
+
+#### Write Unit Tests skill (main chat)
+
+1. Open **AI Chat** and pick the **Write Unit Tests** skill from the skill picker (🧪 icon), or simply ask: *"write unit tests for FB_MotorControl"*
+2. The assistant reads the block interface, computes boundary values, plans test cases and summarises the plan in the chat — no giant JSON blobs
+3. When it's ready to write the suite, an **Approve** / **Deny** prompt appears inline. Approve to let the assistant save the suite to `.tia-tests/`
+4. If you asked the assistant to also run the suite, a second approval prompt appears for the run itself. Results come back as a pass/fail summary in the chat, and the assistant offers to refine any failing cases
+5. The Test Explorer picks up the new suite automatically — open it, review it in the Visual or JSON editor, and run it yourself whenever you want
+6. You can also ask the assistant to *"open that suite"* after it's been created — the suite opens as a new tab in the Unit-Testing editor without you having to switch to the Test Explorer
+
+#### Inline chat in the suite editor (Ctrl+I)
+
+While a test suite is open in the JSON editor:
+
+1. Place the cursor near the test case you want to change (or select a range)
+2. Press **`Ctrl+I`** — a small prompt box appears above the editor
+3. Type what you want, for example:
+   - *"add an overflow test for Counter_Value"*
+   - *"make this test parametrized with five speed setpoints"*
+   - *"tighten the tolerance on all REAL assertions to 0.01"*
+4. The assistant streams the updated JSON and a diff overlay appears in the editor
+5. Click **Accept** to apply the change (the file is saved and the Test Explorer reloads) or **Reject** to discard
+
+The inline chat uses the same block interface the suite was opened with, so variable names and types are validated against the real block — mismatches are caught before you save.
+
+#### AI badge in the Test Explorer and Visual editor
+
+TestCases authored by the AI carry a small **AI** tag that appears:
+- next to the test case name in the **Visual editor**
+- in the **Test Explorer** tree
+
+Review AI-authored test cases just like you would a colleague's pull request — read each assertion, sanity-check expected values, then run on the simulator before pointing it at real hardware.
+
+#### Safety (F-CPU) protection
+
+AI test authoring is gated for Safety blocks:
+
+- **Creating tests** — The assistant refuses to author tests for an F-CPU block without an explicit, in-conversation confirmation from you. The underlying tools also reject the write if the confirmation is missing
+- **Running tests** — The assistant **cannot run** tests against Safety blocks. Full stop, no override. Safety-block verification requires a certified methodology (TÜV/CE), not an AI-generated run. If you want to run a test against a Safety block, trigger the run yourself from the Test Explorer
+
+#### Licensing
+
+The Write Unit Tests skill and the unit-test MCP tools are Enterprise-only. On Basic or Professional tiers, the skill surfaces an "Enterprise required" message before any AI call is made.
 
 ---
 
@@ -1691,6 +1963,21 @@ In the License dialog, you can see:
 - Hardware ID
 - Activation code
 
+### Security Alerts
+
+When the app detects an unusual security event, a yellow banner appears at the top of the main window. These alerts stay visible until you dismiss them (click the **×** button) so they are never overwritten by other status messages.
+
+Two event types surface here:
+
+- **Storage integrity warning.** The app could not fully save your license information to the Windows Registry. This is usually a permissions issue on a managed laptop. The app keeps running with your cached license — if the warning appears immediately after activation, try running the app once as Administrator, or contact your IT department.
+- **Certificate change warning.** The TLS certificate of `tiaopenessmanager.ch` changed unexpectedly. Your connection is still TLS-protected (otherwise the app would refuse the request entirely), but the change is worth investigating — especially if it coincides with a newly installed corporate proxy. The app continues to work; contact support if the warning does not clear within 24 hours.
+
+Both alerts are informational. Your license stays active while they are visible. The banner automatically disappears the next time the condition clears.
+
+**Untrusted Environment (Basic mode)**
+
+If the app detects a debugger attached to its process, or if the main executable is not signed with the expected Certum certificate, the app silently downgrades to Basic tier. This is a defense-in-depth measure against tampering. Release builds always have the correct signature; if you see this behaviour in a normal install, the binary has been modified — reinstall from https://www.tiaopenessmanager.ch.
+
 ---
 
 ## 14a. Git Client
@@ -1777,6 +2064,103 @@ Press **Ctrl+Shift+P** while working in the Git workspace to open the Command Pa
 
 ---
 
+## 14b. Trace / Signal Visualization
+
+The Trace tab captures OPC UA signal values at a fixed cycle and plots them in real time, similar to a scope. It is the right tool when a number in the Watch Table is not enough and you need to see how a signal changes over time — rising flanks, overshoot, oscillations or drift.
+
+### Opening the Trace Tab
+
+Pick **Trace** in the main tab bar. Before you can record anything you need an active OPC UA session (connect via the OPC UA tab first).
+
+### Adding Signals
+
+Use the signal sidebar on the left:
+
+- **"+ Signal"** opens the OPC UA browser so you can pick a tag from the PLC.
+- **"+ Computed"** adds a computed signal whose value is calculated from a formula over the other signals (see below).
+
+Each signal has a checkbox to enable or disable it without removing it from the list, a color swatch, and a delete button.
+
+### Toolbar
+
+| Button | Action |
+|--------|--------|
+| Start / Stop | Start or stop the trace |
+| Mode | **Continuous** keeps the newest samples in a rolling window; **Single trigger** captures a fixed window around a trigger event |
+| Cycle time | How often the PLC is polled (100 ms, 200 ms, 500 ms, 1 s, 2 s, 5 s) |
+| Window | Time window shown in continuous mode (30 s up to 1 h) |
+| Trigger | Configure rising / falling / both edge with threshold plus pre- and post-samples |
+| Auto-scale | Toggle automatic y-axis fitting |
+| Auto-reconnect | If ON, the trace restarts automatically with the same signals after an OPC UA disconnect |
+| Export CSV | Write the recording to a CSV file |
+
+While a recording is running the signal list is read-only. Stop the trace to edit signals, add computed signals or change scaling.
+
+### Plot Interaction (after Stop)
+
+Once a recording is stopped the plot toolbar turns on additional buttons:
+
+- **Pan** — drag to move the viewport
+- **Rectangle zoom** — drag a box to zoom into a region
+- **Zoom in / Zoom out** — step zoom
+- **100 %** — reset both axes to the full recording
+- **Fit** — auto-fit the y-axis within the current time window
+
+### Dual Cursors
+
+Click the plot to place cursor **t1**, click again to place cursor **t2**. Further clicks toggle which cursor moves. Drag either cursor to reposition it precisely. Hold **Ctrl** and click anywhere to clear both cursors.
+
+The time difference **Δt** between the two cursors is displayed in the upper-right corner of the plot. Each cursor carries a small **t1** / **t2** badge at the top of the line, and the second cursor also shows the live Δt and ΔY right on the line as you drag it.
+
+The toolbar has a **Show measurement cursors** toggle next to the export button. When you turn it on for the first time after stopping a recording, the cursors auto-place at 25 % and 75 % of the visible time so you see them immediately. Turning the toggle off hides the cursor lines and clears the Y(t1) / Y(t2) / ΔY columns in the signal table — the last cursor positions are remembered and reappear when you turn the toggle back on.
+
+### Signal Table (below the plot)
+
+Every signal gets a row with the following editable columns: **Name**, **Formula**, **Format** (Decimal / Hex / Binary / Bool / Scientific), **Line** (Linear or Step), **Min Y**, **Max Y** and **Scaling group**. Edits take effect live — no trace restart needed. The right-hand columns **Y(t1)**, **Y(t2)** and **ΔY** show the interpolated signal values at the two cursors plus their difference, in the same display format as the signal.
+
+The **Line** column controls how the signal is drawn on the stopped recording: Linear draws a straight line between samples, Step draws a rectangular waveform — which matches how a boolean or bit-style signal actually changes in the PLC. Switching a signal's format to Bool picks Step automatically. You can change the line style manually at any time and the choice is remembered across format changes.
+
+### Scaling Groups
+
+Multiple signals can share a y-axis by putting them into the same scaling group:
+
+- **Main** — the primary left axis (default for new signals)
+- **A / B / C / D** — four shared right axes; every signal in the same letter group uses one common axis with a neutral scale label
+- **Own** — a dedicated right axis per signal, colored with the signal's own color
+
+Example: put three temperature probes into group **A** to overlay them on one scale while pressure sits on its own axis.
+
+### Computed Signals (Formulas)
+
+A computed signal has no PLC tag of its own. It is computed from the values of earlier signals in the list using a formula you type into the **Formula** column.
+
+**Syntax:**
+
+- `$0`, `$1`, `$2` … refer to signals by their position in the list (zero-based). A computed signal at position *i* can only reference signals **before** it (`$0` … `$(i-1)`), which rules out circular references.
+- Basic arithmetic `+`, `-`, `*`, `/` and parentheses.
+- Built-in functions: `abs`, `sqrt`, `min(a, b)`, `max(a, b)`, `pow(a, b)`, `sin`, `cos`, `tan`, `log`, `log10`, `exp`, `ceiling`, `floor`, `round`.
+- Two time-aware functions: `deriv($i)` returns the numerical derivative `(yₙ − yₙ₋₁) / Δt`, `integ($i)` returns the running integral (trapezoidal rule). Each call keeps its own state, so `deriv($0) + deriv($1)` works as expected. The state is reset every time you start a new trace.
+
+**Examples:**
+
+```
+$0 + $1                 # sum of two signals
+($0 + $1) / 2           # average
+$0 - $1                 # difference
+abs($0 - $1) * 2        # twice the absolute difference
+deriv($0)               # numerical derivative
+integ($0)               # numerical integral
+$0 * 0.5 + 1.25         # gain + offset
+```
+
+**Validation:** The formula is parsed while you type. An invalid formula paints a red border around the cell and shows the error as a tooltip; the Start button stays disabled until every formula is valid again.
+
+### Export
+
+Click **Export CSV** to save the recording to disk. Every signal (source and computed) becomes a column, every sample a row, with the timestamp in the first column.
+
+---
+
 ## 15. Troubleshooting & FAQ
 
 ### Common Problems
@@ -1846,7 +2230,7 @@ A: No, currently only one project at a time is supported.
 
 For further questions or problems, contact support:
 
-- **Email:** [tiaopenessmanager@outlook.com]
+- **Email:** [support@tiaopenessmanager.ch]
 - **Documentation:** See `Information/` folder
 - **Report a Bug or Feature Request:** Help → Report Issue inside the app
 

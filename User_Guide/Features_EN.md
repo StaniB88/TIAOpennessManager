@@ -194,17 +194,37 @@ The built-in code editor provides professional editing features for SCL and othe
 - **Direct Connection** - Connect to any OPC UA server by endpoint URL (e.g., `opc.tcp://192.168.0.1:4840`)
 - **Auto-Discovery** - Automatically detect PLC OPC UA endpoints from the connected TIA Portal project
 - **Authentication Modes** - Anonymous, Username/Password, and Certificate-based authentication
+- **Dockable Workspace Layout** - Address Space Browser, Node Information, References, Struct Fields and Watch Table each live in their own dockable panel that can be floated, pinned, rearranged or stacked via the drag-grip on each title bar
 - **Address Space Browser** - Browse the full OPC UA address space in a TreeView with node class icons
 - **Node Search** - Filter address space nodes by name to quickly locate variables
+- **Node Information Panel** - Selecting a node shows every OPC UA attribute including Node Id, Browse Name, Display Name, Node Class, Description, Write/User-Write Masks, and for variables Data Type, Value Rank, Array Dimensions, Access Level, User Access Level, Minimum Sampling Interval, Historizing, current Value, Status Code, and Source/Server Timestamp (matches UaExpert)
+- **References Panel** - Dedicated panel listing every incoming and outgoing reference of the selected node with direction, reference type, browse name, node class and target node id columns
+- **Event Log Panel** - Subscribe to OPC UA events from a notifier node and watch them stream into a Time / Severity / Source / Event Type / Message grid; severity range filter, CSV export with formula-injection guard, and a 5000-entry FIFO ring with bounded UI dispatch under flood
+- **History Chart Panel** - Load raw historical values for a variable node over a time range and plot them on a date-time scatter chart; quick 1h / 6h / 24h / 7d presets, calendar pickers for custom ranges, CSV export, and safe handling of out-of-range timestamps / non-numeric values / hostile-server payload sizes
+- **Call Method Dialog** - Right-click a method node in the Address Space Browser to open a modal dialog that lists input and output arguments with per-type editors (scalar text boxes, array-row editor), runs the call, and shows the returned values and status; closing the dialog cancels any call still in flight
+- **Certificate Management Dialog** - Review the client's own certificate plus every server certificate this client has trusted or rejected in a three-tab modal (Own / Trusted / Rejected); trust pending server certificates, reject previously trusted ones, remove obsolete entries, or regenerate the client certificate. A companion Auto-accept toggle in the OPC UA settings flyout switches between automatic trust (default) and manual per-server approval
+- **Matrix Editor Dialog** - Right-click a matrix-typed variable in the Address Space Browser to open a spreadsheet-style editor with row and column headers; edit cells individually, track dirty changes, and save the whole matrix back to the server in one write. Read-only matrices stay visible but disable the Save button; matrices with more than two dimensions report an honest "rank not supported" error instead of silently flattening the data
+- **Struct Fields Panel** - Read and edit complex struct/UDT values with nested expansion, per-index array rows and dirty-field write-back
 - **Watch Table** - Add variables via double-click or drag-and-drop; view Name, Node ID, Data Type, Value, Status, and Timestamp per row
 - **Read Values** - Read all watch table variables with a single server request, or read individual rows on demand
 - **Write Values** - Write values directly to PLC variables by editing watch table cells
 - **Live Subscriptions** - Subscribe to value changes with a configurable interval (in milliseconds); values update automatically without polling
 - **Per-Variable Subscribe** - Subscribe to a selection of rows independently of the full watch table
 - **Save/Load Configuration** - Save and restore watch table configurations (endpoint URL + variable list) as `.opcua-watch` JSON files
+- **Workspace Persistence** - The whole OPC UA workspace (panel layout + open connections + watch table) is restored automatically the next time the app opens. Every open connection tab keeps its own watches, subscriptions, event filter and history range — not only the active tab. A per-tab **Don't persist this connection in workspace** toggle in each connection's Settings flyout lets you exclude a tab from the workspace file and the auto-restore when an endpoint must stay private. A dock-toolbar **Workspace** menu offers **Save Workspace As…**, **Load Workspace…** (accepts both new `.opcua-workspace` and legacy `.json` watch files), and **Reset Workspace**. Passwords stay out of the workspace file — operators re-enter them on reconnect
 - **CSV Export** - Export watch table data to CSV with all columns (Name, Node ID, Data Type, Value, Status, Timestamp)
 - **JSON Export** - Export watch table data to structured JSON with full metadata
 - **MCP Integration** - Unified `opcua` tool with 9 subcommands for AI assistants: connect, disconnect, browse, read, read_complex, write, write_complex, get_types, subscribe
+
+### S7 Native (S7 Comm+)
+
+- **Direct S7 Comm+ connection** - TLS 1.3-secured native S7 protocol access to S7-1200 (FW ≥ 4.3) and S7-1500 (FW ≥ 2.9) without OPC UA
+- **Authentication** - Legacy password and TLS user/password authentication via the built-in driver
+- **Symbolic browsing** - Browse all block types (DB/FB/FC/OB) with tag/UDT expansion; absolute addresses (I0.0, MW10, QD20) resolved via manual address dialog
+- **TIA tag import** - Import PLC tags from the active TIA Portal project as a "PLC Tags" tree node; IP-based PLC matching
+- **Live Watch Table** - Native S7 Comm+ subscriptions push value changes with configurable cycle time; the old fixed-interval polling path is gone
+- **Connection status dot** - A coloured dot in every PLC tab header signals the PLC state live (grey = not connected, green = running, yellow = stopped or reconnecting, red = unreachable) with a hover tooltip
+- **Automatic reconnection with visible progress** - A "Reconnecting…" banner surfaces under the connection bar while the app restores a lost connection; Watch Table values fade to half opacity and switch to `???` until fresh values arrive; all recovery is handled in the background
 
 ### SCL Unit Testing (Enterprise)
 
@@ -225,9 +245,31 @@ Integrated unit test framework for SCL blocks — write, run and evaluate tests 
 - **Automatic block analysis** — Interface, boundary values and dependencies are extracted from the TIA project with a single click
 - **Dock layout** — Test Explorer, analysis tools, test editors and results panel are freely movable dock tools
 
+### Trace / Signal Visualization
+
+Real-time scope for OPC UA signals. Capture PLC values at a fixed cycle, see them as live graphs, and analyse stopped recordings with scope-style tools.
+
+- **Continuous and single-trigger modes** — Continuous keeps the newest samples in a rolling window (30 s to 1 h), single-trigger captures a fixed window around a rising, falling or both-edge condition with configurable pre- and post-samples
+- **Auto-reconnect** — If the OPC UA session drops, the trace restarts automatically with the same signals when the session comes back
+- **Multi-signal plotting with scaling groups** — Put signals on the main axis, one of four shared right-hand axes (A / B / C / D) or a dedicated own axis per signal
+- **Dual cursors with delta** — Click to place t1, click again for t2, drag either one to reposition. The time difference Δt is shown on the plot; the signal table shows Y(t1), Y(t2) and ΔY per signal in the chosen display format
+- **Toolbar toggle for cursors** — Show or hide both cursors with a single toolbar button. When turned on for the first time after stopping a recording, the cursors auto-place at 25 % and 75 % of the visible time. Each cursor carries a small t1 / t2 badge; the second cursor shows the live Δt and ΔY right on the line as you drag
+- **Per-signal format** — Decimal, Hex, Binary, Bool or Scientific, editable directly in the signal table and applied live to cursor readouts
+- **Linear or stepped rendering per signal** — The signal table has a Line column to pick Linear (diagonals between samples) or Step (rectangular waveform, matches how a boolean or bit-style signal actually changes). Switching a signal's format to Bool picks Step automatically
+- **Computed signals from formulas** — Combine source signals with `+`, `-`, `*`, `/`, parentheses, built-in math (`abs`, `sqrt`, `min`, `max`, `sin`, `cos`, `log`, ...) and time-aware `deriv` / `integ`; invalid formulas are flagged inline with a red cell border, the error as a tooltip, and the Start button stays disabled until every formula is valid
+- **Overview minimap** — Compact strip below the main plot shows the whole recording at a glance; drag the highlighted rectangle to scrub, zoom or pan the main plot — the rectangle follows
+- **FFT tab after stop** — Stopped recordings offer a Frequency tab with Rectangular / Hann / Hamming / Blackman windows plus optional dB and logarithmic y-axis
+- **Plot interaction** — Pan, rectangle zoom, step zoom in/out, 100 % reset, fit-to-current-window — all available after stop
+- **CSV export** — Write the full recording (source and computed signals) with ISO-8601 timestamps to disk
+- **MCP integration** — `tia_trace` tool with start / stop / status / export; AI agents can wire source and computed signals directly
+
 ### Issue Reporting
 
 Report bugs and request features without leaving the app. The Help menu's "Report Issue" entry opens a dialog where you describe the problem; the app collects system information (app version, OS, .NET runtime, active TIA Portal version, language, license tier) and recent logs, then opens GitHub in your browser with the issue pre-filled. No GitHub account login is required from inside the app — you submit on GitHub yourself.
+
+### One Window per Windows Session
+
+Only one instance of TIA Openness Manager runs per Windows session. Opening a file or folder from Windows Explorer while the app is already running activates the existing window and opens the item there, instead of starting a second copy. Double-clicking the application icon or launching the executable a second time also brings the running window to the front. Different Windows users (including separate RDP sessions) each get their own independent instance.
 
 ---
 
@@ -288,12 +330,16 @@ Report bugs and request features without leaving the app. The Help menu's "Repor
 - Safety Block Support (F_FB, F_FC, F_DB, F_OB)
 - Protection Profiles
 - MCP Server Integration
+- AI Chat
+- Project Library Operations
 - Priority Support
 
 ### Enterprise (CHF 29.99/month or CHF 299.99/year)
 - **Unlimited files**
 - **Annual plan saves 17%** (2 months free)
-- Everything in Professional
+- Everything in Professional, plus:
+- Password Vault
+- SCL Unit Testing
 - Multi-user licenses
 - Dedicated support
 - Volume discounts
@@ -309,7 +355,7 @@ Report bugs and request features without leaving the app. The Help menu's "Repor
 
 ### Online Activation
 1. Purchase subscription at: https://www.tiaopenessmanager.ch
-2. Receive activation code via email (format: `ACT-XXXX-XXXX-XXXX`)
+2. Receive activation code via email
 3. Enter code in the program under **View → Settings → Manage License**
 4. License is bound to your hardware
 
@@ -329,6 +375,6 @@ The software is provided "as is". The provider assumes no liability for damages 
 
 ---
 
-**Contact:** For questions, contact us at [tiaopenessmanager@outlook.com]
+**Contact:** For questions, contact us at [support@tiaopenessmanager.ch]
 
 **© 2025-2026 AnyAutomation. All rights reserved.**

@@ -1,62 +1,103 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>3.2.0</version>
-    <url>https://github.com/StaniB88/TIAOpenessManager/releases/download/v3.2.0/TiaOpennessManager_Setup_3.2.0.exe</url>
-    <changelog>https://github.com/StaniB88/TIAOpenessManager/blob/main/CHANGELOG.md</changelog>
-    <release_date>2026-04-14</release_date>
+    <version>3.3.0</version>
+    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v3.3.0/TiaOpennessManager_Setup_3.3.0.exe</url>
+    <changelog>https://github.com/StaniB88/TIAOpennessManager/blob/main/CHANGELOG.md</changelog>
+    <release_date>2026-04-20</release_date>
     <body>## What&apos;s Changed
 
-### SCL Unit Testing (BETA)
-- **New feature** â€” Integrated unit test framework for SCL blocks. Write, run and evaluate tests against a live PLCSIM Advanced instance without leaving the app. Requires PLCSIM Advanced V3.0+ (separate Siemens license)
-- **Test Explorer** â€” Tree of all test suites in the project&apos;s `.tia-tests/` folder with live status icons (Pass / Fail / Error / Skipped). The explorer auto-detects new, deleted and modified suite files
-- **Run tests** â€” Run Suite, Run Test (single case), Run All, Run Selected from the Test Explorer context menu or the Run button. Live progress streams through phase updates and per-test-case status icons while the run is active
-- **Persistent results** â€” Test results are saved locally and reappear automatically when you reopen the app
-- **Search and filter** â€” Text filter across suite and test case names, plus a &quot;Failed only&quot; toggle that hides all passing suites
-- **Test suite editor** â€” Create test suites with the JSON, Visual or SCL editor modes. Block interface, boundary values and dependencies are extracted from the TIA project with a single click
-- **Results panel** â€” Per-test-case detail grid with Variable, Operator, Expected, Actual and Pass/Fail markers for every assertion
-- **Rename and delete suites** â€” Right-click a test suite in the Test Explorer to rename or delete it. Deleting also clears the run history for that suite
-- **Manage test cases** â€” Right-click a test case to edit its name and description, duplicate it, delete it, or move it up and down in the list
-- **PLCSIM Settings dialog** â€” New toolbar button opens a dialog for per-suite PLCSIM configuration (instance name, IP address, cycle wait time, auto-connect), with an option to save the values as defaults for new suites
-- **Failed variable highlighting** â€” When a test case fails, the affected variable is underlined in red directly in the generated SCL code, with the error message shown on hover
-- **Click-to-navigate from results** â€” Double-clicking a test case in the Results panel jumps to the corresponding position in the suite editor
-- **Variable name check before running** â€” Before a run starts, the manager warns about variable names in the suite that don&apos;t exactly match the block interface, including case differences. You can still run the suite after acknowledging the warning
-- **Auto-reload of open suites** â€” Suite files are now automatically reloaded in the editor when they&apos;re modified externally, unless there are unsaved local changes
-
 ### AI Chat
-- **Removed Terminal Mode from AI Chat**
-- **More accurate AI responses** â€” Built-in agents and skills have been refined to give more reliable results when working with TIA Portal projects
-- **Automatic context window sizes** â€” AI Chat now picks the right context window for every supported model, including brand-new models released after your app version. No more guessing or waiting for an app update when a new model launches
-- **Context window override** â€” Advanced agent settings have a new &quot;Context Window Override&quot; field for setting a custom context window per agent, plus an &quot;Enable 1M context (Anthropic Beta)&quot; toggle that opts Anthropic models into the 1M-token context beta
-- **Live sub-agent info in the chat bubble** â€” Dispatched sub-agents now show their name, current activity, tool count, token usage, elapsed time and a stop button directly in the chat bubble, right where the agent was started. No more jumping between chat and a separate panel to check progress
-- **Jump-back button when sub-agents run off-screen** â€” If you scroll up while a sub-agent is still working, a small pill at the bottom of the chat shows how many agents are running and jumps you back to the first running one when clicked
-- **Mouse wheel unsticks auto-scroll reliably** â€” Scrolling up with the mouse wheel during a streaming response now always stops the chat from auto-scrolling back to the bottom
+- **New providers** â€” xAI (Grok), Groq, Cerebras, DeepSeek, Perplexity, Together AI, Hugging Face, Z.AI, MiniMax, Fireworks AI, Moonshot AI, Vercel AI Gateway, SGLang, vLLM, Qwen, Alibaba Model Studio, Baidu Qianfan, Volcano Engine, BytePlus, Arcee AI, and Kimi Coding. SGLang and vLLM accept a custom OpenAI-compatible URL.
+- **Google Antigravity sandbox** â€” Sign in with Google to use Claude Opus/Sonnet, Gemini 3 Pro/Flash, and GPT-OSS 120B. No separate key needed.
+- **Cloudflare AI Gateway proxy** â€” Route requests through your Cloudflare gateway with Account ID, Gateway ID, and a chosen downstream provider.
+- **Region picker for Qwen, Z.AI, MiniMax, Moonshot** â€” Switch between Global and China endpoints. Qwen and Z.AI also expose Coding Plan endpoints.
+- **Faster built-in skills on large projects** â€” Describe/Document/Explain Block and Describe/Document Project run noticeably faster.
+- **UP recalls queued messages** â€” With the input empty, UP pulls queued messages back to edit or drop. ESC still cancels.
+- **Sub-agent approvals in main chat** â€” Prompts appear in the main chat with Allowed / Denied / Interrupted states; sensitive arguments show as `[redacted]`.
+- **Queue hint shows current activity** â€” The indicator explains what the assistant is doing (e.g. &quot;running tia_import&quot;).
+- **Ctrl+B detaches a sub-agent** â€” Sends a blocking sub-agent to the background; a chat notification arrives when it finishes. A &quot;(background)&quot; badge marks detached agents; a reminder appears if there&apos;s nothing to detach.
+- **Smaller models no longer loop on compaction** â€” The compaction reserve scales with the model&apos;s context size.
+- **Reasoning-without-answer recovery** â€” If a thinking model exhausts its reasoning budget without answering, the request is retried with a continuation prompt.
+- **Non-existent tool calls no longer loop** â€” After a few retries the failed call is turned into a plain text reply.
+- **More reliable prompt caching** â€” The skills list is sorted in a stable order, improving cache hit rates.
+- **Azure OpenAI reasoning models** â€” `reasoning_effort` now works for Azure deployments of o1/o3/gpt-5.
+- **Canvas snapshots open the canvas automatically** â€” No need to open the panel first.
+- **Cleaner provider error messages** â€” Provider rejections show a short summary instead of a raw server dump.
+- **Tool calls no longer rejected as invalid schema** â€” Fixed a detail that caused strict providers to reject some tools.
+- **Tool responses can carry NaN / Infinity values** â€” MCP tool results with REAL boundary values no longer fail to serialize.
 
-### Help &amp; Support
-- **Report Issue from inside the app** â€” New Help â†’ Report Issue entry. Pick Bug Report or Feature Request, fill in a title and description, and the app opens GitHub in your browser with the issue pre-filled. System information (app version, OS, TIA Portal version, language) is attached automatically so you don&apos;t have to look it up. Bug reports can optionally include recent log lines to help with diagnosis
+### TIA Portal
+- **Instant project tree refreshes** â€” After the first load, refreshes are instant and scoped to the changed area.
+- **Selective import from Preview Diff** â€” Tick the blocks to import; the batch is transactional and rolls back on failure.
+- **Preview Diff catches source-file edits** â€” SCL, AWL and DB source changes without a matching XML change now show up.
 
-### Code Editor
-- **Syntax Highlighting Persistence** â€” Fixed syntax highlighting disappearing when switching between editor tabs or rapidly opening blocks. Highlighting now survives tab switches reliably
-- **AI inline edits on SCL with special characters** â€” Fixed AI inline edits failing to match code containing characters like `&lt;`, `&gt;`, `+`, `Â°`, and quotes. AI edits now work reliably on all SCL code regardless of formatting quirks
+### Editor
+- **Save and Upload split into two buttons** â€” Save writes to disk; Upload imports into TIA Portal.
 
-### Import / Export
-- **Auto-Compile before Export Selected** â€” Pressing &quot;Export Selected&quot; now automatically compiles the PLC before exporting, so blocks are always up-to-date. If compilation fails, the export continues and skips any still-inconsistent blocks
+### SCL Unit Testing 
+- **AI Chat authors test suites end-to-end** â€” Ask &quot;write tests for FB_X&quot; and the assistant drafts, runs and refines the suite. AI-authored cases carry an &quot;AI&quot; badge. F-CPU (Safety) blocks are refused without confirmation.
+- **Inline chat and Accept/Reject diff in the suite editor** â€” Press `Ctrl+I` for targeted edits streamed as a reviewable diff.
+- **AI opens a suite in the editor** â€” The assistant can open a newly created suite as a tab on request.
+- **Variable timeline chart** â€” Click a test case after a run to plot its watch variables over the cycles. Add `&quot;watch&quot;: [...]` to a test case to enable it.
+- **Tag browser with inline edit** â€” Write tag values from the tag browser with a type-aware editor and range clamping.
+- **Saved Instances list** â€” Lists persisted PLCSim instances with Load and Delete actions, including their configured IP addresses.
+- **Searchable block picker** â€” A search box next to the block dropdown filters as you type.
+- **Streamlined Connection Settings** â€” IP address and PLCSIM preparation are shared across transports; switching between PLCSim Advanced and S7 Comm+ keeps the IP.
+- **Honest error for optimized-DB variables on PLCSim Advanced** â€” Suites that target an optimized-access DB now report that the variable isn&apos;t reachable and suggest S7 Comm+, instead of a cryptic PLCSim error code.
+- **Open Suite falls back to the project folder** â€” If the hidden `.tia-tests` folder doesn&apos;t exist yet, the dialog opens in the TIA project folder.
+- **Empty state when no project is loaded** â€” The Test Explorer shows &quot;No TIA Project connected&quot; until a project is open.
+- **Virtual-adapter status in the Simulation view** â€” A status row shows whether the PLCSim virtual adapter is ready.
+
+### Application Shell
+- **One app per Windows session** â€” Opening a file or folder from Explorer activates the running window instead of starting a second copy.
+- **Language switch applies to dates and numbers** â€” Dates, numbers and regional conventions follow the selected language; regional variants fall back to the parent language.
+- **Correct plural forms per language** â€” Count-based messages use proper singular/plural in EN/DE/FR/IT; trial dates use each language&apos;s short format.
+
+### Trace
+- **Zoom and pan stopped recordings** â€” Drag-pan, rectangle-zoom, step-zoom, reset and fit-y added to the toolbar. Live recording still scrolls.
+- **Recording start time on the plot** â€” Shown as `HH:mm:ss.fff` in the upper-left.
+- **Two cursors with Î”t** â€” Click to place t1/t2, drag to move, Ctrl+click to clear; Î”t shown in the upper-right.
+- **Signal table with per-cursor values** â€” Shows color, name, tag, format, Y range and Y(t1)/Y(t2)/Î”Y; name, format and Y range are editable live.
+- **Overview minimap with viewport drag** â€” Shows the whole recording; drag the rectangle or click to scrub.
+- **Frequency spectrum (FFT)** â€” New FFT tab with Rectangular/Hann/Hamming/Blackman windows, dB and log-Y. Disabled while recording.
+- **Shared y-axes (scaling groups)** â€” Send each signal to Main, one of Aâ€“D shared groups, or its own axis.
+- **Computed signals from formulas** â€” &quot;+ Computed&quot; adds a signal defined by an expression referencing `$0, $1, â€¦` with functions like `abs`, `sqrt`, `min`, `sin`, `cos`, `log`, `deriv`, `integ`. Invalid formulas highlight red and block Start.
+- **Cursor toggle + labeled readout** â€” Toolbar toggles both cursors, auto-placing at 25 %/75 %. Each cursor carries a t1/t2 badge; t2 shows live Î”t and the first signal&apos;s Î”Y.
+- **Stepped rendering for digital signals** â€” Pick Linear or Step per signal; Bool switches to Step automatically.
+- **Splitter no longer shrinks the plot** â€” The horizontal splitter correctly resizes the signal table against the plot.
+
+### PLC Online 
+- **Live connection status dot per tab** â€” Grey/green/yellow/red dot with a tooltip.
+
+
+### OPC UA
+- **Per-tab workspace persistence** â€” Each tab keeps its own watch list, subscriptions, event filter and history range. A &quot;don&apos;t persist&quot; toggle keeps confidential endpoints out of the workspace file.
+- **Workspace auto-restore** â€” Restores on startup; a Workspace menu saves, loads or resets `.opcua-workspace` files.
+- **Edit matrices as a spreadsheet** â€” &quot;Edit Matrixâ€¦&quot; opens a row/column editor; Save writes the whole matrix; read-only matrices are labelled.
+- **Certificate Management dialog** â€” Lists own, trusted and rejected certs; trust/reject/remove pending server certs; regenerate the client cert. An Auto-accept toggle controls automatic trust.
+- **Call methods from the Address Space Browser** â€” &quot;Call Methodâ€¦&quot; loads arguments, accepts scalars or arrays, runs the call and shows outputs with status.
+- **History Chart panel** â€” Plots historical values over a time range; presets 1h/6h/24h/7d; CSV export.
+- **Event Log panel** â€” Subscribes to events from a notifier node and shows Time / Severity / Source / Event Type / Message; filter by severity; CSV export.
+- **References panel** â€” Shows incoming and outgoing references of the selected node.
+- **Node Information grid extensions** â€” Adds User Access Level and splits Timestamp into Source and Server Timestamp.
+- **Workspace as dockable panels** â€” Address Space Browser, Node Information, Struct Fields and Watch Table are separate dockable panels.
+- **Struct fields as expandable tree** â€” Nested structs and arrays collapse/expand individually; pending edits survive.
+- **Array fields in struct writes** â€” Writing structs with array fields no longer crashes; each element is its own row.
+- **Read-only summaries for containers** â€” Array and nested struct rows show as read-only; only leaf values are editable; writes send only modified fields.
+- **Read-only fields surfaced** â€” PLC-marked read-only fields appear as non-editable text.
+- **Struct drops expand in Watch Table** â€” Dragging a struct adds one row per field; a confirmation asks first for large structs.
+- **Copyable read-only cells** â€” Ctrl+C copies text from read-only cells in Node Information and Struct Fields.
+- **Denser grid rows** â€” Tighter row height and smaller font fit more data on screen.
+- **Node Information and Struct Fields side-by-side** â€” Leaves more vertical space for the Watch Table.
 
 ### Bug Fixes
-- Fixed GitHub Copilot chat returning &quot;Misdirected Request&quot; errors for Business and Enterprise Copilot accounts â€” chat requests are now sent to the account&apos;s correct host
-- Fixed Project Explorer Disconnect leaving the &quot;Protect: N&quot; badge and the selected protection profile visible after closing the project â€” both now clear together with the project tree
-- Fixed &quot;Clear Protection&quot; leaving the code and attribute toggles visible on blocks â€” clearing the protection selection now also resets the protection mark and options
-- Fixed Project Explorer still showing the project tree after disconnecting while a search filter was active
-- Fixed AI Chat responses sometimes appearing with missing code blocks at the end of a message
-- Fixed Import/Export settings opened from the View menu showing default values instead of your saved settings, and changes made there being silently discarded
-- Fixed MCP Server &quot;Allow Write Operations&quot; toggle resetting to off on every app restart â€” the setting is now remembered
-- Fixed AI Chat Memory settings always showing &quot;0 memories&quot; â€” the panel now displays memories for the active agent
-- Fixed AI Chat agent URLs being silently reset on every app start and whenever the Settings dialog was opened or closed â€” your configured endpoints are now stable across sessions
-- Fixed Git Preferences: date format, 24-hour clock, and &quot;Ignore CR at EOL&quot; settings had no effect â€” changes are now applied immediately
-- Fixed Git Preferences: &quot;Max History Commits&quot; slider had no effect â€” history now respects the configured limit
-- Fixed Git Preferences: &quot;Open in Terminal&quot; always opened cmd.exe instead of the shell configured in Integration settings
-- Fixed Git Preferences showing empty Install Path and version 0.0.0 after startup
-- Fixed crash when selecting certain protection profiles from the dropdown</body>
+- Fixed Unsubscribe All only clearing the first Watch Table row when several came from the same struct drop.
+- Fixed `.db` source files showing a folder icon instead of the data block icon.
+- Removed `.spl` and `.s7dcl` from drag-and-drop import targets.
+- Fixed log files growing to gigabytes after a cancelled or timed-out operation.
+- Hardened the internal connection to the TIA Portal helper against same-user impersonation.
+- Fixed Save as Patch in the Git commit history failing with `Invalid argument` when the chosen folder ended with a backslash.</body>
     <mandatory>false</mandatory>
-    <size>251522288</size>
-    <sha256>004618DFD2F3F2B1C1444DB03061222E7CD015C5D3AA32B07FADBB12DCC51C38</sha256>
+    <size>253930832</size>
+    <sha256>B99C4C7BB1270BFE70247BA55078B6813AC28BAA5973E88076775A5E958A6286</sha256>
 </item>

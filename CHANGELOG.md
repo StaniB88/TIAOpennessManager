@@ -1,5 +1,99 @@
 # TIA Openness Manager - Changelog
 
+## v3.3.0 (2026-04-20)
+
+### AI Chat
+- **New providers** — xAI (Grok), Groq, Cerebras, DeepSeek, Perplexity, Together AI, Hugging Face, Z.AI, MiniMax, Fireworks AI, Moonshot AI, Vercel AI Gateway, SGLang, vLLM, Qwen, Alibaba Model Studio, Baidu Qianfan, Volcano Engine, BytePlus, Arcee AI, and Kimi Coding. SGLang and vLLM accept a custom OpenAI-compatible URL.
+- **Google Antigravity sandbox** — Sign in with Google to use Claude Opus/Sonnet, Gemini 3 Pro/Flash, and GPT-OSS 120B. No separate key needed.
+- **Cloudflare AI Gateway proxy** — Route requests through your Cloudflare gateway with Account ID, Gateway ID, and a chosen downstream provider.
+- **Region picker for Qwen, Z.AI, MiniMax, Moonshot** — Switch between Global and China endpoints. Qwen and Z.AI also expose Coding Plan endpoints.
+- **Faster built-in skills on large projects** — Describe/Document/Explain Block and Describe/Document Project run noticeably faster.
+- **UP recalls queued messages** — With the input empty, UP pulls queued messages back to edit or drop. ESC still cancels.
+- **Sub-agent approvals in main chat** — Prompts appear in the main chat with Allowed / Denied / Interrupted states; sensitive arguments show as `[redacted]`.
+- **Queue hint shows current activity** — The indicator explains what the assistant is doing (e.g. "running tia_import").
+- **Ctrl+B detaches a sub-agent** — Sends a blocking sub-agent to the background; a chat notification arrives when it finishes. A "(background)" badge marks detached agents; a reminder appears if there's nothing to detach.
+- **Smaller models no longer loop on compaction** — The compaction reserve scales with the model's context size.
+- **Reasoning-without-answer recovery** — If a thinking model exhausts its reasoning budget without answering, the request is retried with a continuation prompt.
+- **Non-existent tool calls no longer loop** — After a few retries the failed call is turned into a plain text reply.
+- **More reliable prompt caching** — The skills list is sorted in a stable order, improving cache hit rates.
+- **Azure OpenAI reasoning models** — `reasoning_effort` now works for Azure deployments of o1/o3/gpt-5.
+- **Canvas snapshots open the canvas automatically** — No need to open the panel first.
+- **Cleaner provider error messages** — Provider rejections show a short summary instead of a raw server dump.
+- **Tool calls no longer rejected as invalid schema** — Fixed a detail that caused strict providers to reject some tools.
+- **Tool responses can carry NaN / Infinity values** — MCP tool results with REAL boundary values no longer fail to serialize.
+
+### TIA Portal
+- **Instant project tree refreshes** — After the first load, refreshes are instant and scoped to the changed area.
+- **Selective import from Preview Diff** — Tick the blocks to import; the batch is transactional and rolls back on failure.
+- **Preview Diff catches source-file edits** — SCL, AWL and DB source changes without a matching XML change now show up.
+
+### Editor
+- **Save and Upload split into two buttons** — Save writes to disk; Upload imports into TIA Portal.
+
+### SCL Unit Testing 
+- **AI Chat authors test suites end-to-end** — Ask "write tests for FB_X" and the assistant drafts, runs and refines the suite. AI-authored cases carry an "AI" badge. F-CPU (Safety) blocks are refused without confirmation.
+- **Inline chat and Accept/Reject diff in the suite editor** — Press `Ctrl+I` for targeted edits streamed as a reviewable diff.
+- **AI opens a suite in the editor** — The assistant can open a newly created suite as a tab on request.
+- **Variable timeline chart** — Click a test case after a run to plot its watch variables over the cycles. Add `"watch": [...]` to a test case to enable it.
+- **Tag browser with inline edit** — Write tag values from the tag browser with a type-aware editor and range clamping.
+- **Saved Instances list** — Lists persisted PLCSim instances with Load and Delete actions, including their configured IP addresses.
+- **Searchable block picker** — A search box next to the block dropdown filters as you type.
+- **Streamlined Connection Settings** — IP address and PLCSIM preparation are shared across transports; switching between PLCSim Advanced and S7 Comm+ keeps the IP.
+- **Honest error for optimized-DB variables on PLCSim Advanced** — Suites that target an optimized-access DB now report that the variable isn't reachable and suggest S7 Comm+, instead of a cryptic PLCSim error code.
+- **Open Suite falls back to the project folder** — If the hidden `.tia-tests` folder doesn't exist yet, the dialog opens in the TIA project folder.
+- **Empty state when no project is loaded** — The Test Explorer shows "No TIA Project connected" until a project is open.
+- **Virtual-adapter status in the Simulation view** — A status row shows whether the PLCSim virtual adapter is ready.
+
+### Application Shell
+- **One app per Windows session** — Opening a file or folder from Explorer activates the running window instead of starting a second copy.
+- **Language switch applies to dates and numbers** — Dates, numbers and regional conventions follow the selected language; regional variants fall back to the parent language.
+- **Correct plural forms per language** — Count-based messages use proper singular/plural in EN/DE/FR/IT; trial dates use each language's short format.
+
+### Trace
+- **Zoom and pan stopped recordings** — Drag-pan, rectangle-zoom, step-zoom, reset and fit-y added to the toolbar. Live recording still scrolls.
+- **Recording start time on the plot** — Shown as `HH:mm:ss.fff` in the upper-left.
+- **Two cursors with Δt** — Click to place t1/t2, drag to move, Ctrl+click to clear; Δt shown in the upper-right.
+- **Signal table with per-cursor values** — Shows color, name, tag, format, Y range and Y(t1)/Y(t2)/ΔY; name, format and Y range are editable live.
+- **Overview minimap with viewport drag** — Shows the whole recording; drag the rectangle or click to scrub.
+- **Frequency spectrum (FFT)** — New FFT tab with Rectangular/Hann/Hamming/Blackman windows, dB and log-Y. Disabled while recording.
+- **Shared y-axes (scaling groups)** — Send each signal to Main, one of A–D shared groups, or its own axis.
+- **Computed signals from formulas** — "+ Computed" adds a signal defined by an expression referencing `$0, $1, …` with functions like `abs`, `sqrt`, `min`, `sin`, `cos`, `log`, `deriv`, `integ`. Invalid formulas highlight red and block Start.
+- **Cursor toggle + labeled readout** — Toolbar toggles both cursors, auto-placing at 25 %/75 %. Each cursor carries a t1/t2 badge; t2 shows live Δt and the first signal's ΔY.
+- **Stepped rendering for digital signals** — Pick Linear or Step per signal; Bool switches to Step automatically.
+- **Splitter no longer shrinks the plot** — The horizontal splitter correctly resizes the signal table against the plot.
+
+### PLC Online 
+- **Live connection status dot per tab** — Grey/green/yellow/red dot with a tooltip.
+
+
+### OPC UA
+- **Per-tab workspace persistence** — Each tab keeps its own watch list, subscriptions, event filter and history range. A "don't persist" toggle keeps confidential endpoints out of the workspace file.
+- **Workspace auto-restore** — Restores on startup; a Workspace menu saves, loads or resets `.opcua-workspace` files.
+- **Edit matrices as a spreadsheet** — "Edit Matrix…" opens a row/column editor; Save writes the whole matrix; read-only matrices are labelled.
+- **Certificate Management dialog** — Lists own, trusted and rejected certs; trust/reject/remove pending server certs; regenerate the client cert. An Auto-accept toggle controls automatic trust.
+- **Call methods from the Address Space Browser** — "Call Method…" loads arguments, accepts scalars or arrays, runs the call and shows outputs with status.
+- **History Chart panel** — Plots historical values over a time range; presets 1h/6h/24h/7d; CSV export.
+- **Event Log panel** — Subscribes to events from a notifier node and shows Time / Severity / Source / Event Type / Message; filter by severity; CSV export.
+- **References panel** — Shows incoming and outgoing references of the selected node.
+- **Node Information grid extensions** — Adds User Access Level and splits Timestamp into Source and Server Timestamp.
+- **Workspace as dockable panels** — Address Space Browser, Node Information, Struct Fields and Watch Table are separate dockable panels.
+- **Struct fields as expandable tree** — Nested structs and arrays collapse/expand individually; pending edits survive.
+- **Array fields in struct writes** — Writing structs with array fields no longer crashes; each element is its own row.
+- **Read-only summaries for containers** — Array and nested struct rows show as read-only; only leaf values are editable; writes send only modified fields.
+- **Read-only fields surfaced** — PLC-marked read-only fields appear as non-editable text.
+- **Struct drops expand in Watch Table** — Dragging a struct adds one row per field; a confirmation asks first for large structs.
+- **Copyable read-only cells** — Ctrl+C copies text from read-only cells in Node Information and Struct Fields.
+- **Denser grid rows** — Tighter row height and smaller font fit more data on screen.
+- **Node Information and Struct Fields side-by-side** — Leaves more vertical space for the Watch Table.
+
+### Bug Fixes
+- Fixed Unsubscribe All only clearing the first Watch Table row when several came from the same struct drop.
+- Fixed `.db` source files showing a folder icon instead of the data block icon.
+- Removed `.spl` and `.s7dcl` from drag-and-drop import targets.
+- Fixed log files growing to gigabytes after a cancelled or timed-out operation.
+- Hardened the internal connection to the TIA Portal helper against same-user impersonation.
+- Fixed Save as Patch in the Git commit history failing with `Invalid argument` when the chosen folder ended with a backslash.
+
 ## v3.2.0 (2026-04-14)
 
 ### SCL Unit Testing (BETA)
@@ -17,6 +111,9 @@
 - **Click-to-navigate from results** — Double-clicking a test case in the Results panel jumps to the corresponding position in the suite editor
 - **Variable name check before running** — Before a run starts, the manager warns about variable names in the suite that don't exactly match the block interface, including case differences. You can still run the suite after acknowledging the warning
 - **Auto-reload of open suites** — Suite files are now automatically reloaded in the editor when they're modified externally, unless there are unsaved local changes
+- **One-click test runs for protected projects** — The PLCSIM Settings dialog has a new "Automatic TCP download" preparation mode. Pick it, click Run, and the runner compiles your project, starts a fresh PLCSIM Advanced instance, downloads via TCP over the PLCSIM Virtual Adapter and starts the tests. If your project has master-secret protection enabled, a password field appears in the dialog — check "Remember password" to store it in Windows Credential Manager so every future run picks it up automatically
+- **Manage PLCSim instances without leaving the app** — The SCL Unit Testing tab has a new Simulation sub-mode switcher at the top. Switch to Simulation to see every registered PLCSim Advanced instance with inline buttons for Power On, Run, Stop, Memory Reset, Settings, Network and Delete, plus a Tag Browser that connects to any instance and lists its tags with filter, search and auto-refresh
+- **Run tests against real hardware or via the PLCSim API** — The Connection Settings dialog (renamed from PLCSIM Settings) now lets each suite pick its transport: PLCSim Advanced for direct API access or S7 Comm+ for real hardware and authenticated TCP access. The S7 Comm+ section owns its own IP, port, rack, slot, TLS, user and password fields, so Unit Testing works independently of any other tab. Passwords are stored in Windows Credential Manager and can optionally be remembered across runs
 
 ### AI Chat
 - **Removed Terminal Mode from AI Chat**
@@ -519,13 +616,8 @@ The AI Chat has been rebuilt from the ground up.
 ## v1.1.6 (2025-12-22)
 
 ### New Features
-- **7-Day Full Trial** - New users get a 7-day trial with ALL features unlocked (Enterprise-level)
-- **Server-Side Trial Tracking** - Trial period is tracked on our server using hardware fingerprint
-- **Anti-Reinstall Protection** - Reinstalling the app does NOT reset your trial period
-
-### Changes
-- **Trial = Enterprise** - During trial, all features are available: Safety blocks, Bulk Import, Protection Profiles, MCP Server, Find Unused
-- **After Trial** - Falls back to Basic tier (limited features) or purchase a license to continue
+- **30-Day Full Trial** - New users get a 30-day trial with every feature unlocked. After the trial, the app falls back to Basic (free) or a purchased license.
+- **Trial now follows your device, not your install** - Reinstalling the app does not reset the trial.
 
 ---
 
@@ -543,17 +635,15 @@ The AI Chat has been rebuilt from the ground up.
 ## v1.1.4 (2025-12-21)
 
 ### New Features
-- **Online License Activation** - New activation system using activation codes (ACT-XXXX-XXXX-XXXX format)
-- **Hardware-Bound Licenses** - Licenses are now bound to your machine for added security
-- **Free Basic Tier** - Basic tier is now permanently free (no trial expiration)
-- **Monthly/Yearly Toggle** - Switch between monthly and yearly billing directly in the app
-- **Direct Stripe Checkout** - Subscribe buttons now open Stripe checkout directly (no website redirect)
+- **Online License Activation** - Activate your subscription directly from the app by entering the code you received after purchase.
+- **Hardware-Bound Licenses** - A license can only be used on the machine it was activated on. To move a license to a new machine, contact support.
+- **Free Basic Tier** - Basic tier is now permanently free (no trial expiration).
+- **Monthly/Yearly Toggle** - Switch between monthly and yearly billing directly in the app.
+- **Direct Stripe Checkout** - Subscribe buttons now open Stripe checkout directly (no website redirect).
 
 ### Improvements
-- **Simplified Activation** - Enter your activation code received via email to unlock Pro/Enterprise features
-- **License Server Integration** - Licenses are validated against our secure server
-- **Manage Subscription Button** - Improved visibility with accent color styling
-- **Dynamic Pricing Display** - Prices update automatically when switching between monthly/yearly
+- **Manage Subscription Button** - Improved visibility with accent color styling.
+- **Dynamic Pricing Display** - Prices update automatically when switching between monthly/yearly.
 
 ---
 

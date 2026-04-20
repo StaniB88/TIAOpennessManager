@@ -83,6 +83,12 @@ Ihr Windows-Benutzer muss Mitglied der Gruppe **"Siemens TIA Openness"** sein. O
 > net localgroup "Siemens TIA Openness" %USERNAME% /add
 > ```
 
+### Anwendung starten
+
+Pro Windows-Sitzung läuft nur eine Instanz des TIA Openness Managers. Wenn Sie eine Datei oder einen Ordner aus dem Windows Explorer öffnen, während die Anwendung bereits läuft, wird das vorhandene Fenster aktiviert und das Element dort geöffnet, statt eine zweite Kopie zu starten. Ein erneuter Doppelklick auf das Anwendungssymbol oder ein erneutes Ausführen der Exe holt ebenfalls nur das laufende Fenster nach vorn.
+
+Wenn ein anderes Programm den Namen belegt hat, den die Anwendung intern verwendet, verweigert sie den Start und zeigt eine Warnung. Schließen Sie das andere Programm (oder melden Sie sich ab und wieder an) und versuchen Sie es erneut.
+
 ---
 
 ## 3. Benutzeroberfläche
@@ -334,11 +340,17 @@ Wählen Sie **View → Import/Export Settings** aus der Menüleiste.
 Die Preview Diff Funktion zeigt Unterschiede zwischen dem TIA Portal Projekt und dem Working Directory:
 
 1. Klicken Sie auf **Preview Diff**
-2. Die Anwendung vergleicht Fingerprints (Hashes) der Blöcke
-3. Ein Fenster zeigt:
-   - **Geändert** - Blöcke, deren Inhalt sich unterscheidet
-   - **Neu in TIA** - Blöcke, die nur im Projekt existieren
-   - **Gelöscht** - Blöcke, die nur im Working Directory existieren
+2. Die Anwendung vergleicht TIA-Portal-Fingerprints und Datei-Hashes gegen den gespeicherten Stand vom letzten Export
+3. Das Compare-Panel öffnet sich mit einer Zusammenfassungszeile (`X geändert · Y hinzugefügt · Z geschützt · N unverändert`) und einer Zeile pro Block-Unterschied:
+   - **Geändert** - Block-Inhalt in TIA oder Source-Datei unterscheidet sich
+   - **Neu in TIA** - Block existiert nur im Projekt
+   - **Gelöscht** - Block existiert nur im Working Directory
+4. Haken Sie die Checkbox neben jedem Block an, den Sie in die PLC zurückschreiben möchten (Geändert und Hinzugefügt sind vorausgewählt, geschützte Blöcke sind deaktiviert)
+5. Klicken Sie auf **Importieren**, um die gewählten Dateien zu re-importieren
+
+Preview Diff erkennt sowohl XML-seitige Änderungen (Block-Interface-Bearbeitungen in TIA) als auch Source-Datei-Änderungen (SCL, AWL, DB auf der Platte). Der Re-Import läuft in einer einzelnen Transaktion — wenn ein Block fehlschlägt, werden alle Änderungen zurückgerollt, und das Projekt bleibt im ursprünglichen Zustand. Nicht angehakte Zeilen und geschützte Blöcke werden nicht angefasst.
+
+**Voraussetzung:** Führen Sie mindestens einmal **Export All** mit aktivierter Fingerprint-Extraktion aus, um den Cache (`.fingerprint-cache.json` im Working Directory) zu befüllen. Ohne Cache gibt es nichts zum Vergleichen.
 
 ### Compare (Manueller Vergleich)
 
@@ -615,6 +627,40 @@ Der Tab zeigt:
 
 Das integrierte KI-Chat-Panel bietet eine Konversationsoberfläche zu einem KI-Assistenten, der Ihr Projekt und Ihre Umgebung kennt. Konfigurieren Sie es über **View → AI Chat Settings**.
 
+### Chat-Anbieter
+
+Wählen Sie pro Agent einen Anbieter im Provider-Dropdown. Jeder Anbieter verwendet seinen eigenen API-Schlüssel, den Sie einmalig in den Einstellungen hinterlegen.
+
+| Anbieter | API-Schlüssel beziehen |
+|----------|------------------------|
+| xAI (Grok) | <https://console.x.ai/> |
+| Groq | <https://console.groq.com/keys> |
+| Cerebras | <https://cloud.cerebras.ai/> |
+| DeepSeek | <https://platform.deepseek.com/api_keys> |
+| Perplexity | <https://www.perplexity.ai/settings/api> |
+| Together AI | <https://api.together.ai/settings/api-keys> |
+| Hugging Face | <https://huggingface.co/settings/tokens> |
+| Z.AI | <https://z.ai/manage-apikey/apikey-list> |
+| MiniMax | <https://www.minimax.io/platform/user-center/basic-information/interface-key> |
+| Fireworks AI | <https://fireworks.ai/account/api-keys> |
+| Moonshot AI | <https://platform.moonshot.ai/console/api-keys> |
+| Vercel AI Gateway | <https://vercel.com/dashboard/ai-gateway/api-keys> |
+| SGLang (self-hosted) | Kein API-Schlüssel standardmäßig erforderlich — richten Sie den Endpunkt auf Ihren SGLang-Server aus (z.B. `http://localhost:30000/v1`) |
+| vLLM (self-hosted) | Kein API-Schlüssel standardmäßig erforderlich — richten Sie den Endpunkt auf Ihren vLLM-Server aus (z.B. `http://localhost:8000/v1`) |
+| Qwen | <https://home.qwencloud.com/api-keys> |
+| Alibaba Model Studio | <https://home.qwencloud.com/api-keys> |
+| Baidu Qianfan | <https://qianfan.baidubce.com/> |
+| Volcano Engine (Doubao) | <https://console.volcengine.com/ark> |
+| BytePlus (Doubao Global) | <https://console.byteplus.com/ark> |
+| Arcee AI | <https://app.arcee.ai/> |
+| Kimi Coding | <https://platform.moonshot.cn/console/api-keys> |
+
+**Cloudflare AI Gateway** funktioniert anders als die oben genannten Provider: Es ist ein Proxy, der Chat-Anfragen über Ihr eigenes Cloudflare-Konto leitet. Wählen Sie es im Provider-Dropdown, tragen Sie dann Ihre **Konto-ID**, **Gateway-ID** ein und wählen Sie einen **Backend-Provider** (OpenAI, Anthropic, Groq, Mistral, Google oder Workers AI). Cloudflare-Caching, Analytics und Rate-Limits greifen vor dem gewählten Backend-LLM. Einstieg: <https://dash.cloudflare.com/?to=/:account/ai/ai-gateway>.
+
+**Regions-Option für Qwen, Z.AI, MiniMax und Moonshot** — Wenn einer dieser vier Provider gewählt ist, erscheint im Einstellungsdialog zusätzlich ein **Region**-Picker. Wählen Sie **Global** für den internationalen Endpunkt oder **China** für den chinesischen Endpunkt; Qwen und Z.AI bieten zusätzlich **Global (Coding-Plan)** und **China (Coding-Plan)** für die separaten Coding-Abo-Endpunkte. Auf **Auto** bleibt der jeweilige Provider-Standard aktiv.
+
+Zusätzlich verfügbar: Anthropic, OpenAI, Google Gemini, Mistral, OpenRouter, GitHub Copilot, Azure OpenAI, Google Vertex, AWS Bedrock, Ollama (lokal), LM Studio (lokal), **Google Antigravity** (Anmeldung mit Ihrem Google-Konto — gleicher Flow wie Gemini CLI — um Claude Opus/Sonnet, Gemini 3 Pro/Flash und GPT-OSS 120B in der Antigravity-Sandbox zu nutzen).
+
 ### Kontext-Ordner
 
 Registrieren Sie Ordner auf Ihrem Dateisystem, die der KI zum Durchsuchen freigegeben sind. Nach der Registrierung kann die KI die Tools `fs_read_file`, `fs_list_directory` und `fs_search_files` verwenden, um diese Ordner in Ihrem Auftrag zu untersuchen.
@@ -791,6 +837,8 @@ Legen Sie eine `.json`-Datei in `%LocalAppData%\TiaOpennessManager\agents\` ab m
 }
 ```
 
+**Responses API für Reasoning-Modelle (Azure):** Wenn Ihr Azure-Deployment ein Reasoning-Modell wie `o1`, `o3` oder `gpt-5` hostet, aktivieren Sie die Option „Responses API verwenden (für Reasoning-Modelle)" im Azure-Abschnitt des Agenten. Damit wird die Anfrage über den Azure-Responses-Endpoint geleitet, was nötig ist, damit `reasoning_effort` wirksam wird. Für Standard-Deployments (ohne Reasoning) lassen Sie die Option deaktiviert.
+
 ### Dateianhänge
 
 Ziehen Sie Dateien direkt in den KI-Chat, um sie an Ihre Nachricht anzuhängen. Die KI kann den Inhalt angehängter Dateien sehen und entsprechend antworten.
@@ -933,6 +981,8 @@ Der KI-Agent kann Teilaufgaben an unabhängige Subagenten delegieren und diese w
 - Einen langen Exportvorgang im Hintergrund ausführen, während Fragen beantwortet werden
 - Dokumentationserstellung an einen Subagenten delegieren, während Code überprüft wird
 
+**Genehmigungs-Anfragen von Sub-Agenten.** Wenn ein Sub-Agent deine Erlaubnis braucht, um ein Tool auszuführen (z. B. eine OPC-UA-Verbindung aufzubauen oder einen Git-Branch zu pushen), erscheint die Anfrage jetzt direkt im Hauptchat — du musst das Sub-Agent-Panel nicht aufklappen, um sie zu finden. Jede Anfrage zeigt klar, welcher Sub-Agent sie ausgelöst hat. Nach deiner Entscheidung zeigt die Anfrage einen von drei Status: grüner Haken ("Erlaubt"), rotes X ("Abgelehnt" — du hast aktiv abgelehnt) oder oranger Hinweis ("Unterbrochen" — die App wurde geschlossen oder der Aufruf abgebrochen, bevor du entscheiden konntest). Tool-Argumente mit Namen wie `password`, `api_key` oder `token` werden als `[redacted]` angezeigt, damit sie nicht in der Chat-Historie auf der Platte landen.
+
 ### Hooks
 
 Hooks sind ereignisgesteuerte Abfangmechanismen, die vor oder nach KI-Tool-Aufrufen ausgefuehrt werden. Sie ermoeglichen benutzerdefinierte Validierung, Formatierung, Protokollierung oder Steuerung der Tool-Ausfuehrung.
@@ -986,7 +1036,7 @@ Eigene Hooks koennen in `ai_chat_settings.json` unter dem `Hooks`-Array hinzugef
 
 ### Befehlswarteschlange
 
-Sie koennen Nachrichten eingeben und senden waehrend der KI-Agent aktiv arbeitet. Statt die Eingabe waehrend des Streamings zu blockieren, werden Nachrichten in eine Prioritaetswarteschlange gestellt und nach jedem abgeschlossenen Turn automatisch verarbeitet.
+Sie koennen Nachrichten eingeben und senden waehrend der KI-Agent aktiv arbeitet. Waehrend des Streamings eingegebene Nachrichten werden in eine Prioritaetswarteschlange gestellt und nach jedem abgeschlossenen Turn automatisch verarbeitet.
 
 **Senden waehrend der Agent arbeitet:** Geben Sie einfach Ihre Nachricht ein und druecken Sie Enter waehrend der Agent streamt. Die Nachricht wird als "in Warteschlange" angezeigt und das Eingabefeld wird geleert, damit Sie weitertippen koennen. Ein kleiner Indikator neben dem Eingabebereich zeigt an, wie viele Nachrichten warten (z.B. "2 Nachrichten in Warteschlange").
 
@@ -997,10 +1047,17 @@ Sie koennen Nachrichten eingeben und senden waehrend der KI-Agent aktiv arbeitet
 | Naechstes | User-Nachrichten (Standard) | Verarbeitung nach aktuellem Turn |
 | Spaeter | Agenten-Benachrichtigungen | Verarbeitung nach User-Nachrichten |
 
-**ESC-Verhalten:**
+**Warteschlangen-Steuerung:**
 
-- **Waehrend Streaming:** Bricht die aktuelle KI-Antwort ab und leert alle wartenden Nachrichten
-- **Im Leerlauf mit wartenden Nachrichten:** Holt alle editierbaren Nachrichten aus der Warteschlange zurueck ins Eingabefeld, damit Sie sie bearbeiten oder verwerfen koennen
+- **ESC waehrend Streaming:** Bricht die aktuelle KI-Antwort ab und leert alle wartenden Nachrichten
+- **Pfeil-nach-oben bei leerem Eingabefeld:** Holt alle wartenden Nachrichten zurueck ins Eingabefeld, damit Sie sie bearbeiten oder verwerfen koennen. Bereits eingegebener Text bleibt stehen — die Warteschlangen-Nachrichten werden dahinter angehaengt.
+- **Stop-Button im Leerlauf mit wartenden Nachrichten:** Gleich wie Pfeil-nach-oben — holt die Warteschlange ins Eingabefeld zurueck.
+
+**Warteschlangen-Anzeige:** Der Text neben dem Eingabefeld zeigt, wie viele Nachrichten warten und was der Assistent gerade tut — zum Beispiel "2 in Warteschlange — tia_import laeuft", "1 in Warteschlange — Sub-Agent scl-expert laeuft" oder "3 in Warteschlange — ESC entfernt letzte", wenn der Assistent im Leerlauf ist.
+
+**Sub-Agent-Genehmigungen:** Wenn ein Sub-Agent ein Tool ausfuehren moechte, das eine Genehmigung benoetigt, erscheinen die Allow/Deny-Buttons im Haupt-Chat und sind mit "ueber Sub-Agent X" gekennzeichnet, damit erkennbar ist, von welchem Agenten die Anfrage stammt.
+
+**Sub-Agent in den Hintergrund verschieben:** Wenn ein blockierender Sub-Agent den Haupt-Assistenten wartet laesst, druecken Sie **Strg+B**. Der Sub-Agent wird losgeloest und laeuft im Hintergrund weiter, waehrend der Haupt-Assistent frei ist, auf neue Nachrichten zu antworten. Am Sub-Agent-Block erscheint ein kleines "(Hintergrund)"-Kennzeichen. Sobald der Sub-Agent im Hintergrund fertig ist, erscheint sein Ergebnis als Benachrichtigung im Chat, und der Haupt-Assistent setzt dort an. Wenn mehrere Sub-Agenten gleichzeitig blockieren, schickt Strg+B alle auf einmal in den Hintergrund.
 
 **Warteschlangen-Verarbeitung:** Nach jedem abgeschlossenen KI-Turn prueft das System automatisch die Warteschlange und verarbeitet die naechste Nachricht. Bei mehreren wartenden Nachrichten werden diese einzeln in Prioritaetsreihenfolge verarbeitet (hoehere Prioritaet zuerst, FIFO innerhalb gleicher Prioritaet).
 
@@ -1076,6 +1133,107 @@ Der linke Bereich des OPC UA Tabs zeigt eine Baumansicht des Server-Adressraums:
 **Knoten suchen:**
 Verwenden Sie das Suchfeld über dem Baum, um Knoten nach Namen zu filtern. Der Baum klappt zusammen und zeigt nur übereinstimmende Knoten und ihre übergeordneten Elemente an.
 
+### Knoteninformationen
+
+Ein im Adressraum ausgewählter Knoten füllt das **Knoteninformationen**-Panel auf der rechten Seite mit allen OPC UA-Attributen dieses Knotens: Node Id, Browse Name, Display Name, Node Class, Description, Write Mask und User Write Mask. Bei Variablen kommen Data Type, Value Rank, Array Dimensions, Access Level, User Access Level, Minimum Sampling Interval, Historizing, aktueller Value, Status Code sowie Source- und Server-Timestamp dazu. Alle Zellen lassen sich mit Strg+C kopieren.
+
+### Referenzen
+
+Neben den Knoteninformationen zeigt das **Referenzen**-Panel jede eingehende und ausgehende Referenz des ausgewählten Knotens:
+
+| Spalte | Beschreibung |
+|--------|--------------|
+| Richtung | In (invers) oder Out (vorwärts) |
+| Referenztyp | Aufgelöster Name des Referenztyps (z. B. `HasComponent`, `Organizes`, `HasTypeDefinition`) |
+| Browse-Name | Browse-Name des Zielknotens |
+| Knotenklasse | Knotenklasse des Zielknotens |
+| Ziel-Knoten-ID | Vollständige Node Id des referenzierten Knotens |
+
+### Ereignisprotokoll
+
+Das **Ereignisprotokoll** liegt als Tab neben der Beobachtungstabelle am unteren Rand des OPC-UA-Arbeitsbereichs und empfängt Live-Ereignismeldungen von einem serverseitigen Notifier-Objekt.
+
+| Toolbar-Element | Zweck |
+|-----------------|-------|
+| Notifier-Knoten | Node Id des OPC-UA-Objekts, das Ereignisse meldet. Standard ist `i=2253` (Server). Während aktiver Subscription gesperrt. |
+| Schweregrad | Zwei Zahleneingaben (0–1000), die einkommende Ereignisse nach Schweregrad einschränken. Ereignisse außerhalb des Bereichs werden vor der Anzeige verworfen. |
+| Ereignisse abonnieren | Startet die Subscription gegen den konfigurierten Notifier. |
+| Ereignis-Abonnement stoppen | Bricht die aktive Subscription ab. |
+| CSV exportieren | Speichert die sichtbaren Ereignisse als CSV. Zellen, die mit `=`, `+`, `-`, `@`, Tabulator oder Wagenrücklauf beginnen, werden mit einem führenden Apostroph quotiert, um Tabellenkalkulations-Formel-Injektionen zu entschärfen. |
+| Ereignisprotokoll leeren | Leert die Tabelle, ohne die aktive Subscription zu beenden. |
+
+Die Tabelle hält die letzten 5000 Ereignisse mit dem neuesten oben. Server-gelieferte Felder werden auf 8 KB pro Zelle begrenzt, um den Speicher zu schützen; bei Ereignisfluten werden zusätzliche Ereignisse stillschweigend verworfen, und einmal pro Sekunde wird eine Debug-Log-Zeile mit der Anzahl der verworfenen Ereignisse geschrieben.
+
+### Verlaufsdiagramm (History Chart)
+
+Das **Verlaufsdiagramm** liegt als dritter Tab neben Beobachtungstabelle und Ereignisprotokoll am unteren Rand des OPC-UA-Arbeitsbereichs. Es lädt die historischen Rohwerte eines Variablenknotens über einen Zeitbereich und stellt sie in einem Streudiagramm mit Datum/Uhrzeit-X-Achse dar.
+
+| Bedienelement | Zweck |
+|---------------|-------|
+| Quelle | Schreibgeschützte Anzeige, folgt automatisch dem aktuell im Adressraum ausgewählten Variablenknoten. |
+| Start | Beginn des Zeitbereichs (UTC). Standard: vor einer Stunde. |
+| Ende | Ende des Zeitbereichs (UTC). Standard: jetzt. |
+| 1h / 6h / 24h / 7T | Schnellauswahl: setzt Ende auf jetzt und Start auf jetzt minus das gewählte Intervall. |
+| Verlauf lesen | Holt die historischen Rohwerte für den Quellknoten zwischen Start und Ende. Während eines laufenden Lesevorgangs deaktiviert. |
+| CSV exportieren | Speichert die geladenen Werte als CSV (Source Timestamp / Server Timestamp / Value / Status Code). Der Schutz gegen Formel-Injektion ist identisch mit dem Ereignisprotokoll-Export. |
+| Diagramm leeren | Löscht das Diagramm und gibt den Speicher frei. |
+
+Nicht-numerische Werte, Werte mit `Bad`-Status sowie Samples mit ungültigen Zeitstempeln werden im Diagramm ausgelassen, bleiben aber im CSV-Export enthalten. Ein Lesevorgang ist auf 100.000 Werte pro Anfrage und 1.000.000 Werte gesamt begrenzt; liefert der Server mehr, zeigt das Diagramm das, was hineinpasst, und eine Warnung wird protokolliert. Das Diagramm wird automatisch beim Protokollwechsel oder bei der Trennung geleert — beim Navigieren im Adressraum bleibt der Inhalt jedoch erhalten, damit geladene Daten nicht durch einen Knotenwechsel verloren gehen.
+
+Die Variable muss am Server `Historizing = true` haben und die Sitzung muss HistoryRead-Zugriff besitzen. Siemens S7-1500-CPUs aktivieren Historizing nicht automatisch — die meisten Variablen müssen in der PLC-Konfiguration explizit für den Verlaufszugriff markiert werden.
+
+### Methodenaufruf-Dialog
+
+Rechtsklick auf einen **Methodenknoten** im Adressraum-Browser und **Methode aufrufen...** wählen öffnet einen modalen Dialog, der einen OPC-UA-Methodenaufruf von Anfang bis Ende durchführt.
+
+Der Dialog lädt zunächst die Liste der Eingabe- und Ausgabeargumente vom Server und rendert je ein Eingabefeld pro Input:
+
+| Argumentform | Eingabefeld |
+|--------------|-------------|
+| Skalar (boolean, Integer, Float, String, DateTime) | Einzelnes Textfeld mit dem erwarteten Datentyp als Platzhalter |
+| Array | Liste von Einzelwertzeilen mit **+ Zeile** / **− Zeile** zum Anpassen der Arraylänge |
+
+Jede Karte zeigt Name, Datentyp und Beschreibung des Arguments (falls vom Server geliefert). Nach dem Befüllen der Eingaben **Aufrufen** klicken — der Dialog ruft den Server auf, begrenzt übergroße Payloads und füllt den Ausgabebereich mit den zurückgegebenen Werten und einer Statuszeile. Dialog schließen bricht einen noch laufenden Aufruf ab.
+
+Methodenaufrufe schreiben auf die PLC — vor dem Aufruf an einer laufenden Maschine die Wirkung der Methode verstehen.
+
+### Matrix bearbeiten-Dialog
+
+Rechtsklick auf einen **Variablenknoten**, dessen Wert eine zweidimensionale Matrix ist (zum Beispiel eine `Double[3,4]`-Sollwert-Tabelle oder ein Kalibriergitter), im Adressraum-Browser und **Matrix bearbeiten...** wählen öffnet einen tabellenartigen Editor. Der Menüeintrag erscheint nur, wenn die selektierte Variable tatsächlich Matrix-Form am Server hat.
+
+Der Dialog lädt den aktuellen Wert und rendert jede Zelle als bearbeitbares Textfeld mit Zeilenüberschriften (`R0`, `R1`, ...) und Spaltenüberschriften (`C0`, `C1`, ...). Zellen einzeln bearbeiten — geänderte Zellen werden als geändert markiert. **Speichern** schreibt die gesamte Matrix zurück zum Server (nur tatsächlich geänderte Zellen werden neu geparst; unveränderte Zellen bleiben erhalten) oder **Neu laden** verwirft die Bearbeitung und holt eine frische Kopie vom Server.
+
+Wenn der Server die Variable als schreibgeschützt deklariert (kein Schreibzugriff für Ihre Sitzung), zeigt der Dialog ein **Nur lesen**-Etikett und der Speichern-Button bleibt deaktiviert. Matrizen mit mehr als zwei Dimensionen sind nicht bearbeitbar — der Dialog meldet "Rang nicht unterstützt" statt die Daten still zu flatten. Ungültige Zellwerte (zum Beispiel Text in einer numerischen Matrix) werden beim Speichern markiert; Zelle korrigieren und erneut versuchen.
+
+### Zertifikatsverwaltung
+
+Im Einstellungen-Flyout (Zahnradsymbol neben der Endpunkt-URL in der Verbindungsleiste) öffnet der Button **Zertifikatsverwaltung...** einen Dialog, der die OPC UA Zertifikate dieses Clients auflistet und verwaltet. Der Dialog zeigt drei Tabs:
+
+| Tab | Inhalt | Aktionen |
+|-----|--------|----------|
+| Eigenes Zertifikat | Ihr Client-Zertifikat — das, welches die SPS beim Verbindungsaufbau sieht | Neu erstellen (erzeugt ein frisches Schlüsselpaar; beendet alle aktiven OPC UA Sessions), Entfernen |
+| Vertrauenswürdig | Server-Zertifikate, denen dieser Client vertraut | Ablehnen (verschiebt in den Tab „Abgelehnt"), Entfernen |
+| Abgelehnt | Server-Zertifikate, die dieser Client abgelehnt hat oder die bei ausgeschaltetem Auto-Accept empfangen wurden | Vertrauen (verschiebt in den Tab „Vertrauenswürdig"), Entfernen |
+
+Jede Zeile zeigt Betreff, Aussteller (bei Server-Zertifikaten), Fingerabdruck, „Gültig ab" und „Gültig bis". Zeile auswählen und die Aktionsbuttons des jeweiligen Tabs verwenden.
+
+Direkt darüber sitzt der Schalter **Serverzertifikate automatisch akzeptieren**:
+
+- **An (Default)** — Jedes neue Server-Zertifikat wird beim ersten Verbindungsaufbau automatisch vertraut. Schnellster, bequemster Pfad; entspricht dem bisherigen Verhalten.
+- **Aus** — Neue Server-Zertifikate landen statt im vertrauenswürdigen im abgelehnten Store. Der Dialog muss geöffnet und „Vertrauen" geklickt werden, bevor der nächste Verbindungsaufbau erfolgreich ist. Dieser Modus eignet sich in Netzen, in denen jede SPS explizit freigegeben werden soll.
+
+### Verbindungsstatus-Indikatoren (S7 Nativ)
+
+Beim nativen S7-Comm+-Zugriff auf eine S7-1200 oder S7-1500 zeigt der PLC-Online-Tab drei Live-Indikatoren, die unmittelbar auf das reagieren, was die SPS macht:
+
+- **Tab-Header-Punkt** — ein kleiner farbiger Kreis vor dem Tab-Titel. Hover zeigt einen Tooltip mit der Bedeutung:
+  - **Grau** — noch nicht verbunden
+  - **Grün** — online, CPU läuft
+  - **Gelb** — online, aber CPU nicht in RUN (Stop, Anlauf, Hold, ...), oder die App stellt die Verbindung gerade wieder her
+  - **Rot** — SPS nicht erreichbar
+- **Wiederverbindungs-Banner** — ein gelber Streifen unter der Verbindungsleiste erscheint mit der Meldung "Wiederverbinde…" solange die App versucht, eine unterbrochene Verbindung wiederherzustellen. Er verschwindet automatisch, sobald die SPS wieder da ist.
+- **Ausgegraute Werte** — wird die SPS unerreichbar, werden die Werte in der Beobachtungstabelle auf halbe Deckkraft gedimmt und auf `???` umgestellt, damit klar ist, dass sie nicht mehr aktuell sind. Sobald die SPS zurück ist, ersetzen frische Live-Werte die Platzhalter automatisch. Kein Neustart, kein manuelles Wiederverbinden nötig.
+
 ### Beobachtungstabelle (Watch Table)
 
 Die Beobachtungstabelle auf der rechten Seite zeigt Variablen, die Sie zur Überwachung ausgewählt haben.
@@ -1145,6 +1303,20 @@ Beobachtungstabellen-Konfigurationen (die Liste der überwachten Variablen und d
 1. Klicken Sie auf **Beobachtungstabelle laden** (Ordner-Symbol)
 2. Wählen Sie eine zuvor gespeicherte `.opcua-watch`-Datei
 3. Die Variablen werden wiederhergestellt; klicken Sie auf **Verbinden** und dann **Alle lesen** oder **Abonnieren**, um die Überwachung fortzusetzen
+
+### Den gesamten Arbeitsbereich speichern und wiederherstellen
+
+Der gesamte OPC UA-Arbeitsbereich — Panel-Layout (welche Tabs aktiv sind), offene Verbindungen (ohne Passwörter) und die Beobachtungstabelle — wird zusätzlich automatisch gespeichert und beim nächsten App-Start wiederhergestellt. Es ist keine Einrichtung nötig; einfach die App schliessen und wieder öffnen.
+
+Jeder geöffnete Verbindungstab bekommt jetzt seinen eigenen gespeicherten Zustand — Beobachtungsliste, Abonnements, Ereignisfilter und Verlaufsbereich — nicht mehr nur der gerade aktive Tab. Beim erneuten Öffnen der App oder beim Laden einer Workspace-Datei kehrt jeder Tab mit genau den Variablen, Alarmen und dem Zeitbereich zurück, mit denen Sie ihn verlassen haben.
+
+Für benannte Snapshots, die Sie an Kollegen weitergeben oder für eine bestimmte Inbetriebnahme aufheben möchten, nutzen Sie das **Arbeitsbereich**-Menü in der Dock-Toolbar oben im OPC UA-Tab:
+
+- **Arbeitsbereich speichern unter…** schreibt den aktuellen Zustand in eine `.opcua-workspace`-Datei Ihrer Wahl. Passwörter werden nie in die Datei geschrieben — Bediener müssen sie beim erneuten Verbinden neu eingeben.
+- **Arbeitsbereich laden…** öffnet eine beliebige frühere `.opcua-workspace`-Datei und wendet sie an. Der Picker akzeptiert auch die älteren `.json`-Beobachtungstabellen-Dateien aus dem Disketten-Symbol, sodass Legacy-Arbeitsbereiche weiterhin geladen werden.
+- **Arbeitsbereich zurücksetzen** löscht den automatisch gespeicherten Snapshot und die Beobachtungsliste der aktiven Verbindung nach einer Bestätigungsabfrage — nützlich vor einer Bildschirmpräsentation oder wenn ein veralteter Arbeitsbereich immer wieder veralteten Zustand wiederherstellt.
+
+Um einen vertraulichen Endpoint komplett aus dem Arbeitsbereich herauszuhalten, öffnen Sie den Settings-Flyout der Verbindung (Zahnrad-Symbol in der verbundenen Verbindungsleiste) und aktivieren Sie **Diese Verbindung nicht im Arbeitsbereich speichern**. Solange der Toggle aktiv ist, bleiben Endpoint, Beobachtungsliste, Abonnements, Ereignisfilter und Verlaufsbereich dieses Tabs aus der Workspace-Datei und dem automatischen Wiederherstellen heraus. Schalten Sie den Toggle wieder aus, sobald der Tab wieder gespeichert werden soll.
 
 ### Beobachtungstabellen-Daten exportieren
 
@@ -1311,6 +1483,9 @@ Nach einem Lauf zeigt das Ergebnis-Panel:
 - **Zusammenfassung:** Gesamt Bestanden/Fehlgeschlagen/Fehler-Zähler + Gesamtdauer
 - **Test-Case-Liste:** Jeder Case mit Status-Icon, Name und Dauer
 - **Detail-Grid (bei Case-Auswahl):** Alle Assertions mit Variable, Operator, Erwartet, Tatsächlich, ✓/✗
+- **Variablenverlauf (bei Case-Auswahl):** Ein Diagramm zeigt, wie sich jede Watch-Variable Zyklus für Zyklus während des Laufs verändert hat. Links listet eine Checkbox-Legende die Variablen — Haken raus nimmt die Linie aus dem Chart. Numerische Typen (BOOL/INT/REAL/TIME/…) werden als Linie gezeichnet; nicht-numerische Typen erscheinen in der Legende, werden aber nicht gezeichnet. Beim Hovern rastet ein Fadenkreuz auf den nächsten Datenpunkt ein und zeigt Variablenname, Zyklus und Wert im Titel
+
+Um den Verlauf zu befüllen, füge ein `"watch": ["Var1", "Var2"]`-Array zu einem Testfall in der Suite-JSON hinzu und setze `"cycles"` größer als 1. Das Timeline-Sampling ist pro Testfall auf 100.000 Zyklen gedeckelt.
 
 Test-Ergebnisse werden in `%LocalAppData%\TiaOpennessManager\db\test_results.db` persistiert — sie überleben App-Neustarts und erscheinen automatisch wieder im Test Explorer.
 
@@ -1337,6 +1512,12 @@ Test-Ergebnisse werden in `%LocalAppData%\TiaOpennessManager\db\test_results.db`
 - **Aus dem Test Explorer:** Doppelklick auf die Suite im Baum
 - **Aus dem Menü:** **Open Suite** Button in der Toolbar → Datei-Auswahl
 
+### Wo werden Test-Suiten gespeichert?
+
+Test-Suiten liegen in einem versteckten Ordner namens `.tia-tests` direkt neben Ihrer TIA-Projektdatei (`*.ap21`, `*.ap20`, …). Ein Klick auf **Open Suite** öffnet den Dialog in diesem Ordner; der AI-Assistent schreibt in denselben Ordner. Wenn noch kein TIA-Projekt geladen ist, zeigt der Test Explorer "Kein TIA-Projekt verbunden" und **Open Suite** ist deaktiviert — bitte erst ein Projekt verbinden.
+
+Die KI kann diese Test-Suite-Dateien direkt aus dem Chat heraus lesen, auflisten und bearbeiten.
+
 ### Tests ausführen
 
 1. Sicherstellen dass PLCSIM Advanced V3.0+ installiert ist
@@ -1352,11 +1533,55 @@ Der Runner erledigt automatisch:
 - Schreibt die Test-Inputs, wartet die konfigurierten Zyklen, liest die Outputs, evaluiert die Assertions
 - Räumt die S7-Verbindung auf und deregistriert die Instanz
 
+### Transport auswählen
+
+Der **Verbindungseinstellungen**-Dialog lässt Sie wählen, wie Test-Reads und -Writes zwischen App und PLC übertragen werden:
+
+- **PLCSim Advanced** — Direkter Zugriff über die Siemens-PLCSim-API, schneller und ohne aktive S7-Session. Ideal für reine Simulator-Tests.
+- **S7 Comm+** — Nutzt den S7-Communication-Treiber über TCP/IP. Wählen Sie diese Option für Tests gegen echte Hardware oder gegen PLCSim über den virtuellen Ethernet-Adapter mit Benutzerauthentifizierung.
+
+Beide Transports haben eine eigene Konfigurations-Sektion im selben Dialog, sodass jede Suite unabhängig konfiguriert werden kann. Bei S7 Comm+ hat die Suite eigene IP, Port, Rack, Slot, TLS-Einstellung, Benutzername und Passwort — kein Cross-Tab-Lookup aus der PLC-Online-Ansicht.
+
+### Simulation-Arbeitsbereich
+
+Innerhalb des SCL-Unit-Testing-Tabs schaltet ein **Simulation**-Sub-Mode-Umschalter oben zwischen der Test-Suites-Ansicht und einer dedizierten **Simulation**-Ansicht für die PLCSim-Advanced-Instanzverwaltung um. Die Simulation-Ansicht zeigt:
+
+- API-Version, Online-Zugriffsmodus (PLCSim / TCP/IP einzeln / TCP/IP mehrfach), Strict-Motion-Timing-Toggle und Runtime-Manager-Port.
+- Eine **Virtueller Adapter**-Zeile mit dauerhaftem Status des Siemens PLCSIM Virtual Ethernet Adapters (Bereit / APIPA / Deaktiviert / Nicht installiert / Keine IPv4), seiner IPv4-Adresse und einem Refresh-Button. Wenn der Adapter im 169.254.x.y-APIPA-Bereich hängt, werden Downloads unzuverlässig — weisen Sie ihm in den Windows-Netzwerkeinstellungen eine statische IPv4-Adresse zu.
+- Jede registrierte PLCSim-Instanz mit Inline-Buttons: Einschalten, Run, Stop, Memory-Reset, Ausschalten, Einstellungen, Netzwerk, Löschen. Jede Zeile zeigt die konfigurierte IP-Adresse; hat die Instanz mehrere Schnittstellen mit einer IP, werden diese als `X1: 192.168.0.1, X2: 10.0.0.5` aufgelistet.
+- Einen **Neue Instanz**-Button, der nach Name und CPU-Typ fragt.
+- Ein **Tag-Browser**-Panel, das sich mit jeder Instanz verbinden und alle Tags des laufenden Programms anzeigen kann — filterbar nach Namensuche, Bereich (Eingang / Ausgang / Merker / Datenbaustein) und Datentyp. Auto-Refresh kann für Live-Wertebeobachtung aktiviert werden. Jeder schreibbare Tag hat einen **Bleistift-Button**, der einen typ-spezifischen Write-Dialog öffnet (Schalter für Bool, numerische Eingabe mit passendem Bereich für Ganzzahlen und Gleitkomma, Ein-Zeichen-Feld für Char/WChar). String-Tags sind read-only.
+- Eine **Gespeicherte Instanzen**-Sektion am unteren Rand, die jede PLCSim-Advanced-Instanz auflistet, die auf der virtuellen SIMATIC Memory Card persistiert ist. Klicken Sie **Laden**, um eine solche Instanz erneut zu registrieren und fortzuführen — PLCSim übernimmt automatisch den gespeicherten CPU-Typ, das E/A-Abbild und das Programm. Klicken Sie **Löschen** (mit Bestätigung), um den persistierten Ordner zu entfernen.
+
+Der Sub-Mode wird zwischen Sitzungen gemerkt, und der Wechsel behält alle geöffneten Suite-Dokumente.
+
+### PLCSIM-Vorbereitungsmodus
+
+Der **Verbindungseinstellungen**-Dialog hat eine Auswahl für den Vorbereitungsmodus (innerhalb der PLCSim-Sektion). Dieser steuert, wie der Runner das Projekt in die PLCSIM-Instanz bekommt, bevor der Testlauf startet:
+
+- **Ich lade selbst (empfohlen)** — Der Runner erwartet, dass Sie die PLCSIM-Instanz bereits manuell via TIA Portal gestartet und das Projekt geladen haben. Compile und Download werden übersprungen, der Runner verbindet sich direkt und führt die Tests aus. Schnellste Option für wiederholte Läufe am selben Projekt.
+- **Automatischer TCP-Download** — Der Runner kompiliert das Projekt, startet eine frische PLCSIM-Instanz und lädt es via TCP über den PLCSIM Virtual Adapter. Keine manuelle TIA-Portal-Interaktion nötig — einfach Run klicken.
+
+### Test-Läufe gegen geschützte Projekte
+
+Wenn Ihr TIA-Projekt **„Schutz vertraulicher PLC-Konfigurationsdaten"** aktiviert hat, erscheint im Automatischer-TCP-Download-Modus im Verbindungseinstellungen-Dialog ein zusätzliches Passwortfeld:
+
+1. **Verbindungseinstellungen…** öffnen
+2. Unter PLCSIM-Vorbereitung **Automatischer TCP-Download** auswählen
+3. Das Master-Secret-Passwort des Projekts eingeben
+4. Optional: Haken bei **Passwort merken** setzen, um es im Windows Credential Manager zu speichern — dann holt sich der Runner das Passwort bei jedem Folge-Lauf automatisch, ohne erneut nachzufragen. Haken weglassen, wenn Sie das Passwort nur einmal verwenden möchten und es nach dem Lauf vergessen werden soll
+5. **OK** klicken, dann **▶ Run**
+
+Beim nächsten Öffnen des Dialogs erscheint der Hinweis *„Für diesen Benutzer ist ein Passwort gespeichert"*, wenn Sie es gespeichert haben. Lassen Sie das Passwortfeld leer, um das gespeicherte Passwort zu behalten. Haken bei **Passwort merken** entfernen und OK klicken löscht den gespeicherten Eintrag.
+
+Das Passwort wird nie in die Suite-Datei, in Logs oder Einstellungs-Dateien geschrieben. Es lebt ausschliesslich im Windows Credential Manager unter dem Servicenamen `com.tiaopennessmanager` und wird vom Dialog zum Runner über einen benutzergebundenen DPAPI-Kanal übertragen, sodass ein anderer Windows-Benutzer es nicht lesen kann.
+
 ### Suites und Testfälle verwalten
 
 - **Rechtsklick auf eine Test-Suite** im Test Explorer, um sie umzubenennen oder zu löschen. Beim Löschen wird auch die Testlauf-Historie dieser Suite entfernt.
 - **Rechtsklick auf einen Testfall**, um Name oder Beschreibung zu ändern, ihn zu duplizieren, zu löschen oder in der Liste nach oben bzw. unten zu verschieben.
-- Ein neuer **PLCSIM Settings**-Button in der Toolbar erlaubt die Konfiguration von PLCSIM-Instanzname, IP-Adresse, Zyklus-Wartezeit und Auto-Connect für die aktive Suite. Setzen Sie den Haken bei *Als Default speichern*, damit neu erstellte Suites dieselben Werte übernehmen.
+- Der **Verbindungseinstellungen…**-Button in der Toolbar erlaubt die Konfiguration von Transport, PLCSim-Instanz (aus der Simulation-Registry wählbar oder frei eingebbar), IP-Adresse, Zyklus-Wartezeit, S7-Comm+-Ziel (IP, Port, Rack, Slot, TLS, Benutzer, Passwort) und Auto-Connect für die aktive Suite. Setzen Sie den Haken bei *Als Default speichern*, damit neu erstellte PLCSim-Suites dieselben Werte übernehmen. Der Dialog hat einen **Verwalten…**-Button in der PLCSim-Sektion, der ohne Verlust der aktuellen Eingaben in den Simulation-Sub-Mode springt, um Instanzen anzulegen oder anzupassen.
+- **Verbindungseinstellungen werden pro Suite gespeichert.** Ein Klick auf **OK** schreibt Ihre Auswahl — Transport, Instanzname, IP, S7-Verbindungsdaten und alle weiteren Felder — zurück in die Suite-Datei. Beim nächsten Öffnen zeigt der Dialog genau die zuletzt gewählten Werte, statt auf Defaults zurückzuspringen. Passwörter bleiben weiterhin im Windows Credential Manager — die Suite-Datei speichert nur eine Referenz, nie ein Klartext-Passwort.
 - Vor jedem Lauf prüft der Manager, dass jeder Variablenname in Ihrer Suite exakt dem Baustein-Interface entspricht — inklusive Gross-/Kleinschreibung. Werden Abweichungen gefunden, zeigt ein Warndialog die Korrekturvorschläge an; Sie können den Lauf nach Bestätigung trotzdem starten.
 - Schlägt ein Testfall fehl, wird die betroffene Variable direkt im generierten SCL-Code **rot unterstrichen**, die Fehlermeldung erscheint als Tooltip. **Doppelklicken Sie einen fehlgeschlagenen Testfall** im Ergebnis-Panel, um direkt zu der Variable im Suite-Editor zu springen.
 - Wird eine Suite-Datei extern geändert — oder durch eine der Rename- / Delete- / Edit-Aktionen oben — lädt der offene Editor sie automatisch neu. Sind jedoch noch ungespeicherte Änderungen vorhanden, bleiben diese erhalten.
@@ -1367,6 +1592,53 @@ Der Runner erledigt automatisch:
 - **„Run" Button ist ausgegraut:** Ein TIA-Projekt muss geöffnet sein, und das aktive Suite-Dokument muss valides JSON sein.
 - **Test Explorer ist leer:** Das Arbeitsverzeichnis hat noch keinen `.tia-tests/` Ordner. **New Suite** klicken um die erste Suite zu erstellen — der Ordner wird automatisch angelegt.
 - **PLCSIM-Fehler:** Prüfen ob PLCSIM Advanced V3.0+ installiert und lizenziert ist. Die genaue Version wird zur Laufzeit automatisch erkannt.
+
+### KI-geschriebene Test-Suites (Enterprise)
+
+Der AI-Chat kann komplette SCL-Unit-Test-Suites für Sie entwerfen, verfeinern und (optional) ausführen. Benötigt eine Enterprise-Lizenz.
+
+#### Skill „Write Unit Tests" (Hauptchat)
+
+1. **AI Chat** öffnen und im Skill-Picker den Skill **Write Unit Tests** auswählen (🧪-Icon) — oder einfach fragen: *„schreib Unit-Tests für FB_MotorControl"*
+2. Der Assistent liest das Baustein-Interface, berechnet Grenzwerte, plant Testfälle und fasst den Plan im Chat zusammen — ohne riesige JSON-Blöcke
+3. Wenn er die Suite schreiben möchte, erscheint inline ein **Erlauben**- / **Ablehnen**-Prompt. Erlauben speichert die Suite nach `.tia-tests/`
+4. Wenn Sie den Assistenten gebeten haben, die Suite auch auszuführen, erscheint ein zweiter Approval-Prompt für den Run selbst. Die Ergebnisse kommen als Pass/Fail-Zusammenfassung zurück in den Chat, und der Assistent bietet an, fehlgeschlagene Testfälle nachzubessern
+5. Der Test Explorer übernimmt die neue Suite automatisch — öffnen, im Visual- oder JSON-Editor prüfen und nach Wunsch selbst laufen lassen
+6. Nach dem Anlegen können Sie auch direkt *„öffne die Suite"* schreiben — die Suite wird als neuer Tab im Unit-Testing-Editor geöffnet, ohne dass Sie zum Test Explorer wechseln müssen
+
+#### Inline-Chat im Suite-Editor (Strg+I)
+
+Während eine Test-Suite im JSON-Editor geöffnet ist:
+
+1. Den Cursor nahe des zu ändernden Testfalls platzieren (oder einen Bereich markieren)
+2. **`Strg+I`** drücken — oberhalb des Editors erscheint ein kleines Prompt-Feld
+3. Eingeben, was geändert werden soll, zum Beispiel:
+   - *„füg einen Overflow-Test für Counter_Value hinzu"*
+   - *„mach daraus einen parametrisierten Test mit fünf Sollwerten"*
+   - *„setz die Toleranz aller REAL-Assertions auf 0.01"*
+4. Der Assistent streamt das aktualisierte JSON, und im Editor erscheint ein Diff-Overlay
+5. **Akzeptieren** übernimmt die Änderung (die Datei wird gespeichert und der Test Explorer lädt neu); **Ablehnen** verwirft sie
+
+Der Inline-Chat nutzt dasselbe Baustein-Interface, mit dem die Suite geöffnet wurde, sodass Variablennamen und Typen gegen den echten Baustein geprüft werden — Abweichungen fallen vor dem Speichern auf.
+
+#### KI-Badge im Test Explorer und Visual-Editor
+
+Von der KI erstellte TestCases tragen ein kleines **AI**-Tag, das erscheint:
+- neben dem Testfall-Namen im **Visual-Editor**
+- im **Test Explorer**-Baum
+
+Überprüfen Sie KI-geschriebene Testfälle wie einen Pull Request von einer Kollegin — jede Assertion lesen, erwartete Werte plausibilisieren, erst am Simulator laufen lassen und dann auf echter Hardware.
+
+#### Safety-Schutz (F-CPU)
+
+Das KI-gestützte Schreiben von Tests ist für Safety-Bausteine abgesichert:
+
+- **Tests erstellen** — Der Assistent verweigert das Schreiben von Tests für einen F-CPU-Baustein ohne eine explizite Bestätigung im Gespräch. Auch die darunterliegenden Tools lehnen den Schreibvorgang ohne diese Bestätigung ab
+- **Tests ausführen** — Der Assistent **kann keine Tests** gegen Safety-Bausteine laufen lassen. Punkt. Kein Override. Safety-Baustein-Verifikation erfordert eine zertifizierte Methodik (TÜV/CE), keinen KI-Run. Wenn Sie einen Test gegen einen Safety-Baustein laufen lassen wollen, starten Sie den Run selbst aus dem Test Explorer
+
+#### Lizenzierung
+
+Der Skill „Write Unit Tests" und die Unit-Test-MCP-Tools sind Enterprise-only. In den Tiers Basic oder Professional zeigt der Skill vor jedem KI-Call eine „Enterprise erforderlich"-Meldung.
 
 ---
 
@@ -1651,20 +1923,20 @@ Bei aktiviertem Debug Logging werden detaillierte Logs erstellt:
 Beim ersten Start können Sie eine **30-tägige kostenlose Testphase** mit allen Enterprise-Funktionen starten. Nach Ablauf der Testphase fällt die Anwendung auf den Basic-Modus (kostenlos) zurück.
 
 Testphase starten:
-1. Klicken Sie auf **View → Settings → Manage License**
-2. Klicken Sie auf **Start 30-Day Trial**
+1. Klicken Sie auf **View → Einstellungen → Lizenz verwalten**
+2. Klicken Sie auf **30-Tage-Testversion starten**
 3. Alle Funktionen sind 30 Tage verfügbar
 
 ### Lizenz aktivieren (Online)
 
 1. Kaufen Sie eine Subscription (Professional oder Enterprise) auf https://www.tiaopenessmanager.ch
-2. Sie erhalten einen Aktivierungscode per E-Mail (Format: `ACT-XXXX-XXXX-XXXX`)
-3. Öffnen Sie **View → Settings → Manage License**
+2. Sie erhalten einen Aktivierungscode per E-Mail
+3. Öffnen Sie **View → Einstellungen → Lizenz verwalten**
 4. Geben Sie den Aktivierungscode ein
-5. Klicken Sie auf **Activate**
+5. Klicken Sie auf **Aktivieren**
 6. Die Lizenz wird an Ihre Hardware gebunden
 
-**Abrechnung:** Sie können im License-Dialog zwischen monatlicher und jährlicher Abrechnung wechseln. Jahresabos sparen ca. 17%.
+**Abrechnung:** Sie können im Lizenz-Dialog zwischen monatlicher und jährlicher Abrechnung wechseln. Jahresabos sparen ca. 17%.
 
 **Wichtig:** Die Software validiert die Lizenz alle 7 Tage online. Bei fehlender Internetverbindung kann die Software **bis zu 14 Tage offline** genutzt werden. Nach 14 Tagen ist eine erneute Online-Validierung erforderlich.
 
@@ -1675,21 +1947,36 @@ Jede Lizenz ist an eine eindeutige Hardware-ID gebunden, die generiert wird aus:
 - Mainboard-Seriennummer
 - Primäre MAC-Adresse
 
-### Subscription verwalten
+### Abonnement verwalten
 
-- Klicken Sie auf **Manage Subscription** im License-Dialog
+- Klicken Sie auf **Abonnement verwalten** im Lizenz-Dialog
 - Öffnet das Stripe-Portal für:
   - Zahlungsmethode ändern
   - Rechnungen herunterladen
-  - Subscription kündigen
+  - Abonnement kündigen
 
 ### Lizenz-Information anzeigen
 
-Im License-Dialog sehen Sie:
+Im Lizenz-Dialog sehen Sie:
 - Aktueller Lizenz-Typ (Basic/Professional/Enterprise)
 - Ablaufdatum der aktuellen Periode
 - Hardware-ID
 - Aktivierungscode
+
+### Sicherheits-Hinweise
+
+Wenn die App ein ungewöhnliches Sicherheits-Ereignis erkennt, erscheint oben im Hauptfenster ein gelber Hinweis-Balken. Diese Hinweise bleiben sichtbar, bis Sie sie über das **×** schliessen — sie werden nicht von anderen Status-Meldungen überschrieben.
+
+Zwei Ereignisse können hier auftauchen:
+
+- **Speicher-Warnung.** Die App konnte Ihre Lizenzdaten nicht vollständig in die Windows-Registry schreiben. Meist eine Berechtigungs-Situation auf verwalteten Notebooks. Die App läuft weiter mit den zwischengespeicherten Lizenzdaten — falls die Warnung direkt nach einer Aktivierung erscheint, starten Sie die App einmal als Administrator oder wenden Sie sich an Ihre IT.
+- **Zertifikats-Warnung.** Das TLS-Zertifikat von `tiaopenessmanager.ch` hat sich unerwartet geändert. Ihre Verbindung ist weiterhin TLS-geschützt (sonst würde die App die Anfrage komplett verweigern), aber die Änderung sollte beobachtet werden — insbesondere wenn sie mit einem neu installierten Firmen-Proxy zusammenfällt. Die App arbeitet weiter; kontaktieren Sie den Support, falls die Warnung länger als 24 Stunden bestehen bleibt.
+
+Beide Hinweise sind informell. Ihre Lizenz bleibt aktiv, während sie eingeblendet sind. Der Balken verschwindet automatisch, sobald der Auslöser nicht mehr zutrifft.
+
+**Nicht vertrauenswürdige Umgebung (Basic-Modus)**
+
+Wenn ein Debugger an den App-Prozess angehängt ist oder die Haupt-EXE nicht mit dem erwarteten Certum-Zertifikat signiert ist, schaltet die App still auf den Basic-Tier. Das ist eine Tiefen-Absicherung gegen Manipulation. Release-Builds haben immer die korrekte Signatur — erscheint diese Degradierung bei einer Standard-Installation, wurde die Binary verändert. Installieren Sie dann neu von https://www.tiaopenessmanager.ch.
 
 ---
 
@@ -1777,6 +2064,103 @@ Drücken Sie **Strg+Umschalt+P** im Git-Arbeitsbereich, um die Befehlspalette zu
 
 ---
 
+## 14b. Trace / Signal-Visualisierung
+
+Das Trace-Register zeichnet OPC-UA-Signalwerte in festem Takt auf und stellt sie als Live-Diagramm dar — ähnlich einem Oszilloskop. Das ist das richtige Werkzeug, wenn eine Zahl in der Watch Table nicht reicht und Sie sehen wollen, wie sich ein Signal über die Zeit verändert: steigende Flanken, Überschwinger, Schwingungen oder Drift.
+
+### Trace-Register öffnen
+
+Wählen Sie **Trace** in der Haupt-Registerleiste. Für eine Aufzeichnung brauchen Sie eine aktive OPC-UA-Sitzung (zuerst über das OPC-UA-Register verbinden).
+
+### Signale hinzufügen
+
+In der linken Signal-Seitenleiste:
+
+- **„+ Signal"** öffnet den OPC-UA-Browser zum Auswählen eines PLC-Tags.
+- **„+ Computed"** fügt ein berechnetes Signal hinzu, dessen Wert aus einer Formel über die anderen Signale berechnet wird (siehe unten).
+
+Jedes Signal hat eine Checkbox zum Aktivieren/Deaktivieren (ohne es zu entfernen), einen Farb-Indikator und einen Löschen-Button.
+
+### Werkzeugleiste
+
+| Schaltfläche | Aktion |
+|--------------|--------|
+| Start / Stop | Aufzeichnung starten bzw. stoppen |
+| Modus | **Fortlaufend** hält die neuesten Samples in einem rollenden Fenster; **Einzel-Trigger** zeichnet ein festes Fenster um ein Trigger-Ereignis auf |
+| Zykluszeit | Wie oft die SPS abgefragt wird (100 ms, 200 ms, 500 ms, 1 s, 2 s, 5 s) |
+| Fenster | Zeitfenster im fortlaufenden Modus (30 s bis 1 h) |
+| Trigger | Steigende/fallende/beide Flanken mit Schwellwert plus Pre-/Post-Samples konfigurieren |
+| Auto-Skalierung | Automatische Y-Achsen-Anpassung ein/aus |
+| Auto-Reconnect | Wenn aktiv, startet die Aufzeichnung nach einem OPC-UA-Verbindungsabbruch automatisch mit denselben Signalen neu |
+| CSV exportieren | Aufzeichnung in eine CSV-Datei schreiben |
+
+Während einer laufenden Aufzeichnung ist die Signalliste schreibgeschützt. Stoppen Sie den Trace, um Signale zu ändern, berechnete Signale hinzuzufügen oder die Skalierung zu wechseln.
+
+### Plot-Interaktion (nach Stop)
+
+Sobald die Aufzeichnung gestoppt ist, stehen zusätzliche Buttons zur Verfügung:
+
+- **Pan** — ziehen verschiebt den Ausschnitt
+- **Rechteck-Zoom** — ein Rechteck aufziehen zoomt in den Bereich
+- **Zoom In / Zoom Out** — schrittweises Zoomen
+- **100 %** — beide Achsen auf die volle Aufzeichnung zurücksetzen
+- **Fit** — Y-Achse im aktuellen Zeitfenster automatisch anpassen
+
+### Dual-Cursor
+
+Klicken Sie in den Plot, um Cursor **t1** zu setzen; ein weiterer Klick setzt **t2**. Jeder weitere Klick wechselt, welcher Cursor bewegt wird. Ziehen Sie einen Cursor, um ihn präzise zu positionieren. **Strg** + Klick irgendwo auf den Plot löscht beide Cursor.
+
+Die Zeitdifferenz **Δt** zwischen den Cursorn wird oben rechts im Plot angezeigt. Jeder Cursor trägt oben an der Linie ein kleines **t1**- oder **t2**-Label, und am zweiten Cursor werden Δt und ΔY live direkt an der Linie mitgeführt, während Sie ziehen.
+
+In der Toolbar gibt es neben dem Export-Button einen Toggle **Messcursor anzeigen**. Beim ersten Einschalten nach einem gestoppten Trace platzieren sich die Cursor automatisch bei 25 % und 75 % des sichtbaren Zeitfensters, damit sie sofort sichtbar sind. Wird der Toggle ausgeschaltet, verschwinden die Cursor-Linien und die Spalten Y(t1) / Y(t2) / ΔY leeren sich — die zuletzt gesetzten Cursor-Positionen bleiben erhalten und erscheinen beim nächsten Einschalten wieder.
+
+### Signal-Tabelle (unter dem Plot)
+
+Jedes Signal erscheint als Zeile mit den editierbaren Spalten: **Name**, **Formel**, **Format** (Dezimal / Hex / Binär / Bool / Wissenschaftlich), **Linie** (Linear oder Stufen), **Min Y**, **Max Y** und **Skalierungsgruppe**. Änderungen wirken sofort — kein Trace-Neustart nötig. Die rechten Spalten **Y(t1)**, **Y(t2)** und **ΔY** zeigen die interpolierten Signalwerte an den beiden Cursorn sowie deren Differenz im gewählten Anzeigeformat.
+
+Die **Linie**-Spalte steuert das Rendering im gestoppten Trace: Linear zieht eine Gerade zwischen Samples, Stufen zeichnet einen Rechteckverlauf — das passt zu booleschen oder bitweisen Signalen, die in der PLC tatsächlich sprunghaft zwischen diskreten Werten wechseln. Wird das Format eines Signals auf Bool gestellt, wird automatisch Stufen vorausgewählt. Sie können die Linien-Darstellung jederzeit manuell überschreiben; die Wahl bleibt bei späteren Format-Wechseln erhalten.
+
+### Skalierungsgruppen
+
+Mehrere Signale können sich eine Y-Achse teilen, indem sie in dieselbe Skalierungsgruppe gelegt werden:
+
+- **Main** — die linke Hauptachse (Default für neue Signale)
+- **A / B / C / D** — vier geteilte rechte Achsen; jedes Signal in derselben Buchstaben-Gruppe nutzt eine gemeinsame Achse mit neutraler Beschriftung
+- **Eigene** — eine dedizierte rechte Achse pro Signal, in der Signalfarbe eingefärbt
+
+Beispiel: Drei Temperaturfühler in Gruppe **A** liegen auf einer gemeinsamen Skala übereinander, während der Druck auf seiner eigenen Achse bleibt.
+
+### Berechnete Signale (Formeln)
+
+Ein berechnetes Signal hat keinen eigenen PLC-Tag. Sein Wert ergibt sich aus den Werten früherer Signale in der Liste, gemäss einer Formel, die Sie in die Spalte **Formel** eintragen.
+
+**Syntax:**
+
+- `$0`, `$1`, `$2` … referenzieren Signale nach ihrer Position in der Liste (null-basiert). Ein berechnetes Signal an Position *i* darf nur Signale **davor** referenzieren (`$0` … `$(i-1)`), wodurch zyklische Abhängigkeiten strukturell ausgeschlossen sind.
+- Grundrechenarten `+`, `-`, `*`, `/` und Klammerung.
+- Built-in-Funktionen: `abs`, `sqrt`, `min(a, b)`, `max(a, b)`, `pow(a, b)`, `sin`, `cos`, `tan`, `log`, `log10`, `exp`, `ceiling`, `floor`, `round`.
+- Zwei zustandsbehaftete Funktionen: `deriv($i)` liefert die numerische Ableitung `(yₙ − yₙ₋₁) / Δt`, `integ($i)` das laufende Integral (Trapezregel). Jeder Aufruf hat seinen eigenen State, sodass `deriv($0) + deriv($1)` wie erwartet funktioniert. Der State wird bei jedem Trace-Neustart zurückgesetzt.
+
+**Beispiele:**
+
+```
+$0 + $1                 # Summe zweier Signale
+($0 + $1) / 2           # Mittelwert
+$0 - $1                 # Differenz
+abs($0 - $1) * 2        # doppelte absolute Differenz
+deriv($0)               # numerische Ableitung
+integ($0)               # numerisches Integral
+$0 * 0.5 + 1.25         # Verstärkung + Offset
+```
+
+**Validierung:** Die Formel wird während der Eingabe geprüft. Eine ungültige Formel zeichnet einen roten Rahmen um die Zelle und zeigt den Fehler als Tooltip; der Start-Button bleibt deaktiviert, bis jede Formel gültig ist.
+
+### Export
+
+Über **CSV exportieren** wird die Aufzeichnung auf die Festplatte geschrieben. Jedes Signal (Quell- wie berechnetes) wird zu einer Spalte, jedes Sample zu einer Zeile, mit dem Zeitstempel in der ersten Spalte.
+
+---
+
 ## 15. Fehlerbehebung & FAQ
 
 ### Häufige Probleme
@@ -1846,7 +2230,7 @@ A: Nein, aktuell wird nur ein Projekt gleichzeitig unterstützt.
 
 Bei weiteren Fragen oder Problemen kontaktieren Sie den Support:
 
-- **E-Mail:** [tiaopenessmanager@outlook.com]
+- **E-Mail:** [support@tiaopenessmanager.ch]
 - **Dokumentation:** Siehe `Information/` Ordner
 - **Bug oder Funktionswunsch melden:** Help → Problem melden in der App
 

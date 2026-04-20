@@ -194,17 +194,37 @@ Der integrierte Code-Editor bietet professionelle Bearbeitungsfunktionen für SC
 - **Direkte Verbindung** - Verbindung zu jedem OPC UA Server über Endpunkt-URL (z.B. `opc.tcp://192.168.0.1:4840`)
 - **Auto-Erkennung** - Automatisches Erkennen von PLC OPC UA Endpunkten aus dem verbundenen TIA Portal-Projekt
 - **Authentifizierungsmodi** - Anonym, Benutzername/Passwort und Zertifikatsbasierte Authentifizierung
+- **Dockbares Arbeitsbereichs-Layout** - Adressraum-Browser, Knoteninformationen, Referenzen, Struktur-Felder und Beobachtungstabelle liegen jeweils in einem eigenen dockbaren Panel, das per Drag-Griff am Titelbalken abgedockt, angepinnt, umsortiert oder gestapelt werden kann
 - **Adressraum-Browser** - Vollständigen OPC UA Adressraum in einer Baumansicht mit Knotenklassen-Symbolen durchsuchen
 - **Knotensuche** - Adressraum-Knoten nach Namen filtern, um Variablen schnell zu finden
+- **Knoteninformationen-Panel** - Beim Auswählen eines Knotens werden alle OPC UA-Attribute angezeigt: Node Id, Browse Name, Display Name, Node Class, Description, Write-/User-Write-Masks und bei Variablen zusätzlich Data Type, Value Rank, Array Dimensions, Access Level, User Access Level, Minimum Sampling Interval, Historizing, aktueller Value, Status Code sowie Source- und Server-Timestamp (entspricht UaExpert)
+- **Referenzen-Panel** - Eigenes Panel mit jeder eingehenden und ausgehenden Referenz des ausgewählten Knotens, Spalten Richtung, Referenztyp, Browse-Name, Knotenklasse und Ziel-Knoten-ID
+- **Ereignisprotokoll-Panel** - OPC-UA-Ereignisse von einem Notifier-Knoten abonnieren und live in einer Zeit / Schweregrad / Quelle / Ereignistyp / Meldung-Tabelle empfangen; Schweregrad-Filter, CSV-Export mit Formel-Injektions-Schutz und 5000-Einträge-FIFO-Ring mit begrenzter UI-Dispatch-Queue bei Ereignisfluten
+- **Verlaufsdiagramm-Panel** - Historische Rohwerte eines Variablenknotens über einen Zeitbereich laden und in einem Streudiagramm mit Datum/Uhrzeit-X-Achse darstellen; Schnellauswahl 1h / 6h / 24h / 7T, Kalender-Pickers für eigene Zeitbereiche, CSV-Export und sichere Behandlung von ungültigen Zeitstempeln, nicht-numerischen Werten und bösartigen Server-Payloads
+- **Methodenaufruf-Dialog** - Rechtsklick auf einen Methodenknoten im Adressraum-Browser öffnet einen modalen Dialog mit Ein- und Ausgabeargumenten, typspezifischen Eingabefeldern (Skalar-Textboxen, Array-Zeilen-Editor), führt den Aufruf aus und zeigt die zurückgegebenen Werte und Status; Dialog schließen bricht einen noch laufenden Aufruf ab
+- **Zertifikatsverwaltung-Dialog** - Eigenes Client-Zertifikat sowie alle vertrauten und abgelehnten Server-Zertifikate in einem modalen Drei-Tab-Dialog (Eigenes / Vertrauenswürdig / Abgelehnt) prüfen; ausstehende Server-Zertifikate vertrauen, bisher vertraute ablehnen, obsolete Einträge entfernen oder das Client-Zertifikat neu erstellen. Der zugehörige Schalter „Serverzertifikate automatisch akzeptieren" im OPC UA Einstellungen-Flyout schaltet zwischen automatischem Vertrauen (Default) und manueller Freigabe pro Server
+- **Matrix-Editor-Dialog** - Rechtsklick auf eine matrix-typisierte Variable im Adressraum-Browser öffnet einen tabellenartigen Editor mit Zeilen- und Spaltenüberschriften; Zellen einzeln bearbeiten, geänderte Zellen werden markiert und die gesamte Matrix wird mit einem Schreibvorgang zurück zum Server gesendet. Schreibgeschützte Matrizen bleiben sichtbar, der Speichern-Button wird deaktiviert; Matrizen mit mehr als zwei Dimensionen melden einen klaren „Rang nicht unterstützt"-Fehler statt die Daten still zu flatten
+- **Struktur-Felder-Panel** - Komplexe Struct-/UDT-Werte lesen und bearbeiten mit verschachtelter Ein-/Ausklappen-Ansicht, Per-Index-Array-Zeilen und Dirty-Feld-Rückschreiben
 - **Beobachtungstabelle** - Variablen per Doppelklick oder Drag-and-Drop hinzufügen; Name, Knoten-ID, Datentyp, Wert, Status und Zeitstempel pro Zeile anzeigen
 - **Werte lesen** - Alle Beobachtungstabellen-Variablen mit einer einzigen Serveranfrage lesen oder einzelne Zeilen auf Anfrage
 - **Werte schreiben** - Werte direkt in PLC-Variablen schreiben durch Bearbeitung von Beobachtungstabellen-Zellen
 - **Live-Abonnements** - Wertänderungen mit konfigurierbarem Intervall (in Millisekunden) abonnieren; Werte aktualisieren sich automatisch ohne Polling
 - **Variablen-spezifische Abonnements** - Bestimmte Zeilen unabhängig von der vollständigen Beobachtungstabelle abonnieren
 - **Konfiguration speichern/laden** - Beobachtungstabellen-Konfigurationen (Endpunkt-URL + Variablenliste) als `.opcua-watch` JSON-Dateien speichern und wiederherstellen
+- **Arbeitsbereichs-Persistenz** - Der gesamte OPC UA-Arbeitsbereich (Panel-Layout + offene Verbindungen + Beobachtungstabelle) wird beim nächsten App-Start automatisch wiederhergestellt. Jeder geöffnete Verbindungstab behält seine eigenen Beobachtungen, Abonnements, Ereignisfilter und Verlaufsbereiche — nicht nur der aktive Tab. Ein **Diese Verbindung nicht im Arbeitsbereich speichern**-Toggle pro Tab im Settings-Flyout der Verbindung schliesst einen Tab bei Bedarf aus der Workspace-Datei und dem automatischen Wiederherstellen aus, wenn ein Endpoint privat bleiben soll. Ein **Arbeitsbereich**-Menü in der Dock-Toolbar bietet **Arbeitsbereich speichern unter…**, **Arbeitsbereich laden…** (akzeptiert sowohl neue `.opcua-workspace`- als auch alte `.json`-Watch-Dateien) und **Arbeitsbereich zurücksetzen**. Passwörter wandern nie in die Workspace-Datei — Bediener geben sie beim erneuten Verbinden neu ein
 - **CSV-Export** - Beobachtungstabellen-Daten mit allen Spalten (Name, Knoten-ID, Datentyp, Wert, Status, Zeitstempel) als CSV exportieren
 - **JSON-Export** - Beobachtungstabellen-Daten als strukturiertes JSON mit vollständigen Metadaten exportieren
 - **MCP-Integration** - Vereinheitlichtes `opcua`-Tool mit 9 Unterbefehlen für KI-Assistenten: connect, disconnect, browse, read, read_complex, write, write_complex, get_types, subscribe
+
+### S7 Nativ (S7 Comm+)
+
+- **Direkte S7-Comm+-Verbindung** - TLS-1.3-gesicherter nativer S7-Protokollzugriff auf S7-1200 (FW ≥ 4.3) und S7-1500 (FW ≥ 2.9) ohne OPC UA
+- **Authentifizierung** - Legacy-Passwort und TLS-Benutzer/Passwort über den eingebauten Treiber
+- **Symbolisches Browsing** - Alle Block-Typen (DB/FB/FC/OB) mit Tag-/UDT-Expansion; absolute Adressen (I0.0, MW10, QD20) über manuellen Adress-Dialog
+- **TIA-Tag-Import** - PLC-Tags aus dem aktiven TIA-Portal-Projekt als "PLC Tags"-Baumknoten importieren; IP-basiertes PLC-Matching
+- **Live-Beobachtungstabelle** - Native S7-Comm+-Subscriptions pushen Wertänderungen mit konfigurierbarer Zykluszeit; der alte Timer-Polling-Pfad ist entfernt
+- **Verbindungsstatus-Punkt** - Ein farbiger Punkt im Tab-Header zeigt den SPS-Zustand live an (grau = nicht verbunden, grün = läuft, gelb = angehalten oder wird wiederverbunden, rot = nicht erreichbar) mit einem Hover-Tooltip
+- **Automatische Wiederverbindung mit sichtbarem Fortschritt** - Ein "Wiederverbinde…"-Banner erscheint unter der Verbindungsleiste, während die App eine unterbrochene Verbindung wiederherstellt; Werte in der Beobachtungstabelle werden auf halbe Deckkraft gedimmt und auf `???` umgestellt, bis frische Werte ankommen; die gesamte Recovery läuft im Hintergrund
 
 ### SCL Unit Testing (Enterprise)
 
@@ -225,9 +245,31 @@ Integriertes Unit-Test-Framework für SCL-Bausteine — schreiben, ausführen un
 - **Automatische Block-Analyse** — Interface, Boundary-Werte und Dependencies werden mit einem Klick aus dem TIA-Projekt extrahiert
 - **Dock-Layout** — Test Explorer, Analyse-Tools, Test-Editoren und Ergebnis-Panel sind frei verschiebbare Dock-Tools
 
+### Trace / Signal-Visualisierung
+
+Echtzeit-Oszilloskop für OPC-UA-Signale. Zeichnet PLC-Werte in festem Takt auf, stellt sie als Live-Diagramm dar und bietet Oszilloskop-Werkzeuge für gestoppte Aufzeichnungen.
+
+- **Fortlaufend- und Einzel-Trigger-Modus** — Fortlaufend hält die neuesten Samples in einem rollenden Fenster (30 s bis 1 h), Einzel-Trigger zeichnet ein festes Fenster um eine steigende, fallende oder beidseitige Flanke auf, mit konfigurierbaren Pre-/Post-Samples
+- **Auto-Reconnect** — Fällt die OPC-UA-Sitzung aus, startet der Trace nach Wiederherstellung automatisch mit denselben Signalen
+- **Multi-Signal-Plots mit Skalierungsgruppen** — Signale auf die Hauptachse, eine von vier geteilten rechten Achsen (A / B / C / D) oder eine eigene rechte Achse pro Signal legen
+- **Dual-Cursor mit Delta** — Klick setzt t1, erneuter Klick setzt t2, beide sind draggbar. Die Zeitdifferenz Δt erscheint im Plot; die Signal-Tabelle zeigt Y(t1), Y(t2) und ΔY pro Signal im gewählten Anzeigeformat
+- **Toolbar-Toggle für Cursor** — Beide Messcursor per Toolbar-Button ein- und ausblenden. Beim ersten Einschalten nach Stopp platzieren sich die Cursor automatisch bei 25 % und 75 % des sichtbaren Zeitfensters. Jeder Cursor trägt ein kleines t1/t2-Label; am zweiten Cursor stehen Δt und ΔY live direkt an der Linie und wandern beim Ziehen mit
+- **Pro-Signal-Format** — Dezimal, Hex, Binär, Bool oder Wissenschaftlich, direkt in der Signal-Tabelle editierbar, wirkt live auf Cursor-Anzeigen
+- **Linear- oder Stufen-Darstellung pro Signal** — Die Signal-Tabelle hat eine Linie-Spalte mit Linear (Schräge zwischen Samples) oder Stufen (Rechteckverlauf, passt zu Bool oder bitweisen Signalen). Wird das Format eines Signals auf Bool gestellt, wird automatisch Stufen vorausgewählt
+- **Berechnete Signale aus Formeln** — Kombiniere Quell-Signale mit `+`, `-`, `*`, `/`, Klammern, Built-in-Math (`abs`, `sqrt`, `min`, `max`, `sin`, `cos`, `log`, ...) und zustandsbehafteten `deriv` / `integ`; ungültige Formeln werden mit rotem Zellrahmen markiert, der Fehlertext erscheint als Tooltip, der Start-Button bleibt deaktiviert, bis jede Formel gültig ist
+- **Overview-Minimap** — Kompakter Streifen unter dem Hauptplot zeigt die gesamte Aufzeichnung; das markierte Rechteck per Drag verschieben scrollt den Hauptplot mit, Zoomen verschiebt das Rechteck mit
+- **FFT-Tab nach Stopp** — Gestoppte Aufzeichnungen bieten einen Frequenz-Tab mit Rectangular- / Hann- / Hamming- / Blackman-Fensterfunktionen plus optionaler dB- und Log-Y-Anzeige
+- **Plot-Interaktion** — Pan, Rechteck-Zoom, schrittweises Zoomen, 100 % Reset, Fit aufs aktuelle Zeitfenster — alles nach Stopp verfügbar
+- **CSV-Export** — Ganze Aufzeichnung (Quell- und berechnete Signale) mit ISO-8601-Zeitstempeln auf die Festplatte schreiben
+- **MCP-Integration** — `tia_trace`-Tool mit start / stop / status / export; AI-Agenten können Quell- und berechnete Signale direkt verkabeln
+
 ### Problem-Meldung
 
 Melde Bugs und schlage neue Funktionen vor, ohne die App zu verlassen. Der Help-Menü-Eintrag „Problem melden" öffnet einen Dialog, in dem du das Problem beschreibst; die App sammelt System-Informationen (App-Version, Betriebssystem, .NET-Runtime, aktive TIA-Portal-Version, Sprache, Lizenz-Tier) und aktuelle Logs und öffnet dann GitHub im Browser mit dem vorausgefüllten Issue. Kein GitHub-Login innerhalb der App nötig — die eigentliche Einreichung machst du selbst auf GitHub.
+
+### Ein Fenster pro Windows-Sitzung
+
+Pro Windows-Sitzung läuft nur eine Instanz des TIA Openness Managers. Wird eine Datei oder ein Ordner aus dem Windows Explorer geöffnet, während die App bereits läuft, holt das vorhandene Fenster sich nach vorn und öffnet das Element dort, statt eine zweite Kopie zu starten. Ein erneuter Doppelklick auf das Anwendungssymbol oder ein zweites Ausführen der Exe holt ebenfalls nur das laufende Fenster nach vorn. Verschiedene Windows-Benutzer (auch getrennte RDP-Sitzungen) bekommen jeweils eine eigene unabhängige Instanz.
 
 ---
 
@@ -288,12 +330,16 @@ Melde Bugs und schlage neue Funktionen vor, ohne die App zu verlassen. Der Help-
 - Safety Block Support (F_FB, F_FC, F_DB, F_OB)
 - Protection Profiles
 - MCP Server Integration
+- KI-Chat
+- Projektbibliothek-Operationen
 - Priority Support
 
 ### Enterprise (CHF 29.99/Monat oder CHF 299.99/Jahr)
 - **Unbegrenzte Dateien**
 - **Jahresabo spart 17%** (2 Monate gratis)
-- Alles aus Professional
+- Alles aus Professional, plus:
+- Passwort-Tresor
+- SCL Unit Testing
 - Multi-User Lizenzen
 - Dedizierter Support
 - Mengenrabatte
@@ -309,12 +355,12 @@ Melde Bugs und schlage neue Funktionen vor, ohne die App zu verlassen. Der Help-
 
 ### Online-Aktivierung
 1. Subscription kaufen unter: https://www.tiaopenessmanager.ch
-2. Aktivierungscode per E-Mail erhalten (Format: `ACT-XXXX-XXXX-XXXX`)
-3. Code im Programm eingeben unter **View → Settings → Manage License**
+2. Aktivierungscode per E-Mail erhalten
+3. Code im Programm eingeben unter **View → Einstellungen → Lizenz verwalten**
 4. Lizenz ist an Ihre Hardware gebunden
 
-### Subscription verwalten
-- Klicken Sie auf "Manage Subscription" im License-Dialog
+### Abonnement verwalten
+- Klicken Sie auf **Abonnement verwalten** im Lizenz-Dialog
 - Öffnet das Stripe-Portal für Zahlungen, Rechnungen und Kündigung
 
 ---
@@ -329,6 +375,6 @@ Die Software wird „as is" geliefert. Der Anbieter übernimmt keine Haftung fü
 
 ---
 
-**Kontakt:** Für Fragen kontaktieren Sie uns unter [tiaopenessmanager@outlook.com]
+**Kontakt:** Für Fragen kontaktieren Sie uns unter [support@tiaopenessmanager.ch]
 
 **© 2025-2026 AnyAutomation. Alle Rechte vorbehalten.**
