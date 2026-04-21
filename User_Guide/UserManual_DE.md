@@ -1318,6 +1318,8 @@ Für benannte Snapshots, die Sie an Kollegen weitergeben oder für eine bestimmt
 
 Um einen vertraulichen Endpoint komplett aus dem Arbeitsbereich herauszuhalten, öffnen Sie den Settings-Flyout der Verbindung (Zahnrad-Symbol in der verbundenen Verbindungsleiste) und aktivieren Sie **Diese Verbindung nicht im Arbeitsbereich speichern**. Solange der Toggle aktiv ist, bleiben Endpoint, Beobachtungsliste, Abonnements, Ereignisfilter und Verlaufsbereich dieses Tabs aus der Workspace-Datei und dem automatischen Wiederherstellen heraus. Schalten Sie den Toggle wieder aus, sobald der Tab wieder gespeichert werden soll.
 
+Der gespeicherte Arbeitsbereich merkt sich auch, wie Sie die Bereiche angeordnet haben — ob die Beobachtungstabelle unten oder rechts sitzt, ob die Typ-Definitionen angeheftet sind, wo Sie die Trenner platziert haben und welche Registerkarten aktiv waren. Beim Laden des Arbeitsbereichs wird jeder Bereich genau dorthin zurückgesetzt, wo Sie ihn verlassen haben.
+
 ### Beobachtungstabellen-Daten exportieren
 
 Exportieren Sie die aktuellen Beobachtungstabellen-Werte für Dokumentation oder weitere Analyse:
@@ -1592,6 +1594,7 @@ Das Passwort wird nie in die Suite-Datei, in Logs oder Einstellungs-Dateien gesc
 - **„Run" Button ist ausgegraut:** Ein TIA-Projekt muss geöffnet sein, und das aktive Suite-Dokument muss valides JSON sein.
 - **Test Explorer ist leer:** Das Arbeitsverzeichnis hat noch keinen `.tia-tests/` Ordner. **New Suite** klicken um die erste Suite zu erstellen — der Ordner wird automatisch angelegt.
 - **PLCSIM-Fehler:** Prüfen ob PLCSIM Advanced V3.0+ installiert und lizenziert ist. Die genaue Version wird zur Laufzeit automatisch erkannt.
+- **TLS-Verkehr für den Support aufzeichnen (fortgeschritten):** Wenn der Support einen Wireshark-Mitschnitt des S7-Comm+-Handshakes braucht, die Umgebungsvariable `SSLKEYLOGFILE` vor dem Start der App auf einen absoluten Dateipfad setzen — z.B. `setx SSLKEYLOGFILE "C:\Temp\s7-keys.log"` — und anschliessend neu starten. In Wireshark die TLS-Einstellung *(Pre)-Master-Secret log filename* auf dieselbe Datei zeigen lassen. Solange die Variable gesetzt ist, wird bei jeder Verbindung eine Warnung ins App-Log geschrieben, damit sie nicht vergessen wird. Im Normalbetrieb die Variable leer lassen.
 
 ### KI-geschriebene Test-Suites (Enterprise)
 

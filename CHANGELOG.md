@@ -1,5 +1,20 @@
 # TIA Openness Manager - Changelog
 
+## v3.3.1 (2026-04-21)
+
+### OPC UA
+- **Workspace remembers the full pane arrangement** — Save/Load now restores where every panel sits, including floating, pinned, and splitter positions.
+
+### Bug Fixes
+- **AI Chat** — Context compaction — safety-critical tool results (deletions, test runs, compilations) are preserved verbatim through compaction instead of being truncated.
+- **S7 driver** — Connection reliability and stability improvements.
+- **SCL Unit Testing** — PLCSIM Advanced transport reliability and diagnostic improvements.
+- **AI Chat settings** — API Key field reliably appears when a provider needs one.
+- **AI Chat** — Ctrl+B sub-agent backgrounding works reliably in all chat contexts.
+- **AI Chat** — Stalled responses surface as a clear error instead of hanging; timeouts are tuned per model so long-thinking assistants still complete.
+- **AI Chat** — Context handling on long conversations is more reliable, with automatic recovery when a request grows too large.
+- **AI Chat** — Describe Project and Document Project run more reliably on very large projects and resume cleanly after an interruption.
+
 ## v3.3.0 (2026-04-20)
 
 ### AI Chat
@@ -8,23 +23,22 @@
 - **Cloudflare AI Gateway proxy** — Route requests through your Cloudflare gateway with Account ID, Gateway ID, and a chosen downstream provider.
 - **Region picker for Qwen, Z.AI, MiniMax, Moonshot** — Switch between Global and China endpoints. Qwen and Z.AI also expose Coding Plan endpoints.
 - **Faster built-in skills on large projects** — Describe/Document/Explain Block and Describe/Document Project run noticeably faster.
-- **UP recalls queued messages** — With the input empty, UP pulls queued messages back to edit or drop. ESC still cancels.
+- **Up arrow recalls queued messages** — With the input empty, the Up arrow pulls queued messages back to edit or drop. Esc still cancels.
 - **Sub-agent approvals in main chat** — Prompts appear in the main chat with Allowed / Denied / Interrupted states; sensitive arguments show as `[redacted]`.
-- **Queue hint shows current activity** — The indicator explains what the assistant is doing (e.g. "running tia_import").
+- **Queue hint shows current activity** — The indicator explains what the assistant is currently doing.
 - **Ctrl+B detaches a sub-agent** — Sends a blocking sub-agent to the background; a chat notification arrives when it finishes. A "(background)" badge marks detached agents; a reminder appears if there's nothing to detach.
-- **Smaller models no longer loop on compaction** — The compaction reserve scales with the model's context size.
-- **Reasoning-without-answer recovery** — If a thinking model exhausts its reasoning budget without answering, the request is retried with a continuation prompt.
-- **Non-existent tool calls no longer loop** — After a few retries the failed call is turned into a plain text reply.
-- **More reliable prompt caching** — The skills list is sorted in a stable order, improving cache hit rates.
-- **Azure OpenAI reasoning models** — `reasoning_effort` now works for Azure deployments of o1/o3/gpt-5.
+- **Long conversations on smaller models** — More reliable on models with smaller context windows.
+- **Reasoning model recovery** — Automatic retry when a thinking model runs out of reasoning room without producing an answer.
+- **Failed tool calls no longer loop** — After a few retries the assistant falls back to a plain response.
+- **Reasoning effort for Azure OpenAI** — The reasoning-effort setting now applies to Azure-hosted models.
 - **Canvas snapshots open the canvas automatically** — No need to open the panel first.
 - **Cleaner provider error messages** — Provider rejections show a short summary instead of a raw server dump.
-- **Tool calls no longer rejected as invalid schema** — Fixed a detail that caused strict providers to reject some tools.
-- **Tool responses can carry NaN / Infinity values** — MCP tool results with REAL boundary values no longer fail to serialize.
+- **Stricter tool schemas accepted** — Fixed a detail that caused some providers to reject tool definitions.
+- **PLC real-number boundary values in tool results** — Tool results containing NaN or Infinity from the PLC are handled correctly.
 
 ### TIA Portal
 - **Instant project tree refreshes** — After the first load, refreshes are instant and scoped to the changed area.
-- **Selective import from Preview Diff** — Tick the blocks to import; the batch is transactional and rolls back on failure.
+- **Selective import from Preview Diff** — Tick the blocks to import; failed imports don't leave the project in a partial state.
 - **Preview Diff catches source-file edits** — SCL, AWL and DB source changes without a matching XML change now show up.
 
 ### Editor
@@ -34,19 +48,19 @@
 - **AI Chat authors test suites end-to-end** — Ask "write tests for FB_X" and the assistant drafts, runs and refines the suite. AI-authored cases carry an "AI" badge. F-CPU (Safety) blocks are refused without confirmation.
 - **Inline chat and Accept/Reject diff in the suite editor** — Press `Ctrl+I` for targeted edits streamed as a reviewable diff.
 - **AI opens a suite in the editor** — The assistant can open a newly created suite as a tab on request.
-- **Variable timeline chart** — Click a test case after a run to plot its watch variables over the cycles. Add `"watch": [...]` to a test case to enable it.
-- **Tag browser with inline edit** — Write tag values from the tag browser with a type-aware editor and range clamping.
+- **Variable timeline chart** — Click a test case after a run to plot its watched variables over the cycles.
+- **Tag browser with inline edit** — Write tag values from the tag browser with a type-aware editor that validates value ranges.
 - **Saved Instances list** — Lists persisted PLCSim instances with Load and Delete actions, including their configured IP addresses.
 - **Searchable block picker** — A search box next to the block dropdown filters as you type.
 - **Streamlined Connection Settings** — IP address and PLCSIM preparation are shared across transports; switching between PLCSim Advanced and S7 Comm+ keeps the IP.
-- **Honest error for optimized-DB variables on PLCSim Advanced** — Suites that target an optimized-access DB now report that the variable isn't reachable and suggest S7 Comm+, instead of a cryptic PLCSim error code.
-- **Open Suite falls back to the project folder** — If the hidden `.tia-tests` folder doesn't exist yet, the dialog opens in the TIA project folder.
+- **Clearer error for optimized data blocks on PLCSim Advanced** — The suite now reports that the variable isn't reachable and suggests S7 Comm+ instead of a cryptic error code.
+- **Open Suite falls back to the project folder** — When no test folder exists yet, the dialog opens in the TIA project folder.
 - **Empty state when no project is loaded** — The Test Explorer shows "No TIA Project connected" until a project is open.
 - **Virtual-adapter status in the Simulation view** — A status row shows whether the PLCSim virtual adapter is ready.
 
 ### Application Shell
 - **One app per Windows session** — Opening a file or folder from Explorer activates the running window instead of starting a second copy.
-- **Language switch applies to dates and numbers** — Dates, numbers and regional conventions follow the selected language; regional variants fall back to the parent language.
+- **Language switch applies to dates and numbers** — Dates, numbers and regional conventions follow the selected language.
 - **Correct plural forms per language** — Count-based messages use proper singular/plural in EN/DE/FR/IT; trial dates use each language's short format.
 
 ### Trace
@@ -68,7 +82,7 @@
 
 ### OPC UA
 - **Per-tab workspace persistence** — Each tab keeps its own watch list, subscriptions, event filter and history range. A "don't persist" toggle keeps confidential endpoints out of the workspace file.
-- **Workspace auto-restore** — Restores on startup; a Workspace menu saves, loads or resets `.opcua-workspace` files.
+- **Workspace auto-restore** — Restores on startup; a Workspace menu lets you save, load or reset workspace files.
 - **Edit matrices as a spreadsheet** — "Edit Matrix…" opens a row/column editor; Save writes the whole matrix; read-only matrices are labelled.
 - **Certificate Management dialog** — Lists own, trusted and rejected certs; trust/reject/remove pending server certs; regenerate the client cert. An Auto-accept toggle controls automatic trust.
 - **Call methods from the Address Space Browser** — "Call Method…" loads arguments, accepts scalars or arrays, runs the call and shows outputs with status.
@@ -91,8 +105,7 @@
 - Fixed `.db` source files showing a folder icon instead of the data block icon.
 - Removed `.spl` and `.s7dcl` from drag-and-drop import targets.
 - Fixed log files growing to gigabytes after a cancelled or timed-out operation.
-- Hardened the internal connection to the TIA Portal helper against same-user impersonation.
-- Fixed Save as Patch in the Git commit history failing with `Invalid argument` when the chosen folder ended with a backslash.
+- Fixed Save as Patch in the Git commit history failing when the chosen folder path ended with a backslash.
 
 ## v3.2.0 (2026-04-14)
 
@@ -553,153 +566,3 @@ The AI Chat has been rebuilt from the ground up.
 - **Password Vault** - Encrypted credential storage for TIA Portal connections
 - **Enhanced Export** - Source code generation, structured export paths, fingerprint caching
 
----
-
-## v1.2.2 (2026-01-02)
-
-### Bug Fixes
-- **Remove V21 from Settings** - Removed TIA Portal V21 option from API version dropdown to prevent crashes (V21 support not yet stable)
-
----
-
-## v1.2.1 (2026-01-01)
-
-### New Features
-- **Privacy Policy & EULA Integration** - Added direct access to legal documents from About Window
-  - New "Privacy Policy" button opens Privacy.md
-  - New "EULA" button opens EULA.md
-  - Documents automatically included in installer and build output
-- **Website Link in About Window** - Added clickable website link (https://tiaopenessmanager.ch)
-  - Opens in default browser when clicked
-  - Matches existing GitHub link functionality
-
-### Changes
-- About Window now displays three buttons: "View Full Licenses", "Privacy Policy", and "EULA"
-
----
-
-## v1.2.0 (2025-12-30)
-
-### New Features
-- **Swiss Franc (CHF) Currency Support** - Automatic IP-based region detection for Switzerland
-  - Swiss users automatically see CHF prices (Professional: CHF 25/250, Enterprise: CHF 40/400)
-  - IP geolocation service (ip-api.com) detects user location on startup
-  - All other regions continue to see EUR prices
-- **Complete Payment Coverage** - All EUR/CHF, Professional/Enterprise, Monthly/Yearly combinations supported
-
-### Changes
-- **Enterprise Price Reduction** - EUR Enterprise pricing reduced from €50/€500 to €40/€400 (CHF 40/CHF 400)
-- **Removed Manual Currency Toggle** - Currency is now fully automatic based on IP location (no user override)
-- **Updated EULA Files** - VERSION line now automatically updated during releases
-
-### Fixed
-- **EUR Price Flash** - Fixed brief EUR price display on dialog open (removed hardcoded XAML defaults)
-- **IP Detection Always Runs** - Ignores cached currency preference to ensure fresh detection
-
----
-
-## v1.1.7 (2025-12-30)
-
-### New Features
-- **Import/Export Settings Window** - New dialog for configuring import and export behavior
-- **SPL Export Support** - Export SCL/AWL/LAD/FBD blocks as SIMATIC Source Documents (.spl format, V20+)
-- **Export Options** - Configure export with defaults and read-only attributes
-- **Import Options** - Ignore structural changes and missing references during import
-
-### Improvements
-- **V21 Infrastructure** - Prepared codebase for future TIA Portal V21 support
-- **MCP Server** - Updated code generation tools for V21 compatibility
-- **Safety Block Detection** - Improved detection of Safety blocks in S7DCL format (V20 Update 4+)
-
----
-
-## v1.1.6 (2025-12-22)
-
-### New Features
-- **30-Day Full Trial** - New users get a 30-day trial with every feature unlocked. After the trial, the app falls back to Basic (free) or a purchased license.
-- **Trial now follows your device, not your install** - Reinstalling the app does not reset the trial.
-
----
-
-## v1.1.5 (2025-12-21)
-
-### Bug Fixes
-- **Language Switching Fixed** - Language switching now works correctly in the installed version
-
-### Improvements
-- **Settings Dialog Translations** - Added missing translations for Folder Names and License Information sections in all languages (DE/FR/IT)
-- **Smaller Installer** - Reduced installer size by ~3MB (removed bundled Siemens.Engineering DLLs that are loaded from TIA Portal at runtime)
-
----
-
-## v1.1.4 (2025-12-21)
-
-### New Features
-- **Online License Activation** - Activate your subscription directly from the app by entering the code you received after purchase.
-- **Hardware-Bound Licenses** - A license can only be used on the machine it was activated on. To move a license to a new machine, contact support.
-- **Free Basic Tier** - Basic tier is now permanently free (no trial expiration).
-- **Monthly/Yearly Toggle** - Switch between monthly and yearly billing directly in the app.
-- **Direct Stripe Checkout** - Subscribe buttons now open Stripe checkout directly (no website redirect).
-
-### Improvements
-- **Manage Subscription Button** - Improved visibility with accent color styling.
-- **Dynamic Pricing Display** - Prices update automatically when switching between monthly/yearly.
-
----
-
-## v1.1.3 (2025-12-20)
-
-### Bug Fixes
-- **Auto-Update not working** - Added missing AutoUpdater.NET.dll to installer package (update feature was broken since v1.1.0)
-
----
-
-## v1.1.2 (2025-12-20)
-
-### Bug Fixes
-- **FindUnused false positives on some machines** - Removed debug code that caused XML parsing to fail silently on machines without a specific folder structure
-
----
-
-## v1.1.1 (2025-12-20)
-
-### New Features
-- **Clear Code Button** - New button to clear the code editor content
-- **Clear Results Button** - New button to clear Find Unused results
-- **Auto-Clear on Project Close** - Code editor and Find Unused results are automatically cleared when project is closed
-
-### Bug Fixes
-- **Instance DBs marked as unused** - FindUnused now correctly detects Instance DB references from FB calls (prevents false positives)
-- **ObjectDisposedException after detach** - Fixed stale facade reference when detaching from attached TIA Portal instance
-
-### Improvements
-- **Import Progress Display** - Progress label now shows current file name being imported
-- **About Dialog** - Added clickable GitHub link for easy access to the repository
-- **Third-Party Licenses** - Added AutoUpdater.NET to the licenses list in About dialog and THIRD_PARTY_NOTICES.txt
-
----
-
-## v1.1.0 (2025-12-20)
-
-### New Features
-- **Auto-Update Check** - Application now checks for updates at startup and notifies when a new version is available
-- **Update Settings** - New checkbox in Settings to enable/disable automatic update checks
-
-### Bug Fixes
-- **Progress bar not fully filled** - Progress bar now shows 100% when operations complete (Analysis, Export, HMI Export)
-
----
-
-## v1.0.1 (2025-12-18)
-
-### Bug Fixes
-
-- **Checkbox state lost during search/filter** - Checkboxes in left and right tree now persist when filtering or searching multiple times
-- **Selection count incorrect with filter** - Import/Export selection count now correctly reflects checked items even when filter is active
-- **Delete Selection fails with filter** - Delete operation now works correctly when tree is filtered
-- **Single block import progress bar** - Progress bar now updates correctly for imports with less than 5 files
-- **Right-click doesn't select item** - Right-clicking on a tree item now selects it before showing context menu
-- **Missing Import button in right tree** - Added Import option to right tree context menu
-- **FindUnused false positives** - Fixed reference detection for FC calls with direct Component pattern in XML
-- **Fingerprint export progress** - Progress bar now includes fingerprint cache update phase after export
-- **MCP Generate FC fails** - Fixed VAR section removal regex to only remove standalone VAR, not VAR_INPUT/VAR_OUTPUT/VAR_TEMP

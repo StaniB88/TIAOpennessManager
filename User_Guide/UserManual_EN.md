@@ -1318,6 +1318,8 @@ For named snapshots that you can hand to a colleague or stash for a specific com
 
 To keep a confidential endpoint out of the workspace entirely, open the connection's Settings flyout (the gear icon in the connected connection bar) and enable **Don't persist this connection in workspace**. While the toggle is on, that tab's endpoint, watches, subscriptions, event filter and history range stay out of the workspace file and the auto-restore. Turn it back off whenever you want the tab to be remembered again.
 
+The saved workspace also remembers how you arranged the panes — whether the Watch Table sits at the bottom or the right, whether Type Definitions is pinned, where you placed the splitters, and which tabs were active. Loading the workspace puts every pane back exactly where you left it.
+
 ### Exporting Watch Table Data
 
 Export the current watch table values for documentation or further analysis:
@@ -1592,6 +1594,7 @@ The password is never written to the suite file, to any log, or to any settings 
 - **"Run" button greyed out:** A TIA project must be open, and the active suite document must be valid JSON.
 - **Test Explorer is empty:** The working directory has no `.tia-tests/` folder yet. Click **New Suite** to create the first one — the folder is created automatically.
 - **PLCSIM errors:** Check that PLCSIM Advanced V3.0+ is installed and licensed. The exact version is auto-detected at runtime.
+- **Capture the TLS traffic for support (advanced):** If support asks for a Wireshark capture of the S7 Comm+ handshake, set the `SSLKEYLOGFILE` environment variable to an absolute file path before starting the app — for example `setx SSLKEYLOGFILE "C:\Temp\s7-keys.log"` — then restart. Point Wireshark's TLS preference *(Pre)-Master-Secret log filename* at the same file. A warning is written to the app log on every connection while this is enabled so you don't forget to unset it. Leave the variable empty in normal operation.
 
 ### AI-Authored Test Suites (Enterprise)
 

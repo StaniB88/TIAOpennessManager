@@ -212,6 +212,7 @@ The built-in code editor provides professional editing features for SCL and othe
 - **Per-Variable Subscribe** - Subscribe to a selection of rows independently of the full watch table
 - **Save/Load Configuration** - Save and restore watch table configurations (endpoint URL + variable list) as `.opcua-watch` JSON files
 - **Workspace Persistence** - The whole OPC UA workspace (panel layout + open connections + watch table) is restored automatically the next time the app opens. Every open connection tab keeps its own watches, subscriptions, event filter and history range — not only the active tab. A per-tab **Don't persist this connection in workspace** toggle in each connection's Settings flyout lets you exclude a tab from the workspace file and the auto-restore when an endpoint must stay private. A dock-toolbar **Workspace** menu offers **Save Workspace As…**, **Load Workspace…** (accepts both new `.opcua-workspace` and legacy `.json` watch files), and **Reset Workspace**. Passwords stay out of the workspace file — operators re-enter them on reconnect
+  - Pane arrangement, splitter positions, and floating / pinned tool windows survive save/load.
 - **CSV Export** - Export watch table data to CSV with all columns (Name, Node ID, Data Type, Value, Status, Timestamp)
 - **JSON Export** - Export watch table data to structured JSON with full metadata
 - **MCP Integration** - Unified `opcua` tool with 9 subcommands for AI assistants: connect, disconnect, browse, read, read_complex, write, write_complex, get_types, subscribe
