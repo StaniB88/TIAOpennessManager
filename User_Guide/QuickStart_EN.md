@@ -34,6 +34,8 @@ TIA Portal requires that your Windows user is a member of the "Siemens TIA Openn
 
 ## First Launch
 
+On first launch, the Welcome tab opens — follow the Get Started walkthrough or jump straight into connecting to TIA Portal. You can reopen the Welcome tab anytime from **Help → Welcome Guide**, or turn off auto-open with the checkbox at the bottom of the page.
+
 ### 1. Connect to TIA Portal Project
 
 There are two ways to connect:

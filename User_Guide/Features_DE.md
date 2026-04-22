@@ -8,6 +8,15 @@ Der **TIA Openness Manager** ist ein leistungsstarkes Werkzeug für Siemens TIA 
 
 ## Hauptfeatures
 
+### Willkommen-Tab
+
+- **Willkommen-Tab** — Interaktive Einführung mit „Erste Schritte"-Anleitung und Schnellzugriff-Aktionen.
+- **„Erste Schritte"-Anleitung** - Vier Schritte (Verbinden, Project-Explorer-Grundlagen, Exportieren, Nächsten Bereich wählen), die sich während der Nutzung automatisch abhaken
+- **Sieben Schnellzugriff-Aktionen** - Verbinden, Projekt öffnen, Export-Ordner wählen, Git-Repository klonen, Neue SCL-Datei, SCL Unit Testing, KI-Assistent konfigurieren
+- **Feature-Karten** - Ein-Klick-Sprung zu KI-Chat, Git, SCL Unit Testing, OPC UA und zum „Was ist neu"-Changelog
+- **Zuletzt geöffnete Projekte** - Klick stellt die Verbindung wieder her; bei mehr als fünf Einträgen öffnet ein Link den vollständigen Connect-Dialog
+- **Jederzeit wieder öffnen** - Hilfe → Willkommen-Guide öffnet den Tab unabhängig von der Startup-Einstellung
+
 ### Import & Export
 
 - **Bulk Export** - Exportieren Sie hunderte Blöcke mit einem Klick
@@ -64,10 +73,29 @@ Der **TIA Openness Manager** ist ein leistungsstarkes Werkzeug für Siemens TIA 
 
 ### Differenzvergleich (Preview Diff)
 
-- **Fingerprint-basiert** - Schneller Vergleich ohne vollständigen Export
-- **Änderungserkennung** - Erkennt geänderte, neue und gelöschte Blöcke
+- **Projektweiter Scan** - Kompiliert zuerst die SPS, dann Vergleich von TIA-Portal-Fingerprints und Datei-Hashes gegen den gespeicherten Stand vom letzten Export
+- **Funktioniert beim ersten Klick** - Kein vorheriger Export erforderlich; beim ersten Lauf baut die Anwendung still eine Baseline auf, indem sie die SPS temporär exportiert, und schaltet danach für alle Folge-Vergleiche auf den schnellen Pfad um
+- **Änderungserkennung** - Erkennt geänderte, neue und gelöschte Blöcke in fünf Kategorien (Geändert / Nur in TIA / Nur auf Platte / Unverändert / Inkonsistent)
+- **Block-Icons in der Dateiliste** - Jede Zeile zeigt das passende Block-Icon (FC / FB / OB / DB, mit Safety-Varianten), konsistent zum Projektbaum
+- **Symmetrische Links/Rechts-Dateilisten** - TIA-Seite und Disk-Seite haben jeweils eine eigene Dateiliste mit eigenem Ein-/Ausblenden-Toggle; geänderte Blöcke erscheinen in beiden Listen, nur-in-TIA und inkonsistent nur links, nur-auf-Platte nur rechts
+- **Farbstreifen pro Zeile** - Ein schmaler farbiger Balken am rechten Rand jeder Dateizeile signalisiert den Änderungstyp auf einen Blick: Grün für Hinzugefügt, Rot für Gelöscht, Orange für Geändert, Gelb für Inkonsistent, Blau für Nur in TIA
 - **Detaillierter Diff-Viewer** - Zeigt Unterschiede Zeile für Zeile
-- **Selektiver Re-Export** - Nur geänderte Blöcke exportieren
+- **Selektiver Re-Import** - Haken Sie die Blöcke an, die Sie in die SPS zurückschreiben möchten; transaktional, Rollback bei jedem Fehler
+
+### Ad-hoc Compare (Drag and Drop)
+
+- **Blöcke ins Compare-Panel ziehen** - Der Block wird kompiliert und mit denselben Strip-Einstellungen exportiert wie bei "Export Selected"; sowohl XML- als auch Source-Code-Formate (SCL, DB) erscheinen als eigene Zeilen
+- **Unabhängige linke/rechte Seite** - TIA-Items links ablegen, beliebige Datei rechts wählen (oder zwei Dateien direkt droppen, um sie ohne TIA-Export gegeneinander zu vergleichen)
+- **Resizebare Dateiliste** - Splitter zwischen Dateiliste und Diff-Editor zieht zwischen 180 und 500 Pixel; Breite wird über Anzeigen/Ausblenden hinweg gemerkt
+
+### Diff-Editor
+
+- **Syntax-Highlighting** - SCL, AWL, DB, XML und weitere Sprachen werden anhand der Dateiendung erkannt
+- **Side-by-side und Unified** - Layout in der Toolbar umschaltbar
+- **Änderungsnavigation** - Erste / Vorherige / Nächste / Letzte Änderung mit `1/N`-Zähler
+- **Kontextzeilen-Collapse** - Unveränderte Bereiche hinter einem Hunk-Header einklappen; Kontextbreite mit `+=`/`-=` anpassen oder die ganze Datei aufklappen
+- **Edit-Modus** - Eine Seite entsperren und direkt bearbeiten; per Klick zurück in Datei oder SPS speichern
+- **Diff-Optionen** - Whitespace ignorieren, verborgene Zeichen anzeigen, Zeilenumbruch ein/aus
 
 ### Code-Editor
 

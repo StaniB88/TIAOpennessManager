@@ -1,11 +1,42 @@
 # TIA Openness Manager - Changelog
 
+## v3.4.0 (2026-04-22)
+
+### Welcome
+- **Welcome tab** — interactive introduction with Get Started walkthrough on fresh install.
+
+### Compare Panel
+- **Redesigned diff editor** — Consolidated toolbar, cleaner change navigation, SCL syntax highlighting, and a streamlined set of actions (Edit, Save, Discard, Merge, Swap, Clear) alongside the built-in diff controls.
+- **Context-lines collapse** — Unchanged stretches far from any edit are folded behind a hunk header; buttons increase or decrease how much context is shown, or expand the entire file in one click.
+- **Working edit mode** — Toggle Edit to modify either side of the diff in place and save back to the file or PLC from the same toolbar.
+- **Preview Diff works on first click** — No more "cache not found" error on fresh checkouts or new working directories; the baseline is built automatically on the first run.
+- **Compare** — Block icons in the file list, matching the project tree.
+- **Compare** — Symmetric right-side file list with its own show/hide toggle for inspecting the disk side alongside the TIA side.
+- **Compare** — Color-coded change strip at the right edge of each file-list row for at-a-glance change classification.
+- **Git** — Diff viewer in commit details and revision compare no longer shows unused Compare-panel buttons.
+
+### AI Chat
+- **Write Unit Tests** — now supports AWL/STL blocks in addition to SCL.
+
+### Bug Fixes
+- **AI Chat** — AWL→SCL conversion preserves the original block header and comments verbatim.
+- **AI Chat** — Completed tool approvals collapse to a compact status line instead of keeping the full warning card on screen.
+- **OPC UA** — Method-call, matrix-editor, and certificate-management dialogs show their full content without left-edge clipping.
+- **Editor** — Empty split panes close automatically when their last tab is closed.
+- **Compare** — Preview Diff surfaces export failures in the status bar instead of leaving the editor blank.
+- **Compare** — Each block appears only once in the Preview Diff file list regardless of export format.
+
 ## v3.3.1 (2026-04-21)
+
+### Compare Panel
+- **Drag-and-drop ad-hoc compare** — Drop TIA blocks directly into the Compare panel; the block is compiled, exported with the same strip settings as your file-system export, and both XML and source formats land as their own rows for side-by-side comparison against any file you pick on the right.
+- **Preview Diff catches uncompiled changes** — The project is compiled before the fingerprint scan so recent edits always show up in the diff.
 
 ### OPC UA
 - **Workspace remembers the full pane arrangement** — Save/Load now restores where every panel sits, including floating, pinned, and splitter positions.
 
 ### Bug Fixes
+- **Compare panel — file list is resizable again** — The splitter between the file list and the diff editor drags between 180 and 500 pixels; the chosen width is remembered across show/hide cycles.
 - **AI Chat** — Context compaction — safety-critical tool results (deletions, test runs, compilations) are preserved verbatim through compaction instead of being truncated.
 - **S7 driver** — Connection reliability and stability improvements.
 - **SCL Unit Testing** — PLCSIM Advanced transport reliability and diagnostic improvements.

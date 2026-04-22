@@ -7,6 +7,7 @@
 
 ## Inhaltsverzeichnis
 
+0. [Willkommen-Tab](#0-willkommen-tab)
 1. [Einführung](#1-einführung)
 2. [Installation & Systemvoraussetzungen](#2-installation--systemvoraussetzungen)
 3. [Benutzeroberfläche](#3-benutzeroberfläche)
@@ -27,6 +28,61 @@
 14. [Lizenzierung](#14-lizenzierung)
 14a. [Git-Client](#14a-git-client)
 15. [Fehlerbehebung & FAQ](#15-fehlerbehebung--faq)
+
+---
+
+## 0. Willkommen-Tab
+
+### Was ist der Willkommen-Tab?
+
+Der Willkommen-Tab ist das Erste, was Sie beim Start des TIA Openness Managers sehen. Er bündelt an einem Ort den Einstieg in eine neue Sitzung, eine kompakte Einführung in die wichtigsten Konzepte der Anwendung und den schnellen Wiedereinstieg in ein zuletzt genutztes Projekt. Der Tab ist nicht-modal — Sie können ihn parallel zu Ihrer Arbeit offen lassen oder schließen und später über das Hilfe-Menü wieder öffnen.
+
+### Wann er sich öffnet
+
+- **Beim ersten Start** öffnet sich der Willkommen-Tab automatisch.
+- **Bei jedem weiteren Start** öffnet er sich so lange, bis Sie unten auf der Seite *„Willkommen-Seite beim Start anzeigen"* abwählen.
+- **Jederzeit** können Sie ihn über **Hilfe → Willkommen-Guide** erneut öffnen. Ein erneutes Öffnen auf diesem Weg aktiviert die Startup-Einstellung nicht wieder.
+
+### Schnellzugriff-Aktionen
+
+Die linke Spalte bietet sieben Abkürzungen für die häufigsten ersten Schritte:
+
+- **Mit TIA Portal verbinden…** — auf eine laufende TIA-Portal-Instanz aufsetzen.
+- **TIA-Projekt öffnen…** — eine `.ap1x`- / `.ap2x`-Projektdatei von der Platte wählen.
+- **Export-Ordner auswählen…** — den Ordner festlegen, in den exportierte Blöcke geschrieben werden.
+- **Git-Repository klonen…** — ein Repository direkt in der Anwendung klonen.
+- **Neue SCL-Datei…** — einen leeren SCL-Editor-Tab öffnen.
+- **SCL Unit Testing…** — den SCL-Unit-Testing-Arbeitsbereich öffnen.
+- **KI-Assistent konfigurieren…** — die KI-Chat-Einstellungen öffnen, um einen API-Schlüssel zu hinterlegen oder sich anzumelden.
+
+### „Erste Schritte"-Anleitung
+
+In der Mitte des Tabs finden Sie die interaktive **Erste Schritte**-Karte mit vier Schritten. Die Schritte haken sich automatisch ab, während Sie mit der Anwendung arbeiten:
+
+1. **Mit TIA Portal verbinden** — wird abgehakt, sobald die Verbindung erfolgreich steht.
+2. **Project Explorer kennenlernen** — erklärt die Checkboxen pro Zeile, den Unterschied zwischen *Export Selected* und *Export All*, die Protection-Spalte, an Import-/Export-Ordner gebundene Protection-Profile sowie Drag-&-Drop-Import. Ein Inline-Button öffnet den Protection-Profile-Speichern-Dialog; der Schritt wird abgeschlossen, sobald Sie ein Profil speichern (egal ob über diesen Button oder über Ihren normalen Project-Explorer-Ablauf).
+3. **Ersten Baustein exportieren** — wird abgehakt, sobald ein Block-Export erfolgreich durchläuft.
+4. **Nächsten Schritt wählen** — vier Buttons (Git, KI-Chat, SCL Unit Testing, OPC UA) öffnen den jeweiligen Tab und schließen diesen Schritt ab.
+
+Oben auf der Karte zeigt ein Fortschrittsbalken, wie viele Schritte bereits abgeschlossen sind. Unten auf der Karte setzt der Link **Anleitungs-Fortschritt zurücksetzen** alle vier Haken zurück, wenn Sie die Anleitung noch einmal durchlaufen wollen.
+
+### Feature-Karten
+
+Fünf Karten rechts im Tab beschreiben die Hauptbereiche der Anwendung. Ein Klick auf eine Karte öffnet den passenden Bereich:
+
+- **KI-Chat** — öffnet den KI-Chat-Arbeitsbereich und den Einstellungsdialog.
+- **Git-Versionsverwaltung** — öffnet den Git-Arbeitsbereich.
+- **SCL Unit Testing** — öffnet den SCL-Unit-Testing-Arbeitsbereich.
+- **OPC-UA-Browser** — öffnet den OPC-UA-Arbeitsbereich.
+- **Was ist neu in 3.x** — öffnet das mitgelieferte `CHANGELOG` mit den letzten nutzer-sichtbaren Änderungen.
+
+### Zuletzt geöffnete Projekte
+
+Die Liste **Zuletzt** zeigt bis zu fünf zuletzt geöffnete TIA-Projekte. Ein Klick auf einen Eintrag verbindet Sie direkt wieder damit. Bei mehr als fünf öffnet der Link **Mehr…** den vollständigen Connect-Dialog. Ist die Liste leer, bietet ein einzelner Inline-Link an, eine Verbindung zu starten.
+
+### Willkommen-Tab ausblenden
+
+Entfernen Sie unten im Tab den Haken bei **Willkommen-Seite beim Start anzeigen**. Die Anwendung öffnet den Willkommen-Tab beim Start dann nicht mehr automatisch. Über **Hilfe → Willkommen-Guide** können Sie ihn jederzeit wieder aufrufen.
 
 ---
 
@@ -340,7 +396,7 @@ Wählen Sie **View → Import/Export Settings** aus der Menüleiste.
 Die Preview Diff Funktion zeigt Unterschiede zwischen dem TIA Portal Projekt und dem Working Directory:
 
 1. Klicken Sie auf **Preview Diff**
-2. Die Anwendung vergleicht TIA-Portal-Fingerprints und Datei-Hashes gegen den gespeicherten Stand vom letzten Export
+2. Die SPS wird zuerst kompiliert, damit auch noch nicht gespeicherte Änderungen erfasst werden, dann vergleicht die Anwendung TIA-Portal-Fingerprints und Datei-Hashes gegen den gespeicherten Stand vom letzten Export
 3. Das Compare-Panel öffnet sich mit einer Zusammenfassungszeile (`X geändert · Y hinzugefügt · Z geschützt · N unverändert`) und einer Zeile pro Block-Unterschied:
    - **Geändert** - Block-Inhalt in TIA oder Source-Datei unterscheidet sich
    - **Neu in TIA** - Block existiert nur im Projekt
@@ -350,30 +406,50 @@ Die Preview Diff Funktion zeigt Unterschiede zwischen dem TIA Portal Projekt und
 
 Preview Diff erkennt sowohl XML-seitige Änderungen (Block-Interface-Bearbeitungen in TIA) als auch Source-Datei-Änderungen (SCL, AWL, DB auf der Platte). Der Re-Import läuft in einer einzelnen Transaktion — wenn ein Block fehlschlägt, werden alle Änderungen zurückgerollt, und das Projekt bleibt im ursprünglichen Zustand. Nicht angehakte Zeilen und geschützte Blöcke werden nicht angefasst.
 
-**Voraussetzung:** Führen Sie mindestens einmal **Export All** mit aktivierter Fingerprint-Extraktion aus, um den Cache (`.fingerprint-cache.json` im Working Directory) zu befüllen. Ohne Cache gibt es nichts zum Vergleichen.
+**Erste Nutzung:** Preview Diff funktioniert auf einem frischen Working Directory auch dann, wenn Sie Export All noch nie ausgeführt haben. Beim ersten Klick baut die Anwendung still eine Baseline auf, indem sie die SPS temporär exportiert, die temporären Dateien mit den bereits auf der Platte vorhandenen vergleicht und die Baseline (`.fingerprint-cache.json`) speichert — danach läuft jeder Folge-Vergleich über den schnellen Pfad. Der erste Durchlauf dauert länger als Folge-Durchläufe.
 
-### Compare (Manueller Vergleich)
+**Linke und rechte Dateiliste:** Das Compare-Panel zeigt links eine Dateiliste für die TIA-Seite und rechts eine passende Dateiliste für die Disk-Seite. Geänderte Blöcke erscheinen in beiden Listen; Blöcke, die nur in TIA existieren (oder noch kompiliert werden müssen), erscheinen nur links, Blöcke, die nur auf der Platte existieren, nur rechts. Beide Listen haben einen eigenen Ein-/Ausblenden-Toggle in der Compare-Toolbar — Sie können sich wahlweise auf eine Seite konzentrieren oder beide nebeneinander anzeigen lassen.
 
-Die Compare-Funktion ermöglicht einen detaillierten Zeilenvergleich zwischen einem TIA Portal Block und einer beliebigen XML-Datei.
+**Farbbalken am Zeilenrand:** Jede Zeile in beiden Dateilisten trägt am rechten Rand einen schmalen farbigen Balken, der den Änderungstyp ohne Textabgleich signalisiert: Grün für Hinzugefügt, Rot für Gelöscht, Orange für Geändert, Gelb für Inkonsistent (muss kompiliert werden), Blau für Blöcke, die nur in TIA existieren. Unveränderte Zeilen zeigen keinen Balken.
 
-**So verwenden Sie den manuellen Vergleich:**
+### Ad-hoc Compare (Drag and Drop)
 
-1. Wählen Sie einen Block im linken Baum (TIA Projekt)
-2. Wählen Sie eine XML-Datei im rechten Baum (Working Directory)
-3. Klicken Sie auf **Compare**
-4. Das Compare-Fenster öffnet sich und zeigt:
-   - **Links (TIA Portal):** Name des ausgewählten Blocks
-   - **Rechts (Dateisystem):** Name der ausgewählten Datei
-5. Klicken Sie auf **Vergleich starten**
-6. Der Diff-Viewer zeigt die Unterschiede Zeile für Zeile
+Für schnelle Side-by-Side-Überprüfungen ohne Projektweiten Scan ziehen Sie Items direkt in das Compare-Panel:
 
-**Vorteile des manuellen Vergleichs:**
+1. Ziehen Sie einen oder mehrere Blöcke aus dem TIA-Projektbaum und lassen Sie sie über dem Compare-Panel fallen
+2. Die SPS wird kompiliert, die Blöcke werden mit Ihren aktuellen Import/Export-Einstellungen exportiert (dieselben Strip-Regeln wie beim normalen "Export Selected"), und jede exportierte Datei wird zu einer eigenen Zeile in der Dateiliste links — ein SCL-Block erzeugt sowohl eine `.xml`- als auch eine `.scl`-Zeile, ein InstanceDB erzeugt `.xml` und `.db`
+3. Klicken Sie auf die Zeile mit dem Format, das Sie links sehen möchten
+4. Ziehen Sie die Datei, gegen die Sie vergleichen möchten, auf die rechte Seite des Diff-Editors (oder ziehen Sie zwei Dateien direkt, um sie ohne TIA-Export gegeneinander zu vergleichen)
+5. Der Diff-Viewer zeigt die Unterschiede Zeile für Zeile
 
-- **Freie Zuordnung** - Vergleichen Sie beliebige Blöcke mit beliebigen Dateien, unabhängig vom Namen
-- **Schneller Einzelvergleich** - Ideal für gezielte Überprüfungen ohne alle Dateien zu scannen
-- **SCL-Unterstützung** - Falls verfügbar, wird automatisch die besser lesbare SCL-Datei verwendet
+**Hinweise:**
 
-**Hinweis:** Im Gegensatz zu Preview Diff (Hash-basiert) führt Compare einen direkten Textvergleich durch. Der Block wird temporär exportiert und Zeile für Zeile mit der Datei verglichen.
+- Die TIA-Seite wird kompiliert und genau gleich gestrippt wie bei einem normalen Export — der Vergleich erfolgt also Apfel gegen Apfel gegen eine Datei, die früher ins Working Directory exportiert wurde.
+- Die rechte Seite bleibt leer, bis Sie dort eine Datei ablegen — ein TIA-Block kann so gegen mehrere Kandidat-Dateien geprüft werden, ohne neu zu exportieren.
+- Der Splitter der Dateiliste ist zwischen 180 und 500 Pixeln resizebar und merkt sich die von Ihnen gewählte Breite.
+
+Für den projektweiten Vergleich mit selektivem Re-Import zurück in die SPS verwenden Sie stattdessen **Preview Diff** (Hash-basiert, produziert Modified / Only in TIA / Only on Disk-Kategorien und einen Sync-Mode Import-Button).
+
+### Diff-Editor Toolbar
+
+Die Toolbar des Diff-Editors enthält folgende Bedienelemente:
+
+- **Änderungsnavigation** — Buttons Erste / Vorherige / Nächste / Letzte Änderung plus ein `1/N`-Zähler springen durch alle Hunks der aktuellen Datei.
+- **Kontextzeilen** — `+=` und `-=` erhöhen oder verringern die Anzahl der unveränderten Zeilen um jede Änderung (Standard 3, Minimum 4). Die Bereiche zwischen Hunks werden hinter einer `@@ -a,b +c,d @@`-Kopfzeile eingeklappt.
+- **Ganze Datei zeigen** — Jede Zeile der Datei sichtbar, keine Kontext-Faltung mehr.
+- **Syntax-Highlighting** — Ein/Aus (SCL, AWL, DB, XML und weitere Sprachen werden anhand der Dateiendung erkannt).
+- **Zeilenumbruch** — Lange Zeilen in der Unified-Ansicht umbrechen.
+- **Whitespace ignorieren** — Reine Leerzeichen-Unterschiede als unverändert behandeln.
+- **Verborgene Zeichen** — Leerzeichen, Tabs und Zeilenende-Marker sichtbar machen.
+- **Nebeneinander / Vereinheitlicht** — Layout umschalten.
+
+Links daneben finden Sie die TIA-spezifischen Aktionen:
+
+- **Bearbeiten** — Beide Seiten zum direkten Bearbeiten entsperren. Beim Aktivieren wechselt die Ansicht automatisch auf Side-by-Side und klappt die ganze Datei auf, damit Kontext-Faltung den Edit nicht zerreisst. Änderungen werden pro Seite getrackt.
+- **Links speichern / Rechts speichern** — Die editierte Seite zurück zur Quelle schreiben (Datei auf der Platte oder Baustein in TIA).
+- **Verwerfen** — Ungespeicherte Bearbeitungen verwerfen.
+- **Alle nach rechts** / **Tauschen** / **Alle nach links** — Eine Seite mit der anderen überschreiben oder die Seiten tauschen.
+- **Leeren** — Aktuellen Vergleich schliessen.
 
 ### HMI Export/Import
 

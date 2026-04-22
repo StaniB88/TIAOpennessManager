@@ -8,6 +8,15 @@ The **TIA Openness Manager** is a powerful tool for Siemens TIA Portal developer
 
 ## Main Features
 
+### Welcome Tab
+
+- **Welcome Tab** — Interactive introduction with Get Started walkthrough and quick-action shortcuts.
+- **Get Started walkthrough** - Four steps (Connect, Project Explorer basics, Export, Choose next area) that check themselves off as you use the app
+- **Seven quick-action shortcuts** - Connect, Open Project, Browse Export Folder, Clone Git, New SCL File, SCL Unit Testing, Configure AI Assistant
+- **Feature cards** - Single-click jump to AI Chat, Git, SCL Unit Testing, OPC UA, and the What's New changelog
+- **Recent projects** - Click to reconnect; more than five opens the full Connect dialog
+- **Reopen anytime** - Help → Welcome Guide opens the tab regardless of the startup setting
+
 ### Import & Export
 
 - **Bulk Export** - Export hundreds of blocks with a single click
@@ -64,10 +73,29 @@ The **TIA Openness Manager** is a powerful tool for Siemens TIA Portal developer
 
 ### Difference Comparison (Preview Diff)
 
-- **Fingerprint-based** - Fast comparison without full export
-- **Change Detection** - Detects modified, new, and deleted blocks
+- **Project-wide scan** - Compiles the PLC first, then compares TIA-Portal fingerprints and file hashes against the cached state from the last export
+- **Works on the first click** - No previous export required; the first run silently builds a baseline by temporarily exporting the PLC, then hands off to the fast path for every follow-up comparison
+- **Change Detection** - Detects modified, new, and deleted blocks in five categories (Modified / Only in TIA / Only on Disk / Unchanged / Inconsistent)
+- **Block icons in the file list** - Every row shows the matching block icon (FC / FB / OB / DB, with safety variants), matching the project tree
+- **Symmetric left/right file lists** - The TIA side and the disk side each have their own file list with its own show/hide toggle; modified items appear in both lists, added/inconsistent only on the left, deleted only on the right
+- **Change strip per row** - A thin colored bar at the right edge of each file row signals the change type at a glance: green for added, red for deleted, orange for modified, yellow for inconsistent, blue for TIA-only
 - **Detailed Diff Viewer** - Shows differences line by line
-- **Selective Re-Export** - Export only changed blocks
+- **Selective Re-Import** - Tick the checkbox next to each block you want to push back into the PLC; transactional, rolls back on any failure
+
+### Ad-hoc Compare (Drag and Drop)
+
+- **Drop blocks into the Compare panel** - The block is compiled and exported with the same strip settings as "Export Selected"; both XML and source-code formats (SCL, DB) land as their own rows
+- **Independent left/right sides** - Drop TIA items on the left, pick any file on the right (or drop two files to compare them directly without a TIA export)
+- **Resizable file list** - Splitter between file list and diff editor drags between 180 and 500 pixels; width is remembered across show/hide
+
+### Diff Editor
+
+- **Syntax highlighting** - SCL, AWL, DB, XML, and other languages are recognised by extension
+- **Side-by-side and unified** - Switch layout from the toolbar
+- **Change navigation** - First / Previous / Next / Last with a `1/N` counter
+- **Context-lines collapse** - Fold unchanged stretches behind a hunk header; adjust context width with `+=`/`-=` or expand the entire file
+- **Edit mode** - Toggle Edit to modify either side in place; save back to the file or PLC with one click
+- **Diff tweaks** - Ignore whitespace, show hidden symbols, toggle word-wrap
 
 ### Code Editor
 

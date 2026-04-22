@@ -7,6 +7,7 @@
 
 ## Table of Contents
 
+0. [Welcome Tab](#0-welcome-tab)
 1. [Introduction](#1-introduction)
 2. [Installation & System Requirements](#2-installation--system-requirements)
 3. [User Interface](#3-user-interface)
@@ -27,6 +28,61 @@
 14. [Licensing](#14-licensing)
 14a. [Git Client](#14a-git-client)
 15. [Troubleshooting & FAQ](#15-troubleshooting--faq)
+
+---
+
+## 0. Welcome Tab
+
+### What is the Welcome Tab?
+
+The Welcome tab is the first thing you see when you start TIA Openness Manager. It gives you a single place to start a new session, learn the app's core concepts, and jump back into a recent project. The tab is non-modal — you can leave it open alongside your work, or close it and open it again later from the Help menu.
+
+### When it opens
+
+- **On first launch** the Welcome tab opens automatically.
+- **On every launch** after that, it keeps opening until you uncheck *"Show welcome page on startup"* at the bottom of the page.
+- **Anytime** you can reopen it from **Help → Welcome Guide**. Reopening it this way does not turn the startup setting back on.
+
+### Quick Start actions
+
+The left column offers seven shortcuts for the most common first steps:
+
+- **Connect to TIA Portal…** — attach to a running TIA Portal instance.
+- **Open TIA Project…** — pick a `.ap1x` / `.ap2x` project file from disk.
+- **Browse Export Folder…** — choose the folder where exported blocks are written.
+- **Clone Git Repository…** — clone a repository directly into the app.
+- **New SCL File…** — open a blank SCL editor tab.
+- **SCL Unit Testing…** — open the SCL Unit Testing workspace.
+- **Configure AI Assistant…** — open the AI Chat settings so you can add an API key or sign in.
+
+### Get Started walkthrough
+
+The centre of the tab has an interactive **Get Started** card with four steps. The steps check themselves off as you use the app:
+
+1. **Connect to TIA Portal** — checks itself off when you successfully connect.
+2. **Learn the Project Explorer** — explains per-row checkboxes, *Export Selected* vs. *Export All*, the Protection column, Protection Profiles bound to Import/Export folders, and drag-and-drop import. An inline button opens the Protection-Profile save dialog; the step completes as soon as you save a profile (either from this button or from your normal Project Explorer workflow).
+3. **Export your first block** — completes when any block export succeeds.
+4. **Choose your next step** — four buttons (Git, AI Chat, SCL Unit Testing, OPC UA) open the corresponding tab and complete this step.
+
+A progress bar at the top of the card shows how many steps are done. A **Reset walkthrough progress** link at the bottom of the card clears all four checkmarks if you want to run through them again.
+
+### Feature cards
+
+Five cards on the right describe the app's main areas. Click a card to jump to that feature:
+
+- **AI Chat** — opens the AI Chat workspace and the settings dialog.
+- **Git Version Control** — opens the Git workspace.
+- **SCL Unit Testing** — opens the SCL Unit Testing workspace.
+- **OPC UA Browser** — opens the OPC UA workspace.
+- **What's New in 3.x** — opens the bundled `CHANGELOG` with the latest user-visible changes.
+
+### Recent projects
+
+The **Recent** list shows up to five recently opened TIA projects. Click an entry to reconnect straight to it. If you have more than five, a **More…** link opens the full Connect dialog. If the list is empty, a single inline link offers to start a connection.
+
+### Hiding the Welcome tab
+
+Uncheck **Show welcome page on startup** at the bottom of the tab. The app will no longer auto-open the Welcome tab on launch. You can always bring it back from **Help → Welcome Guide**.
 
 ---
 
@@ -340,7 +396,7 @@ Select **View → Import/Export Settings** from the menu bar.
 The Preview Diff function shows differences between the TIA Portal project and the Working Directory:
 
 1. Click **Preview Diff**
-2. The application compares TIA Portal fingerprints and file hashes against the cached state from the last export
+2. The PLC is compiled first so any unsaved edits are included, then the application compares TIA Portal fingerprints and file hashes against the cached state from the last export
 3. The Compare panel opens with a summary header (`X changed · Y added · Z protected · N unchanged`) and one row per differing block:
    - **Changed** - Block content in TIA or source file differs
    - **New in TIA** - Block only exists in the project
@@ -350,30 +406,50 @@ The Preview Diff function shows differences between the TIA Portal project and t
 
 Preview Diff detects both XML-side changes (block interface edits in TIA) and source-file changes (SCL, AWL, DB edits on disk). Re-imports run in a single transaction — if any block fails, all changes are rolled back so the project stays in its original state. Unticked rows and protected blocks are left untouched.
 
-**Prerequisite:** Run **Export All** with fingerprint extraction enabled at least once to populate the cache (`.fingerprint-cache.json` in the working directory). Without a cache there is nothing to compare against.
+**First-time use:** Preview Diff works on a fresh working directory even if you have never run Export All. On the first click the application silently builds a baseline by temporarily exporting the PLC, comparing the temporary files against what is already on disk, and then saving the baseline (`.fingerprint-cache.json`) so subsequent runs use the fast path. The first run takes longer than follow-up runs.
 
-### Compare (Manual Comparison)
+**Left and right file lists:** The Compare panel shows a file list on the left for the TIA side and a matching file list on the right for the disk side. Modified blocks appear in both lists; blocks that only exist in TIA (or that still need compiling) show only on the left, blocks that only exist on disk show only on the right. Each list has its own show/hide toggle in the Compare toolbar, so you can focus on either side or keep both visible.
 
-The Compare function allows a detailed line-by-line comparison between a TIA Portal block and any XML file.
+**Change strip at the row edge:** Every row in both file lists carries a thin colored bar at its right edge that tells you the change type without reading the label: green for added, red for deleted, orange for modified, yellow for inconsistent (needs compiling), and blue for blocks that only exist in TIA. Unchanged rows show no bar.
 
-**How to use manual comparison:**
+### Ad-hoc Compare (Drag and Drop)
 
-1. Select a block in the left tree (TIA Project)
-2. Select an XML file in the right tree (Working Directory)
-3. Click **Compare**
-4. The Compare window opens and shows:
-   - **Left (TIA Portal):** Name of the selected block
-   - **Right (Filesystem):** Name of the selected file
-5. Click **Start Compare**
-6. The diff viewer shows differences line by line
+For quick side-by-side checks without scanning the whole project, drag items directly into the Compare panel:
 
-**Advantages of manual comparison:**
+1. Drag one or more blocks from the TIA project tree and drop them onto the Compare panel
+2. The PLC is compiled, the blocks are exported with your current Import/Export Settings (the same strip rules that apply to a normal "Export Selected"), and each exported file becomes its own row in the file list on the left — an SCL block produces both a `.xml` and a `.scl` row, an InstanceDB produces `.xml` and `.db`
+3. Click the row for the format you want to see on the left side
+4. Drag the file you want to compare against onto the right side of the diff editor (or drop two files directly to compare them against each other without a TIA export)
+5. The diff viewer shows differences line by line
 
-- **Free matching** - Compare any block with any file, regardless of name
-- **Quick single comparison** - Ideal for targeted checks without scanning all files
-- **SCL support** - If available, the more readable SCL file is automatically used
+**Notes:**
 
-**Note:** Unlike Preview Diff (hash-based), Compare performs a direct text comparison. The block is temporarily exported and compared line by line with the file.
+- The TIA side is compiled and stripped the same way a regular export would be, so the comparison is apples-to-apples against a file that was exported earlier to your working directory.
+- The right side stays empty until you drop a file there — one block in TIA can be checked against several candidate files without re-exporting.
+- The file list splitter is resizable between 180 and 500 pixels and remembers the width you picked.
+
+For project-wide comparison with selective re-import back into the PLC, use **Preview Diff** instead (hash-based, produces Modified / Only in TIA / Only on Disk categories and a Sync-Mode Import button).
+
+### Diff Editor Toolbar
+
+The diff editor has a built-in toolbar with the following controls:
+
+- **Change navigation** — First / Previous / Next / Last change buttons plus a `1/N` counter jump through all hunks in the current file.
+- **Context lines** — The `+=` and `-=` buttons increase or decrease how many unchanged lines are shown around each change (default 3, minimum 4). The stretches between hunks are folded behind a `@@ -a,b +c,d @@` header.
+- **Show entire file** — Expand every line of the file, no context folding.
+- **Syntax highlighting** — Toggle on/off (SCL, AWL, DB, XML, and other languages are recognised by extension).
+- **Word wrap** — Wrap long lines in unified view.
+- **Ignore whitespace** — Treat whitespace-only differences as unchanged.
+- **Hidden symbols** — Reveal spaces, tabs, and line-ending markers.
+- **Side-by-side / Unified** — Switch layout.
+
+On the left of that toolbar you'll find the TIA-specific actions:
+
+- **Edit** — Unlock both sides for direct editing. When enabled the view switches to side-by-side and expands the entire file so the edits aren't broken up by the context-lines fold. Typed changes are tracked per side.
+- **Save Left / Save Right** — Write the edited side back to its source (file on disk or block in TIA).
+- **Discard** — Drop unsaved edits.
+- **Merge All →** / **Swap** / **Merge All ←** — Overwrite one side with the other, or flip which side is "original".
+- **Clear** — Close the current comparison.
 
 ### HMI Export/Import
 

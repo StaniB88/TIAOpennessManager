@@ -1,24 +1,35 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>3.3.1</version>
-    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v3.3.1/TiaOpennessManager_Setup_3.3.1.exe</url>
+    <version>3.4.0</version>
+    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v3.4.0/TiaOpennessManager_Setup_3.4.0.exe</url>
     <changelog>https://github.com/StaniB88/TIAOpennessManager/blob/main/CHANGELOG.md</changelog>
-    <release_date>2026-04-21</release_date>
+    <release_date>2026-04-22</release_date>
     <body>## What&apos;s Changed
 
-### OPC UA
-- **Workspace remembers the full pane arrangement** â€” Save/Load now restores where every panel sits, including floating, pinned, and splitter positions.
+### Welcome
+- **Welcome tab** — interactive introduction with Get Started walkthrough on fresh install.
+
+### Compare Panel
+- **Redesigned diff editor** — Consolidated toolbar, cleaner change navigation, SCL syntax highlighting, and a streamlined set of actions (Edit, Save, Discard, Merge, Swap, Clear) alongside the built-in diff controls.
+- **Context-lines collapse** — Unchanged stretches far from any edit are folded behind a hunk header; buttons increase or decrease how much context is shown, or expand the entire file in one click.
+- **Working edit mode** — Toggle Edit to modify either side of the diff in place and save back to the file or PLC from the same toolbar.
+- **Preview Diff works on first click** — No more &quot;cache not found&quot; error on fresh checkouts or new working directories; the baseline is built automatically on the first run.
+- **Compare** — Block icons in the file list, matching the project tree.
+- **Compare** — Symmetric right-side file list with its own show/hide toggle for inspecting the disk side alongside the TIA side.
+- **Compare** — Color-coded change strip at the right edge of each file-list row for at-a-glance change classification.
+- **Git** — Diff viewer in commit details and revision compare no longer shows unused Compare-panel buttons.
+
+### AI Chat
+- **Write Unit Tests** — now supports AWL/STL blocks in addition to SCL.
 
 ### Bug Fixes
-- **AI Chat** â€” Context compaction â€” safety-critical tool results (deletions, test runs, compilations) are preserved verbatim through compaction instead of being truncated.
-- **S7 driver** â€” Connection reliability and stability improvements.
-- **SCL Unit Testing** â€” PLCSIM Advanced transport reliability and diagnostic improvements.
-- **AI Chat settings** â€” API Key field reliably appears when a provider needs one.
-- **AI Chat** â€” Ctrl+B sub-agent backgrounding works reliably in all chat contexts.
-- **AI Chat** â€” Stalled responses surface as a clear error instead of hanging; timeouts are tuned per model so long-thinking assistants still complete.
-- **AI Chat** â€” Context handling on long conversations is more reliable, with automatic recovery when a request grows too large.
-- **AI Chat** â€” Describe Project and Document Project run more reliably on very large projects and resume cleanly after an interruption.</body>
+- **AI Chat** — AWL→SCL conversion preserves the original block header and comments verbatim.
+- **AI Chat** — Completed tool approvals collapse to a compact status line instead of keeping the full warning card on screen.
+- **OPC UA** — Method-call, matrix-editor, and certificate-management dialogs show their full content without left-edge clipping.
+- **Editor** — Empty split panes close automatically when their last tab is closed.
+- **Compare** — Preview Diff surfaces export failures in the status bar instead of leaving the editor blank.
+- **Compare** — Each block appears only once in the Preview Diff file list regardless of export format.</body>
     <mandatory>false</mandatory>
-    <size>253693328</size>
-    <sha256>E45AC37110BDC8A60A63781EA049C389939F7DB6E53FAB3DD621E5D463C3AFF8</sha256>
+    <size>253977480</size>
+    <sha256>1C51C1ED560791986ACC37F4685BD3A9BB41233EDE26BE259AB599F96967EF8A</sha256>
 </item>
