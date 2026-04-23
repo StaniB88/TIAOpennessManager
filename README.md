@@ -3,7 +3,7 @@
 **Streamline Your Siemens TIA Portal Workflow**
 
 [![Website](https://img.shields.io/badge/Website-tiaopenessmanager.ch-blue)](https://tiaopenessmanager.ch/)
-[![Version](https://img.shields.io/badge/Version-3.4.0-green)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-3.5.0-green)](CHANGELOG.md)
 [![TIA Portal](https://img.shields.io/badge/TIA%20Portal-V15--V21-orange)]()
 [![Platform](https://img.shields.io/badge/Platform-Windows%20x64-lightgrey)]()
 
@@ -21,7 +21,7 @@ TIA Openness Manager is a productivity tool for Siemens TIA Portal developers th
 - **AI Chat** with context folders, git integration, skills, and custom agents
 - **Password Vault** for encrypted know-how protection credentials
 - **Project Library Management** with full MCP integration
-- **SCL Unit Testing** (Beta, requires PLCSIM Advanced V3.0+)
+- **Unit Testing** (Beta, requires PLCSIM Advanced V3.0+)
 - TIA Portal V21 support
 
 ---
@@ -78,7 +78,7 @@ Integrated SCL editor with syntax highlighting, search & replace, and inline dif
 - **Bulk Protect / Unprotect** — apply or remove know-how protection on all assigned blocks at once
 - **Crash Recovery** — blocks left unprotected during a crash are automatically re-protected on next launch
 
-### SCL Unit Testing (Beta)
+### Unit Testing (Beta)
 
 ![Unit Testing](screenshots/UnitTesting.png)
 
@@ -121,6 +121,8 @@ Define test cases for SCL blocks with expected inputs and outputs. Run tests aga
 - **Save / Load Configurations** and export watch data as CSV or JSON
 
 ### AI Chat & MCP Integration
+
+![AI Chat](screenshots/AIChat.png)
 
 - **Built-in AI Chat** with context folders, file attachments, and session history
 - **MCP Server** — connect any MCP-compatible AI assistant to your TIA Portal project

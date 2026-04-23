@@ -12,21 +12,23 @@ The **TIA Openness Manager** is a powerful tool for Siemens TIA Portal developer
 
 - **Welcome Tab** — Interactive introduction with Get Started walkthrough and quick-action shortcuts.
 - **Get Started walkthrough** - Four steps (Connect, Project Explorer basics, Export, Choose next area) that check themselves off as you use the app
-- **Seven quick-action shortcuts** - Connect, Open Project, Browse Export Folder, Clone Git, New SCL File, SCL Unit Testing, Configure AI Assistant
-- **Feature cards** - Single-click jump to AI Chat, Git, SCL Unit Testing, OPC UA, and the What's New changelog
-- **Recent projects** - Click to reconnect; more than five opens the full Connect dialog
+- **Seven quick-action shortcuts** - Connect, Open Project, Browse Export Folder, Clone Git, New SCL File, Unit Testing, Configure AI Assistant
+- **Feature cards** - Single-click jump to AI Chat, Git, Unit Testing, OPC UA, and the What's New changelog
+- **Recent projects** - Up to five newest entries, updated after every successful connection (file-open or attach); click to reconnect straight to a project, missing files are hidden automatically
 - **Reopen anytime** - Help → Welcome Guide opens the tab regardless of the startup setting
 
 ### Import & Export
 
-- **Bulk Export** - Export hundreds of blocks with a single click
-- **Selective Export** - Choose exactly the blocks you need
+- **Export Selected** - Export only the ticked blocks, data types, tag tables, technology objects, or software-unit items. Existing files with the same name are overwritten; other files in the export folder are kept
+- **Export All** - Full project export; the PLC export folder is cleared first, then all blocks, data types, tag tables, technology objects, and software units are written fresh
 - **XML & SCL Support** - Full support for Simatic ML and SCL files
 - **S7DCL Export (V20+)** - Additional text-based export format (.s7dcl) for better version control
 - **Folder Structure Preservation** - TIA Portal folder structure is maintained
 - **Automatic Compilation** - Automatically compiles and saves after import
 - **Configurable Folder Names** - Customize export folder names (Source, Blocks, Tags, etc.)
 - **Optional Source Folder** - Enable/disable the Source folder wrapper in exports
+- **Import Selected** - Targeted import; only the ticked files are written. Existing blocks with the same name are overwritten, the rest of the PLC is left untouched
+- **Import All** - Full project re-import; all existing blocks, data types and tag tables are cleared first, then everything in the Working Directory is imported. Blocks marked in the Protection Profile are preserved
 
 ### HMI Export/Import
 
@@ -85,7 +87,7 @@ The **TIA Openness Manager** is a powerful tool for Siemens TIA Portal developer
 ### Ad-hoc Compare (Drag and Drop)
 
 - **Drop blocks into the Compare panel** - The block is compiled and exported with the same strip settings as "Export Selected"; both XML and source-code formats (SCL, DB) land as their own rows
-- **Independent left/right sides** - Drop TIA items on the left, pick any file on the right (or drop two files to compare them directly without a TIA export)
+- **Independent left and right drop targets** - Blocks and files can be dropped on either side; the item lands on whichever half you drop onto and additional drops append to that side instead of replacing it
 - **Resizable file list** - Splitter between file list and diff editor drags between 180 and 500 pixels; width is remembered across show/hide
 
 ### Diff Editor
@@ -102,6 +104,7 @@ The **TIA Openness Manager** is a powerful tool for Siemens TIA Portal developer
 The built-in code editor provides professional editing features for SCL and other file types.
 
 - **Split View** — Split editors horizontally or vertically, drag tabs between groups, dock and pin panels (file tree, markdown preview)
+- **Drag & drop from Project Explorer** — Drag one or several blocks or offline source files onto the editor or Welcome tab; each opens as its own editor tab
 - **Syntax Highlighting** — SCL, C#, XML, JSON, Python, and 60+ other languages
 - **Code Folding** — Collapse/expand code regions, IF/FOR blocks, and VAR sections
 - **Auto-Completion** — Type 2+ characters to see SCL keywords, data types, and functions
@@ -166,6 +169,9 @@ The built-in code editor provides professional editing features for SCL and othe
 
 ### AI Chat
 
+- **Reasoning Effort** - Pick per agent how hard deep-thinking models think before replying (Low / Medium / High). Switch on the fly from the composer bar's brain chip or under Settings → Agents → Capabilities.
+- **Provider Settings Tab** - Cross-agent provider console in AI Chat Settings. GitHub Copilot card shows sign-in status, enterprise domains, reasoning-model policy state, and Retry / Verify buttons. Placeholder cards preview the cross-provider Manage Language Models browser.
+- **Manage Language Models** - Cross-provider catalog browser behind the gear icon in the composer bar. Combines GitHub Copilot's catalog, the OAuth catalogs (OpenAI Codex, Google Gemini CLI, Antigravity), a live-fetched list for every API-key agent (Anthropic, OpenAI, OpenRouter, Mistral, XAI, Groq, Cerebras, DeepSeek, Perplexity, Together, HuggingFace, Ollama, LM Studio, and more), plus static AWS Bedrock rows. A Copilot-specific **Policy** column shows Enabled / Failed / Admin-managed status per model with a right-click **Retry Copilot model policy** action for failed rows. Azure OpenAI agents can register multiple deployments per agent and each one appears as its own row. The status bar calls out the live-fetched count; Refresh invalidates the 5-minute cache. Right-click or click **Use in active agent** to apply a model in one step.
 - **Context Folders** - Register folders the AI can browse using file read and search tools
 - **Instruction Files** - Inject Markdown files into the AI's system prompt automatically at session start
 - **Git Integration** - AI is aware of your git repository, branch, and changes; can view status, stage files, commit, push, and pull (mutating operations require user approval)
@@ -254,10 +260,11 @@ The built-in code editor provides professional editing features for SCL and othe
 - **Live Watch Table** - Native S7 Comm+ subscriptions push value changes with configurable cycle time; the old fixed-interval polling path is gone
 - **Connection status dot** - A coloured dot in every PLC tab header signals the PLC state live (grey = not connected, green = running, yellow = stopped or reconnecting, red = unreachable) with a hover tooltip
 - **Automatic reconnection with visible progress** - A "Reconnecting…" banner surfaces under the connection bar while the app restores a lost connection; Watch Table values fade to half opacity and switch to `???` until fresh values arrive; all recovery is handled in the background
+- **PLC Explorer sidebar** - A persistent list of known PLCs in its own activity-bar workspace; each entry shows a live reachability dot driven by active sessions and a 10-second TCP probe on port 102, plus the last-seen timestamp; add, rename and remove PLCs via dialogs; double-click an entry to open or focus its PLC Online tab with the IP and protocol pre-filled; the list is saved between sessions
 
-### SCL Unit Testing (Enterprise)
+### Unit Testing (Enterprise)
 
-Integrated unit test framework for SCL blocks — write, run and evaluate tests without TIA Portal Test Suite. Requires PLCSIM Advanced V3.0+.
+Integrated unit test framework for TIA blocks — write, run and evaluate tests without TIA Portal Test Suite. Requires PLCSIM Advanced V3.0+.
 
 - **Test Explorer** — Tree of all test suites in the project's `.tia-tests/` folder, auto-detects new/deleted/modified files via FileSystemWatcher (500 ms debounce)
 - **Live status icons** — Each test case shows its current status during and after execution: ✓ Pass, ✗ Fail, ⊘ Skipped, ⚠ Error
@@ -368,7 +375,7 @@ Only one instance of TIA Openness Manager runs per Windows session. Opening a fi
 - **Annual plan saves 17%** (2 months free)
 - Everything in Professional, plus:
 - Password Vault
-- SCL Unit Testing
+- Unit Testing
 - Multi-user licenses
 - Dedicated support
 - Volume discounts

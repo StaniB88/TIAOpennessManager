@@ -12,21 +12,23 @@ Der **TIA Openness Manager** ist ein leistungsstarkes Werkzeug für Siemens TIA 
 
 - **Willkommen-Tab** — Interaktive Einführung mit „Erste Schritte"-Anleitung und Schnellzugriff-Aktionen.
 - **„Erste Schritte"-Anleitung** - Vier Schritte (Verbinden, Project-Explorer-Grundlagen, Exportieren, Nächsten Bereich wählen), die sich während der Nutzung automatisch abhaken
-- **Sieben Schnellzugriff-Aktionen** - Verbinden, Projekt öffnen, Export-Ordner wählen, Git-Repository klonen, Neue SCL-Datei, SCL Unit Testing, KI-Assistent konfigurieren
-- **Feature-Karten** - Ein-Klick-Sprung zu KI-Chat, Git, SCL Unit Testing, OPC UA und zum „Was ist neu"-Changelog
-- **Zuletzt geöffnete Projekte** - Klick stellt die Verbindung wieder her; bei mehr als fünf Einträgen öffnet ein Link den vollständigen Connect-Dialog
+- **Sieben Schnellzugriff-Aktionen** - Verbinden, Projekt öffnen, Export-Ordner wählen, Git-Repository klonen, Neue SCL-Datei, Unit Testing, KI-Assistent konfigurieren
+- **Feature-Karten** - Ein-Klick-Sprung zu KI-Chat, Git, Unit Testing, OPC UA und zum „Was ist neu"-Changelog
+- **Zuletzt geöffnete Projekte** - Bis zu fünf neueste Einträge, aktualisiert nach jedem erfolgreichen Verbindungsaufbau (Datei öffnen oder anhängen); Klick stellt die Verbindung direkt wieder her, fehlende Dateien werden automatisch ausgeblendet
 - **Jederzeit wieder öffnen** - Hilfe → Willkommen-Guide öffnet den Tab unabhängig von der Startup-Einstellung
 
 ### Import & Export
 
-- **Bulk Export** - Exportieren Sie hunderte Blöcke mit einem Klick
-- **Selektiver Export** - Wählen Sie genau die Blöcke, die Sie benötigen
+- **Export Selected** - Nur angehakte Blöcke, Datentypen, Variablentabellen, Technologie-Objekte oder Software-Unit-Einträge exportieren. Bestehende Dateien mit gleichem Namen werden überschrieben; andere Dateien im Export-Ordner bleiben erhalten
+- **Export All** - Vollständiger Projekt-Export; der SPS-Export-Ordner wird zuerst geleert, danach werden alle Blöcke, Datentypen, Variablentabellen, Technologie-Objekte und Software-Units neu geschrieben
 - **XML & SCL Support** - Vollständige Unterstützung für Simatic ML und SCL-Dateien
 - **S7DCL Export (V20+)** - Zusätzliches textbasiertes Export-Format (.s7dcl) für bessere Versionskontrolle
 - **Ordnerstruktur-Erhaltung** - Die TIA Portal Ordnerstruktur wird beibehalten
 - **Automatische Kompilierung** - Kompiliert und speichert automatisch nach Import
 - **Konfigurierbare Ordnernamen** - Passen Sie Export-Ordnernamen an (Source, Blocks, Tags, etc.)
 - **Optionaler Source-Ordner** - Source-Ordner im Export aktivieren/deaktivieren
+- **Import Selected** - Zielgerichteter Import; nur angehakte Dateien werden geschrieben. Bestehende Blöcke mit gleichem Namen werden überschrieben, der Rest der SPS bleibt unverändert
+- **Import All** - Vollständiger Projekt-Reimport; alle bestehenden Blöcke, Datentypen und Variablentabellen werden zuerst gelöscht, danach wird alles aus dem Working Directory importiert. Im Schutzprofil markierte Blöcke bleiben erhalten
 
 ### HMI Export/Import
 
@@ -85,7 +87,7 @@ Der **TIA Openness Manager** ist ein leistungsstarkes Werkzeug für Siemens TIA 
 ### Ad-hoc Compare (Drag and Drop)
 
 - **Blöcke ins Compare-Panel ziehen** - Der Block wird kompiliert und mit denselben Strip-Einstellungen exportiert wie bei "Export Selected"; sowohl XML- als auch Source-Code-Formate (SCL, DB) erscheinen als eigene Zeilen
-- **Unabhängige linke/rechte Seite** - TIA-Items links ablegen, beliebige Datei rechts wählen (oder zwei Dateien direkt droppen, um sie ohne TIA-Export gegeneinander zu vergleichen)
+- **Unabhängige linke und rechte Drop-Ziele** - Blöcke und Dateien lassen sich auf beiden Seiten ablegen; das Item landet auf der Hälfte, auf die Sie droppen, und weitere Drops hängen an statt die Seite zu ersetzen
 - **Resizebare Dateiliste** - Splitter zwischen Dateiliste und Diff-Editor zieht zwischen 180 und 500 Pixel; Breite wird über Anzeigen/Ausblenden hinweg gemerkt
 
 ### Diff-Editor
@@ -102,6 +104,7 @@ Der **TIA Openness Manager** ist ein leistungsstarkes Werkzeug für Siemens TIA 
 Der integrierte Code-Editor bietet professionelle Bearbeitungsfunktionen für SCL und andere Dateitypen.
 
 - **Split View** — Editoren horizontal oder vertikal teilen, Tabs zwischen Gruppen ziehen, Panels andocken und anheften (Dateibaum, Markdown-Vorschau)
+- **Drag & Drop aus dem Project Explorer** — Einen oder mehrere Bausteine bzw. Offline-Quelldateien auf den Editor oder Welcome-Tab ziehen; jedes Objekt öffnet sich als eigener Editor-Tab
 - **Syntax-Hervorhebung** — SCL, C#, XML, JSON, Python und 60+ weitere Sprachen
 - **Code-Faltung** — Coderegionen, IF/FOR-Blöcke und VAR-Abschnitte ein-/ausklappen
 - **Auto-Vervollständigung** — Ab 2 Zeichen werden SCL-Schlüsselwörter, Datentypen und Funktionen vorgeschlagen
@@ -166,6 +169,9 @@ Der integrierte Code-Editor bietet professionelle Bearbeitungsfunktionen für SC
 
 ### KI-Chat
 
+- **Reasoning-Aufwand** - Legen Sie pro Agent fest, wie intensiv Deep-Thinking-Modelle vor der Antwort nachdenken (Niedrig / Mittel / Hoch). Über das Gehirn-Chip in der Composer-Bar oder unter Einstellungen → Agents → Capabilities jederzeit umschaltbar.
+- **Anbieter-Tab** - Agent-übergreifende Anbieter-Konsole in den AI-Chat-Einstellungen. GitHub-Copilot-Karte zeigt Anmeldestatus, Enterprise-Domains, Reasoning-Modell-Policy und Retry-/Verify-Schaltflächen. Platzhalter-Karten verweisen auf den Modell-Browser.
+- **Sprachmodelle verwalten** - Provider-übergreifender Modellkatalog hinter dem Zahnrad in der Composer-Bar. Kombiniert den GitHub-Copilot-Katalog, die OAuth-Kataloge (OpenAI Codex, Google Gemini CLI, Antigravity), eine live abgefragte Liste für jeden API-Key-Agent (Anthropic, OpenAI, OpenRouter, Mistral, XAI, Groq, Cerebras, DeepSeek, Perplexity, Together, HuggingFace, Ollama, LM Studio und mehr) sowie die statischen AWS-Bedrock-Zeilen. Eine Copilot-spezifische Spalte **Richtlinie** zeigt Aktiviert / Fehlgeschlagen / Admin-verwaltet pro Modell mit Rechtsklick-Aktion **Copilot-Modellrichtlinie erneut anwenden** bei fehlgeschlagenen Zeilen. Azure-OpenAI-Agents können mehrere Deployments pro Agent registrieren, jedes davon erscheint als eigene Zeile. Die Statuszeile zeigt die Live-Zählung; **Aktualisieren** invalidiert den 5-Minuten-Cache. Rechtsklick oder **Für aktiven Agent verwenden** setzt das Modell in einem Schritt.
 - **Kontext-Ordner** - Registrieren Sie Ordner, die die KI mit Datei-Lese- und Suchwerkzeugen durchsuchen kann
 - **Anweisungsdateien** - Markdown-Dateien werden automatisch zu Sitzungsbeginn in den System-Prompt der KI eingefügt
 - **Git-Integration** - Die KI kennt Ihr Git-Repository, den aktuellen Branch und Änderungen; kann Status anzeigen, Dateien stagen, committen, pushen und pullen (schreibende Operationen erfordern Benutzerbestätigung)
@@ -254,10 +260,11 @@ Der integrierte Code-Editor bietet professionelle Bearbeitungsfunktionen für SC
 - **Live-Beobachtungstabelle** - Native S7-Comm+-Subscriptions pushen Wertänderungen mit konfigurierbarer Zykluszeit; der alte Timer-Polling-Pfad ist entfernt
 - **Verbindungsstatus-Punkt** - Ein farbiger Punkt im Tab-Header zeigt den SPS-Zustand live an (grau = nicht verbunden, grün = läuft, gelb = angehalten oder wird wiederverbunden, rot = nicht erreichbar) mit einem Hover-Tooltip
 - **Automatische Wiederverbindung mit sichtbarem Fortschritt** - Ein "Wiederverbinde…"-Banner erscheint unter der Verbindungsleiste, während die App eine unterbrochene Verbindung wiederherstellt; Werte in der Beobachtungstabelle werden auf halbe Deckkraft gedimmt und auf `???` umgestellt, bis frische Werte ankommen; die gesamte Recovery läuft im Hintergrund
+- **SPS-Explorer-Seitenleiste** - Eine persistente Liste bekannter SPSen in einem eigenen Aktivitätsleisten-Workspace; jeder Eintrag zeigt einen Live-Erreichbarkeitspunkt aus aktiven Sessions und einem 10-Sekunden-TCP-Check auf Port 102 plus den Zeitstempel der letzten Erreichbarkeit; SPSen über Dialoge hinzufügen, umbenennen und entfernen; Doppelklick öffnet oder fokussiert den PLC-Online-Tab mit bereits ausgefüllter IP und Protokoll; die Liste wird zwischen Sessions gespeichert
 
-### SCL Unit Testing (Enterprise)
+### Unit Testing (Enterprise)
 
-Integriertes Unit-Test-Framework für SCL-Bausteine — schreiben, ausführen und auswerten ohne TIA Portal Test Suite. Erfordert PLCSIM Advanced V3.0+.
+Integriertes Unit-Test-Framework für TIA-Bausteine — schreiben, ausführen und auswerten ohne TIA Portal Test Suite. Erfordert PLCSIM Advanced V3.0+.
 
 - **Test Explorer** — Baum aller Test-Suites im Projektordner `.tia-tests/`, automatisches Erkennen neuer/gelöschter/geänderter Dateien per FileSystemWatcher (500 ms Debounce)
 - **Live-Status-Icons** — Jeder Test-Case zeigt seinen aktuellen Status während und nach der Ausführung: ✓ Bestanden, ✗ Fehlgeschlagen, ⊘ Übersprungen, ⚠ Fehler
@@ -368,7 +375,7 @@ Pro Windows-Sitzung läuft nur eine Instanz des TIA Openness Managers. Wird eine
 - **Jahresabo spart 17%** (2 Monate gratis)
 - Alles aus Professional, plus:
 - Passwort-Tresor
-- SCL Unit Testing
+- Unit Testing
 - Multi-User Lizenzen
 - Dedizierter Support
 - Mengenrabatte

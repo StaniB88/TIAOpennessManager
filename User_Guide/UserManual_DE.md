@@ -19,7 +19,7 @@
 9. [MCP Tab (KI-Integration)](#9-mcp-tab-ki-integration)
 9a. [KI-Chat](#9a-ki-chat)
 9b. [OPC UA Tab](#9b-opc-ua-tab)
-9c. [SCL Unit Testing (Enterprise)](#9c-scl-unit-testing-enterprise)
+9c. [Unit Testing (Enterprise)](#9c-unit-testing-enterprise)
 9c. [AI Canvas](#9c-ai-canvas)
 10. [Projektbibliothek-Verwaltung](#10-projektbibliothek-verwaltung)
 11. [Hardware Tab](#11-hardware-tab)
@@ -52,7 +52,7 @@ Die linke Spalte bietet sieben Abkürzungen für die häufigsten ersten Schritte
 - **Export-Ordner auswählen…** — den Ordner festlegen, in den exportierte Blöcke geschrieben werden.
 - **Git-Repository klonen…** — ein Repository direkt in der Anwendung klonen.
 - **Neue SCL-Datei…** — einen leeren SCL-Editor-Tab öffnen.
-- **SCL Unit Testing…** — den SCL-Unit-Testing-Arbeitsbereich öffnen.
+- **Unit Testing…** — den Unit-Testing-Arbeitsbereich öffnen.
 - **KI-Assistent konfigurieren…** — die KI-Chat-Einstellungen öffnen, um einen API-Schlüssel zu hinterlegen oder sich anzumelden.
 
 ### „Erste Schritte"-Anleitung
@@ -62,7 +62,7 @@ In der Mitte des Tabs finden Sie die interaktive **Erste Schritte**-Karte mit vi
 1. **Mit TIA Portal verbinden** — wird abgehakt, sobald die Verbindung erfolgreich steht.
 2. **Project Explorer kennenlernen** — erklärt die Checkboxen pro Zeile, den Unterschied zwischen *Export Selected* und *Export All*, die Protection-Spalte, an Import-/Export-Ordner gebundene Protection-Profile sowie Drag-&-Drop-Import. Ein Inline-Button öffnet den Protection-Profile-Speichern-Dialog; der Schritt wird abgeschlossen, sobald Sie ein Profil speichern (egal ob über diesen Button oder über Ihren normalen Project-Explorer-Ablauf).
 3. **Ersten Baustein exportieren** — wird abgehakt, sobald ein Block-Export erfolgreich durchläuft.
-4. **Nächsten Schritt wählen** — vier Buttons (Git, KI-Chat, SCL Unit Testing, OPC UA) öffnen den jeweiligen Tab und schließen diesen Schritt ab.
+4. **Nächsten Schritt wählen** — vier Buttons (Git, KI-Chat, Unit Testing, OPC UA) öffnen den jeweiligen Tab und schließen diesen Schritt ab.
 
 Oben auf der Karte zeigt ein Fortschrittsbalken, wie viele Schritte bereits abgeschlossen sind. Unten auf der Karte setzt der Link **Anleitungs-Fortschritt zurücksetzen** alle vier Haken zurück, wenn Sie die Anleitung noch einmal durchlaufen wollen.
 
@@ -72,13 +72,13 @@ Fünf Karten rechts im Tab beschreiben die Hauptbereiche der Anwendung. Ein Klic
 
 - **KI-Chat** — öffnet den KI-Chat-Arbeitsbereich und den Einstellungsdialog.
 - **Git-Versionsverwaltung** — öffnet den Git-Arbeitsbereich.
-- **SCL Unit Testing** — öffnet den SCL-Unit-Testing-Arbeitsbereich.
+- **Unit Testing** — öffnet den Unit-Testing-Arbeitsbereich.
 - **OPC-UA-Browser** — öffnet den OPC-UA-Arbeitsbereich.
 - **Was ist neu in 3.x** — öffnet das mitgelieferte `CHANGELOG` mit den letzten nutzer-sichtbaren Änderungen.
 
 ### Zuletzt geöffnete Projekte
 
-Die Liste **Zuletzt** zeigt bis zu fünf zuletzt geöffnete TIA-Projekte. Ein Klick auf einen Eintrag verbindet Sie direkt wieder damit. Bei mehr als fünf öffnet der Link **Mehr…** den vollständigen Connect-Dialog. Ist die Liste leer, bietet ein einzelner Inline-Link an, eine Verbindung zu starten.
+Die Liste **Zuletzt** zeigt bis zu fünf zuletzt geöffnete TIA-Projekte — neueste oben. Ein Klick auf einen Eintrag verbindet Sie direkt wieder damit. Einträge auf Projekte, die verschoben oder gelöscht wurden, werden automatisch ausgeblendet. Die Liste wird nach jedem erfolgreichen Verbindungsaufbau aktualisiert — egal ob Sie eine Projektdatei öffnen oder sich an eine laufende TIA-Portal-Instanz anhängen. Ist die Liste leer, bietet ein einzelner Inline-Link an, eine Verbindung zu starten.
 
 ### Willkommen-Tab ausblenden
 
@@ -257,7 +257,7 @@ Der Connect-Dialog hat zwei Tabs:
 
 Dies startet TIA Portal im Hintergrund (Headless Mode) ohne sichtbare Benutzeroberfläche. Dies ist schneller für reine Export/Import-Operationen.
 
-**Letzte Projekte:** Der Dialog merkt sich Ihr zuletzt geöffnetes Projekt für schnellen Zugriff.
+**Letzte Projekte:** Der Dialog merkt sich Ihre zuletzt geöffneten Projekte (bis zu zehn, neueste zuerst) für schnellen Zugriff. Einträge auf Projekte, die verschoben oder gelöscht wurden, werden automatisch ausgeblendet.
 
 **Hinweis:** Bei großen Bulk-Operationen (25+ Dateien) nutzt die Anwendung automatisch ExclusiveAccess für bessere Stabilität.
 
@@ -326,24 +326,24 @@ Das Right Directory ist der Ordner auf Ihrem Dateisystem, in dem exportierte XML
 #### Export Selected
 1. Setzen Sie Häkchen bei den gewünschten Blöcken im linken Baum
 2. Klicken Sie auf **Export Selected**
-3. Die ausgewählten Blöcke werden als XML exportiert
+3. Die ausgewählten Einträge werden als XML exportiert. Bestehende Dateien mit gleichem Namen werden überschrieben; alle übrigen Dateien im Export-Ordner bleiben erhalten.
 
 #### Export All
 1. Klicken Sie auf **Export All**
-2. ALLE Blöcke, Datentypen und Tag-Tabellen werden exportiert
+2. Der SPS-Export-Ordner wird zuerst geleert, danach werden ALLE Blöcke, Datentypen, Variablentabellen, Technologie-Objekte und Software-Units exportiert — ein vollständiger Projekt-Export
 
 ### Import-Operationen
 
 #### Import Selected
 1. Setzen Sie Häkchen bei den gewünschten XML-Dateien im rechten Baum
 2. Klicken Sie auf **Import Selected**
-3. Die ausgewählten Dateien werden importiert
+3. Die ausgewählten Dateien werden importiert. Bestehende Blöcke mit gleichem Namen werden überschrieben; alle übrigen SPS-Inhalte bleiben unverändert.
 
 #### Import All
 1. Klicken Sie auf **Import All**
-2. ALLE XML-Dateien im Working Directory werden importiert
+2. Das gesamte SPS-Programm wird zuerst gelöscht (alle Blöcke, Datentypen und Variablentabellen), danach werden ALLE XML-Dateien im Working Directory importiert — ein vollständiger Projekt-Reimport
 
-**Wichtig:** Der Import überschreibt bestehende Blöcke mit gleichem Namen!
+**Wichtig:** Import All ersetzt den kompletten SPS-Inhalt durch das, was im Working Directory liegt. Im Schutzprofil markierte Blöcke bleiben erhalten.
 
 ### Import/Export Optionen
 
@@ -410,23 +410,23 @@ Preview Diff erkennt sowohl XML-seitige Änderungen (Block-Interface-Bearbeitung
 
 **Linke und rechte Dateiliste:** Das Compare-Panel zeigt links eine Dateiliste für die TIA-Seite und rechts eine passende Dateiliste für die Disk-Seite. Geänderte Blöcke erscheinen in beiden Listen; Blöcke, die nur in TIA existieren (oder noch kompiliert werden müssen), erscheinen nur links, Blöcke, die nur auf der Platte existieren, nur rechts. Beide Listen haben einen eigenen Ein-/Ausblenden-Toggle in der Compare-Toolbar — Sie können sich wahlweise auf eine Seite konzentrieren oder beide nebeneinander anzeigen lassen.
 
-**Farbbalken am Zeilenrand:** Jede Zeile in beiden Dateilisten trägt am rechten Rand einen schmalen farbigen Balken, der den Änderungstyp ohne Textabgleich signalisiert: Grün für Hinzugefügt, Rot für Gelöscht, Orange für Geändert, Gelb für Inkonsistent (muss kompiliert werden), Blau für Blöcke, die nur in TIA existieren. Unveränderte Zeilen zeigen keinen Balken.
+**Farbbalken am Zeilenrand:** Jede Zeile in beiden Dateilisten trägt am rechten Rand einen schmalen farbigen Balken, der den Änderungstyp ohne Textabgleich signalisiert: Grün für Hinzugefügt, Rot für Gelöscht, Orange für Geändert, Gelb für Inkonsistent (muss kompiliert werden), Blau für Blöcke, die nur auf einer Seite existieren (links oder rechts). Unveränderte Zeilen zeigen keinen Balken.
 
 ### Ad-hoc Compare (Drag and Drop)
 
-Für schnelle Side-by-Side-Überprüfungen ohne Projektweiten Scan ziehen Sie Items direkt in das Compare-Panel:
+Für schnelle Side-by-Side-Überprüfungen ohne Projektweiten Scan ziehen Sie Items direkt in das Compare-Panel. Beide Seiten sind unabhängige Drop-Ziele — auf welche Hälfte Sie ablegen, in dieser Hälfte taucht das Item auch auf:
 
-1. Ziehen Sie einen oder mehrere Blöcke aus dem TIA-Projektbaum und lassen Sie sie über dem Compare-Panel fallen
-2. Die SPS wird kompiliert, die Blöcke werden mit Ihren aktuellen Import/Export-Einstellungen exportiert (dieselben Strip-Regeln wie beim normalen "Export Selected"), und jede exportierte Datei wird zu einer eigenen Zeile in der Dateiliste links — ein SCL-Block erzeugt sowohl eine `.xml`- als auch eine `.scl`-Zeile, ein InstanceDB erzeugt `.xml` und `.db`
-3. Klicken Sie auf die Zeile mit dem Format, das Sie links sehen möchten
-4. Ziehen Sie die Datei, gegen die Sie vergleichen möchten, auf die rechte Seite des Diff-Editors (oder ziehen Sie zwei Dateien direkt, um sie ohne TIA-Export gegeneinander zu vergleichen)
-5. Der Diff-Viewer zeigt die Unterschiede Zeile für Zeile
+1. Ziehen Sie einen oder mehrere Blöcke aus dem TIA-Projektbaum und lassen Sie sie über der linken oder rechten Hälfte des Compare-Panels fallen. Die abgelegten Items erscheinen in der zugehörigen Dateiliste (links bzw. rechts).
+2. Die SPS wird kompiliert, die Blöcke werden mit Ihren aktuellen Import/Export-Einstellungen exportiert (dieselben Strip-Regeln wie beim normalen "Export Selected"), und jede exportierte Datei wird zu einer eigenen Zeile in der zugehörigen Dateiliste — ein SCL-Block erzeugt sowohl eine `.xml`- als auch eine `.scl`-Zeile, ein InstanceDB erzeugt `.xml` und `.db`.
+3. Klicken Sie auf die Zeile mit dem Format, das Sie sehen möchten.
+4. Die Quellen dürfen pro Seite unterschiedlich sein: Sie können einen TIA-Block auf die eine Seite und eine Windows-Datei auf die andere ziehen, oder zwei Dateien direkt für einen File-to-File-Vergleich ohne TIA-Export ablegen.
+5. Der Diff-Viewer zeigt die Unterschiede Zeile für Zeile.
 
 **Hinweise:**
 
 - Die TIA-Seite wird kompiliert und genau gleich gestrippt wie bei einem normalen Export — der Vergleich erfolgt also Apfel gegen Apfel gegen eine Datei, die früher ins Working Directory exportiert wurde.
-- Die rechte Seite bleibt leer, bis Sie dort eine Datei ablegen — ein TIA-Block kann so gegen mehrere Kandidat-Dateien geprüft werden, ohne neu zu exportieren.
-- Der Splitter der Dateiliste ist zwischen 180 und 500 Pixeln resizebar und merkt sich die von Ihnen gewählte Breite.
+- Weitere Drops auf dieselbe Seite werden an die bestehende Liste angehängt statt sie zu ersetzen — ein TIA-Block lässt sich so gegen mehrere Kandidat-Dateien prüfen, ohne neu zu exportieren, und die andere Seite behält, was sie bereits geladen hat.
+- Die Splitter der Dateilisten sind zwischen 180 und 500 Pixeln resizebar und merken sich die von Ihnen gewählten Breiten.
 
 Für den projektweiten Vergleich mit selektivem Re-Import zurück in die SPS verwenden Sie stattdessen **Preview Diff** (Hash-basiert, produziert Modified / Only in TIA / Only on Disk-Kategorien und einen Sync-Mode Import-Button).
 
@@ -505,6 +505,10 @@ Wenn Sie einen Block im Projektbaum auswählen, wird sein Quellcode im Code-Edit
 - SCL (Structured Control Language)
 - STL (Statement List)
 - LAD/FBD (als XML-Darstellung)
+
+### Drag & Drop aus dem Project Explorer
+
+Sie können jeden Baustein (FB, FC, OB, DB, UDT, Variablentabelle) aus dem TIA-Baum direkt auf den Editor oder den Welcome-Tab ziehen — oder Quelldateien aus dem Offline-Ordner. Jedes abgelegte Objekt öffnet sich als eigener Editor-Tab; der Editor lädt den Inhalt genauso wie bei einem Doppelklick. Objekte, die nicht gefunden oder geöffnet werden konnten, werden in der Statusleiste gemeldet.
 
 ### Block-Details Panel
 
@@ -915,6 +919,20 @@ Legen Sie eine `.json`-Datei in `%LocalAppData%\TiaOpennessManager\agents\` ab m
 
 **Responses API für Reasoning-Modelle (Azure):** Wenn Ihr Azure-Deployment ein Reasoning-Modell wie `o1`, `o3` oder `gpt-5` hostet, aktivieren Sie die Option „Responses API verwenden (für Reasoning-Modelle)" im Azure-Abschnitt des Agenten. Damit wird die Anfrage über den Azure-Responses-Endpoint geleitet, was nötig ist, damit `reasoning_effort` wirksam wird. Für Standard-Deployments (ohne Reasoning) lassen Sie die Option deaktiviert.
 
+**Mehrere Azure-Deployments pro Agent:** Ein einzelner Azure-OpenAI-Agent kann mehrere Deployments bedienen. Im Azure-Abschnitt des Agenten enthält die Liste **Zusätzliche Deployments** eine Zeile pro zusätzlichem Deployment-Namen; klicken Sie auf **Deployment hinzufügen**, um eine neue Zeile anzulegen, tippen Sie den Deployment-Namen ein, oder klicken Sie auf den ×-Button einer Zeile, um sie zu entfernen. Jedes registrierte Deployment erscheint als eigene Zeile in „Sprachmodelle verwalten"; über **Für aktiven Agent verwenden** schalten Sie zwischen den Deployments um. Das Haupt-Deployment oben ist immer Teil der Liste.
+
+**Reasoning-Aufwand (Niedrig / Mittel / Hoch):** Für Agents, deren Modell Deep Thinking unterstützt, legen Sie fest, wie intensiv das Modell vor der Antwort nachdenkt. Einstellbar pro Agent unter **Einstellungen → Agents → Capabilities → Reasoning-Aufwand** oder direkt in der Composer-Bar über das Gehirn-Chip neben der Tool-Call-Schaltfläche. Höher = besseres Reasoning, aber langsamer und mehr Tokens. Mit **App-Standard verwenden** heben Sie die Agent-Überschreibung wieder auf und der Agent folgt dem globalen Standard.
+
+**Anbieter-Einstellungen (Einstellungen → Anbieter):** Agentenübergreifende Übersicht der unterstützten KI-Anbieter. Die GitHub-Copilot-Karte zeigt Anmeldestatus, alle von Copilot-Agents verwendeten Enterprise-Domains, den Status der Reasoning-Modell-Policy sowie Schaltflächen, um die Policy-Freigabe erneut auszulösen oder den Copilot-Modellkatalog zu prüfen — alles aus dem Einstellungs-Dialog heraus. Platzhalter-Karten für Anthropic, OpenAI, Google Gemini, Azure OpenAI, AWS Bedrock, Ollama und OpenRouter verweisen auf den Modell-Browser. Anmeldung und Enterprise-Domain bleiben pro Copilot-Agent im Agents-Tab gepflegt — der Anbieter-Tab ist eine Read-only-Konsole.
+
+**Sprachmodelle verwalten (Manage Language Models):** Das Zahnrad-Symbol neben dem Assistenten-Wähler in der Composer-Bar öffnet einen provider-übergreifenden Katalog aller Modelle, die die App kennt. Das Fenster kombiniert drei Zeilenarten: den gemergten statischen und server-discovered Copilot-Katalog; die OAuth-Kataloge für OpenAI Codex, Google Gemini CLI und Antigravity; und — neu — eine **live abgefragte** Modell-Liste für jeden Agent, den Sie mit API-Key konfiguriert haben. Die App fragt das `/models`-Endpoint jedes Anbieters direkt ab, also erscheinen Anthropic, OpenAI, OpenRouter, Mistral, XAI, Groq, Cerebras, DeepSeek, Perplexity, Together, HuggingFace, Z.AI, MiniMax, Fireworks, Moonshot, Vercel AI Gateway, SGLang, vLLM, Qwen, Alibaba Model Studio, Arcee, Cloudflare AI Gateway, Ollama, LM Studio und Custom-OpenAI-kompatible Endpoints jeweils mit dem, was der Anbieter aktuell anbietet. AWS-Bedrock-Zeilen bleiben statisch, weil AWS kein öffentliches Modell-Discovery-Endpoint bereitstellt. Suchen nach Modellname oder ID, Filtern nach Anbieter. Die Spalte **Quelle** unterscheidet die drei Zeilenarten. Die Statuszeile zeigt eine Live-Zählung (z. B. *120 von 240 Modellen · 75 live*), sobald mindestens eine sichtbare Zeile live geholt wurde. Die Spalte **Fähigkeiten** zeigt pro Modell Tool-, Vision- und Reasoning-Badges; die Spalte **Request-Multiplikator** zeigt die Copilot-Premium-Request-Kosten pro Modell (`0x`, `0.33x`, `1x`, `3x`, `7.5x`, …). Die Spalte **Richtlinie** ist Copilot-spezifisch: *Aktiviert* zeigt Modelle, die Ihr Account erfolgreich eingeschaltet hat; *Fehlgeschlagen* markiert Modelle, bei denen die letzte Aktivierung abgelehnt wurde (Mouseover zeigt den genauen Fehler); *Admin-verwaltet* erscheint, wenn Ihr Copilot-Plan die Modellverfügbarkeit den Tenant-Admin überlässt. Bei *Fehlgeschlagen* öffnet Rechtsklick → **Copilot-Modellrichtlinie erneut anwenden** einen neuen Aktivierungsdurchlauf gegen Ihren Copilot-Tenant. Rechtsklick auf eine Zeile oder **Für aktiven Agent verwenden** setzt das Modell des aktiven Agents (nur verfügbar, wenn der Anbieter zur Zeile passt). Die Schaltfläche **Aktualisieren** invalidiert den 5-Minuten-Modell-Cache und fragt jedes Endpoint erneut ab — praktisch nach dem Hinzufügen eines API-Keys oder wenn ein Anbieter ein neues Modell ankündigt.
+
+**Numerische Parameter (Request Timeout, Context Window Override, Temperature, Top-P, Session Memory Count):** Tippen Sie den Wert direkt ein. **Enter** übernimmt, **Escape** verwirft, oder klicken Sie neben das Feld, um automatisch zu übernehmen. Werte ausserhalb des erlaubten Bereichs werden auf die nächste Grenze gekürzt. Leere **Context Window Override**, **Temperature** oder **Top-P** bedeuten, dass der Katalog-/Provider-Standard verwendet wird (kein Override gesendet).
+
+**GitHub-Copilot-Provider:** Melden Sie sich über den Device Flow in **Einstellungen → Agenten → GitHub-Authentifizierung** an. Für Firmenkonten tragen Sie vor der Anmeldung Ihre **GitHub-Enterprise-Domain** (z. B. `firma.ghe.com`) ein — OAuth- und API-Aufrufe laufen dann gegen Ihre Enterprise-Instanz. Nach der Anmeldung nutzen Sie **Modelle erneut aktivieren**, falls Claude- oder Grok-Modelle einen Policy-Fehler melden. Die Model-Auswahl zeigt automatisch das zugehörige Kontextfenster pro Modell; Copilot routet jedes Modell an die richtige Upstream-API.
+
+**Globale Copilot-Enterprise-Domain:** Wenn alle Copilot-Agenten Ihrer Installation dieselbe GitHub-Enterprise-Instanz nutzen, setzen Sie die Domain einmal in **Einstellungen → Provider → GitHub Copilot → Globale GitHub-Enterprise-Domain**. Jeder Copilot-Agent ohne eigene Domain erbt den globalen Wert automatisch; Agenten mit eigener Domain behalten Vorrang. Die Agenten-Karte zeigt einen Hinweis *„Erbt die globale GitHub-Enterprise-Domain: …"*, sobald der geerbte Wert aktiv ist.
+
 ### Dateianhänge
 
 Ziehen Sie Dateien direkt in den KI-Chat, um sie an Ihre Nachricht anzuhängen. Die KI kann den Inhalt angehängter Dateien sehen und entsprechend antworten.
@@ -1298,6 +1316,27 @@ Direkt darüber sitzt der Schalter **Serverzertifikate automatisch akzeptieren**
 - **An (Default)** — Jedes neue Server-Zertifikat wird beim ersten Verbindungsaufbau automatisch vertraut. Schnellster, bequemster Pfad; entspricht dem bisherigen Verhalten.
 - **Aus** — Neue Server-Zertifikate landen statt im vertrauenswürdigen im abgelehnten Store. Der Dialog muss geöffnet und „Vertrauen" geklickt werden, bevor der nächste Verbindungsaufbau erfolgreich ist. Dieser Modus eignet sich in Netzen, in denen jede SPS explizit freigegeben werden soll.
 
+### SPS-Explorer — Liste bekannter SPSen führen
+
+Neben den Aktivitätsleisten-Buttons für TIA-Manager, Versionskontrolle, PLC Online und Dateiexplorer gibt es einen eigenen Button, der den **SPS-Explorer** öffnet — eine Seitenleiste, in der du deine häufig verwendeten SPSen hältst, damit du zwischen Sessions nicht jedes Mal die IP neu eintippen musst.
+
+Jeder Eintrag in der Liste zeigt:
+
+- Einen farbigen Punkt für die zuletzt bekannte Erreichbarkeit (grün = erreichbar, rot = offline, gelb = Reconnect, grau = noch nie geprüft)
+- Den Alias, den du vergeben hast
+- Die IP-Adresse oder den OPC-UA-Endpunkt
+- Wann die SPS zuletzt erreichbar war
+
+**SPS hinzufügen.** Auf **SPS hinzufügen...** klicken, einen Alias (freier Text) und eine IP oder einen Endpunkt eingeben und das Protokoll wählen (S7 Nativ oder OPC UA). Der Eintrag erscheint sofort in der Liste.
+
+**Erreichbarkeit prüfen.** Einträge ohne aktive Verbindung werden alle 10 Sekunden mit einem schnellen TCP-Check auf Port 102 geprüft (nur S7; OPC-UA-Einträge zeigen den letzten bekannten Zustand aus der letzten aktiven Session). Der Punkt wechselt von allein, sobald sich die Erreichbarkeit ändert — kein Neuladen nötig.
+
+**Verbindung öffnen.** Doppelklick auf einen Eintrag oder im Kontextmenü **Verbinden und Tab öffnen**. Ein PLC-Online-Tab öffnet sich (oder der bestehende wird fokussiert) mit bereits ausgefüllter IP und Protokoll. Im Tab auf **Verbinden** klicken, um die Session zu starten.
+
+**Umbenennen oder Entfernen.** Rechtsklick für **Umbenennen...** und **Aus Liste entfernen**. Umbenennen ändert nur den Anzeigealias — Protokoll und IP bleiben gleich, ebenso die Identität (`Protokoll:Adresse`).
+
+Die Liste wird automatisch zwischen Sessions gespeichert.
+
 ### Verbindungsstatus-Indikatoren (S7 Nativ)
 
 Beim nativen S7-Comm+-Zugriff auf eine S7-1200 oder S7-1500 zeigt der PLC-Online-Tab drei Live-Indikatoren, die unmittelbar auf das reagieren, was die SPS macht:
@@ -1502,9 +1541,9 @@ Canvas-Dashboards können als JSONL-Dateien gespeichert und später geladen werd
 
 ---
 
-## 9c. SCL Unit Testing (Enterprise)
+## 9c. Unit Testing (Enterprise)
 
-Integriertes Unit-Test-Framework für SCL-Bausteine. Schreiben, ausführen und auswerten von Tests gegen eine laufende PLCSIM Advanced Instanz direkt in der App.
+Integriertes Unit-Test-Framework für TIA-Bausteine. Schreiben, ausführen und auswerten von Tests gegen eine laufende PLCSIM Advanced Instanz direkt in der App.
 
 **Voraussetzungen:**
 - Enterprise-Lizenz
@@ -1513,7 +1552,7 @@ Integriertes Unit-Test-Framework für SCL-Bausteine. Schreiben, ausführen und a
 
 ### Unit-Testing-Workspace öffnen
 
-1. Klicken Sie auf **SCL Unit Testing** in der linken Seitenleiste (oder drücken Sie `Strg+5`)
+1. Klicken Sie auf **Unit Testing** in der linken Seitenleiste (oder drücken Sie `Strg+5`)
 2. Der Workspace besteht aus vier Dock-Panels:
    - **Links (Analyse-Tools + Test Explorer):** Interface, Boundary Values, Dependencies, Test Explorer (als Tabs)
    - **Mitte (Document Dock):** Test-Suite-Editoren (JSON, Visual, SCL Modi)

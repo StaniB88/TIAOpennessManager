@@ -19,7 +19,7 @@
 9. [MCP Tab (AI Integration)](#9-mcp-tab-ai-integration)
 9a. [AI Chat](#9a-ai-chat)
 9b. [OPC UA Tab](#9b-opc-ua-tab)
-9c. [SCL Unit Testing (Enterprise)](#9c-scl-unit-testing-enterprise)
+9c. [Unit Testing (Enterprise)](#9c-unit-testing-enterprise)
 9c. [AI Canvas](#9c-ai-canvas)
 10. [Project Library Management](#10-project-library-management)
 11. [Hardware Tab](#11-hardware-tab)
@@ -52,7 +52,7 @@ The left column offers seven shortcuts for the most common first steps:
 - **Browse Export Folder…** — choose the folder where exported blocks are written.
 - **Clone Git Repository…** — clone a repository directly into the app.
 - **New SCL File…** — open a blank SCL editor tab.
-- **SCL Unit Testing…** — open the SCL Unit Testing workspace.
+- **Unit Testing…** — open the Unit Testing workspace.
 - **Configure AI Assistant…** — open the AI Chat settings so you can add an API key or sign in.
 
 ### Get Started walkthrough
@@ -62,7 +62,7 @@ The centre of the tab has an interactive **Get Started** card with four steps. T
 1. **Connect to TIA Portal** — checks itself off when you successfully connect.
 2. **Learn the Project Explorer** — explains per-row checkboxes, *Export Selected* vs. *Export All*, the Protection column, Protection Profiles bound to Import/Export folders, and drag-and-drop import. An inline button opens the Protection-Profile save dialog; the step completes as soon as you save a profile (either from this button or from your normal Project Explorer workflow).
 3. **Export your first block** — completes when any block export succeeds.
-4. **Choose your next step** — four buttons (Git, AI Chat, SCL Unit Testing, OPC UA) open the corresponding tab and complete this step.
+4. **Choose your next step** — four buttons (Git, AI Chat, Unit Testing, OPC UA) open the corresponding tab and complete this step.
 
 A progress bar at the top of the card shows how many steps are done. A **Reset walkthrough progress** link at the bottom of the card clears all four checkmarks if you want to run through them again.
 
@@ -72,13 +72,13 @@ Five cards on the right describe the app's main areas. Click a card to jump to t
 
 - **AI Chat** — opens the AI Chat workspace and the settings dialog.
 - **Git Version Control** — opens the Git workspace.
-- **SCL Unit Testing** — opens the SCL Unit Testing workspace.
+- **Unit Testing** — opens the Unit Testing workspace.
 - **OPC UA Browser** — opens the OPC UA workspace.
 - **What's New in 3.x** — opens the bundled `CHANGELOG` with the latest user-visible changes.
 
 ### Recent projects
 
-The **Recent** list shows up to five recently opened TIA projects. Click an entry to reconnect straight to it. If you have more than five, a **More…** link opens the full Connect dialog. If the list is empty, a single inline link offers to start a connection.
+The **Recent** list shows up to five recently opened TIA projects, newest first. Click an entry to reconnect straight to it. Entries pointing to projects that have been moved or deleted are hidden automatically. The list updates after every successful connection, whether you opened a project file or attached to a running TIA Portal instance. If the list is empty, a single inline link offers to start a connection.
 
 ### Hiding the Welcome tab
 
@@ -257,7 +257,7 @@ The Connect Dialog has two tabs:
 
 This starts TIA Portal in the background (headless mode) without a visible user interface. This is faster for pure export/import operations.
 
-**Recent Projects:** The dialog remembers your last opened project for quick access.
+**Recent Projects:** The dialog remembers your recently opened projects (up to ten, newest first) for quick access. Entries pointing to projects that have been moved or deleted are hidden automatically.
 
 **Note:** For large bulk operations (25+ files), the application automatically uses ExclusiveAccess for better stability.
 
@@ -326,24 +326,24 @@ The Right Directory is the folder on your file system where exported XML files a
 #### Export Selected
 1. Check the boxes next to the desired blocks in the left tree
 2. Click **Export Selected**
-3. The selected blocks are exported as XML
+3. The selected items are exported as XML. Existing files with the same name are overwritten; all other files in the export folder are kept.
 
 #### Export All
 1. Click **Export All**
-2. ALL blocks, data types, and tag tables are exported
+2. The PLC export folder is cleared first, then ALL blocks, data types, tag tables, technology objects, and software units are exported — a full project export
 
 ### Import Operations
 
 #### Import Selected
 1. Check the boxes next to the desired XML files in the right tree
 2. Click **Import Selected**
-3. The selected files are imported
+3. The selected files are imported. Existing blocks with the same name are overwritten; all other PLC content is left untouched.
 
 #### Import All
 1. Click **Import All**
-2. ALL XML files in the Working Directory are imported
+2. The entire PLC program is cleared first (all blocks, data types, and tag tables are deleted), then ALL XML files in the Working Directory are imported — a full project re-import
 
-**Important:** Import overwrites existing blocks with the same name!
+**Important:** Import All replaces the complete PLC content with what is in the Working Directory. Blocks marked in the Protection Profile are preserved.
 
 ### Import/Export Options
 
@@ -410,23 +410,23 @@ Preview Diff detects both XML-side changes (block interface edits in TIA) and so
 
 **Left and right file lists:** The Compare panel shows a file list on the left for the TIA side and a matching file list on the right for the disk side. Modified blocks appear in both lists; blocks that only exist in TIA (or that still need compiling) show only on the left, blocks that only exist on disk show only on the right. Each list has its own show/hide toggle in the Compare toolbar, so you can focus on either side or keep both visible.
 
-**Change strip at the row edge:** Every row in both file lists carries a thin colored bar at its right edge that tells you the change type without reading the label: green for added, red for deleted, orange for modified, yellow for inconsistent (needs compiling), and blue for blocks that only exist in TIA. Unchanged rows show no bar.
+**Change strip at the row edge:** Every row in both file lists carries a thin colored bar at its right edge that tells you the change type without reading the label: green for added, red for deleted, orange for modified, yellow for inconsistent (needs compiling), and blue for blocks that only exist on one side (left or right). Unchanged rows show no bar.
 
 ### Ad-hoc Compare (Drag and Drop)
 
-For quick side-by-side checks without scanning the whole project, drag items directly into the Compare panel:
+For quick side-by-side checks without scanning the whole project, drag items directly into the Compare panel. Both sides accept drops independently — whichever half you drop onto is the half the item lands in:
 
-1. Drag one or more blocks from the TIA project tree and drop them onto the Compare panel
-2. The PLC is compiled, the blocks are exported with your current Import/Export Settings (the same strip rules that apply to a normal "Export Selected"), and each exported file becomes its own row in the file list on the left — an SCL block produces both a `.xml` and a `.scl` row, an InstanceDB produces `.xml` and `.db`
-3. Click the row for the format you want to see on the left side
-4. Drag the file you want to compare against onto the right side of the diff editor (or drop two files directly to compare them against each other without a TIA export)
-5. The diff viewer shows differences line by line
+1. Drag one or more blocks from the TIA project tree and drop them onto the left or right half of the Compare panel. Dropped items appear in the matching file list (left or right).
+2. The PLC is compiled, the blocks are exported with your current Import/Export Settings (the same strip rules that apply to a normal "Export Selected"), and each exported file becomes its own row in the corresponding file list — an SCL block produces both a `.xml` and a `.scl` row, an InstanceDB produces `.xml` and `.db`.
+3. Click the row for the format you want to see.
+4. You can mix sources on either side: drag a TIA block to one side and a Windows file onto the other, or drop two files directly for a file-to-file compare without a TIA export.
+5. The diff viewer shows differences line by line.
 
 **Notes:**
 
 - The TIA side is compiled and stripped the same way a regular export would be, so the comparison is apples-to-apples against a file that was exported earlier to your working directory.
-- The right side stays empty until you drop a file there — one block in TIA can be checked against several candidate files without re-exporting.
-- The file list splitter is resizable between 180 and 500 pixels and remembers the width you picked.
+- Additional drops on the same side append to the existing list instead of replacing it — one block in TIA can be checked against several candidate files without re-exporting, and the other side keeps whatever is already loaded.
+- The file list splitters are resizable between 180 and 500 pixels and remember the widths you picked.
 
 For project-wide comparison with selective re-import back into the PLC, use **Preview Diff** instead (hash-based, produces Modified / Only in TIA / Only on Disk categories and a Sync-Mode Import button).
 
@@ -505,6 +505,10 @@ When you select a block in the project tree, its source code is displayed in the
 - SCL (Structured Control Language)
 - STL (Statement List)
 - LAD/FBD (as XML representation)
+
+### Drag & Drop from the Project Explorer
+
+You can drag any block (FB, FC, OB, DB, UDT, Tag Table) from the TIA tree directly onto the editor or the Welcome tab, or drag source files from the offline folder. Each dropped item opens as its own editor tab; the editor loads the content exactly as it would on double-click. Items that can't be resolved or opened are reported in the status bar.
 
 ### Block Details Panel
 
@@ -915,6 +919,20 @@ Place a `.json` file in `%LocalAppData%\TiaOpennessManager\agents\` with the fol
 
 **Responses API for reasoning models (Azure):** If your Azure deployment hosts a reasoning model such as `o1`, `o3`, or `gpt-5`, enable the "Use Responses API (for reasoning models)" toggle in the agent's Azure section. This switches the request flow to Azure's Responses endpoint, which is required for `reasoning_effort` to take effect. Standard (non-reasoning) deployments should leave this off.
 
+**Additional Azure deployments per agent:** A single Azure OpenAI agent can serve multiple deployments. In the agent's Azure section, the **Additional deployments** list holds one row per extra deployment name; click **Add deployment** to append a new row, type the deployment name, or click the × button on a row to remove it. Each registered deployment surfaces as its own row in Manage Language Models; pick any of them as the active deployment via **Use in active agent**. The primary deployment above is always included in the list.
+
+**Reasoning effort (Low / Medium / High):** For agents whose model supports deep thinking, pick how hard the model should think before replying. Set it per agent in **Settings → Agents → Capabilities → Reasoning Effort**, or switch it on the fly via the brain chip next to the tool-call button in the composer bar. Higher levels produce better reasoning at the cost of latency and tokens. Selecting **Use app default** clears the per-agent override so the agent follows the global default configured elsewhere.
+
+**Provider settings tab (Settings → Providers):** A cross-agent overview of the AI providers the app can talk to. The GitHub Copilot card shows sign-in status, every enterprise domain used by a Copilot agent, the reasoning-model policy state, and buttons to retry the policy enablement or verify the Copilot model catalog without leaving Settings. Placeholder cards for Anthropic, OpenAI, Google Gemini, Azure OpenAI, AWS Bedrock, Ollama, and OpenRouter link through to the Manage Language Models browser. Copilot sign-in and enterprise domain still live on each Copilot agent in the Agents tab — the Providers tab is a read-only console for those values.
+
+**Manage Language Models window:** Click the gear icon next to the assistant selector in the composer bar to open a cross-provider catalog of every model the app knows about. The window combines three kinds of rows: GitHub Copilot's merged static and server-discovered list; the OAuth catalogs shipped for OpenAI Codex, Google Gemini CLI, and Antigravity; and — new — a **live-fetched** list of models for every agent you have configured with an API key. The app asks each vendor's `/models` endpoint directly, so Anthropic, OpenAI, OpenRouter, Mistral, XAI, Groq, Cerebras, DeepSeek, Perplexity, Together, HuggingFace, Z.AI, MiniMax, Fireworks, Moonshot, Vercel AI Gateway, SGLang, vLLM, Qwen, Alibaba Model Studio, Arcee, Cloudflare AI Gateway, Ollama, LM Studio, and Custom OpenAI-compatible endpoints surface whatever their vendor is offering right now. AWS Bedrock rows remain static because AWS has no public model-discovery endpoint. Search by model name or ID and filter by provider. The **Source** column distinguishes the three kinds. The status bar shows a live count (e.g. *120 of 240 models · 75 live*) when at least one visible row was fetched live. The **Capabilities** column shows per-model Tool, Vision, and Reasoning badges; the **Request Multiplier** column shows the Copilot premium-request cost for Copilot models (`0x`, `0.33x`, `1x`, `3x`, `7.5x`, …). The **Policy** column is Copilot-specific: it shows *Enabled* for models your account has successfully turned on, *Failed* for models the last enablement attempt rejected (hover the badge to read the exact error), or *Admin-managed* when your Copilot plan lets the tenant administrator control model availability. When a row shows *Failed*, right-click it and choose **Retry Copilot model policy** to kick off a fresh enablement pass against your Copilot tenant. Right-click a row or press **Use in active agent** to switch the active agent's model in one step (enabled only when the row's provider matches the agent's provider). The **Refresh** button invalidates the 5-minute model-list cache and re-queries every endpoint — use it after adding a new API key or after a vendor announces a new model.
+
+**Numeric parameters (Request Timeout, Context Window Override, Temperature, Top-P, Session Memory Count):** Type the value directly. Press **Enter** to apply, **Escape** to revert, or click away to apply automatically. Values outside the allowed range are clamped to the nearest bound. Leaving **Context Window Override**, **Temperature**, or **Top-P** empty means the catalog/provider default is used (no override sent).
+
+**GitHub Copilot provider:** Sign in via the Device Flow in **Settings → Agents → GitHub Authentication**. For corporate accounts, enter your **GitHub Enterprise Domain** (e.g. `company.ghe.com`) before signing in — OAuth and API calls then go to your enterprise instance. After signing in, use **Re-enable models** if Claude or Grok models report a policy error. Model selection automatically shows per-model context-window limits; Copilot routes each model to its correct upstream API.
+
+**Global Copilot enterprise domain:** If every Copilot agent in your setup uses the same GitHub Enterprise instance, set the domain once in **Settings → Providers → GitHub Copilot → Global GitHub Enterprise Domain**. Any Copilot agent without its own domain will inherit the global value automatically; agents that set their own domain still win. The agent card shows a hint *"Inherits global GitHub Enterprise domain: …"* when the inherited value is active.
+
 ### File Attachments
 
 Drag and drop files directly into the AI Chat to attach them to your message. The AI can see the content of attached files and respond accordingly.
@@ -1298,6 +1316,27 @@ Directly above the button sits the **Auto-accept server certificates** toggle:
 - **On (default)** — Any new server certificate is trusted on first connect. Fastest, most convenient; matches the previous behaviour.
 - **Off** — New server certificates are routed to the Rejected tab instead of being accepted automatically. You must open the dialog and click Trust before the next connect succeeds. Use this mode on networks where you want explicit per-server approval.
 
+### PLC Explorer — Keep a List of Known PLCs
+
+Next to the activity bar buttons for TIA Manager, Version Control, PLC Online, and File Explorer, a separate button opens the **PLC Explorer** — a sidebar where you keep your frequently-used PLCs so you can jump back to them without re-typing the IP each session.
+
+Each entry in the list shows:
+
+- A coloured dot for the last known reachability (green = reachable, red = offline, yellow = reconnecting, grey = never checked yet)
+- The alias you gave the PLC
+- The IP address or OPC UA endpoint
+- When the PLC was last seen reachable
+
+**Adding a PLC.** Click **Add PLC...**, fill in an alias (free-text), an IP or endpoint, and pick the protocol (S7 Native or OPC UA). The entry appears immediately in the list.
+
+**Checking whether a PLC is reachable.** Entries without an active connection are probed every 10 seconds via a quick TCP check on port 102 (S7 only; OPC UA entries show the last known state from the last active session). The dot flips on its own as soon as the PLC reachability changes — no need to reload the view.
+
+**Opening a connection.** Double-click an entry or use **Connect and open tab** from the context menu. A PLC Online tab opens (or the existing one is focused) with the IP and protocol already filled in. Click **Connect** in that tab to start the session.
+
+**Renaming or removing.** Right-click an entry for **Rename...** and **Remove from list**. Renaming only changes the display alias — the protocol and IP stay the same, and so does the entry's identity (`protocol:address`).
+
+The list is saved automatically between sessions.
+
 ### Connection Status Indicators (S7 Native)
 
 When connected to an S7-1200 or S7-1500 PLC over the native S7 Comm+ protocol, the PLC Online tab shows three live status indicators that react immediately to what the PLC is doing:
@@ -1502,9 +1541,9 @@ Canvas dashboards can be saved to JSONL files and loaded later. **OPC UA binding
 
 ---
 
-## 9c. SCL Unit Testing (Enterprise)
+## 9c. Unit Testing (Enterprise)
 
-Integrated unit test framework for SCL blocks. Write, run and evaluate tests against a live PLCSIM Advanced instance without leaving the app.
+Integrated unit test framework for TIA blocks. Write, run and evaluate tests against a live PLCSIM Advanced instance without leaving the app.
 
 **Requirements:**
 - Enterprise license
@@ -1513,7 +1552,7 @@ Integrated unit test framework for SCL blocks. Write, run and evaluate tests aga
 
 ### Opening the Unit Testing Workspace
 
-1. Click the **SCL Unit Testing** entry in the left sidebar (or press `Ctrl+5`)
+1. Click the **Unit Testing** entry in the left sidebar (or press `Ctrl+5`)
 2. The workspace has four dock panels:
    - **Left (Analysis tools + Test Explorer):** Interface, Boundary Values, Dependencies, Test Explorer (as tabs)
    - **Center (Document Dock):** Test suite editors (JSON, Visual, SCL modes)
@@ -1622,7 +1661,7 @@ Both transports expose their own configuration section in the same dialog, so ea
 
 ### Simulation Workspace
 
-Inside the SCL Unit Testing tab, a **Simulation** sub-mode switcher at the top lets you toggle between the Test Suites view and a dedicated **Simulation** view for managing PLCSim Advanced instances. The Simulation view shows:
+Inside the Unit Testing tab, a **Simulation** sub-mode switcher at the top lets you toggle between the Test Suites view and a dedicated **Simulation** view for managing PLCSim Advanced instances. The Simulation view shows:
 
 - API version, online-access mode (PLCSim / TCP/IP single / TCP/IP multi), strict motion timing toggle, and Runtime Manager Port.
 - A **Virtual Adapter** row showing the permanent status of the Siemens PLCSIM virtual Ethernet adapter (Ready / APIPA / Disabled / Not Installed / No IPv4), its IPv4 address, and a refresh button. If the adapter is stuck in the 169.254.x.y APIPA range, downloads will be unreliable — assign a static IPv4 address in Windows network settings.

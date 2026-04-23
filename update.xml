@@ -1,35 +1,46 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>3.4.0</version>
-    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v3.4.0/TiaOpennessManager_Setup_3.4.0.exe</url>
+    <version>3.5.0</version>
+    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v3.5.0/TiaOpennessManager_Setup_3.5.0.exe</url>
     <changelog>https://github.com/StaniB88/TIAOpennessManager/blob/main/CHANGELOG.md</changelog>
-    <release_date>2026-04-22</release_date>
+    <release_date>2026-04-24</release_date>
     <body>## What&apos;s Changed
 
-### Welcome
-- **Welcome tab** — interactive introduction with Get Started walkthrough on fresh install.
-
-### Compare Panel
-- **Redesigned diff editor** — Consolidated toolbar, cleaner change navigation, SCL syntax highlighting, and a streamlined set of actions (Edit, Save, Discard, Merge, Swap, Clear) alongside the built-in diff controls.
-- **Context-lines collapse** — Unchanged stretches far from any edit are folded behind a hunk header; buttons increase or decrease how much context is shown, or expand the entire file in one click.
-- **Working edit mode** — Toggle Edit to modify either side of the diff in place and save back to the file or PLC from the same toolbar.
-- **Preview Diff works on first click** — No more &quot;cache not found&quot; error on fresh checkouts or new working directories; the baseline is built automatically on the first run.
-- **Compare** — Block icons in the file list, matching the project tree.
-- **Compare** — Symmetric right-side file list with its own show/hide toggle for inspecting the disk side alongside the TIA side.
-- **Compare** — Color-coded change strip at the right edge of each file-list row for at-a-glance change classification.
-- **Git** — Diff viewer in commit details and revision compare no longer shows unused Compare-panel buttons.
-
 ### AI Chat
-- **Write Unit Tests** — now supports AWL/STL blocks in addition to SCL.
+- **AI Chat** — Importing or generating TIA blocks now always asks for explicit confirmation before changes are applied.
+- **AI Chat** — Removing or deleting unit tests now always asks for explicit confirmation before changes are applied.
+- **Azure OpenAI** — Chat-completions deployments now respect the configured request timeout on long-running calls.
+- **Reasoning effort** — Pick per agent how hard the model thinks (Low / Medium / High) from the composer bar or Settings.
+- **Provider settings tab** — New Providers section in AI Chat Settings shows GitHub Copilot sign-in status, enterprise domains in use, the reasoning-model policy state, and a catalog-refresh button. Placeholder cards for the other configured providers preview the upcoming Manage Language Models browser.
+- **Manage Language Models window** — New cross-provider model browser behind the gear icon in the composer bar. Search by name or ID, filter by provider, see per-model Tool / Vision / Reasoning badges and the Copilot request multiplier, apply a model to the active agent in one click.
+- **Manage Language Models window** — Claude models signed in via Anthropic OAuth now appear in the catalog alongside OpenAI, Google, and GitHub Copilot.
+- **Manage Language Models window** — Reasoning, Vision, Tool, context-window and max-output badges fall back to the community model catalog when a provider&apos;s /v1/models response does not report them.
+- **Copilot model policy badges** — The Manage Language Models window now shows per-model Enabled / Failed / Admin-managed status for GitHub Copilot rows, with a right-click retry for failed models.
+- **Azure OpenAI — multiple deployments per agent** — Register additional Azure deployments with per-row Add / edit / Remove controls on an Azure agent and they all appear in Manage Language Models.
+
+### Editor
+- **Drag &amp; drop from the Project Explorer** — Drop one or several blocks or offline source files onto the code editor or the Welcome tab; each dropped item opens as its own editor tab.
+
+### PLC Explorer
+- **PLC Explorer sidebar** — Keep a list of your frequently-used PLCs in a dedicated workspace, see at a glance which ones are reachable, and double-click to open a connection tab with the IP and protocol already filled in.
+
+### Unit Testing
+- **Unit Testing** — workspace renamed from &quot;SCL Unit Testing&quot;.
 
 ### Bug Fixes
-- **AI Chat** — AWL→SCL conversion preserves the original block header and comments verbatim.
-- **AI Chat** — Completed tool approvals collapse to a compact status line instead of keeping the full warning card on screen.
-- **OPC UA** — Method-call, matrix-editor, and certificate-management dialogs show their full content without left-edge clipping.
-- **Editor** — Empty split panes close automatically when their last tab is closed.
-- **Compare** — Preview Diff surfaces export failures in the status bar instead of leaving the editor blank.
-- **Compare** — Each block appears only once in the Preview Diff file list regardless of export format.</body>
+- **AI Chat** — Claude context window no longer reports 1 000 000 tokens when the 1M extended-context toggle is off; the composer bar shows the actual 200 000-token limit your plan uses.
+- **Output panel** — Maximize now fills the workspace even while the Welcome tab is open.
+- **Welcome tab** — Dropping a file from Windows Explorer or the File Tree onto the Welcome tab now opens it in the editor instead of being ignored.
+- **Protection profiles** — Active profile stays applied after Import All.
+- **Compare** — Dropping items on the right side now lists them on the right instead of defaulting to the left.
+- **Compare** — Side-aware drops refresh the file list immediately, dedupe re-exports of the same block, and keep the header in sync with the clicked file.
+- **Compare** — Diff backgrounds, highlights, and minimap now follow the active light/dark theme instead of staying dark.
+- **Profiles bar** — Selected profile name is vertically centered, and the add-profile field is wide enough to show its full label.
+- **Import / Delete errors** — Failed groups now show their real path, and errors are surfaced in the in-app log as well as the log file.
+- **File tree icons** — User-defined data types are recognised and shown with their own icon; non-TIA files no longer borrow block icons.
+- **Canvas** — Agent-drawn Canvas2D graphics stay visible after the agent finishes: the placeholder message is cleared on first draw, and drawings are re-painted when the Canvas panel is resized.
+- **Canvas** — Mouse clicks on agent-drawn Canvas2D shapes now reach the agent&apos;s event handlers; A2UI widgets keep receiving clicks unchanged.</body>
     <mandatory>false</mandatory>
-    <size>253977480</size>
-    <sha256>1C51C1ED560791986ACC37F4685BD3A9BB41233EDE26BE259AB599F96967EF8A</sha256>
+    <size>254366712</size>
+    <sha256>8A5CB48DE0CF871D91871523A54E990B40273D7E453E3FE284D1D7BED481788F</sha256>
 </item>

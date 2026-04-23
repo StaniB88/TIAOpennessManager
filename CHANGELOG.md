@@ -1,9 +1,48 @@
 # TIA Openness Manager - Changelog
 
+## v3.5.0 (2026-04-24)
+
+### AI Chat
+- **AI Chat** — Importing or generating TIA blocks now always asks for explicit confirmation before changes are applied.
+- **AI Chat** — Removing or deleting unit tests now always asks for explicit confirmation before changes are applied.
+- **Azure OpenAI** — Chat-completions deployments now respect the configured request timeout on long-running calls.
+- **Reasoning effort** — Pick per agent how hard the model thinks (Low / Medium / High) from the composer bar or Settings.
+- **Provider settings tab** — New Providers section in AI Chat Settings shows GitHub Copilot sign-in status, enterprise domains in use, the reasoning-model policy state, and a catalog-refresh button. Placeholder cards for the other configured providers preview the upcoming Manage Language Models browser.
+- **Manage Language Models window** — New cross-provider model browser behind the gear icon in the composer bar. Search by name or ID, filter by provider, see per-model Tool / Vision / Reasoning badges and the Copilot request multiplier, apply a model to the active agent in one click.
+- **Manage Language Models window** — Claude models signed in via Anthropic OAuth now appear in the catalog alongside OpenAI, Google, and GitHub Copilot.
+- **Manage Language Models window** — Reasoning, Vision, Tool, context-window and max-output badges fall back to the community model catalog when a provider's /v1/models response does not report them.
+- **Copilot model policy badges** — The Manage Language Models window now shows per-model Enabled / Failed / Admin-managed status for GitHub Copilot rows, with a right-click retry for failed models.
+- **Azure OpenAI — multiple deployments per agent** — Register additional Azure deployments with per-row Add / edit / Remove controls on an Azure agent and they all appear in Manage Language Models.
+
+### Editor
+- **Drag & drop from the Project Explorer** — Drop one or several blocks or offline source files onto the code editor or the Welcome tab; each dropped item opens as its own editor tab.
+
+### PLC Explorer
+- **PLC Explorer sidebar** — Keep a list of your frequently-used PLCs in a dedicated workspace, see at a glance which ones are reachable, and double-click to open a connection tab with the IP and protocol already filled in.
+
+### Unit Testing
+- **Unit Testing** — workspace renamed from "SCL Unit Testing".
+
+### Bug Fixes
+- **AI Chat** — Claude context window no longer reports 1 000 000 tokens when the 1M extended-context toggle is off; the composer bar shows the actual 200 000-token limit your plan uses.
+- **Output panel** — Maximize now fills the workspace even while the Welcome tab is open.
+- **Welcome tab** — Dropping a file from Windows Explorer or the File Tree onto the Welcome tab now opens it in the editor instead of being ignored.
+- **Protection profiles** — Active profile stays applied after Import All.
+- **Compare** — Dropping items on the right side now lists them on the right instead of defaulting to the left.
+- **Compare** — Side-aware drops refresh the file list immediately, dedupe re-exports of the same block, and keep the header in sync with the clicked file.
+- **Compare** — Diff backgrounds, highlights, and minimap now follow the active light/dark theme instead of staying dark.
+- **Profiles bar** — Selected profile name is vertically centered, and the add-profile field is wide enough to show its full label.
+- **Import / Delete errors** — Failed groups now show their real path, and errors are surfaced in the in-app log as well as the log file.
+- **File tree icons** — User-defined data types are recognised and shown with their own icon; non-TIA files no longer borrow block icons.
+- **Canvas** — Agent-drawn Canvas2D graphics stay visible after the agent finishes: the placeholder message is cleared on first draw, and drawings are re-painted when the Canvas panel is resized.
+- **Canvas** — Mouse clicks on agent-drawn Canvas2D shapes now reach the agent's event handlers; A2UI widgets keep receiving clicks unchanged.
+
 ## v3.4.0 (2026-04-22)
 
 ### Welcome
 - **Welcome tab** — interactive introduction with Get Started walkthrough on fresh install.
+- **Recent projects** — the Welcome tab now lists your last opened TIA projects and keeps them up to date, whether you open a project file or attach to a running TIA Portal instance.
+- **Recent projects — tidier layout** — file name on top, folder path beneath it, list sits directly under the Start actions instead of being pushed to the bottom of the page.
 
 ### Compare Panel
 - **Redesigned diff editor** — Consolidated toolbar, cleaner change navigation, SCL syntax highlighting, and a streamlined set of actions (Edit, Save, Discard, Merge, Swap, Clear) alongside the built-in diff controls.
@@ -17,6 +56,8 @@
 
 ### AI Chat
 - **Write Unit Tests** — now supports AWL/STL blocks in addition to SCL.
+- **GitHub Copilot** — now a first-class provider with per-model routing, GitHub Enterprise domain support, and accurate context-window limits for Claude models.
+- **AI Chat** — requests longer than 100 seconds now respect the configured timeout instead of being cut short.
 
 ### Bug Fixes
 - **AI Chat** — AWL→SCL conversion preserves the original block header and comments verbatim.
@@ -25,6 +66,9 @@
 - **Editor** — Empty split panes close automatically when their last tab is closed.
 - **Compare** — Preview Diff surfaces export failures in the status bar instead of leaving the editor blank.
 - **Compare** — Each block appears only once in the Preview Diff file list regardless of export format.
+- **Settings** — Numeric fields accept direct typing without crashing and commit on Enter.
+- **AI Chat** — Copilot usage panel refreshes immediately after switching to Copilot instead of requiring a model-dropdown click.
+- **Settings** — Context Window Override and 1M-context hints no longer reference specific third-party subscription tiers.
 
 ## v3.3.1 (2026-04-21)
 
@@ -39,7 +83,7 @@
 - **Compare panel — file list is resizable again** — The splitter between the file list and the diff editor drags between 180 and 500 pixels; the chosen width is remembered across show/hide cycles.
 - **AI Chat** — Context compaction — safety-critical tool results (deletions, test runs, compilations) are preserved verbatim through compaction instead of being truncated.
 - **S7 driver** — Connection reliability and stability improvements.
-- **SCL Unit Testing** — PLCSIM Advanced transport reliability and diagnostic improvements.
+- **Unit Testing** — PLCSIM Advanced transport reliability and diagnostic improvements.
 - **AI Chat settings** — API Key field reliably appears when a provider needs one.
 - **AI Chat** — Ctrl+B sub-agent backgrounding works reliably in all chat contexts.
 - **AI Chat** — Stalled responses surface as a clear error instead of hanging; timeouts are tuned per model so long-thinking assistants still complete.
@@ -75,7 +119,7 @@
 ### Editor
 - **Save and Upload split into two buttons** — Save writes to disk; Upload imports into TIA Portal.
 
-### SCL Unit Testing 
+### Unit Testing
 - **AI Chat authors test suites end-to-end** — Ask "write tests for FB_X" and the assistant drafts, runs and refines the suite. AI-authored cases carry an "AI" badge. F-CPU (Safety) blocks are refused without confirmation.
 - **Inline chat and Accept/Reject diff in the suite editor** — Press `Ctrl+I` for targeted edits streamed as a reviewable diff.
 - **AI opens a suite in the editor** — The assistant can open a newly created suite as a tab on request.
@@ -107,7 +151,7 @@
 - **Stepped rendering for digital signals** — Pick Linear or Step per signal; Bool switches to Step automatically.
 - **Splitter no longer shrinks the plot** — The horizontal splitter correctly resizes the signal table against the plot.
 
-### PLC Online 
+### PLC Online
 - **Live connection status dot per tab** — Grey/green/yellow/red dot with a tooltip.
 
 
@@ -140,7 +184,7 @@
 
 ## v3.2.0 (2026-04-14)
 
-### SCL Unit Testing (BETA)
+### Unit Testing (BETA)
 - **New feature** — Integrated unit test framework for SCL blocks. Write, run and evaluate tests against a live PLCSIM Advanced instance without leaving the app. Requires PLCSIM Advanced V3.0+ (separate Siemens license)
 - **Test Explorer** — Tree of all test suites in the project's `.tia-tests/` folder with live status icons (Pass / Fail / Error / Skipped). The explorer auto-detects new, deleted and modified suite files
 - **Run tests** — Run Suite, Run Test (single case), Run All, Run Selected from the Test Explorer context menu or the Run button. Live progress streams through phase updates and per-test-case status icons while the run is active
@@ -156,7 +200,7 @@
 - **Variable name check before running** — Before a run starts, the manager warns about variable names in the suite that don't exactly match the block interface, including case differences. You can still run the suite after acknowledging the warning
 - **Auto-reload of open suites** — Suite files are now automatically reloaded in the editor when they're modified externally, unless there are unsaved local changes
 - **One-click test runs for protected projects** — The PLCSIM Settings dialog has a new "Automatic TCP download" preparation mode. Pick it, click Run, and the runner compiles your project, starts a fresh PLCSIM Advanced instance, downloads via TCP over the PLCSIM Virtual Adapter and starts the tests. If your project has master-secret protection enabled, a password field appears in the dialog — check "Remember password" to store it in Windows Credential Manager so every future run picks it up automatically
-- **Manage PLCSim instances without leaving the app** — The SCL Unit Testing tab has a new Simulation sub-mode switcher at the top. Switch to Simulation to see every registered PLCSim Advanced instance with inline buttons for Power On, Run, Stop, Memory Reset, Settings, Network and Delete, plus a Tag Browser that connects to any instance and lists its tags with filter, search and auto-refresh
+- **Manage PLCSim instances without leaving the app** — The Unit Testing tab has a new Simulation sub-mode switcher at the top. Switch to Simulation to see every registered PLCSim Advanced instance with inline buttons for Power On, Run, Stop, Memory Reset, Settings, Network and Delete, plus a Tag Browser that connects to any instance and lists its tags with filter, search and auto-refresh
 - **Run tests against real hardware or via the PLCSim API** — The Connection Settings dialog (renamed from PLCSIM Settings) now lets each suite pick its transport: PLCSim Advanced for direct API access or S7 Comm+ for real hardware and authenticated TCP access. The S7 Comm+ section owns its own IP, port, rack, slot, TLS, user and password fields, so Unit Testing works independently of any other tab. Passwords are stored in Windows Credential Manager and can optionally be remembered across runs
 
 ### AI Chat
