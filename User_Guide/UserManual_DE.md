@@ -16,13 +16,14 @@
 6. [Project Tab](#6-project-tab)
 7. [Protected Items Tab](#7-protected-items-tab)
 8. [Passwort-Tresor (Vault Tab)](#8-passwort-tresor-vault-tab)
-9. [MCP Tab (KI-Integration)](#9-mcp-tab-ki-integration)
+9. [MCP Server (KI-Integration)](#9-mcp-server-ki-integration)
 9a. [KI-Chat](#9a-ki-chat)
 9b. [OPC UA Tab](#9b-opc-ua-tab)
 9c. [Unit Testing (Enterprise)](#9c-unit-testing-enterprise)
 9c. [AI Canvas](#9c-ai-canvas)
 10. [Projektbibliothek-Verwaltung](#10-projektbibliothek-verwaltung)
 11. [Hardware Tab](#11-hardware-tab)
+11a. [Im Projekt suchen (Cross-Reference-Suche)](#11a-im-projekt-suchen-cross-reference-suche)
 12. [Find Unused Blocks](#12-find-unused-blocks)
 13. [Einstellungen](#13-einstellungen)
 14. [Lizenzierung](#14-lizenzierung)
@@ -166,7 +167,7 @@ Die Anwendung ist in mehrere Bereiche unterteilt:
 │  Baumsteuerung: [F-Signatur] [Safety Printout]               │
 ├─────────────┬───────────────────────────────────────────────┤
 │             │  [Project] [Import/Export] [Find Unused]       │
-│  Projekt-   │  [MCP] [Hardware]                              │
+│  Projekt-   │  [Hardware]                                    │
 │  Baum       ├───────────────────────────────────────────────┤
 │             │                                               │
 │  (Links)    │              Tab-Inhalt                       │
@@ -174,7 +175,7 @@ Die Anwendung ist in mehrere Bereiche unterteilt:
 ├─────────────┴───────────────────────────────────────────────┤
 │  Unteres Panel: [Log Output] [Terminal] [Compare]            │
 ├─────────────────────────────────────────────────────────────┤
-│  Statusleiste: ● Verbunden | Statusnachricht | MCP: ● Aktiv  │
+│  Statusleiste: ● Verbunden | Statusnachricht | Lizenz: ● Pro │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -189,7 +190,6 @@ Die Anwendung ist in mehrere Bereiche unterteilt:
 - **Project** - Code-Editor für ausgewählte Blöcke
 - **Import/Export** - Haupt-Arbeitsbereich für Datei-Operationen
 - **Find Unused** - Dead-Code-Erkennung und Aufräumen
-- **MCP** - KI-Integrations-Status und Server-Steuerung
 - **Hardware** - Geräteliste mit PROFINET-Namen und IP-Konfiguration
 
 ### Menüleiste
@@ -320,6 +320,15 @@ Das Right Directory ist der Ordner auf Ihrem Dateisystem, in dem exportierte XML
 **Tipp:** Verwenden Sie einen Git-Repository-Ordner für automatische Versionskontrolle.
 
 > **Hinweis:** Das "Working Directory" in den Einstellungen bezieht sich auf die "Find Unused Blocks" Funktion und ist ein separater Ordner.
+
+### Suche im Datei-Baum (rechts)
+
+Das Suchfeld über dem rechten Datei-Baum filtert die Datei-Liste während der Eingabe. Es unterstützt dieselbe Syntax wie die [Suche im Projektbaum](#suche-im-projektbaum):
+
+- Teilzeichenkette (`motor`), Fuzzy (`fbmtr`), mehrere Begriffe (alle müssen passen), Phrase in Anführungszeichen (`"mein block"`), Ausschluss (`!safety`).
+- Passende Zeichen werden in jeder sichtbaren Zeile in fetter Akzentfarbe hervorgehoben.
+- Die Filterung ist um 250 ms entprellt, damit auch lange Listen während der Eingabe reaktiv bleiben.
+- Das Leeren des Suchfelds stellt Ihre manuell aufgeklappten Ordner exakt so wieder her, wie sie vor der Eingabe waren.
 
 ### Export-Operationen
 
@@ -544,9 +553,17 @@ Der Inline-Chat ermöglicht es, der KI direkt im Code-Editor Fragen zu stellen o
 ### Suche im Projektbaum
 
 Nutzen Sie das Suchfeld über dem Projektbaum, um Blöcke schnell zu finden:
-- Suche nach Name
-- Suche nach Nummer
-- Groß-/Kleinschreibung wird ignoriert
+- **Teilwort-Match** — `motor` findet `FB_Motor`, `MotorController`, `drive_motor`.
+- **Fuzzy-Match** — `fbmtr` findet `FB_Motor`, indem die Zeichen in Reihenfolge getroffen werden.
+- **Mehrere Suchbegriffe** — durch Leerzeichen getrennt. Alle Begriffe müssen treffen. `motor plc1` findet nur Einträge, deren Name sowohl `motor` als auch `plc1` enthält. Reihenfolge der Begriffe ist egal.
+- **Phrase in Anführungszeichen** — setzen Sie eine Phrase in doppelte Anführungszeichen, um sie wortwörtlich inklusive Leerzeichen zu suchen: `"my block"` findet genau den Teilstring `my block`.
+- **Ausschluss** — stellen Sie einem Begriff ein `!` voran, um Treffer auszuschließen: `motor !safety` findet Einträge deren Name `motor` matcht, aber **nicht** `safety` enthält.
+- **Bereichsfilter** — mit `kind:WERT` können Sie auf einen bestimmten Knotentyp einschränken. Bekannte Werte: `fb`, `fc`, `db`, `ob` (inkl. Safety-Varianten), `udt`, `tag`, `plc`, `block` (alle Block-Typen), `safety` (nur Safety-Blöcke), `folder`, `screen`. Beispiel: `kind:fb motor` listet nur Funktionsbausteine mit `motor` im Namen.
+- **Ranking** — exakte Treffer stehen oben, danach Präfix-Treffer, danach Treffer an Wortgrenzen (`FB_Motor` vor `CalibrateMotor`), danach allgemeine Teilwort-Treffer, zuletzt Fuzzy-Treffer. Die Weiter/Zurück-Navigation springt in Rang-Reihenfolge.
+- **Hervorhebung** — die matchenden Zeichen werden in jedem sichtbaren Treffer fett in Akzentfarbe dargestellt, damit Sie auf einen Blick erkennen, was getroffen wurde.
+- **Groß-/Kleinschreibung** wird ignoriert — `MOTOR` und `motor` verhalten sich gleich.
+
+Wenn Sie das Suchfeld leeren, wird der Projektbaum exakt so wiederhergestellt, wie er vor Ihrer Eingabe war — inklusive manuell ausgeklappter Knoten.
 
 ---
 
@@ -679,27 +696,76 @@ Die CSV-Datei enthält Passwörter im Klartext für Sicherungszwecke. Speichern 
 
 ---
 
-## 9. MCP Tab (KI-Integration)
+## 9. MCP Server (KI-Integration)
 
 ### Was ist MCP?
 
-Das Model Context Protocol (MCP) ermöglicht KI-Assistenten, auf Ihr TIA Portal Projekt zuzugreifen.
+Das Model Context Protocol (MCP) erlaubt externen KI-Assistenten — Claude Desktop, Claude Code, Gemini CLI, Cursor, LM Studio, Continue.dev — über TIA Openness Manager auf Ihr TIA Portal Projekt zuzugreifen.
 
-### MCP Server Status
+### So funktioniert es
 
-Der Tab zeigt:
-- **Server Status:** Running / Stopped
-- **Verbundene Clients:** Anzahl aktiver Verbindungen
-- **Verfügbare Tools:** Liste der MCP-Funktionen
+Es gibt keinen MCP-Tab im Hauptfenster mehr. Der MCP-Server läuft als Hintergrund-Subprocess, den der KI-Client bei Bedarf selbst startet, indem er `TiaOpennessManager.V3.exe` mit dem Argument `--mcp-stdio` aufruft. Solange TIA Openness Manager geöffnet ist und mit einem TIA Portal Projekt verbunden ist, leitet der Subprocess jeden Tool-Aufruf transparent an die laufende Instanz weiter — alle 37 MCP-Tools (Projekt-Queries, Block-Code lesen, Exports, Vergleiche, KI-gestützte Analysen, OPC UA, Canvas, Git, PowerShell, Trace etc.) arbeiten gegen das Projekt, das Sie aktuell offen haben.
 
-### Verwendung mit KI-Assistenten
+### Einrichtung mit einem KI-Assistenten
 
-1. Starten Sie den MCP Server im TIA Openness Manager
-2. Konfigurieren Sie Ihren KI-Assistenten mit der MCP-Server-Adresse
-3. Der KI-Assistent kann nun:
-   - Projektstruktur abfragen
-   - Block-Code lesen
-   - Analysen durchführen
+1. Öffnen Sie TIA Openness Manager und verbinden Sie es wie gewohnt mit Ihrem TIA Portal Projekt.
+2. Tragen Sie in der MCP-Server-Konfiguration Ihres KI-Clients einen neuen Server ein, mit Kommando `TiaOpennessManager.V3.exe` und Argument `--mcp-stdio`. Die genaue Syntax hängt vom Client ab (jeder Anbieter veröffentlicht sein eigenes MCP-Server-Format) — siehe die Beispiel-Snippets unten.
+3. Starten Sie einen Chat mit dem KI-Assistenten. Er kann jetzt Projektstruktur abfragen, Block-Code lesen, Analysen durchführen, OPC UA Lese-/Schreibzugriffe steuern und jedes andere Tool nutzen, das die aktive Lizenzstufe erlaubt.
+
+### Capabilities
+
+| Capability | Methoden | Was der KI-Client damit kann |
+|------------|----------|------------------------------|
+| Tools | `tools/list`, `tools/call` | 37 Tools — TIA-Projekt- und PLC-Operationen (Projekt-Queries, Code lesen, Exports, Vergleiche, OPC UA, Canvas, Trace, Unit Testing, Git) plus universelle Helfer: `fs` (Dateisystem-Lesen/Schreiben/Suchen), `web_fetch` (HTTP-Outbound), `web_search`. Jeder Aufruf wird durch Lizenzstufe und den Permission-Filter gegated |
+| Resources | `resources/list`, `resources/read`, `notifications/resources/list_changed` | Live-Resource `tia://project` plus 4 URI-Templates; Clients erhalten eine List-Changed-Benachrichtigung wenn sich das Projekt ändert (per-URI-Subscribe ist bewusst nicht advertised) |
+| Sampling | `sampling/createMessage` | Das TIA-Portal-bewusste Tool `tia_ai_analyze` lässt den KI-Client ein Modell anstoßen — der Client steuert Modell und Credentials selbst |
+| Prompts | `prompts/list`, `prompts/get` | 4 vorgefertigte Prompts: `analyze-block`, `generate-unit-tests`, `compare-blocks`, `review-safety-function` |
+| Logging | `logging/setLevel`, `notifications/message` | Der KI-Client kann sich den Server-Log-Stream in einer wählbaren Verbosität liefern lassen |
+
+### Konfigurations-Beispiele
+
+Ersetzen Sie `C:\Program Files\TIA Openness Manager\TiaOpennessManager.V3.exe` durch Ihren tatsächlichen Installationspfad. Der Pfad muss auf einen schreibgeschützten Ort zeigen — das Default-Installationsverzeichnis unter `Program Files` verlangt Admin-Rechte zum Ändern, genau was Sie wollen. Wenn Sie den KI-Client auf ein user-schreibbares Verzeichnis zeigen lassen, wird der MCP-Server-Eintrag zum Code-Execution-Sink für jeden Prozess, der unter Ihrem User-Account läuft.
+
+**Claude Desktop** (`%APPDATA%\Claude\claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "tia-openness-manager": {
+      "command": "C:\\Program Files\\TIA Openness Manager\\TiaOpennessManager.V3.exe",
+      "args": ["--mcp-stdio"]
+    }
+  }
+}
+```
+
+**Claude Code** — registrieren Sie den Server über die CLI:
+
+```
+claude mcp add tia-openness-manager "C:\Program Files\TIA Openness Manager\TiaOpennessManager.V3.exe" -- --mcp-stdio
+```
+
+Claude Code speichert MCP-Server-Einträge in seiner Root-Settings-Datei (`~/.claude.json` unter dem Schlüssel `mcpServers`); nutzen Sie die CLI statt die Datei direkt zu editieren.
+
+**LM Studio** — Settings → MCP Servers → Add Server:
+
+- Name: `tia-openness-manager`
+- Command: `C:\Program Files\TIA Openness Manager\TiaOpennessManager.V3.exe`
+- Arguments: `--mcp-stdio`
+
+**Gemini CLI** (`~/.gemini/config.json`), **Cursor** (Settings → MCP Servers) und **Continue.dev** (`~/.continue/config.json` unter `experimental.modelContextProtocolServer`) akzeptieren dasselbe Format — `command` plus `args: ["--mcp-stdio"]`.
+
+### Lizenz-Gating
+
+MCP-Tool-Aufrufe erfordern eine Lizenzstufe, die MCP-Server-Zugriff enthält (Trial, Professional oder Enterprise). Die Basic-Stufe enthält kein MCP — Aufrufe vom KI-Client werden vom SDK pro Aufruf mit einem Tier-Reject zurückgewiesen. Die Prüfung läuft in der SDK-Filter-Chain bei jedem Tool-Aufruf; es gibt keinen App-Toggle.
+
+### Diagnose
+
+Subprocess-Logs liegen unter `%LocalAppData%/TiaOpennessManager/Logs/mcp-subprocess.log` (tägliche Rotation, 3-Datei-Retention). Damit lassen sich Verbindungsprobleme oder unerwartete Reject-Meldungen nachvollziehen.
+
+### Session-Anzeige
+
+Die Statusleiste am unteren Rand des Hauptfensters zeigt `MCP: <n>`, sobald ein KI-Client über den Proxy-Pfad verbunden ist. Das Stecker-Symbol leuchtet in Akzentfarbe, sobald mindestens ein Client online ist. Ein Klick auf den Indikator öffnet einen Dialog, der alle aktiven Sessions auflistet (Client-Name, Version, Connect-Zeit, Session-Id) und unten eine Setup-Anleitung mit Copy-fertigen Konfigurations-Snippets für Claude Desktop, Claude Code, LM Studio und Continue.dev bereitstellt. Der Desktop-App-Tab bietet zusätzlich einen *Ordner öffnen*-Button, der direkt nach `%APPDATA%\Claude` springt, damit Sie das Snippet in `claude_desktop_config.json` einfügen können.
 
 ---
 
@@ -927,7 +993,7 @@ Legen Sie eine `.json`-Datei in `%LocalAppData%\TiaOpennessManager\agents\` ab m
 
 **Sprachmodelle verwalten (Manage Language Models):** Das Zahnrad-Symbol neben dem Assistenten-Wähler in der Composer-Bar öffnet einen provider-übergreifenden Katalog aller Modelle, die die App kennt. Das Fenster kombiniert drei Zeilenarten: den gemergten statischen und server-discovered Copilot-Katalog; die OAuth-Kataloge für OpenAI Codex, Google Gemini CLI und Antigravity; und — neu — eine **live abgefragte** Modell-Liste für jeden Agent, den Sie mit API-Key konfiguriert haben. Die App fragt das `/models`-Endpoint jedes Anbieters direkt ab, also erscheinen Anthropic, OpenAI, OpenRouter, Mistral, XAI, Groq, Cerebras, DeepSeek, Perplexity, Together, HuggingFace, Z.AI, MiniMax, Fireworks, Moonshot, Vercel AI Gateway, SGLang, vLLM, Qwen, Alibaba Model Studio, Arcee, Cloudflare AI Gateway, Ollama, LM Studio und Custom-OpenAI-kompatible Endpoints jeweils mit dem, was der Anbieter aktuell anbietet. AWS-Bedrock-Zeilen bleiben statisch, weil AWS kein öffentliches Modell-Discovery-Endpoint bereitstellt. Suchen nach Modellname oder ID, Filtern nach Anbieter. Die Spalte **Quelle** unterscheidet die drei Zeilenarten. Die Statuszeile zeigt eine Live-Zählung (z. B. *120 von 240 Modellen · 75 live*), sobald mindestens eine sichtbare Zeile live geholt wurde. Die Spalte **Fähigkeiten** zeigt pro Modell Tool-, Vision- und Reasoning-Badges; die Spalte **Request-Multiplikator** zeigt die Copilot-Premium-Request-Kosten pro Modell (`0x`, `0.33x`, `1x`, `3x`, `7.5x`, …). Die Spalte **Richtlinie** ist Copilot-spezifisch: *Aktiviert* zeigt Modelle, die Ihr Account erfolgreich eingeschaltet hat; *Fehlgeschlagen* markiert Modelle, bei denen die letzte Aktivierung abgelehnt wurde (Mouseover zeigt den genauen Fehler); *Admin-verwaltet* erscheint, wenn Ihr Copilot-Plan die Modellverfügbarkeit den Tenant-Admin überlässt. Bei *Fehlgeschlagen* öffnet Rechtsklick → **Copilot-Modellrichtlinie erneut anwenden** einen neuen Aktivierungsdurchlauf gegen Ihren Copilot-Tenant. Rechtsklick auf eine Zeile oder **Für aktiven Agent verwenden** setzt das Modell des aktiven Agents (nur verfügbar, wenn der Anbieter zur Zeile passt). Die Schaltfläche **Aktualisieren** invalidiert den 5-Minuten-Modell-Cache und fragt jedes Endpoint erneut ab — praktisch nach dem Hinzufügen eines API-Keys oder wenn ein Anbieter ein neues Modell ankündigt.
 
-**Numerische Parameter (Request Timeout, Context Window Override, Temperature, Top-P, Session Memory Count):** Tippen Sie den Wert direkt ein. **Enter** übernimmt, **Escape** verwirft, oder klicken Sie neben das Feld, um automatisch zu übernehmen. Werte ausserhalb des erlaubten Bereichs werden auf die nächste Grenze gekürzt. Leere **Context Window Override**, **Temperature** oder **Top-P** bedeuten, dass der Katalog-/Provider-Standard verwendet wird (kein Override gesendet).
+**Numerische Parameter (Request Timeout, Max. Wiederholungen, Context Window Override, Temperature, Top-P, Session Memory Count):** Tippen Sie den Wert direkt ein. **Enter** übernimmt, **Escape** verwirft, oder klicken Sie neben das Feld, um automatisch zu übernehmen. Werte ausserhalb des erlaubten Bereichs werden auf die nächste Grenze gekürzt. Leere **Max. Wiederholungen**, **Context Window Override**, **Temperature** oder **Top-P** bedeuten, dass der Provider-SDK-Standard (typisch 2–3 Wiederholungen mit exponentiellem Backoff für **Max. Wiederholungen**) bzw. der Katalog-/Provider-Standard verwendet wird (kein Override gesendet). **Max. Wiederholungen** akzeptiert 0–10 und gilt für Anthropic-, OpenAI-, OpenAI-Responses- und Azure-OpenAI-Agenten.
 
 **GitHub-Copilot-Provider:** Melden Sie sich über den Device Flow in **Einstellungen → Agenten → GitHub-Authentifizierung** an. Für Firmenkonten tragen Sie vor der Anmeldung Ihre **GitHub-Enterprise-Domain** (z. B. `firma.ghe.com`) ein — OAuth- und API-Aufrufe laufen dann gegen Ihre Enterprise-Instanz. Nach der Anmeldung nutzen Sie **Modelle erneut aktivieren**, falls Claude- oder Grok-Modelle einen Policy-Fehler melden. Die Model-Auswahl zeigt automatisch das zugehörige Kontextfenster pro Modell; Copilot routet jedes Modell an die richtige Upstream-API.
 
@@ -1077,6 +1143,8 @@ Der KI-Agent kann Teilaufgaben an unabhängige Subagenten delegieren und diese w
 
 **Genehmigungs-Anfragen von Sub-Agenten.** Wenn ein Sub-Agent deine Erlaubnis braucht, um ein Tool auszuführen (z. B. eine OPC-UA-Verbindung aufzubauen oder einen Git-Branch zu pushen), erscheint die Anfrage jetzt direkt im Hauptchat — du musst das Sub-Agent-Panel nicht aufklappen, um sie zu finden. Jede Anfrage zeigt klar, welcher Sub-Agent sie ausgelöst hat. Nach deiner Entscheidung zeigt die Anfrage einen von drei Status: grüner Haken ("Erlaubt"), rotes X ("Abgelehnt" — du hast aktiv abgelehnt) oder oranger Hinweis ("Unterbrochen" — die App wurde geschlossen oder der Aufruf abgebrochen, bevor du entscheiden konntest). Tool-Argumente mit Namen wie `password`, `api_key` oder `token` werden als `[redacted]` angezeigt, damit sie nicht in der Chat-Historie auf der Platte landen.
 
+**Transparenz bei Tool-Aufrufen.** Wenn der Assistent ein Tool ausführt, zeigt der Chat auf einen Blick Operation und Ziel — zum Beispiel *„Lesen (src/main.cs · Zeilen 1-50)"* beim Lesen einer Datei oder *„Git Status"* bei einem Git-Befehl. Erfolgreiche Aktionen erhalten einen grünen Haken mit kurzer Zusammenfassung, Fehler ein rotes X, und abgelehnte Freigaben ein gelbes Schild — so wissen Sie immer, was der Assistent getan hat, ohne die Zeile aufklappen zu müssen. Dateipfade in diesen Zeilen sind anklickbar: Ein Klick öffnet die Datei im Code-Editor-Tab, damit Sie nachsehen können, was der Assistent gelesen oder geschrieben hat, ohne den Pfad selbst abzutippen. Destruktive Tools wie das Löschen eines Bausteins oder das Importieren von externem Code zeigen ihren Namen auf rotem Hintergrund — ein zweiter visueller Warnhinweis vor Ihrer Freigabe.
+
 ### Hooks
 
 Hooks sind ereignisgesteuerte Abfangmechanismen, die vor oder nach KI-Tool-Aufrufen ausgefuehrt werden. Sie ermoeglichen benutzerdefinierte Validierung, Formatierung, Protokollierung oder Steuerung der Tool-Ausfuehrung.
@@ -1153,6 +1221,10 @@ Sie koennen Nachrichten eingeben und senden waehrend der KI-Agent aktiv arbeitet
 
 **Sub-Agent in den Hintergrund verschieben:** Wenn ein blockierender Sub-Agent den Haupt-Assistenten wartet laesst, druecken Sie **Strg+B**. Der Sub-Agent wird losgeloest und laeuft im Hintergrund weiter, waehrend der Haupt-Assistent frei ist, auf neue Nachrichten zu antworten. Am Sub-Agent-Block erscheint ein kleines "(Hintergrund)"-Kennzeichen. Sobald der Sub-Agent im Hintergrund fertig ist, erscheint sein Ergebnis als Benachrichtigung im Chat, und der Haupt-Assistent setzt dort an. Wenn mehrere Sub-Agenten gleichzeitig blockieren, schickt Strg+B alle auf einmal in den Hintergrund.
 
+**Hauptsitzung in den Hintergrund (Ctrl+B):** Wenn der Assistent gerade an einem Turn arbeitet (Tool-Aufrufe, lange Antwort oder Sub-Agent), verschiebt **Ctrl+B** den ganzen Turn in den Hintergrund. Die Original-Sitzung steht sofort wieder fuer neue Eingaben bereit. Der Hintergrund-Turn laeuft weiter; bei Fertigstellung erscheint ein Toast und ein Badge im neuen Abschnitt "Hintergrund-Sitzungen" der Sidebar. Klick auf den Eintrag oder erneutes Ctrl+B holt ihn in den Vordergrund — dort koennen Sie wie gewohnt weiterchatten. Erneutes Ctrl+B schickt ihn wieder in den Hintergrund. Wenn der Hintergrund-Turn fertig ist, wird ausserdem eine kurze Ergebnis-Meldung in der Original-Sitzung angehaengt — der Assistent kann das Ergebnis beim naechsten Mal, wenn Sie schreiben, direkt aufgreifen, ohne dass Sie die Hintergrund-Sitzung manuell oeffnen muessen. Hintergrund-Sitzungen werden beim App-Schliessen abgebrochen.
+
+**Reihenfolge:** Wenn blockierende Sub-Agents laufen, schickt das erste Ctrl+B diese in den Hintergrund (bestehendes Verhalten). Das naechste Ctrl+B (oder Ctrl+B ohne blockierende Sub-Agents) verschiebt den kompletten Hauptturn in den Hintergrund.
+
 **Warteschlangen-Verarbeitung:** Nach jedem abgeschlossenen KI-Turn prueft das System automatisch die Warteschlange und verarbeitet die naechste Nachricht. Bei mehreren wartenden Nachrichten werden diese einzeln in Prioritaetsreihenfolge verarbeitet (hoehere Prioritaet zuerst, FIFO innerhalb gleicher Prioritaet).
 
 ---
@@ -1227,6 +1299,9 @@ Der linke Bereich des OPC UA Tabs zeigt eine Baumansicht des Server-Adressraums:
 **Knoten suchen:**
 Verwenden Sie das Suchfeld über dem Baum, um Knoten nach Namen zu filtern. Der Baum klappt zusammen und zeigt nur übereinstimmende Knoten und ihre übergeordneten Elemente an.
 
+**Knoten aktualisieren:**
+Die orange Pfeil-Schaltfläche „Aktualisieren" in der Werkzeugleiste des Adressraum-Bereichs (oben rechts) lädt die Kinder des aktuell ausgewählten Knotens direkt vom Server neu und umgeht dabei den lokalen Cache. Nutzen Sie sie, wenn sich der Adressraum auf Server-Seite seit dem letzten Erweitern geändert hat — zum Beispiel nach dem Hinzufügen von Tags in TIA Portal — und die zwischengespeicherten Kinder nicht mehr stimmen. Die Schaltfläche ist deaktiviert, wenn kein Knoten ausgewählt ist, keine OPC-UA-Verbindung aktiv ist oder die aktive Verbindung das S7-Native-Protokoll nutzt.
+
 ### Knoteninformationen
 
 Ein im Adressraum ausgewählter Knoten füllt das **Knoteninformationen**-Panel auf der rechten Seite mit allen OPC UA-Attributen dieses Knotens: Node Id, Browse Name, Display Name, Node Class, Description, Write Mask und User Write Mask. Bei Variablen kommen Data Type, Value Rank, Array Dimensions, Access Level, User Access Level, Minimum Sampling Interval, Historizing, aktueller Value, Status Code sowie Source- und Server-Timestamp dazu. Alle Zellen lassen sich mit Strg+C kopieren.
@@ -1275,6 +1350,53 @@ Das **Verlaufsdiagramm** liegt als dritter Tab neben Beobachtungstabelle und Ere
 Nicht-numerische Werte, Werte mit `Bad`-Status sowie Samples mit ungültigen Zeitstempeln werden im Diagramm ausgelassen, bleiben aber im CSV-Export enthalten. Ein Lesevorgang ist auf 100.000 Werte pro Anfrage und 1.000.000 Werte gesamt begrenzt; liefert der Server mehr, zeigt das Diagramm das, was hineinpasst, und eine Warnung wird protokolliert. Das Diagramm wird automatisch beim Protokollwechsel oder bei der Trennung geleert — beim Navigieren im Adressraum bleibt der Inhalt jedoch erhalten, damit geladene Daten nicht durch einen Knotenwechsel verloren gehen.
 
 Die Variable muss am Server `Historizing = true` haben und die Sitzung muss HistoryRead-Zugriff besitzen. Siemens S7-1500-CPUs aktivieren Historizing nicht automatisch — die meisten Variablen müssen in der PLC-Konfiguration explizit für den Verlaufszugriff markiert werden.
+
+### Server-Diagnose (Server Diagnostics)
+
+Das **Server-Diagnose**-Panel sitzt als vierter Reiter neben Watch Table, Event Log und History Chart im unteren Bereich des OPC-UA-Workspace. Es bringt die standardisierte OPC-UA-Server-Object-Hierarchie (Part 5 §6) direkt in die Anwendung — Session-Zähler, Subscription-Status und Server-Build-Informationen ohne Wechsel auf ein externes Tool.
+
+| Toolbar-Bedienung | Zweck |
+|-------------------|-------|
+| Poll-Intervall | NumericUpDown 1–60 s (Default 5). Wird pro Endpunkt persistiert. |
+| Aktualisieren | Liest sofort, unabhängig vom Timer. |
+| Polling-Anzeige | Indeterminate-Balken während aktivem Read. |
+| Zuletzt aktualisiert | Zeitstempel der letzten erfolgreichen Antwort (HH:mm:ss, Ortszeit). |
+| Inline-Fehler | Zeigt den vom Server gelieferten Status-Code, falls der Read scheitert. |
+
+Der Inhalt zeigt fünf zusammenklappbare Sektionen:
+
+- **Server-Status** — State, Startzeit, Abschaltungs-Countdown, Build-Info (Produktname, URI, Hersteller, Software-Version, Build-Nummer, Build-Datum).
+- **Server-Fähigkeiten** — Max. Array- / String- / ByteString-Länge, OperationLimits (Max. Nodes per Read / Write / Browse).
+- **Diagnose-Übersicht** — Aktive und kumulierte Sessions, abgewiesene Sessions, Session-Timeouts, aktive Subscriptions, abgewiesene Anfragen.
+- **Subscriptions** — Sortier-/größenveränderbares Grid, eine Zeile pro aktiver Subscription (ID, Publishing-Intervall, Publishing-Flag, Benachrichtigungszahl).
+- **Sessions** — Sortier-/größenveränderbares Grid, eine Zeile pro Session (Session-ID, Name, Verbindungszeit, letzter Kontakt, Anfragen gesamt, Lesevorgänge, Schreibvorgänge).
+
+Wenn der Server den `Server.ServerDiagnostics`-Subtree per Policy nicht freigibt (z. B. wegen Security-Konfiguration oder Kapazität), erscheint statt leerer Tabellen der Hinweis "Server-Diagnose wird von diesem Server nicht bereitgestellt". Vorübergehende Kommunikationsfehler lösen den Hinweis **nicht** aus — sie landen im Inline-Fehlerstreifen, sodass "Policy-Sperre" und "vorübergehender Ausfall" klar unterscheidbar bleiben. Bei wiederholten Fehlschlägen verlängert das Panel automatisch das Poll-Intervall, um einen angeschlagenen Server nicht zusätzlich zu belasten; sobald wieder eine erfolgreiche Antwort kommt, wird das Backoff zurückgesetzt.
+
+Pro-Zeile-Strings (Session-Name, Produktname, …) werden bereits beim Projektieren bereinigt — eingebettete Steuerzeichen können das Grid-Layout nicht zerschiessen.
+
+### Verbindungs-Polish
+
+Verbindungs-Header und Adressraum-Baum bieten UaExpert-typische Verbesserungen für den täglichen Betrieb:
+
+**Auto-Reconnect-Banner.** Wenn der Keep-Alive-Watchdog eine verlorene Verbindung erkennt, beginnt das SDK im Hintergrund mit dem Wiederaufbau. Während dieser Phase erscheint im Verbindungs-Header ein gelbes Banner, das einmal pro Sekunde die abgelaufene Zeit aktualisiert ("Verbindung wird wiederhergestellt… (12 Sekunden)"). Ein **Abbrechen**-Button im Banner stoppt den Versuch und kehrt in den getrennten Zustand zurück — nützlich, wenn klar ist, dass der Server endgültig weg ist und der 5-Minuten-Timeout übersprungen werden soll.
+
+**Letzte Endpunkte.** Das Endpunkt-URL-Feld ist eine Autocomplete-Liste der letzten 10 erfolgreichen Verbindungen. Tippen filtert; Pfeil-nach-unten öffnet die volle Liste. Die Historie ist pro Installation (nicht pro Projekt) und überlebt einen Anwendungs-Neustart. URL-Varianten, die auf dasselbe Schema + Host + Port auflösen, werden zu einem Eintrag zusammengeführt — `OPC.TCP://Host:4840/` nach einer früheren `opc.tcp://host:4840`-Verbindung aktualisiert den bestehenden Eintrag, statt ein Duplikat anzulegen.
+
+**Tastenkürzel.** Innerhalb des OPC-UA-Tabs sind die folgenden Tasten an die aktive Verbindung gebunden:
+
+| Tastenkürzel | Aktion |
+|--------------|--------|
+| Strg+Eingabe | Verbinden |
+| Strg+D | Trennen |
+| F5 | Ausgewählten Knoten neu lesen (Re-Browse vom Server, Cache-Bypass) |
+| Strg+W | Aktuell markierte Watch-Table-Zeile schreiben |
+
+Das Schreib-Kürzel wirkt auf die in der Watch Table markierte Zeile — Zeile auswählen (einfacher Klick), Wert-Zelle bearbeiten (Doppelklick oder F2), dann Strg+W zum Senden. Ohne aktive Bearbeitung passiert nichts.
+
+**NodeId kopieren / Browse-Pfad kopieren.** Rechtsklick auf einen Knoten im Adressraum-Baum öffnet ein Kontextmenü mit zwei neuen Einträgen: **NodeId kopieren** legt die kanonische NodeId (z. B. `ns=2;s=DB1.MyTag`) in die Zwischenablage, **Browse-Pfad kopieren** legt den lesbaren Pfad (z. B. `Objects/DeviceSet/PLC_1/DB1/MyTag`) ab. Praktisch für das Einfügen in Canvas-Bindings, MCP-Tool-Aufrufe oder externe Skripte.
+
+**Ansichts-Menü.** Ein "Ansicht"-Button in der OPC-UA-Toolbar öffnet ein Menü mit einem Toggle-Eintrag pro Tool-Reiter (Adressraum, Typdefinitionen, Knotenattribute, Referenzen, Strukturfelder, CPU-Schutz, Beobachtungstabelle, Ereignisprotokoll, Verlauf, Serverdiagnose). Ein Klick schliesst den entsprechenden Reiter, falls er offen ist, oder öffnet ihn wieder an seinem ursprünglichen Dock-Platz, falls er geschlossen war. Hilfreich, um einen versehentlich über das ×-Symbol geschlossenen Reiter wiederzubekommen, ohne den ganzen Workspace zurücksetzen zu müssen.
 
 ### Methodenaufruf-Dialog
 
@@ -1348,6 +1470,30 @@ Beim nativen S7-Comm+-Zugriff auf eine S7-1200 oder S7-1500 zeigt der PLC-Online
   - **Rot** — SPS nicht erreichbar
 - **Wiederverbindungs-Banner** — ein gelber Streifen unter der Verbindungsleiste erscheint mit der Meldung "Wiederverbinde…" solange die App versucht, eine unterbrochene Verbindung wiederherzustellen. Er verschwindet automatisch, sobald die SPS wieder da ist.
 - **Ausgegraute Werte** — wird die SPS unerreichbar, werden die Werte in der Beobachtungstabelle auf halbe Deckkraft gedimmt und auf `???` umgestellt, damit klar ist, dass sie nicht mehr aktuell sind. Sobald die SPS zurück ist, ersetzen frische Live-Werte die Platzhalter automatisch. Kein Neustart, kein manuelles Wiederverbinden nötig.
+- **Betriebszustands-Pille** — `RUN`, `STOP`, `STARTUP` etc. neben der IP-Adresse, farblich passend zum CPU-Zustand.
+- **Zugriffs-Stufe-Badge** — direkt neben der Betriebszustands-Pille; spiegelt wider, was die SPS in der Legitimations-Phase gewährt hat:
+  - **Grün `Vollzugriff`** — das eingegebene Passwort (oder Anonymous, falls die SPS es zulässt) wurde mit voller Lese-/Schreib-Berechtigung akzeptiert.
+  - **Bernstein `Lesezugriff` / `HMI-Zugriff`** — die SPS hat eine eingeschränkte Stufe gewährt. Lesen funktioniert in dem Umfang, den die Stufe erlaubt; Schreibvorgänge werden abgelehnt.
+  - **Rot `Kein Zugriff`** — die SPS verlangt ein Passwort und es wurde keines eingegeben. Die Verbindung bleibt offen, aber das Browsen, das Anlegen von Subskriptionen und die CPU-Schutz-Abfrage werden bewusst übersprungen. Geben Sie das richtige Passwort im Verbindungsformular ein und klicken Sie erneut auf Connect, um sich mit Anmeldedaten zu verbinden.
+
+### CPU-Schutz-Panel
+
+Ein Tab `CPU-Schutz` im rechten Werkzeug-Dock zeigt den aktuellen Schutzzustand der verbundenen S7-1500 / S7-1500F-CPU:
+
+- **Schutzstufe** — `Kein Schutz` / `Leseschutz` / `Schreibschutz` / `Vollständiger Schutz` / `Unbekannt`. Die Werte spiegeln das, was TIA Portal in „Online & Diagnose" für dieselbe CPU anzeigt.
+- **Passwort erforderlich** — `Ja`, falls die gewährte Stufe ein Passwort zur Authentifizierung verlangt, sonst `Nein`.
+- **Aktualisieren** — liest den CPU-Speicher- und Schutz-Block neu auf Anforderung. Der Wert wird zusätzlich nach jedem erfolgreichen S7-Verbindungsaufbau einmal automatisch aktualisiert (sodass das Feld bereits gefüllt ist, wenn der Tab geöffnet wird).
+
+Solange keine SPS verbunden ist, zeigen die Werte einen Geviertstrich (`—`). Schlägt das Lesen fehl (z. B. weil die CPU die Anfrage ablehnt), erscheint unterhalb der Zeilen ein roter Hinweis und der zuletzt erfolgreich gelesene Wert bleibt bis zur nächsten erfolgreichen Aktualisierung erhalten.
+
+### Protokollabhängige Werkzeug-Tabs
+
+Die Werkzeug-Tabs rund um den Verbindungs-Workspace passen sich an das Protokoll der aktiven Verbindung an:
+
+- **OPC-UA-Verbindung** — Adressraum, Typdefinitionen, Knoten-Attribute, Verweise, Strukturfelder, Ereignisprotokoll, Beobachtungstabelle, Verlaufsdiagramm, Server-Diagnose. Kein CPU-Schutz-Tab (S7-spezifisch).
+- **S7-Comm+-Verbindung** — Adressraum, Beobachtungstabelle, Verlaufsdiagramm, CPU-Schutz. Die OPC-UA-spezifischen Tabs (Typdefinitionen, Knoten-Attribute, Verweise, Strukturfelder, Ereignisprotokoll, Server-Diagnose) werden ausgeblendet, weil sie NodeIds, OPC-Events oder andere serverseitige Strukturen brauchen, die S7 Comm+ nicht bietet.
+
+Ausgeblendete Tabs behalten ihren Zustand — wechselt der aktive Tab auf eine S7-Verbindung und zurück auf OPC UA, erscheinen die OPC-UA-Tabs wieder an ihren ursprünglichen Stellen. Beim Umschalten der Protokoll-Auswahl im Verbindungsformular während einer laufenden Sitzung wird der Filter sofort neu angewendet.
 
 ### Beobachtungstabelle (Watch Table)
 
@@ -1366,7 +1512,7 @@ Jede Zeile der Beobachtungstabelle zeigt:
 | Name | Anzeigename der Variable |
 | Knoten-ID | OPC UA Knoten-ID (z.B. `ns=3;s="Datenbaustein1"."Drehzahl"`) |
 | Datentyp | OPC UA Datentyp (z.B. Int16, Float, Bool) |
-| Wert | Aktueller Wert |
+| Wert | Aktueller Wert — Skalare als typisierte Zeichenketten (`True`, `12345`, `1.5`); Arrays mit Größenpräfix und Elementliste (`[16] True, False, …`); Byte-Arrays in Hex (`[4] DE AD BE EF`). Lange Arrays werden nach 32 Elementen abgeschnitten. |
 | Status | OPC UA Statuscode (Good, Bad, Uncertain) |
 | Zeitstempel | Server-Zeitstempel des letzten Wertes |
 
@@ -1390,10 +1536,12 @@ Abonnements ermöglichen es dem OPC UA Server, Wertänderungen automatisch an de
 
 #### Abonnement starten
 
-1. Stellen Sie das **Abonnement-Intervall** (in Millisekunden) über das Intervallfeld ein — z.B. `500` für Updates alle 500 ms
+1. Stellen Sie das **Abonnement-Intervall** (in Millisekunden) über das Intervallfeld ein — Standardwert ist `500` ms
 2. Klicken Sie auf **Abonnieren**, um die Überwachung aller Variablen in der Beobachtungstabelle zu starten
 3. Werte aktualisieren sich automatisch, wenn Änderungen auf der SPS auftreten
 4. Ein pulsierender Indikator zeigt an, dass ein Abonnement aktiv ist
+
+> **Hinweis:** Der zulässige Bereich liegt bei 100 – 60000 ms. Werte unter 250 ms sind für produktive CPUs nicht empfohlen — sie können PLCSIM Advanced überlasten und überschreiten ggf. das Kommunikations-Lastbudget echter S7-1200 / 1500-SPSen (siehe CPU-Kommunikationslast-Einstellung im TIA Portal). Werte zwischen 100 und 200 ms sollten nur für kurze, gezielte Messungen verwendet werden.
 
 #### Abonnement stoppen
 
@@ -1451,7 +1599,7 @@ Exportieren Sie die aktuellen Beobachtungstabellen-Werte für Dokumentation oder
 
 ### OPC UA MCP-Tools (KI-Integration)
 
-Wenn der MCP-Server läuft, haben KI-Assistenten Zugriff auf OPC UA und Canvas Tools:
+Wenn der MCP-Server-Subprocess von einem KI-Client gestartet wird (siehe Abschnitt **9. MCP Server**) und TIA Openness Manager mit einem Projekt verbunden ist, haben die KI-Assistenten Zugriff auf OPC UA und Canvas Tools:
 
 | Tool | `what` | Beschreibung |
 |------|--------|--------------|
@@ -1879,6 +2027,58 @@ Speichert geänderte PROFINET-Namen und IP-Adressen zurück ins TIA Portal Proje
 
 ---
 
+## 11a. Im Projekt suchen (Cross-Reference-Suche)
+
+### Was sie tut
+
+Der Tab "Im Projekt suchen" ist eine projekt-weite Referenzsuche. Geben Sie einen Baustein-, Tag- oder UDT-Namen ein und die Anwendung listet jede Cross-Reference auf, die Siemens TIA Portal dazu im offenen Projekt kennt. Die Ergebnisse sind nach Quell-PLC und Quell-Baustein gruppiert, dann nach Zugriffskategorie (Aufrufe / Lesezugriffe / Schreibzugriffe / Sonstige), mit der genauen Referenzposition und Zeilennummer pro Treffer.
+
+Damit beantworten Sie Fragen wie:
+
+- "Wo wird `FB_Motor` aufgerufen?"
+- "Welche Bausteine lesen oder schreiben das Tag `xStartBtn`?"
+- "Welche Bausteine nutzen den UDT `typ_Recipe`?"
+
+### Tab öffnen
+
+| Trigger | Aktion |
+|---------|--------|
+| Rechte Tabs | Klick auf **Im Projekt suchen** im TIA Manager-Arbeitsbereich |
+| Tastenkürzel | `Strg+Umschalt+F` von überall — der Arbeitsbereich wechselt automatisch und das Suchfeld erhält den Fokus |
+| Project Tree | Rechtsklick auf einen Baustein-Knoten und **Referenzen suchen** wählen; der Tab öffnet sich mit dem Bausteinnamen vorbefüllt |
+
+### Suchen
+
+1. Namen (oder Namensteil) ins Suchfeld tippen. Die Suche startet nach 250 ms Pause, damit nicht jede Taste einen vollen Scan triggert.
+2. (Optional) **Scope** wählen: Alle, Bausteine, Tags oder UDTs. Default ist Alle.
+3. (Optional) **PLC** auswählen, um in Multi-PLC-Projekten auf eine einzelne PLC zu beschränken.
+4. Fortschrittsbalken zeigt, wie viele Kandidaten gescannt wurden.
+5. Doppelklick auf eine Trefferzeile öffnet den Quell-Baustein im SCL-Editor und springt zur Quellzeile, oder Rechtsklick auf die Zeile für **Im Editor öffnen** und **Referenzpfad kopieren**.
+
+Die Suche ist groß-/klein- und diakritika-unabhängig: `förder` findet `Förder_DB`, `muller` findet `Müller_FB`, und `GROSSE` findet `Größe_Tag`.
+
+Wenn der Suchbegriff selbst einem Baustein-, Tag- oder UDT-Namen entspricht, erscheint dieses Objekt als eigene **Definitionen**-Gruppe oben im Ergebnis-Baum. Doppelklick auf die Definition-Zeile (oder Rechtsklick-Menü) öffnet den Baustein direkt.
+
+### Banner und Grenzen
+
+| Banner | Bedeutung |
+|--------|-----------|
+| Ergebnis bei 2000 Treffern abgeschnitten | Die Suche hat mehr Treffer als das Cap gefunden. Suche eingrenzen durch mehr Zeichen oder schmaleren Scope/PLC. |
+| Suche fehlgeschlagen: \<Grund\> | Bridge oder TIA Portal hat einen Fehler gemeldet (Projekt mid-Scan geschlossen, COM disposed, V15–V17 ohne `CrossReferenceService`). |
+| Keine Treffer | Suche fertig, nichts gefunden. |
+
+### Performance und Cache
+
+- Identische Suchen innerhalb von 30 Sekunden werden aus einem In-Memory-Cache bedient — gleiche Eingabe = sofortiges Ergebnis ohne Bridge-Roundtrip.
+- Cache wird automatisch invalidiert beim Projekt-Wechsel, beim Schließen eines Projekts oder beim Trennen der TIA-Portal-Verbindung.
+- Suchen laufen im Bridge-Prozess, nicht auf dem UI-Thread; Sie können während eines langen Scans weitertippen oder navigieren.
+
+### Voraussetzungen
+
+Der Cross-Reference-Service ist nur ab TIA Portal V18 stabil. Auf V15–V17 erscheint "Find-References requires TIA Portal V18 or later" im Fehler-Footer.
+
+---
+
 ## 12. Find Unused Blocks
 
 ### Funktion
@@ -2102,11 +2302,28 @@ Wenn ein Debugger an den App-Prozess angehängt ist oder die Haupt-EXE nicht mit
 
 Der Git-Client ist eine integrierte Versionsverwaltungs-Oberfläche für die Arbeit mit Repositories direkt in TIA Openness Manager. Er ermöglicht einen visuellen Git-Workflow, ohne die Anwendung zu verlassen.
 
+### Activity-Bar-Badge
+
+Das Git-Icon in der Activity-Bar (linke Navigationsleiste) zeigt einen kleinen akzentfarbenen Count-Badge, sobald irgendein offenes Repository nicht-committete Änderungen hat. Der Badge zeigt die Gesamtzahl der gestaged + unstaged + untracked Dateien **summiert über alle offenen Repository-Tabs**.
+
+- Werte bis 999 werden exakt angezeigt (z.B. `5`, `42`, `999`)
+- Werte von 1000 bis 99 999 werden im kompakten `K`-Format angezeigt (z.B. `1K`, `10K`, `99K`)
+- Werte ab 100 000 werden als `99K+` angezeigt
+- Der Badge ist ausgeblendet, wenn nirgendwo nicht-committete Änderungen vorhanden sind
+
+Beim Hovern über das Git-Icon erscheint ein Tooltip mit dem lokalisierten Count (z.B. *"Versionsverwaltung (Ctrl+2) — 5 nicht committete Änderungen"*) in der korrekten Plural-Form Ihrer UI-Sprache.
+
 ### Repository öffnen
 
 1. Klicken Sie auf den Tab **Git** in der Hauptnavigation
 2. Klicken Sie auf der Willkommensseite auf **Repository öffnen** und wählen Sie einen Ordner, oder ziehen Sie einen Repository-Ordner auf die Willkommensseite
 3. Zuletzt verwendete Repositories werden in der Liste für den schnellen Zugriff angezeigt
+
+**Tastenkürzel:** Drücken Sie **Strg+Umschalt+O** an beliebiger Stelle im Git-Arbeitsbereich, um das Popup **Lokales Repository öffnen** zu starten. Das Popup nimmt Pfad, Ziel-Workspace und Bookmark-Gruppe in einem Schritt entgegen — das Repository wird bei Erfolg direkt der gewählten Gruppe zugeordnet, ohne zusätzlichen Edit-Schritt.
+
+### Tabs-Palette
+
+Der **Tabs**-Icon-Button neben der Workspace-Auswahl (oder **Strg+P** an beliebiger Stelle im Git-Arbeitsbereich) öffnet eine Quick-Switch-Palette mit allen offenen Repository-Tabs plus zuletzt verwendeten Repositories. Tippen filtert die Liste; Enter wechselt zum hervorgehobenen Tab; Escape schließt die Palette ohne Wechsel.
 
 ### History-Ansicht
 
@@ -2179,6 +2396,60 @@ Drücken Sie **Strg+Umschalt+P** im Git-Arbeitsbereich, um die Befehlspalette zu
 **Unterpaletten:** Befehle, die eine Branch-, Tag- oder Dateiauswahl erfordern, öffnen eine sekundäre Auswahlliste. Tippen Sie, um die Liste fuzzy zu filtern. Drücken Sie **Rücktaste** bei leerem Filter, um zur Hauptpalette zurückzukehren.
 
 **Schliessen:** Drücken Sie **Escape** oder klicken Sie ausserhalb der Palette, um sie zu schliessen.
+
+### Diff-Ladefehler
+
+Wenn ein Revisionsvergleich oder ein Datei-Diff nicht geladen werden kann (z. B. weil Git die Änderungen zwischen den beiden SHAs nicht ermitteln konnte), erscheint ein Inline-Fehlerbanner oberhalb des Diff-Bereichs — sowohl in der Commit-Detailansicht als auch in der Revisionsvergleichsansicht und im Submodul-Vergleichsfenster. Der bisherige Diff-Inhalt bleibt sichtbar; das Banner verschwindet automatisch, sobald die nächste Auswahl oder der nächste Vergleich erfolgreich lädt. Technische Details (Exception-Typ, Befehlsausgabe) werden in das Anwendungslog geschrieben.
+
+### Submodul-Revisionen vergleichen
+
+Wenn ein Commit den Pointer eines Submoduls ändert, erscheint die Datei in der Commit-Detailansicht als **Submodul**-Eintrag mit den alten und neuen Commit-SHAs. Ein Klick auf **Details öffnen** auf dem Submodul-Eintrag öffnet ein eigenes, schreibgeschütztes Fenster **Submodul-Vergleich**. Das Fenster zeigt:
+
+- Zwei CommitDetail-Panes nebeneinander — den alten und neuen Submodul-Commit mit Author, Datum und Message
+- Einen zentralen Änderungs-Pane, der die tatsächlichen Änderungen innerhalb des Submoduls zwischen den beiden Pointern als Text- und Binary-Diff abbildet
+
+Das Fenster ist schreibgeschützt und ändert weder das Eltern-Repository noch das Submodul. Schnelle Doppelklicks auf **Details öffnen** erzeugen kein zweites Fenster — das vorhandene Fenster wird stattdessen in den Vordergrund geholt.
+
+Tastenkürzel in der Datei-Liste:
+
+- `Strg+C` — relative Datei-Pfade in die Zwischenablage kopieren
+- `Strg+Umschalt+C` — absolute Datei-Pfade in die Zwischenablage kopieren
+- `Strg+F` — Suchfeld über der Datei-Liste fokussieren
+
+### Submodul-Badge bei nicht committeten Änderungen
+
+Jedes Submodul in der Sidebar zeigt ein Inline-Badge, sobald das Submodul selbst lokale, nicht committete Änderungen hat (z. B. *„+ 3 nicht committete Änderungen"*). Der Wert entspricht dem trailing `+`-Marker aus `git submodule status` — also Modifikationen im eigenen Working-Tree des Submoduls. Das Badge aktualisiert sich beim Refresh des Eltern-Repositories oder des Submoduls.
+
+### Klonen mit Gruppe und Bookmark
+
+Das Popup **Repository klonen** bietet beim Klonen die Auswahl einer Workspace-**Gruppe** sowie einer **Bookmark-Farbe**. Bei Erfolg wird das geklonte Repository als Knoten in der gewählten Gruppe mit dem ausgewählten Bookmark eingefügt — ohne separaten Edit-Schritt. Beide Felder sind optional; bleiben sie leer, landet das Klone im Workspace-Root ohne Bookmark.
+
+### Custom Actions — Argument-Format und Branch-Selektoren
+
+Custom Actions verwenden jetzt einen frei wählbaren **Argument-Format**-String anstelle einer fixen Argumentliste. Der Format-String unterstützt Variablen, die zur Laufzeit ersetzt werden:
+
+- `${REPO}` — Pfad des Repository-Roots
+- `${BRANCH}` — Name des gewählten Branches
+- `${BRANCH_FRIENDLY_NAME}` — Friendly-Name des Branches (ohne Remote-Prefix)
+- `${SHA}` — SHA des gewählten Commits (bei Aufruf aus der History-Ansicht)
+- `${FILE}` — Pfad der gewählten Datei (bei Aufruf aus einem Datei-Kontextmenü)
+- `${REMOTE}` — Remote-Name (bei Aufruf auf einem Remote)
+- `${TAG}` — Tag-Name (bei Aufruf auf einem Tag)
+
+Ein neuer **Branch-Selector**-Control-Typ befüllt `${BRANCH}` und `${BRANCH_FRIENDLY_NAME}` mit getrennten Modi für lokale und Remote-Tracking-Branches. Konfiguration erfolgt im Custom-Action-Einstellungsdialog (Zahnrad → Custom Actions → Controls konfigurieren).
+
+### Stash-Diff-Toolbar
+
+Der Diff-Bereich der Stash-Ansicht enthält zwei Toolbar-Toggles, analog zur Working-Copy-Diff:
+
+- **Whitespace ignorieren** — berechnet die Diff so, dass reine Whitespace-Änderungen ausgeblendet werden
+- **Side-by-Side** — schaltet zwischen Unified-Diff und Side-by-Side-Layout um
+
+Klicks während ein vorheriger Reload noch läuft, brechen den laufenden Ladevorgang ab und starten einen neuen — der zuletzt gewählte Toggle gewinnt.
+
+### Auto-Fetch
+
+Hintergrund-Auto-Fetch ist jetzt eine einzige globale Einstellung unter **Einstellungen → Git → Auto-Fetch** und gilt für alle offenen Repositories. Das frühere Per-Repository-Toggle wurde entfernt und vorhandene Per-Repo-Settings werden ignoriert. Das Intervall (Default 10 Minuten) wird im selben Einstellungsblock konfiguriert. Der Auto-Fetch-Indikator in der Git-Sidebar ist ausgeblendet, solange die Einstellung deaktiviert ist.
 
 ---
 

@@ -143,6 +143,23 @@ Der integrierte Code-Editor bietet professionelle Bearbeitungsfunktionen für SC
 - **CSV-Export** - Exportieren Sie alle Tresor-Einträge als CSV für Sicherung (inklusive Passwörter im Klartext, verfügbar wenn Tresor entsperrt ist)
 - **Lokalisiert** - Verfügbar in Englisch, Deutsch, Französisch und Italienisch
 
+### Im Projekt suchen (Cross-Reference-Suche)
+
+- **Projekt-weite Referenzsuche** - Eine Suchbox findet jede Block-, Tag- und UDT-Referenz im offenen TIA-Projekt
+- **Hotkey + Rechtsklick** - `Strg+Umschalt+F` öffnet den Tab von überall, oder rechtsklicke einen Baustein im Project-Tree und wähle "Referenzen suchen"
+- **Doppelklick zum Springen** - Doppelklick auf ein Ergebnis öffnet den Quell-Baustein im SCL-Editor mit Cursor auf der passenden Zeile
+- **Rechtsklick-Menü** - Rechtsklick auf eine Trefferzeile für **Im Editor öffnen** oder **Referenzpfad kopieren** in die Zwischenablage
+- **Definitionen-Gruppe** - Wenn der Suchbegriff einem Bausteinnamen entspricht, erscheint dieser Baustein als eigene Gruppe oben im Ergebnis-Baum
+- **Diakritik-unabhängig** - `förder` findet `Förder_DB`; funktioniert für alle deutschen Umlaute und `ß`
+- **Scope-Filter** - Einschränken auf Bausteine, Tags, UDTs oder Alle durchsuchen
+- **PLC-Filter** - Optional auf eine einzelne PLC in Multi-PLC-Projekten beschränken
+- **Determiniertes Fortschritt** - Fortschrittsbalken zeigt aktueller Kandidat / Gesamtkandidaten während des Scans
+- **Ergebnis-Cache** - Identische Suche innerhalb von 30 Sekunden liefert sofort ohne Bridge-Roundtrip
+- **Cancel-freundlich** - Jeder Tastendruck cancelt den laufenden Scan via 250 ms Debounce
+- **Live-Sprachwechsel** - Scope-Labels und Gruppen-Headlines aktualisieren sich sofort beim Sprachwechsel
+- **Ergebnis-Cap** - Harte Obergrenze 2000 Treffer mit "Suche eingrenzen"-Banner bei Erreichen
+- **Benötigt TIA Portal V18 oder neuer** - Frühere Versionen zeigen erklärende Meldung im Fehler-Footer
+
 ### Find Unused Blocks
 
 - **Dead Code Erkennung** - Findet nicht verwendete Bausteine
@@ -158,6 +175,7 @@ Der integrierte Code-Editor bietet professionelle Bearbeitungsfunktionen für SC
 
 ### KI-Integration (MCP Server)
 
+- **Live-Session-Indikator** - Statusleiste zeigt `MCP: <n>` aktiver Proxy-Mode-KI-Client-Verbindungen; Klick öffnet Sessions-Dialog mit Client-Details und integrierter Setup-Anleitung (Claude Desktop, Claude Code, LM Studio, Continue.dev) mit Copy-fertigen Snippets
 - **Model Context Protocol** - Integration mit jedem MCP-kompatiblen KI-Assistenten
 - **Projekt-Kontext** - KI hat Zugriff auf Ihre Projektstruktur
 - **Code-Generierung** - KI kann SCL-Quellcode für Bausteine generieren
@@ -184,8 +202,10 @@ Der integrierte Code-Editor bietet professionelle Bearbeitungsfunktionen für SC
 - **Sitzungsarchiv** - Archivieren Sie alte Sitzungen, um die Sitzungsliste übersichtlich zu halten; archivierte Sitzungen wiederherstellen oder dauerhaft löschen
 - **Agenten-Gedächtnis** - Jeder Agent hat einen eigenen, sitzungsübergreifenden Gedächtnisspeicher mit Scope-Isolierung (Lokal, Projekt oder Benutzer); der Agent speichert automatisch wichtige Fakten und fügt relevante Erinnerungen beim Sitzungsstart in den Kontext ein; unterstützt die Tools `memory_store`, `memory_search`, `memory_list`, `memory_update` und `memory_delete`; konfigurierbarer Embedding-Anbieter (OpenAI, Google, Ollama, LM Studio) für semantische Suche mit Schlüsselwort-Fallback; Gedächtnis-Einstellungen zum Anzeigen, Löschen, Exportieren (JSON), Importieren und Aufräumen alter Erinnerungen; Memory-Snapshots ermöglichen das Vorbefüllen von Agenten mit teamweit geteiltem Wissen über JSON-Dateien
 - **Subagenten-Steuerung** - Agent kann Teilaufgaben an unabhängige Subagenten delegieren (`run_subagent`); bis zu 5 gleichzeitige Subagenten; laufende Subagenten verwalten mit `manage_subagents list/kill/steer`; nicht-blockierender Modus ermöglicht dem Hauptagenten, weiterzuarbeiten, während Teilaufgaben im Hintergrund laufen
+- **Hauptsitzungen im Hintergrund** — Ctrl+B waehrend laufendem Turn verschiebt die komplette Konversation in den Hintergrund; sofort weiterarbeiten in derselben Sitzung, Toast bei Fertigstellung und Ergebnis-Meldung in der Original-Sitzung, sodass der Assistent das Ergebnis beim naechsten Turn aufgreifen kann
 - **Hooks** - Konfigurierbare Event-Hooks, die vor/nach KI-Tool-Aufrufen ausgeführt werden; eigene Hooks in den KI-Chat-Einstellungen als Shell-Befehle oder HTTP-Callbacks hinzufügen; eingebaute Hooks schützen Safety-Blöcke und protokollieren TIA-Operationen; Hooks können Tool-Input modifizieren, Ausführung blockieren oder Kontext zu Ergebnissen hinzufügen; konfigurierbarer Timeout pro Hook (Standard 60s)
 - **Inline Tool-Genehmigungen** - KI-Werkzeugaufrufe werden direkt in der Tool-Nachricht im Chat genehmigt oder abgelehnt; die Buttons sind Teil des scrollbaren Inhalts, sodass Nachrichten weiterhin gelesen, die Historie gescrollt und Tabs gewechselt werden können, während eine Genehmigung aussteht; vier Auswahlmöglichkeiten pro Aufruf: Ablehnen, Einmal erlauben, Für Sitzung erlauben, oder Immer erlauben (dauerhaft gespeichert); wird die Anwendung während einer Genehmigung geschlossen, lässt sich die Sitzung sicher fortsetzen
+- **Transparenz bei Tool-Aufrufen** - Jeder KI-Tool-Aufruf im Chat zeigt Operation und Ziel auf einen Blick (z. B. *„Lesen (src/main.cs · Zeilen 1-50)"*, *„Git Status"*); abgeschlossene Aufrufe erhalten einen grünen Haken mit kurzer Zusammenfassung, Fehler ein rotes X, und abgelehnte Freigaben ein gelbes Schild — so wissen Sie immer, was der Assistent getan hat, ohne die Zeile aufklappen zu müssen
 - **Berechtigungsmodi** - Toggle-Button neben dem Senden-Button wählt durch, wie Schreiboperationen genehmigt werden: **Standard** fragt bei jeder Schreiboperation, **Änderungen akzeptieren** genehmigt Datei-Edits automatisch, fragt aber weiterhin bei Shell-Befehlen und destruktiven Operationen wie Löschen oder Force-Push, **Auto** genehmigt alles außer gefährlichen Operationen (PowerShell, Prozesszugriff, Netzwerk-Schreiboperationen); der aktuelle Modus wird durch ein farbiges Icon und einen Tooltip angezeigt; der Planmodus ist ein separater Toggle, der die KI zwingt, einen genehmigten Plan einzureichen, bevor Schreiboperationen möglich sind
 - **Inline Plan-Genehmigung** - Wenn die KI einen Ausführungsplan einreicht, erscheint dieser als editierbares Textfeld direkt im Chat mit Genehmigen- und Ablehnen-Buttons; der Plan kann vor der Genehmigung bearbeitet werden; nicht-blockierend — während der Prüfung kann durch die Historie gescrollt oder zwischen Tabs gewechselt werden
 - **Befehlswarteschlange** - Nachrichten senden waehrend der KI-Agent arbeitet; Nachrichten werden mit Prioritaetsstufen (Jetzt/Naechstes/Spaeter) in eine Warteschlange gestellt und nach jedem Turn automatisch verarbeitet; Warteschlangen-Anzeige zeigt die Anzahl ausstehender Nachrichten; ESC bricht die aktuelle Operation ab und leert die Warteschlange, oder holt wartende Nachrichten zurueck ins Eingabefeld wenn der Agent untaetig ist
@@ -196,6 +216,7 @@ Der integrierte Code-Editor bietet professionelle Bearbeitungsfunktionen für SC
 ### Git-Client
 
 - **Integrierte Git-Oberfläche** - Vollständiger visueller Git-Workflow direkt in der Anwendung
+- **Activity-Bar-Badge** - Git-Icon zeigt einen Count-Badge für nicht-committete Änderungen summiert über alle offenen Repository-Tabs; kompaktes Format bis 99K+; Tooltip nennt den Count mit korrekter Plural-Form pro UI-Sprache; Badge ausgeblendet bei null
 - **Commit-History** - Visueller Commit-Graph mit Branch- und Tag-Abzeichen, Autor, Datum und Subject
 - **Issue-Tracker-Links** - Commit-Nachrichten zeigen anklickbare Links für Issue-Referenzen, die konfigurierbaren Mustern entsprechen (z.B. `#123`, `PROJ-456`); öffnet die Issue-Seite im Browser; Muster per Repository konfigurierbar über Repository-Einstellungen → Issue-Tracker-Tab; integrierte Vorlagen für GitHub, GitLab, JIRA u.v.m.
 - **Anklickbare URLs** - HTTP(S)- und FTP-URLs in Commit-Nachrichten werden automatisch erkannt und öffnen sich beim Klick im Browser
@@ -220,8 +241,15 @@ Der integrierte Code-Editor bietet professionelle Bearbeitungsfunktionen für SC
 - **Erweiterter Commit-Nachrichten-Editor** - AvaloniaEdit-basierter Editor mit Subject-Line-Guide (gestrichelte "SUBJECT END"-Linie), Subject-Zeichenzähler mit Warnung bei über 72 Zeichen, Spaltenpositions-Anzeige und Autovervollständigung für 13 Git-Trailer (Signed-off-by, Co-authored-by, etc.); Werkzeugleiste mit Commit-Vorlagen/Verlauf-Picker und Conventional-Commit-Builder
 - **Externe Diff/Merge-Tools** - Externes Diff/Merge-Tool pro Repository konfigurierbar unter Repository-Einstellungen → Diff / Merge Tool Tab; 13 Tools unter Windows, 9 unter macOS, 9 unter Linux vorkonfiguriert (VS Code, Visual Studio, KDiff3, Beyond Compare, WinMerge, Meld u.v.m.); Aufruf über Kontextmenüs auf geänderten Dateien in Working Copy und Commit-Detail
 - **Stash-Anwendung mit Optionen** - Rechtsklick auf einen Stash zum Anwenden oder Poppen mit Optionen: "Index wiederherstellen" (--index) stellt zuvor gestagede Änderungen wieder her, "Nach Anwendung löschen" kombiniert Anwenden + Löschen zu einer Pop-Operation
+- **Stash-Diff-Toolbar** - Diff-Bereich der Stash-Ansicht trägt Toggles für „Whitespace ignorieren" und „Side-by-Side"; rapid clickende Toggles brechen den laufenden Reload ab und starten einen neuen, last-toggle-wins
 - **Multi-Branch-Merge** - Mehrere Branches in der Seitenleiste oder mehrere Commits in der History auswählen, dann alle gleichzeitig mergen mit Strategie-Auswahl (Standard, Octopus oder Ours) und optionalem Auto-Commit
 - **Syntax-Highlighting für Revisions-Dateien** - Dateien, die bei einem bestimmten Commit im "Dateien"-Tab angezeigt werden, erhalten vollständiges TextMate-Syntax-Highlighting (konsistent mit der Diff-Ansicht)
+- **Lokales Repository öffnen (Strg+Umschalt+O)** - Eigenes Popup nimmt Pfad, Ziel-Workspace und Bookmark-Gruppe in einem Schritt entgegen; das Repository wird bei Erfolg direkt der gewählten Gruppe zugeordnet, ohne separaten Edit-Schritt
+- **Submodul-Vergleichsfenster** - „Details öffnen" auf einem Submodul-Pointer-Wechsel öffnet ein schreibgeschütztes Vergleichsfenster mit zwei CommitDetail-Panes (alter und neuer Submodul-Commit) und einer zentralen Diff-Ansicht, die Text-, Binary-, verschachtelte Submodul- und Git-LFS-Payload-Änderungen zwischen den beiden Pointern abbildet
+- **Submodul-Badge bei nicht committeten Änderungen** - Jedes Submodul in der Sidebar zeigt ein Inline-Badge, sobald das Submodul selbst lokale, nicht committete Änderungen hat; Wert entspricht dem trailing `+` aus `git submodule status`
+- **Klonen mit Gruppe + Bookmark** - Das Klon-Popup bietet beim Klonen die Auswahl einer Workspace-Gruppe und einer Bookmark-Farbe; das geklonte Repository landet bei Erfolg direkt unter der gewählten Gruppe mit dem ausgewählten Bookmark — ohne separaten Edit-Schritt
+- **Custom-Action-Argument-Format** - Custom Actions verwenden einen frei wählbaren Argument-Format-String mit Substitution für `${REPO}`, `${BRANCH}`, `${BRANCH_FRIENDLY_NAME}`, `${SHA}`, `${FILE}`, `${REMOTE}` und `${TAG}`; ein neuer Branch-Selector-Control-Typ befüllt `${BRANCH}` / `${BRANCH_FRIENDLY_NAME}` mit Modi für lokale und Remote-Tracking-Branches
+- **Globaler Auto-Fetch** - Hintergrund-Auto-Fetch ist jetzt eine einzige globale Einstellung unter Einstellungen → Git → Auto-Fetch und gilt für alle offenen Repositories (ersetzt das frühere Per-Repository-Toggle); das Intervall (Default 10 Minuten) wird im selben Settings-Block konfiguriert
 
 ### OPC UA Client
 
@@ -230,11 +258,18 @@ Der integrierte Code-Editor bietet professionelle Bearbeitungsfunktionen für SC
 - **Authentifizierungsmodi** - Anonym, Benutzername/Passwort und Zertifikatsbasierte Authentifizierung
 - **Dockbares Arbeitsbereichs-Layout** - Adressraum-Browser, Knoteninformationen, Referenzen, Struktur-Felder und Beobachtungstabelle liegen jeweils in einem eigenen dockbaren Panel, das per Drag-Griff am Titelbalken abgedockt, angepinnt, umsortiert oder gestapelt werden kann
 - **Adressraum-Browser** - Vollständigen OPC UA Adressraum in einer Baumansicht mit Knotenklassen-Symbolen durchsuchen
+- **Knoten aktualisieren** - Aktualisieren-Schaltfläche in der Werkzeugleiste lädt die Kinder des ausgewählten Knotens direkt vom Server neu und umgeht den lokalen Cache, um serverseitige Änderungen seit dem letzten Erweitern aufzugreifen
 - **Knotensuche** - Adressraum-Knoten nach Namen filtern, um Variablen schnell zu finden
 - **Knoteninformationen-Panel** - Beim Auswählen eines Knotens werden alle OPC UA-Attribute angezeigt: Node Id, Browse Name, Display Name, Node Class, Description, Write-/User-Write-Masks und bei Variablen zusätzlich Data Type, Value Rank, Array Dimensions, Access Level, User Access Level, Minimum Sampling Interval, Historizing, aktueller Value, Status Code sowie Source- und Server-Timestamp (entspricht UaExpert)
 - **Referenzen-Panel** - Eigenes Panel mit jeder eingehenden und ausgehenden Referenz des ausgewählten Knotens, Spalten Richtung, Referenztyp, Browse-Name, Knotenklasse und Ziel-Knoten-ID
 - **Ereignisprotokoll-Panel** - OPC-UA-Ereignisse von einem Notifier-Knoten abonnieren und live in einer Zeit / Schweregrad / Quelle / Ereignistyp / Meldung-Tabelle empfangen; Schweregrad-Filter, CSV-Export mit Formel-Injektions-Schutz und 5000-Einträge-FIFO-Ring mit begrenzter UI-Dispatch-Queue bei Ereignisfluten
 - **Verlaufsdiagramm-Panel** - Historische Rohwerte eines Variablenknotens über einen Zeitbereich laden und in einem Streudiagramm mit Datum/Uhrzeit-X-Achse darstellen; Schnellauswahl 1h / 6h / 24h / 7T, Kalender-Pickers für eigene Zeitbereiche, CSV-Export und sichere Behandlung von ungültigen Zeitstempeln, nicht-numerischen Werten und bösartigen Server-Payloads
+- **Server-Diagnose-Panel** - Live-Anzeige der standardisierten OPC-UA-Server-Object-Hierarchie (Server-Status, Fähigkeiten, Diagnose-Zähler, aktive Subscriptions, aktive Sessions) mit konfigurierbarem Poll-Intervall 1–60 s pro Verbindung gespeichert; Server, die den Diagnose-Subtree nicht freigeben, zeigen statt leerer Tabellen einen "Nicht bereitgestellt"-Hinweis, vorübergehende Ausfälle erscheinen im Inline-Fehlerstreifen, und ein Exponential-Backoff verhindert das Belasten eines angeschlagenen Servers
+- **Auto-Reconnect-Banner** - Wenn der Keep-Alive-Watchdog eine verlorene Verbindung erkennt, zählt ein gelbes Banner im Verbindungs-Header die Reconnect-Zeit live mit und bietet einen Abbrechen-Button, der den Versuch sofort beendet — kein Warten auf den 5-Minuten-Timeout
+- **Letzte-Endpunkte-Dropdown** - Das Endpunkt-URL-Feld ist eine Autocomplete-Liste der letzten 10 erfolgreichen Verbindungen (pro Installation, übersteht Neustart); URL-Varianten, die auf dasselbe Schema + Host + Port auflösen, werden zu einem Eintrag zusammengeführt statt doppelt geführt
+- **Tastenkürzel** - Strg+Eingabe Verbinden, Strg+D Trennen, F5 Markierten Knoten neu lesen, Strg+W Aktuell markierte Watch-Table-Zeile schreiben — alle im OPC-UA-Tab gebunden und an die aktive Verbindung geroutet
+- **NodeId kopieren / Browse-Pfad kopieren** - Rechtsklick auf einen Knoten im Adressraum kopiert wahlweise die kanonische NodeId oder den lesbaren Browse-Pfad in die Zwischenablage
+- **Ansichts-Menü** - Eintrag in der OPC-UA-Toolbar, der jeden geschlossenen Tool-Reiter wiederöffnet (Adressraum, Typdefinitionen, Knotenattribute, Referenzen, Strukturfelder, CPU-Schutz, Beobachtungstabelle, Ereignisprotokoll, Verlauf, Serverdiagnose), ohne den Workspace zurücksetzen zu müssen
 - **Methodenaufruf-Dialog** - Rechtsklick auf einen Methodenknoten im Adressraum-Browser öffnet einen modalen Dialog mit Ein- und Ausgabeargumenten, typspezifischen Eingabefeldern (Skalar-Textboxen, Array-Zeilen-Editor), führt den Aufruf aus und zeigt die zurückgegebenen Werte und Status; Dialog schließen bricht einen noch laufenden Aufruf ab
 - **Zertifikatsverwaltung-Dialog** - Eigenes Client-Zertifikat sowie alle vertrauten und abgelehnten Server-Zertifikate in einem modalen Drei-Tab-Dialog (Eigenes / Vertrauenswürdig / Abgelehnt) prüfen; ausstehende Server-Zertifikate vertrauen, bisher vertraute ablehnen, obsolete Einträge entfernen oder das Client-Zertifikat neu erstellen. Der zugehörige Schalter „Serverzertifikate automatisch akzeptieren" im OPC UA Einstellungen-Flyout schaltet zwischen automatischem Vertrauen (Default) und manueller Freigabe pro Server
 - **Matrix-Editor-Dialog** - Rechtsklick auf eine matrix-typisierte Variable im Adressraum-Browser öffnet einen tabellenartigen Editor mit Zeilen- und Spaltenüberschriften; Zellen einzeln bearbeiten, geänderte Zellen werden markiert und die gesamte Matrix wird mit einem Schreibvorgang zurück zum Server gesendet. Schreibgeschützte Matrizen bleiben sichtbar, der Speichern-Button wird deaktiviert; Matrizen mit mehr als zwei Dimensionen melden einen klaren „Rang nicht unterstützt"-Fehler statt die Daten still zu flatten

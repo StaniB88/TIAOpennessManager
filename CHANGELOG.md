@@ -1,8 +1,74 @@
 # TIA Openness Manager - Changelog
 
+## v3.5.1 (2026-04-26)
+
+### AI Chat
+- **AI Chat** — Completed background sessions surface their result in the original chat, so the assistant can react to the result the next time you write.
+- **AI Chat** — Ctrl+B sends the whole running turn to the background and frees the session for new input.
+- **AI Chat** — Tapping a background session in the sidebar switches the chat to that run's messages so you can read its progress and continue the conversation; Ctrl+B again returns the run to background and the chat reverts to the original session.
+- **AI Chat** — Background-Sessions sidebar shows an unread-count badge when a backgrounded run completes; opening or dismissing the run clears it.
+- **AI Chat** — GPT-5.5 (OpenAI Codex + GitHub Copilot) and Gemini 3.1 Flash Lite Preview (Google Cloud Code Assist) are now selectable in the model picker.
+- **AI Chat** — Anthropic prompt caching keeps cache entries longer for higher hit rates and lower token cost.
+- **AI Chat** — Reasoning models report accurate token usage in the context-progress indicator.
+- **AI Chat** — New Max Retries field in Agent Settings configures how often a failed request is retried.
+- **AI Chat** — Unit-test tool calls show readable, localized labels in the chat tool line.
+- **Unit Testing** — STL blocks with UDT-typed Static members expose their nested fields, so test cases can reference the dotted variable names.
+- **AI Chat** — Tool-call labels are sanitized before display to block visual-spoofing attacks on approval prompts.
+- **AI Chat** — PowerShell tool calls require explicit confirmation and use a danger-styled approval prompt.
+
+### PLC Online
+- **PLC Online** — Closing a floating Watch Table (or any other PLC Online tool, AI Chat editor preview, or Unit Testing analysis tool) no longer crashes the application.
+- **PLC Online** — Connection header shows an access-level badge (Full / Read / HMI / No access) reflecting what the PLC granted, with a clear "password required" message when the PLC needs authentication.
+- **PLC Online** — S7 connections stay stable during watch-table use and post-connect setup, eliminating spurious heartbeat-miss disconnects.
+- **PLC Online** — New CPU Protection panel in the right-hand tool dock shows the active S7 CPU's protection level (None / Read / Write / Full) and whether a password is required, refreshing automatically on connect with a manual Refresh button.
+- **PLC Online** — Watch Table subscription interval is configurable, defaulting to 500 ms for stable communication.
+- **OPC UA** — Connection header banner now shows live elapsed seconds during reconnect attempts and offers a Cancel button that stops trying.
+- **OPC UA** — Endpoint URL field is now an autocomplete dropdown of the last successful endpoints; selecting one fills the field for one-click reconnect.
+- **OPC UA** — New keyboard shortcuts on the OPC UA tab: Ctrl+Enter Connect, Ctrl+D Disconnect, F5 Refresh selected node, Ctrl+W Write selected watch row.
+- **OPC UA** — Right-click context menu on every Address Space node now offers Copy NodeId and Copy Browse Path.
+- **OPC UA** — New View menu in the OPC UA toolbar re-opens any tool tab that was closed (Address Space, Type Definitions, Node Attributes, References, Struct Fields, CPU Protection, Watch Table, Event Log, History Chart, Server Diagnostics).
+- **OPC UA** — Custom DataType pre-loading via NodeSet2.xml import for servers that do not publish DataTypeDefinition.
+- **OPC UA** — Faster address-space browse with instant re-expansion of previously visited nodes.
+- **OPC UA** — Refresh button on the Address Space toolbar re-fetches the selected node's children from the server, bypassing the local cache.
+- **OPC UA** — New Server Diagnostics tool-tab in the bottom dock surfaces the standard OPC UA server-object hierarchy (server status, capabilities, diagnostic counters, active subscriptions, active sessions) with a configurable poll interval per connection.
+- **PLC Online** — Watch table displays subscribed S7 variables as typed values and renders array variables with size-prefix and element list.
+- **PLC Online** — Tool tabs adapt to the active connection's protocol — only tools that work with S7 CommPlus appear when connected via S7, and only OPC-UA tools appear when connected via OPC UA.
+
+### Git
+- **Git Sidebar** — Branch and folder icons now render in the local-branches tree; previously only the current branch showed an icon.
+- **Activity Bar** — Git icon shows a count badge for uncommitted changes summed across all open repositories; tooltip names the count with proper plural form per UI language.
+- **Git Diff** — Submodule changes in commit detail and revision compare now show old/new submodule SHAs, author, time, subject, and an uncommitted-changes badge. An "Open Details" button launches a separate compare window that lists the changed files inside the submodule and shows the per-file diff.
+- **Git Stash** — Stash compare pane now has the diff toolbar (file path, line counts, navigation buttons) consistent with the rest of the app. Whitespace-ignore and side-by-side toggles now reload the stash diff.
+- **Git Welcome** — New Open Local Repository popup picks path, workspace group, and bookmark color in one step; reachable via the toolbar button or `Ctrl+Shift+O` from anywhere in the Git workspace.
+- **Git Settings** — Auto-Fetch is now a single global setting that applies to every open repository; the previous per-repository toggle is replaced and existing per-repo entries are ignored.
+- **Git Clone** — Clone Repository popup now lets you pick a workspace group and bookmark color at clone time; the cloned repository is inserted under the chosen group on success.
+- **Git Custom Actions** — Custom Action Argument Format string supports `${REPO}`, `${BRANCH}`, `${BRANCH_FRIENDLY_NAME}`, `${SHA}`, `${FILE}`, `${REMOTE}`, and `${TAG}` substitution; new Branch Selector control type with local and remote-tracking modes.
+- **Git Rebase** — Interactive rebase reorder no longer enters an infinite loop on `fixup!` / `squash!` commit subjects.
+- **Git Push** — "Set as tracking branch" toggle is shown only when relevant; previously appeared in unrelated push contexts and was a no-op.
+- **Git Submodule Compare** — Submodule revision compare window supports `Ctrl+C` (copy relative path), `Ctrl+Shift+C` (copy absolute path), and `Ctrl+F` (focus search) on the changed-files list.
+- **Git Submodule Compare** — Rapid double-clicks on "Open Details" no longer open multiple windows; the existing window is brought to the front instead, and the loading spinner now shows immediately when the window opens instead of flickering on after a brief blank state.
+- **Git Tabs** — New Tabs icon button next to the workspace selector opens the tab pages palette (the same `Ctrl+P` overlay that lists open repository tabs and recent repositories).
+- **Git Tabs Palette** — Section headers now read **Tabs** and **Open Repositories** (plural), and repository paths render relative to your home directory (`~/...`) instead of as full absolute paths.
+- **Git Diff** — Failed file diff or revision compare loads now show an inline error banner above the diff pane instead of leaving the pane blank.
+
+### Project Explorer
+- **Project Explorer** — Search now supports quoted phrases (`"my block"` matches verbatim), exclusion with `!term`, and scope filters (`kind:fb motor` finds only function blocks matching `motor`). Matching characters are highlighted in bold accent color in each result row.
+
+### Import/Export
+- **Import/Export** — File-tree search supports the same syntax as the project tree (quoted phrases, `!term` exclusion, fuzzy matching, match highlighting) and restores your manually expanded folders when cleared.
+
+### TIA Portal
+- **TIA Portal** — New "Find in Project" tab and `Ctrl+Shift+F` shortcut search every block, tag, and UDT reference across the project; double-click a result to jump to the block and source line, or right-click any block in the tree to find its callers. Matching blocks appear as a "Definitions" group at the top, and every result row has a right-click menu with "Open in Editor" and "Copy reference location". Diacritic-insensitive (`förder` matches `Förder_DB`), with progress bar and live language switching.
+
+### MCP Server
+- **MCP Server** — External AI clients connect directly without installing a separate helper.
+- **MCP Server** — AI clients can now use project resources and ready-made prompts (analyze block, generate unit tests, compare blocks, review safety function) alongside the existing tools.
+- **MCP Server** — Status bar shows the number of AI clients currently connected; click the indicator to open a setup guide with copy-ready configuration snippets for Claude Desktop, Claude Code, LM Studio, and Continue.dev.
+
 ## v3.5.0 (2026-04-24)
 
 ### AI Chat
+- **AI Chat** — Tool calls show operation, target, and completion status at a glance. File paths in the tool line are clickable and open the file in the code editor tab. Destructive tools render their name on a red background as a second confirmation cue.
 - **AI Chat** — Importing or generating TIA blocks now always asks for explicit confirmation before changes are applied.
 - **AI Chat** — Removing or deleting unit tests now always asks for explicit confirmation before changes are applied.
 - **Azure OpenAI** — Chat-completions deployments now respect the configured request timeout on long-running calls.
@@ -17,11 +83,19 @@
 ### Editor
 - **Drag & drop from the Project Explorer** — Drop one or several blocks or offline source files onto the code editor or the Welcome tab; each dropped item opens as its own editor tab.
 
-### PLC Explorer
-- **PLC Explorer sidebar** — Keep a list of your frequently-used PLCs in a dedicated workspace, see at a glance which ones are reachable, and double-click to open a connection tab with the IP and protocol already filled in.
+### Project Explorer
+- **Project Explorer** — Search box stays responsive on large projects and on low-spec machines (laptop / VM); clearing the search restores your prior expansion state exactly.
+- **Project Explorer** — Search now matches fuzzy (`fbmtr` finds `FB_Motor`), ranks exact matches first, and supports multiple search terms separated by spaces (`motor plc1` matches names containing both).
 
 ### Unit Testing
+- **Unit Testing** — New View menu in the top-right of the Unit Testing tab toggles each tool tab (Test Explorer, Interface, Boundary Values, Dependencies, Test Results) on or off; closed tools can now be brought back without restarting the application.
+- **Unit Testing** — Test Explorer header now exposes the same Float / Pin / Auto-Hide / Dock-as-Tabbed-Document / Close menu and close-X button as the other tools, no longer being limited to Float / Dock-as-Tabbed-Document.
+- **Unit Testing** — Switching between analysis-tool tabs (Test Explorer / Interface / Boundary Values / Dependencies) no longer spams Avalonia binding warnings into the application log.
+- **Unit Testing** — Tool tabs (Test Explorer, Interface, Boundary Values, Dependencies, Test Results) now expose the full Float / Pin / Auto-Hide / Dock-as-Tabbed-Document / Close menu and a close-X in the header, matching the PLC Online tab; closing a floating tool window re-homes the tool into its original dock instead of leaving the user without a way back.
 - **Unit Testing** — workspace renamed from "SCL Unit Testing".
+
+### Password Vault
+- **Password Vault** — clearer error messages when know-how-protecting safety blocks fails (e.g. block not used in the safety program, safety login missing, block not yet compiled).
 
 ### Bug Fixes
 - **AI Chat** — Claude context window no longer reports 1 000 000 tokens when the 1M extended-context toggle is off; the composer bar shows the actual 200 000-token limit your plan uses.

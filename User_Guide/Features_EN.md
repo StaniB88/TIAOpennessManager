@@ -143,6 +143,23 @@ The built-in code editor provides professional editing features for SCL and othe
 - **CSV Export** - Export all vault entries to CSV for backup (includes plaintext passwords, available when vault is unlocked)
 - **Localized** - Available in English, German, French, and Italian
 
+### Find in Project (Cross-Reference Search)
+
+- **Project-wide Reference Search** - One search box finds every block, tag, and UDT reference across the open TIA project
+- **Hotkey + Right-click** - Press `Ctrl+Shift+F` from anywhere to open the tab, or right-click any block in the project tree and choose "Find References"
+- **Click to Navigate** - Double-click any result to open the source block in the SCL editor with the cursor on the matching line
+- **Right-click Menu** - Right-click any result row for **Open in Editor** or **Copy reference location** to clipboard
+- **Definitions Group** - When the search term itself matches a block name, that block appears as its own group at the top of the result tree
+- **Diacritic-Insensitive** - Typing `förder` finds `Förder_DB`; works for all German Umlauts and `ß`
+- **Scope Filter** - Restrict to Blocks, Tags, UDTs, or search All
+- **Per-PLC Filter** - Optional drop-down narrows results to a single PLC in multi-PLC projects
+- **Determinate Progress** - Progress bar shows current candidate / total candidates while scanning
+- **Result Cache** - Re-running the same search within 30 seconds returns instantly without round-tripping the bridge
+- **Cancel-Friendly** - Each new keystroke cancels the in-flight scan via 250 ms debounce
+- **Live Language Switch** - Scope labels and group headers update immediately when you change the application language
+- **Result Cap** - Hard cap of 2000 hits with a "refine your search" banner when reached
+- **Requires TIA Portal V18 or later** - Earlier versions show an explanatory message in the error footer
+
 ### Find Unused Blocks
 
 - **Dead Code Detection** - Finds unused blocks
@@ -166,6 +183,7 @@ The built-in code editor provides professional editing features for SCL and othe
 - **Tag Table Generation** - AI can create Tag Tables
 - **Auto Import** - Generated code can be automatically imported into TIA Portal
 - **Block Analysis** - AI can read and analyze existing blocks
+- **Live session indicator** - Status bar shows `MCP: <n>` for active proxy-mode AI client connections; click to open the sessions dialog with client details and a built-in setup guide (Claude Desktop, Claude Code, LM Studio, Continue.dev) with copy-ready snippets
 
 ### AI Chat
 
@@ -184,8 +202,10 @@ The built-in code editor provides professional editing features for SCL and othe
 - **Session Archive** - Archive old sessions to keep the session list clean; restore or permanently delete archived sessions
 - **Agent Memory** - Each agent has its own persistent memory store across sessions with scope isolation (Local, Project, or User); the agent automatically saves important facts and injects relevant memories into context at session start; supports `memory_store`, `memory_search`, `memory_list`, `memory_update`, and `memory_delete` tools; configurable embedding provider (OpenAI, Google, Ollama, LM Studio) for semantic search, with keyword fallback; Memory Settings panel to view, delete, export (JSON), import, and clean up old memories; Memory Snapshots allow pre-seeding agents with team-shared knowledge via JSON files
 - **Sub-Agent Steering** - Agent can dispatch sub-tasks to independent sub-agents (`run_subagent`); up to 5 concurrent sub-agents; manage running sub-agents via `manage_subagents list/kill/steer`; non-blocking mode allows the main agent to continue working while sub-tasks run in the background
+- **Background Main Sessions** — Press Ctrl+B during an active turn to send the whole conversation turn to the background; keep working on the same session immediately, with a toast on completion and a result notification appended to the original chat so the assistant picks it up on its next turn
 - **Hooks** - Configurable event hooks that run before/after AI tool calls; add custom hooks in AI Chat Settings as shell commands or HTTP callbacks; built-in hooks protect safety blocks and log TIA operations; hooks can modify tool input, block execution, or add context to results; configurable timeout per hook (default 60s)
 - **Inline Tool Approvals** - Approve or deny each AI tool call directly inside the tool-call message in the chat; the approval buttons are part of the scrollable content, so you can continue reading messages, scrolling history, and switching tabs while an approval is pending; four choices per call: Deny, Allow Once, Allow for Session, or Always Allow (persisted to disk); if the application is closed during an approval, the session can be resumed safely
+- **Tool Call Transparency** - Each AI tool call in the chat shows the operation and its target at a glance (e.g. *"Read (src/main.cs · lines 1-50)"*, *"Git Status"*); completed calls show a green check with a short summary, errors show a red X, and rejected approvals show an amber shield — so you always know what the assistant did without expanding the bubble
 - **Permission Modes** - Cycling toggle button next to the send button selects how write operations are approved: **Default** asks for every write, **Accept Edits** auto-approves file edits while still asking for shell commands and destructive operations like delete or force-push, **Auto** auto-approves everything except dangerous operations (PowerShell, process access, network writes); the current mode is shown with a colored icon and tooltip; Plan Mode is a separate dedicated toggle that forces the AI to submit an approved plan before any writes
 - **Inline Plan Approval** - When the AI submits an execution plan, the plan appears as an editable text area directly inside the chat with Approve and Reject buttons; you can modify the plan before approving; non-blocking — scroll history or switch tabs while reviewing
 - **Command Queue** - Send messages while the AI agent is working; messages are queued with priority levels (Now/Next/Later) and processed automatically after each turn; queue indicator shows pending message count; ESC cancels the current operation and clears the queue, or pops queued messages back into the input field when idle
@@ -196,6 +216,7 @@ The built-in code editor provides professional editing features for SCL and othe
 ### Git Client
 
 - **Integrated Git UI** - Full visual Git workflow built into the application
+- **Activity-Bar Badge** - Git icon shows a count badge for uncommitted changes summed across all open repository tabs; compact format up to 99K+; tooltip names the count with proper plural form per UI language; badge hidden when zero
 - **Commit History** - Visual commit graph with branch and tag badges, author, date, and subject
 - **Issue Tracker Links** - Commit messages show clickable links for issue references matching configurable patterns (e.g. `#123`, `PROJ-456`); opens the issue page in your browser; configure patterns per repository via Repository Settings → Issue Tracker tab; built-in presets for GitHub, GitLab, JIRA, and more
 - **Clickable URLs** - HTTP(S) and FTP URLs in commit messages are auto-detected and open in the browser on click
@@ -220,8 +241,15 @@ The built-in code editor provides professional editing features for SCL and othe
 - **Rich Commit Message Editor** - AvaloniaEdit-based editor with subject line guide (dashed "SUBJECT END" line), subject character counter with warning when exceeding 72 characters, column position indicator, and auto-completion for 13 Git trailers (Signed-off-by, Co-authored-by, etc.); toolbar with commit template/history picker and conventional commit builder
 - **External Diff/Merge Tools** - Configure an external diff/merge tool per repository in Repository Settings → Diff / Merge Tool tab; supports 13 tools on Windows, 9 on macOS, 9 on Linux (VS Code, Visual Studio, KDiff3, Beyond Compare, WinMerge, Meld, and more); use from context menus on changed files in Working Copy and Commit Detail
 - **Stash Apply with Options** - Right-click a stash to apply or pop with options: "Restore index" (--index) re-stages previously staged changes, "Drop after apply" combines apply + drop into a pop operation
+- **Stash Diff Toolbar** - Stash diff pane carries Ignore-Whitespace and Side-by-Side toggles; rapid clicks cancel the previous load and start a fresh one, last-toggle-wins
 - **Multi-Branch Merge** - Select multiple branches in the sidebar or multiple commits in the history, then merge them all at once with strategy selection (Default, Octopus, or Ours) and optional auto-commit
 - **Revision File Syntax Highlighting** - Files browsed at any commit in the "Files" tab are displayed with full TextMate syntax highlighting (consistent with the diff view)
+- **Open Local Repository (Ctrl+Shift+O)** - Dedicated popup picks path, target workspace, and bookmark group in one step; the new repository is added to the chosen group on success without an extra edit pass
+- **Submodule Revision Compare Window** - "Open Details" on a submodule pointer change opens a read-only compare window with two CommitDetail panes (old and new submodule commits) and a central diff view that walks text, binary, nested-submodule, and Git LFS payload changes between the two pointers
+- **Submodule Uncommitted-Changes Badge** - Each submodule in the sidebar shows an inline badge whenever the submodule itself has uncommitted local changes; count tracks the trailing `+` from `git submodule status`
+- **Clone with Group + Bookmark** - Clone Repository popup lets you pick a workspace group and bookmark color at clone time; the cloned repository is inserted under the chosen group with the chosen bookmark on success — no separate edit pass
+- **Custom Action Argument Format** - Custom Actions use a free-form Argument Format string with `${REPO}`, `${BRANCH}`, `${BRANCH_FRIENDLY_NAME}`, `${SHA}`, `${FILE}`, `${REMOTE}`, and `${TAG}` substitution; a new Branch Selector control type feeds `${BRANCH}` / `${BRANCH_FRIENDLY_NAME}` with local and remote-tracking modes
+- **Global Auto-Fetch** - Background auto-fetch is configured under Settings → Git → Auto-Fetch as a single global toggle that applies to every open repository (replaces the previous per-repository setting); the interval (default 10 minutes) is set in the same settings block
 
 ### OPC UA Client
 
@@ -230,11 +258,18 @@ The built-in code editor provides professional editing features for SCL and othe
 - **Authentication Modes** - Anonymous, Username/Password, and Certificate-based authentication
 - **Dockable Workspace Layout** - Address Space Browser, Node Information, References, Struct Fields and Watch Table each live in their own dockable panel that can be floated, pinned, rearranged or stacked via the drag-grip on each title bar
 - **Address Space Browser** - Browse the full OPC UA address space in a TreeView with node class icons
+- **Node Refresh** - Toolbar Refresh button re-fetches the selected node's children from the server, bypassing the local cache, for picking up server-side changes since the last expand
 - **Node Search** - Filter address space nodes by name to quickly locate variables
 - **Node Information Panel** - Selecting a node shows every OPC UA attribute including Node Id, Browse Name, Display Name, Node Class, Description, Write/User-Write Masks, and for variables Data Type, Value Rank, Array Dimensions, Access Level, User Access Level, Minimum Sampling Interval, Historizing, current Value, Status Code, and Source/Server Timestamp (matches UaExpert)
 - **References Panel** - Dedicated panel listing every incoming and outgoing reference of the selected node with direction, reference type, browse name, node class and target node id columns
 - **Event Log Panel** - Subscribe to OPC UA events from a notifier node and watch them stream into a Time / Severity / Source / Event Type / Message grid; severity range filter, CSV export with formula-injection guard, and a 5000-entry FIFO ring with bounded UI dispatch under flood
 - **History Chart Panel** - Load raw historical values for a variable node over a time range and plot them on a date-time scatter chart; quick 1h / 6h / 24h / 7d presets, calendar pickers for custom ranges, CSV export, and safe handling of out-of-range timestamps / non-numeric values / hostile-server payload sizes
+- **Server Diagnostics Panel** - Live read-out of the standard OPC UA server-object hierarchy (server status, capabilities, diagnostic counters, active subscriptions, active sessions) with a configurable 1–60 s poll interval persisted per connection; servers that do not expose the diagnostic subtree show a "Not exposed" placeholder instead of empty rows, transient outages surface in an inline error strip, and exponential back-off avoids hammering a struggling server
+- **Auto-Reconnect Banner** - When the keep-alive watchdog detects a lost connection, a yellow banner in the connection header counts the elapsed reconnect time live and offers a Cancel button to stop trying without waiting out the 5-minute timeout
+- **Recent Endpoints Dropdown** - The Endpoint URL field is an autocomplete of the last 10 successful connections (per installation, surviving restart); URL variants that resolve to the same scheme + host + port are merged into one entry instead of cluttering the list with duplicates
+- **Keyboard Shortcuts** - Ctrl+Enter Connect, Ctrl+D Disconnect, F5 Refresh selected node, Ctrl+W Write the selected Watch Table row — all bound on the OPC UA tab and routed to the active connection
+- **Copy NodeId / Copy Browse Path** - Right-click any Address Space node to copy the canonical Node Id or the human-readable browse path to the clipboard
+- **View Menu** - Top-toolbar entry on the OPC UA tab that re-opens any tool tab that was closed (Address Space, Type Definitions, Node Attributes, References, Struct Fields, CPU Protection, Watch Table, Event Log, History Chart, Server Diagnostics) without resetting the workspace
 - **Call Method Dialog** - Right-click a method node in the Address Space Browser to open a modal dialog that lists input and output arguments with per-type editors (scalar text boxes, array-row editor), runs the call, and shows the returned values and status; closing the dialog cancels any call still in flight
 - **Certificate Management Dialog** - Review the client's own certificate plus every server certificate this client has trusted or rejected in a three-tab modal (Own / Trusted / Rejected); trust pending server certificates, reject previously trusted ones, remove obsolete entries, or regenerate the client certificate. A companion Auto-accept toggle in the OPC UA settings flyout switches between automatic trust (default) and manual per-server approval
 - **Matrix Editor Dialog** - Right-click a matrix-typed variable in the Address Space Browser to open a spreadsheet-style editor with row and column headers; edit cells individually, track dirty changes, and save the whole matrix back to the server in one write. Read-only matrices stay visible but disable the Save button; matrices with more than two dimensions report an honest "rank not supported" error instead of silently flattening the data
@@ -260,7 +295,6 @@ The built-in code editor provides professional editing features for SCL and othe
 - **Live Watch Table** - Native S7 Comm+ subscriptions push value changes with configurable cycle time; the old fixed-interval polling path is gone
 - **Connection status dot** - A coloured dot in every PLC tab header signals the PLC state live (grey = not connected, green = running, yellow = stopped or reconnecting, red = unreachable) with a hover tooltip
 - **Automatic reconnection with visible progress** - A "Reconnecting…" banner surfaces under the connection bar while the app restores a lost connection; Watch Table values fade to half opacity and switch to `???` until fresh values arrive; all recovery is handled in the background
-- **PLC Explorer sidebar** - A persistent list of known PLCs in its own activity-bar workspace; each entry shows a live reachability dot driven by active sessions and a 10-second TCP probe on port 102, plus the last-seen timestamp; add, rename and remove PLCs via dialogs; double-click an entry to open or focus its PLC Online tab with the IP and protocol pre-filled; the list is saved between sessions
 
 ### Unit Testing (Enterprise)
 
