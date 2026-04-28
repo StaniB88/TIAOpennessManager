@@ -19,7 +19,7 @@
 9. [MCP Server (KI-Integration)](#9-mcp-server-ki-integration)
 9a. [KI-Chat](#9a-ki-chat)
 9b. [OPC UA Tab](#9b-opc-ua-tab)
-9c. [Unit Testing (Enterprise)](#9c-unit-testing-enterprise)
+9c. [Unit Testing](#9c-unit-testing)
 9c. [AI Canvas](#9c-ai-canvas)
 10. [Projektbibliothek-Verwaltung](#10-projektbibliothek-verwaltung)
 11. [Hardware Tab](#11-hardware-tab)
@@ -524,7 +524,7 @@ Sie können jeden Baustein (FB, FC, OB, DB, UDT, Variablentabelle) aus dem TIA-B
 Neben dem Code werden Metadaten angezeigt:
 - **Block-Typ:** OB, FB, FC, DB
 - **Nummer:** z.B. OB1, FB10
-- **Sprache:** SCL, STL, LAD, FBD, GRAPH
+- **Sprache:** Zeigt die tatsächliche Programmiersprache, die TIA Portal für den Block meldet (`SCL`, `STL`, `LAD`, `FBD`, `GRAPH`, `F_LAD`, …). Für Dateien aus dem File-Explorer entspricht die Anzeige dem Dateityp (`C#`, `Python`, `Markdown`, `TypeScript`, …) — unbekannte Endungen werden als `Text` angezeigt.
 - **Autor:** Falls verfügbar
 - **Letzte Änderung:** Zeitstempel
 
@@ -1221,10 +1221,6 @@ Sie koennen Nachrichten eingeben und senden waehrend der KI-Agent aktiv arbeitet
 
 **Sub-Agent in den Hintergrund verschieben:** Wenn ein blockierender Sub-Agent den Haupt-Assistenten wartet laesst, druecken Sie **Strg+B**. Der Sub-Agent wird losgeloest und laeuft im Hintergrund weiter, waehrend der Haupt-Assistent frei ist, auf neue Nachrichten zu antworten. Am Sub-Agent-Block erscheint ein kleines "(Hintergrund)"-Kennzeichen. Sobald der Sub-Agent im Hintergrund fertig ist, erscheint sein Ergebnis als Benachrichtigung im Chat, und der Haupt-Assistent setzt dort an. Wenn mehrere Sub-Agenten gleichzeitig blockieren, schickt Strg+B alle auf einmal in den Hintergrund.
 
-**Hauptsitzung in den Hintergrund (Ctrl+B):** Wenn der Assistent gerade an einem Turn arbeitet (Tool-Aufrufe, lange Antwort oder Sub-Agent), verschiebt **Ctrl+B** den ganzen Turn in den Hintergrund. Die Original-Sitzung steht sofort wieder fuer neue Eingaben bereit. Der Hintergrund-Turn laeuft weiter; bei Fertigstellung erscheint ein Toast und ein Badge im neuen Abschnitt "Hintergrund-Sitzungen" der Sidebar. Klick auf den Eintrag oder erneutes Ctrl+B holt ihn in den Vordergrund — dort koennen Sie wie gewohnt weiterchatten. Erneutes Ctrl+B schickt ihn wieder in den Hintergrund. Wenn der Hintergrund-Turn fertig ist, wird ausserdem eine kurze Ergebnis-Meldung in der Original-Sitzung angehaengt — der Assistent kann das Ergebnis beim naechsten Mal, wenn Sie schreiben, direkt aufgreifen, ohne dass Sie die Hintergrund-Sitzung manuell oeffnen muessen. Hintergrund-Sitzungen werden beim App-Schliessen abgebrochen.
-
-**Reihenfolge:** Wenn blockierende Sub-Agents laufen, schickt das erste Ctrl+B diese in den Hintergrund (bestehendes Verhalten). Das naechste Ctrl+B (oder Ctrl+B ohne blockierende Sub-Agents) verschiebt den kompletten Hauptturn in den Hintergrund.
-
 **Warteschlangen-Verarbeitung:** Nach jedem abgeschlossenen KI-Turn prueft das System automatisch die Warteschlange und verarbeitet die naechste Nachricht. Bei mehreren wartenden Nachrichten werden diese einzeln in Prioritaetsreihenfolge verarbeitet (hoehere Prioritaet zuerst, FIFO innerhalb gleicher Prioritaet).
 
 ---
@@ -1251,6 +1247,25 @@ Fuehren Sie mehrere KI-Chat-Sessions gleichzeitig aus. Jede Session hat einen ei
 **Canvas pro Session:** Jede Session verwaltet ihren eigenen Canvas-State. Beim Wechsel wird das WebView zurueckgesetzt und der Canvas-Inhalt der Ziel-Session automatisch wiedergegeben.
 
 **Live-Modellwechsel:** Verwenden Sie den Modell-Picker-Button im Chat-Header, um das KI-Modell nur fuer die aktuelle Session zu wechseln. Andere Sessions und die globale Einstellung sind nicht betroffen.
+
+### Workspace — Dateisystem-Zugriffsschutz
+
+Das `fs`-Tool des KI-Chats (lesen, schreiben, erstellen, bearbeiten, loeschen, auflisten, suchen) wird durch eine mehrschichtige Zugriffsrichtlinie gesteuert. Konfiguration unter **KI-Chat-Einstellungen → Workspace**.
+
+**Automatisch erlaubt:**
+- Das Verzeichnis des aktuell geoeffneten TIA-Projekts
+- Desktop, Dokumente und Temp-Ordner (Standard)
+
+**Ordner hinzufuegen:** Klicken Sie in den Einstellungen → Workspace auf **Ordner hinzufuegen…**, um dem KI-Assistenten dauerhaften Zugriff auf weitere Verzeichnisse zu gewaehren (z. B. Projekt-Netzlaufwerke, gemeinsame SCL-Bibliotheken). Pfade in Systemverzeichnissen (Windows, Program Files, AppData-Root, Laufwerks-Root) werden abgewiesen.
+
+**Anfrage-Dialog:** Wenn der KI-Assistent einen Pfad ausserhalb des erlaubten Bereichs anfordert, erscheint ein Dialog mit Operationstyp (lesen / schreiben / loeschen) und Pfad:
+
+- **Einmalig erlauben** — gewaehrt diese eine Operation
+- **Diese Session erlauben** — gewaehrt das uebergeordnete Verzeichnis bis zum App-Ende
+- **Dauerhaft erlauben** — fuegt das uebergeordnete Verzeichnis zu den gespeicherten Workspace-Wurzeln hinzu (Warnhinweis zeigt das genaue Verzeichnis, das persistiert wird)
+- **Ablehnen** — verweigert die Anfrage
+
+**Immer abgewiesen, unabhaengig vom Bereich:** Vault, Lizenz, Chat-Datenbank, Agent-Memory, App-Einstellungen, SSH/AWS/Azure/Kubernetes-Anmeldedaten, Windows/Program Files/AppData-Interna, Browser- und OS-Sperrdateien. Diese Liste kann der KI-Assistent auch durch Permanent-Approval auf ein Eltern-Verzeichnis nicht umgehen.
 
 ---
 
@@ -1486,12 +1501,39 @@ Ein Tab `CPU-Schutz` im rechten Werkzeug-Dock zeigt den aktuellen Schutzzustand 
 
 Solange keine SPS verbunden ist, zeigen die Werte einen Geviertstrich (`—`). Schlägt das Lesen fehl (z. B. weil die CPU die Anfrage ablehnt), erscheint unterhalb der Zeilen ein roter Hinweis und der zuletzt erfolgreich gelesene Wert bleibt bis zur nächsten erfolgreichen Aktualisierung erhalten.
 
+### Diagnosepuffer-Panel
+
+Ein Tab `Diagnosepuffer` im rechten Werkzeug-Dock listet die letzten CPU-Diagnoseereignisse aus der SSL-Teilliste `0xA0` und spiegelt damit, was TIA Portal in „Online & Diagnose" unter „Diagnosepuffer" zeigt:
+
+- **Spalten** — `Zeitstempel` (UTC, Millisekunden-Auflösung), `Ereignis-ID` (Hex `0xXXXX`), `Klasse`, `Priorität`, `OB` (Organisationsbaustein-Referenz).
+- **Aktualisieren** — liest den Diagnosepuffer auf Anforderung neu. Der Wert wird zusätzlich nach jedem erfolgreichen S7-Verbindungsaufbau einmal automatisch aktualisiert, sofern die Firmware unterstützt wird.
+- **Leerer Zustand** — meldet die CPU keine Ereignisse, erscheint stattdessen `Keine Diagnoseereignisse auf dieser CPU.`
+- **Firmware-Anforderung** — der hier verwendete SSL-DS-248-SubrangeRead ist ein Feature ab CPU-**Firmware V3.0**. Auf V2.x-CPUs zeigt der Tab `Diagnosepuffer benötigt CPU-Firmware V3.0 oder neuer.` und überspringt den Auto-Refresh, damit kein Log-Spam entsteht.
+
+### CPU-Identität-Panel
+
+Ein Tab `CPU-Identität` im rechten Werkzeug-Dock zeigt den Geräte-Identifikationsdatensatz (PROFINET I&M0) der verbundenen S7-1500 / S7-1500F-CPU. Funktioniert auf V2.x und V3.0+.
+
+- **MLFB / Bestellnummer / Seriennummer / Hardware-Stand / Firmware-Stand** — fünf Zeilen aus dem I&M0-Datensatz auf dem `theCPUProxy`-Submodul der CPU.
+- **Aktualisieren** — liest den I&M0-Datensatz auf Anforderung neu. Der Wert wird zusätzlich nach jedem erfolgreichen S7-Verbindungsaufbau einmal automatisch aktualisiert.
+
+### Speicherauslastung-Panel
+
+Ein Tab `Speicherauslastung` im rechten Werkzeug-Dock zeigt die Lade-/Arbeits-/Remanenz-Speicher-Auslastung der verbundenen S7-1500 / S7-1500F-CPU und spiegelt damit, was TIA Portal in „Online & Diagnose" unter „Speicher" zeigt:
+
+- **Ladespeicher** — belegt/gesamt in Megabyte plus horizontaler Fortschrittsbalken (0–100 %, gekappt).
+- **Arbeitsspeicher** — gleiche Form.
+- **Remanenzspeicher** — gleiche Form.
+- **Aktualisieren** — liest den CPU-Speicher- und Schutz-Block auf Anforderung neu. Der Wert wird zusätzlich nach jedem erfolgreichen S7-Verbindungsaufbau einmal automatisch aktualisiert.
+
+Solange keine SPS verbunden ist, zeigen die Zeilen einen Geviertstrich (`—`) und die Fortschrittsbalken stehen auf null. Schlägt das Lesen fehl, erscheint unterhalb der Zeilen ein lokalisierter Fehlertext; der zuvor zwischengespeicherte Wert wird gelöscht, damit veraltete Zahlen nicht in die Irre führen.
+
 ### Protokollabhängige Werkzeug-Tabs
 
 Die Werkzeug-Tabs rund um den Verbindungs-Workspace passen sich an das Protokoll der aktiven Verbindung an:
 
-- **OPC-UA-Verbindung** — Adressraum, Typdefinitionen, Knoten-Attribute, Verweise, Strukturfelder, Ereignisprotokoll, Beobachtungstabelle, Verlaufsdiagramm, Server-Diagnose. Kein CPU-Schutz-Tab (S7-spezifisch).
-- **S7-Comm+-Verbindung** — Adressraum, Beobachtungstabelle, Verlaufsdiagramm, CPU-Schutz. Die OPC-UA-spezifischen Tabs (Typdefinitionen, Knoten-Attribute, Verweise, Strukturfelder, Ereignisprotokoll, Server-Diagnose) werden ausgeblendet, weil sie NodeIds, OPC-Events oder andere serverseitige Strukturen brauchen, die S7 Comm+ nicht bietet.
+- **OPC-UA-Verbindung** — Adressraum, Typdefinitionen, Knoten-Attribute, Verweise, Strukturfelder, Ereignisprotokoll, Beobachtungstabelle, Verlaufsdiagramm, Server-Diagnose. Kein CPU-Schutz / Diagnosepuffer / CPU-Identität / Speicherauslastung (alle S7-spezifisch).
+- **S7-Comm+-Verbindung** — Adressraum, Beobachtungstabelle, Verlaufsdiagramm, CPU-Schutz, Diagnosepuffer, CPU-Identität, Speicherauslastung. Die OPC-UA-spezifischen Tabs (Typdefinitionen, Knoten-Attribute, Verweise, Strukturfelder, Ereignisprotokoll, Server-Diagnose) werden ausgeblendet, weil sie NodeIds, OPC-Events oder andere serverseitige Strukturen brauchen, die S7 Comm+ nicht bietet.
 
 Ausgeblendete Tabs behalten ihren Zustand — wechselt der aktive Tab auf eine S7-Verbindung und zurück auf OPC UA, erscheinen die OPC-UA-Tabs wieder an ihren ursprünglichen Stellen. Beim Umschalten der Protokoll-Auswahl im Verbindungsformular während einer laufenden Sitzung wird der Filter sofort neu angewendet.
 
@@ -1529,6 +1571,25 @@ Jede Zeile der Beobachtungstabelle zeigt:
 4. Der Wert wird sofort in die SPS geschrieben
 
 > **Hinweis:** Schreiboperationen setzen voraus, dass der OPC UA Benutzer Schreibrechte auf der SPS konfiguriert hat.
+
+#### Schreibfehler
+
+Wenn ein Schreibvorgang fehlschlägt, bleibt die Zeile im Bearbeitungsmodus (Ihr eingegebener Wert bleibt sichtbar) und unter der Wert-Zelle erscheint eine kleine rote Fehlermeldung mit dem Grund:
+
+- **Variable ist schreibgeschützt** — der Server hat den Schreibvorgang abgelehnt, weil die Variable keine Schreibvorgänge erlaubt (`BadNotWritable` / `BadWriteNotSupported`).
+- **Zugriff verweigert** — der OPC UA Benutzer ist verbunden, hat aber keine Schreibrechte für diese Variable (`BadUserAccessDenied`).
+- **Typenkonflikt** — der Wert kann nicht in den Datentyp der Variable konvertiert werden (`BadTypeMismatch`).
+- **Wert außerhalb des gültigen Bereichs** — der Wert liegt außerhalb des für die Variable zulässigen Bereichs (`BadOutOfRange`).
+- **Server lieferte kein Ergebnis** — der Server hat die Anfrage angenommen, aber kein Per-Item-Ergebnis zurückgegeben; der Schreibvorgang ist möglicherweise nicht wirksam geworden.
+- **Schreibvorgang fehlgeschlagen: {Grund}** — generischer Fallback für jede andere Server-Antwort oder Verbindungsstörung.
+
+Die Fehlermeldung verschwindet, sobald Sie die Zelle erneut bearbeiten oder eine andere Zeile auswählen. Auch ein erfolgreicher Schreibvorgang räumt die Meldung weg.
+
+Dieselbe Rückmeldung erscheint als Banner über dem **Strukturfelder**-Panel bei fehlgeschlagenen Struct-Schreibvorgängen.
+
+#### Struct-Schreibvorgang — Keine Änderungen
+
+Wenn Sie im Strukturfelder-Panel auf **Schreiben** klicken, ohne dass Sie ein Feld bearbeitet haben, zeigt das Panel ein **"Keine Änderungen zum Schreiben"**-Banner an, statt stillschweigend nichts zu tun. Sobald Sie ein Feld bearbeiten, verschwindet das Banner automatisch und der nächste Klick auf **Schreiben** sendet die Änderungen an den Server.
 
 ### Live-Überwachung (Abonnements)
 
@@ -1689,7 +1750,7 @@ Canvas-Dashboards können als JSONL-Dateien gespeichert und später geladen werd
 
 ---
 
-## 9c. Unit Testing (Enterprise)
+## 9c. Unit Testing
 
 Integriertes Unit-Test-Framework für TIA-Bausteine. Schreiben, ausführen und auswerten von Tests gegen eine laufende PLCSIM Advanced Instanz direkt in der App.
 
@@ -1766,11 +1827,180 @@ Test-Ergebnisse werden in `%LocalAppData%\TiaOpennessManager\db\test_results.db`
 
 ### Neue Test-Suite erstellen
 
-1. Zuerst einen Baustein analysieren (siehe oben), damit das Interface bekannt ist
-2. **New Suite** klicken — eine neue Suite-JSON wird mit dem Baustein-Namen erzeugt
-3. Das Dokument öffnet sich mit dem Default-JSON-Skeleton (leeres `testCases`-Array)
-4. In den **Visual**-Editor wechseln um Test-Cases per Drag-and-Drop zu bauen, oder direkt JSON bearbeiten
-5. **Save** klicken (`Strg+S`) — die Suite wird nach `.tia-tests/{SuiteName}.json` geschrieben
+1. Eine SPS und einen Baustein auswählen (oder zuerst **Analyze** klicken, damit das Interface bekannt ist)
+2. **New Suite** klicken — der Button bleibt deaktiviert, bis ein Baustein gewählt ist; so kann keine versehentliche `Unknown_Tests`-Suite mehr entstehen
+3. Die neue Suite wird **sofort** als `<projectDir>/.tia-tests/{BlockName}_Tests.json` auf die Disk geschrieben und erscheint im Test Explorer ohne Projekt-Reload
+4. Das Dokument öffnet sich mit **einem direkt editierbaren Beispiel-Test-Case**, der `arrange` / `act` / `assertions` / `watch` zeigt. Wenn **Analyze** vorher gelaufen ist, nutzt das Beispiel den ersten skalaren Input/Output des Bausteins; sonst generische Platzhalter `Enable` / `Running`, die durch echte Namen ersetzt werden.
+5. In den **Visual**-Editor wechseln (Form-basiert, Master-Detail) um Test-Cases via Felder und Grids hinzuzufügen / löschen / duplizieren — Name, Beschreibung, Zyklen, Tags, Priorität + Arrange-Inputs-Grid + Assertions-Grid + Watch-Liste. Änderungen synchronisieren in Echtzeit zurück in den JSON-Tab
+6. **Save** (`Strg+S`) klicken um weitere Änderungen zu speichern; die Datei existiert bereits nach Schritt 3
+
+### Test-Suite-JSON-Schema
+
+Jede `.tia-tests/*.json`-Datei folgt der gleichen Struktur. Top-Level-Felder:
+
+| Feld | Typ | Pflicht | Zweck |
+|---|---|---|---|
+| `name` | string | ja | Suite-Identifier (muss zum Dateinamen ohne `.json` passen) |
+| `blockName` | string | ja | Exakter TIA-Bausteinname (case-sensitive) |
+| `plcName` | string | ja | SPS-/CPU-Name im TIA-Projekt (z.B. `PLC_1`) |
+| `config` | object | ja | Verbindungs- + Transport-Einstellungen (siehe unten) |
+| `testCases` | array | ja | Ein Eintrag pro Test-Case (siehe unten) |
+
+`config` (alle Felder optional, Defaults gezeigt):
+
+| Feld | Default | Zweck |
+|---|---|---|
+| `cycles` | `1` | Default-PLC-Zyklen pro Test-Case (überschreibbar pro Case via `act.cycles`) |
+| `cycleWaitMs` | `100` | Wartezeit zwischen Sample-Reads bei `cycles > 1` |
+| `timeoutMs` | `5000` | Hard-Timeout pro Test-Case |
+| `instanceDbName` | `""` | Instance-DB für Lese-/Schreibzugriff; leer → `<blockName>_DB` (Siemens-Konvention) |
+| `preferFc` | `false` | FC-Bausteine (ohne Instance-DB) tolerieren; setzen wenn das Ziel eine Function statt Function-Block ist |
+| `transport` | `"s7CommPlus"` | `"s7CommPlus"` für reale SPS / TCP-PLCSIM, `"plcSimApi"` für direkte PLCSIM-Tag-API |
+| `s7IpAddress`, `s7Port`, `s7Rack`, `s7Slot` | `192.168.0.1` / `102` / `0` / `1` | S7-Comm+-Ziel |
+| `s7UseTls` | `false` | TLS 1.3 (erforderlich für S7-1500-Firmware ≥ 2.9) |
+| `s7User`, `s7PasswordKeyId` | `""` / null | Anmeldedaten-Referenz (Passwort liegt im Windows Credential Manager) |
+| `plcSimInstanceName` | `"TiaUnitTest"` | PLCSIM-Advanced-Instanzname bei `transport = "plcSimApi"` |
+| `plcSimIp` | `"192.168.0.100"` | PLCSIM-Advanced-Virtual-Adapter-IP bei `transport = "plcSimApi"` |
+| `preparationMode` | `"userPreloaded"` | `userPreloaded` (empfohlen) oder `tiaTcpDownload` (auto-Compile + Download) |
+| `masterSecretPasswordKeyId` | null | Projekt-Master-Secret-Passwort-Referenz (erforderlich bei `tiaTcpDownload` wenn das Projekt vertraulichen Konfig-Schutz nutzt — Passwort liegt im Windows Credential Manager) |
+| `autoConnectS7` | `true` | S7 vor Run-Start automatisch verbinden |
+| `keepInstanceAfterRun` | `false` | PLCSIM-Instanz nach Run weiterlaufen lassen |
+
+Jeder Eintrag in `testCases`:
+
+| Feld | Typ | Pflicht | Zweck |
+|---|---|---|---|
+| `name` | string | ja | PascalCase-Szenario-Name (z.B. `Start_FromIdle_Runs`) |
+| `description` | string | nein | Ein-Satz-Was-und-Warum |
+| `arrange.inputs` | object | ja | `{ "MemberName": value, … }` — wird vor Act in die DB geschrieben |
+| `act.cycles` | int | nein (Default `config.cycles`) | PLC-Zyklen zwischen Arrange und Assert; **muss > 1 sein, damit `watch[]` feuert**. Schließt sich gegenseitig mit `act.steps` aus (das `oneOf` im Schema lehnt beides am selben `act` ab) |
+| `act.timeoutMs` | int | nein (Default `config.timeoutMs`) | Per-Case-Timeout. Deckt die gesamte `steps`-Sequenz ab, wenn `steps` gesetzt ist |
+| `act.steps` | array | nein | Optionale geordnete Sequenz aus `write` / `wait` / `assert`-Schritten, die *zwischen* Arrange und den Top-Level-`assertions` läuft. Siehe **Mehrstufige Schritte** unten. Schließt sich gegenseitig mit `act.cycles` aus |
+| `assertions` | array | ja | `[ { "variable": "X", "operator": "equal", "expected": v, "tolerance": t? }, … ]` |
+| `watch` | string[] | nein | Variablen die einmal pro Zyklus während Act gesampled werden → Variable-Timeline-Chart im Results-Panel |
+| `tags` | string[] | nein | Frei wählbare Labels |
+| `priority` | string | nein | `"low"` / `"normal"` (Default) / `"high"` |
+| `requirements` | string[] | nein | Traceability-Links |
+| `order` | int | nein | Stabile Sortier-Reihenfolge in der UI |
+
+Unterstützte `operator`-Werte: `equal`, `notEqual`, `greaterThan`, `lessThan`, `inRange` (erwartet `expected: [min, max]`), `isTrue`, `isFalse`. `tolerance` greift nur bei `Real`/`LReal` mit `equal`/`notEqual` (Default `0.0001`). `expected` ist vom Schema für jede Assertion erforderlich (für `isTrue`/`isFalse` einen beliebigen Wert setzen — `false`, `true`, `0` — der Runner ignoriert ihn dort).
+
+> **Sicherheit — Beispielwerte sind Platzhalter.** Wenn `BuildExampleTestCase` keine echten Input-/Output-Namen aus `Analyze` ableiten kann, nutzt das Beispiel sichere Defaults (`Enable: false`, `Running: false`), damit ein Klick auf Run keine Motoren, Ventile oder andere Outputs auf realer Hardware aktivieren kann. Vor jedem Lauf gegen eine reale SPS jeden `arrange.inputs`-Wert und jede Assertion prüfen.
+
+> **Wichtig — `watch[]` ist das Diagnose-Array des Test-Cases, NICHT die TIA-Beobachtungstabelle.**
+> Variablen in `watch` werden einmal pro PLC-Zyklus während der Act-Phase gesampled (sofern `act.cycles > 1`) und im Results-Panel als Zeitreihen-Chart gerendert. Das ist unabhängig von TIA Portals externer Beobachtungstabelle oder einer OPC-UA-Subscription.
+
+#### Vollständiges Beispiel
+
+Eine vollständige minimale Suite mit einem Test-Case der jeden Block nutzt und `watch[]` verwendet:
+
+```json
+{
+  "name": "FB_Motor_Tests",
+  "blockName": "FB_Motor",
+  "plcName": "PLC_1",
+  "config": {
+    "cycles": 1,
+    "timeoutMs": 5000,
+    "instanceDbName": "FB_Motor_DB",
+    "transport": "s7CommPlus",
+    "s7IpAddress": "192.168.0.1",
+    "s7Port": 102,
+    "s7Rack": 0,
+    "s7Slot": 1,
+    "s7UseTls": false,
+    "autoConnectS7": true,
+    "preparationMode": "userPreloaded"
+  },
+  "testCases": [
+    {
+      "name": "Start_FromIdle_RunsWithinThreeCycles",
+      "description": "Prüft dass Run nach gesetztem StartCmd hochgeht; watch zeigt Verlauf.",
+      "arrange": {
+        "inputs": {
+          "StartCmd": true,
+          "Reset":    false,
+          "Speed":    50.0
+        }
+      },
+      "act": { "cycles": 5 },
+      "assertions": [
+        { "variable": "Run",       "operator": "equal",     "expected": true },
+        { "variable": "Speed_Act", "operator": "inRange",   "expected": [49.5, 50.5] },
+        { "variable": "Error",     "operator": "isFalse", "expected": false }
+      ],
+      "watch": ["Run", "Speed_Act", "StartCmd"],
+      "tags": ["happy-path", "smoke"],
+      "priority": "normal"
+    }
+  ]
+}
+```
+
+Nach dem Run zeigt das Results-Panel pass/fail pro Assertion plus ein Variable-Timeline-Chart für die drei `watch`-Variablen über die 5 Zyklen. Um weitere Variablen zu einem bestehenden Case hinzuzufügen: Variablennamen ans `watch`-Array anhängen und `act.cycles` auf eine sinnvolle Zahl erhöhen (3-10 ist typisch).
+
+#### Mehrstufige Schritte (`act.steps`)
+
+Wenn ein einzelnes Arrange-dann-Assert nicht ausreicht — z.B. *Reset → warten → Start → warten → prüfen* — `act.steps` statt `act.cycles` verwenden. Drei Step-Typen:
+
+| `type` | Pflichtfelder | Effekt |
+|---|---|---|
+| `"write"` | `inputs` (Object, gleiche Form wie `arrange.inputs`) | Schreibt die gelisteten Members **additiv** auf den aktuellen DB-Zustand. Nicht gelistete Members behalten ihren Wert. |
+| `"wait"` | `ms` (int, `0`..`3 600 000`) | Async-Delay. Die SPS zykelt weiter. Wenn `watch[]` nicht leer ist und `config.cycleWaitMs > 0`, werden beobachtete Variablen alle `config.cycleWaitMs` ms während des Wait-Fensters gesampled. |
+| `"assert"` | `assertions` (Array, gleiche Form wie Top-Level-`assertions`) | Per-Step-Checkpoint. Ein Fehler bricht den Case sofort ab und meldet `Step <N> (assert): <Grund>` (1-basiert). |
+
+**Reihenfolge der Operationen:**
+
+1. `arrange.inputs` wird einmal am Case-Start geschrieben (nicht zwischen Steps wiederholt).
+2. Jeder Eintrag in `steps` läuft in Deklarationsreihenfolge.
+3. Nach dem letzten Step läuft das **Top-Level**-`assertions[]` als Final-Gate. Per-Step-Asserts und Top-Level-Asserts sind unabhängig — beide müssen passen. Das Schema verlangt `minItems: 1` auf Top-Level-`assertions`, also mindestens eine triviale Top-Level-Assertion authoren auch wenn man primär per-Step-Asserts nutzt.
+4. `watch[]` sampled durchgehend während jedem `wait`-Step (unter den oben genannten Bedingungen); das Time-Series-Chart annotiert Step-Grenzen.
+
+**Caps (vom Runner erzwungen):**
+
+| Limit | Wert |
+|---|---|
+| Steps pro Case | `1024` |
+| Inputs pro `write`-Step | `256` |
+| Assertions pro `assert`-Step | `256` |
+| `wait.ms` | `0`..`3 600 000` (1 Stunde) |
+
+**Visual-Editor:** Die Case-Detail-Ansicht zeigt einen **Steps (optional)**-Bereich mit **+ Write**, **+ Wait**, **+ Assert**-Buttons zum Anhängen, per-Step **↑ / ↓**-Buttons zum Umsortieren, und **−** zum Entfernen. Der Editor lässt `cycles` automatisch im serialisierten JSON weg, sobald der Steps-Bereich nicht leer ist (das Schema lehnt die `cycles + steps`-Kombination ab, der Editor produziert sie also nie).
+
+**Backwards-Kompatibilität:** Ein Case ohne `steps` läuft den bestehenden Single-Phase-`cycles`-Pfad ohne Verhaltensänderung. Ältere Suites brauchen keine Migration.
+
+##### Vollständiges Beispiel — getakteter Motor-Start
+
+`StartCmd` wird nach einem 500 ms langen Reset-Fenster gesetzt, dann warten wir 2 s bis der FB `Run` erreicht, plus eine abschließende Speed-Prüfung.
+
+```json
+{
+  "name": "MotorStart_ReachesRun",
+  "description": "Reset, warten, Start, warten, Run prüfen.",
+  "arrange": { "inputs": { "Enable": true } },
+  "act": {
+    "timeoutMs": 10000,
+    "steps": [
+      { "type": "write", "inputs": { "Reset": true } },
+      { "type": "wait",  "ms": 500 },
+      { "type": "write", "inputs": { "Reset": false, "StartCmd": true } },
+      { "type": "wait",  "ms": 2000 },
+      { "type": "assert", "assertions": [
+          { "variable": "Run", "operator": "isTrue", "expected": true }
+        ]
+      }
+    ]
+  },
+  "assertions": [
+    { "variable": "Speed_Act", "operator": "greaterThan", "expected": 1000 }
+  ],
+  "watch": ["Run", "Speed_Act"]
+}
+```
+
+Wenn der Per-Step-`assert` fehlschlägt (z.B. `Run` ist nicht innerhalb von 2 s true geworden), gibt der Runner `Step 5 (assert): variable Run is not true` aus und bricht den Case ab. Wenn die Per-Step-Asserts alle passen aber das Top-Level-`Speed_Act > 1000` fehlschlägt, scheitert der Case mit der Top-Level-Assertion-Message.
+
+Im Zweifel: zuerst einen einfachen Arrange + `cycles ≥ N` + Assert-Case schreiben. Erst in eine `steps`-Sequenz konvertieren wenn die einfache Form das Timing nicht ausdrücken kann, von dem der Test wirklich abhängt.
 
 ### Vorhandene Suite öffnen
 

@@ -1,8 +1,59 @@
 # TIA Openness Manager - Changelog
 
+## v3.5.2 (2026-04-29)
+
+### AI Chat
+- **AI Chat** — Claude models on GitHub Copilot no longer time out during long reasoning calls.
+- **AI Chat** — Stream timeouts log the system proxy used for the failing endpoint.
+- **AI Chat** — AWL→SCL conversion catches self-IDB access, Bool bit-slices, and INT→DInt promotion before emitting SCL.
+- **AI Chat** — Ctrl+B sends blocking sub-agents to background; main-session detach is no longer offered.
+- **AI Chat** — File system tool can access the open TIA project's directory and any folders added in Settings → Workspace; out-of-scope paths trigger an allow/deny prompt.
+- **AI Chat** — File system tool keeps protected app files (vault, license, chat data, settings) off-limits even inside allow-listed folders.
+- **AI Chat** — Canvas snapshot tool now captures the visible canvas.
+- **AI Chat** — MCP servers with arbitrary display names (spaces, punctuation, accents) now start successfully.
+- **AI Chat** — Edit MCP Server dialog opens above the AI Chat Settings window.
+- **AI Chat** — MCP server commands at install paths containing parentheses (e.g. `C:\Program Files (x86)\…`) are now accepted.
+
+### PLC Online
+- **OPC UA** — Failed writes surface a localized reason (read-only / permission denied / type mismatch / out of range / generic) inline below the watch row, with the row staying in edit mode for retry.
+- **OPC UA** — Failed struct writes show a banner above the Struct Fields panel with the same localized reason.
+- **OPC UA** — Writes with no server result now report it instead of silently appearing to succeed.
+- **OPC UA** — Pressing Write on the struct editor with no field changes shows a "No changes to write" banner; starting a new edit clears it.
+- **OPC UA** — Watch-table polls, struct edits and writes survive transient server-side blips instead of failing outright.
+
+### Git
+- **Git** — Partial stage / unstage / discard now works on diff lines with non-UTF8 text.
+- **Git** — Create Branch popup hides the Local Changes radio when the working tree is clean.
+
+### Editor
+- **Editor** — Header `Language:` shows the real language for TIA Portal blocks (SCL/STL/LAD/FBD) and opened files (C#, Python, Markdown, TypeScript, …) instead of always SCL or XML.
+
+### Unit Testing
+- **Unit Testing** — Test suite files keep special characters (°, <, +, accents) intact.
+- **Unit Testing** — Test Explorer picks up new suites without a project reload.
+- **Unit Testing** — New Suite button stays disabled until a block is selected.
+- **Unit Testing** — Suite names with invalid characters or path-traversal sequences are rejected at every entry point.
+- **Unit Testing** — Connection Settings persist when applied, and save errors appear in the status bar.
+- **Unit Testing** — New Suite opens with a ready-to-edit example test case; the user manual now includes a full schema reference.
+- **Unit Testing** — Example test case uses safe defaults (Bool inputs default to `false`) so a one-click Run cannot accidentally activate outputs on real hardware; user manual gains a safety callout.
+- **Unit Testing** — Visual editor lets you author test cases through a form (Name / Description / Cycles / Tags / Priority + grids for Inputs, Assertions, Watch) instead of an empty page.
+- **Unit Testing** — Multi-phase test steps — author write/wait/assert sequences in a single case for timing-dependent scenarios (reset → wait → start → wait → check) instead of chaining brittle multi-case state.
+- **Unit Testing** — PLCSim Advanced saved-instances list scrolls within its own panel instead of overlapping the active-instances row.
+- **AI Chat** — AI-generated unit tests are deterministic instead of depending on the PLC's current state.
+- **AI Chat** — Unit-test agent uses the test case's watch array directly instead of searching for non-existent watch / monitor / subscribe / trace tools.
+- **AI Chat** — Boundary-values tool no longer fails for blocks with Real/LReal inputs.
+
+### Screen Editor
+- **Screen Editor** — Item borders now render correctly.
+
+### Trace
+- **Trace** — Signal-color swatches render correctly when adding a computed signal.
+- **Trace** — Signal picker now enables Add for OPC UA variables whose data type is a numeric NodeId (e.g. `i=1`, `i=4`).
+
 ## v3.5.1 (2026-04-26)
 
 ### AI Chat
+- **AI Chat** — Background completions now render as a collapsible bubble instead of raw XML.
 - **AI Chat** — Completed background sessions surface their result in the original chat, so the assistant can react to the result the next time you write.
 - **AI Chat** — Ctrl+B sends the whole running turn to the background and frees the session for new input.
 - **AI Chat** — Tapping a background session in the sidebar switches the chat to that run's messages so you can read its progress and continue the conversation; Ctrl+B again returns the run to background and the chat reverts to the original session.
@@ -21,6 +72,8 @@
 - **PLC Online** — Connection header shows an access-level badge (Full / Read / HMI / No access) reflecting what the PLC granted, with a clear "password required" message when the PLC needs authentication.
 - **PLC Online** — S7 connections stay stable during watch-table use and post-connect setup, eliminating spurious heartbeat-miss disconnects.
 - **PLC Online** — New CPU Protection panel in the right-hand tool dock shows the active S7 CPU's protection level (None / Read / Write / Full) and whether a password is required, refreshing automatically on connect with a manual Refresh button.
+- **PLC Online** — New Diagnostic Buffer panel in the right-hand tool dock lists the active S7 CPU's recent diagnostic events (timestamp, event ID, class, priority, OB) with a manual Refresh button, refreshing automatically on connect. Older CPUs (firmware below V3.0) display a "requires V3.0 or newer" notice instead of repeated read failures.
+- **PLC Online** — New CPU Identity panel in the right-hand tool dock shows the active S7 CPU's MLFB, order number, serial number, hardware revision and firmware version, refreshing automatically on connect with a manual Refresh button.
 - **PLC Online** — Watch Table subscription interval is configurable, defaulting to 500 ms for stable communication.
 - **OPC UA** — Connection header banner now shows live elapsed seconds during reconnect attempts and offers a Cancel button that stops trying.
 - **OPC UA** — Endpoint URL field is now an autocomplete dropdown of the last successful endpoints; selecting one fills the field for one-click reconnect.

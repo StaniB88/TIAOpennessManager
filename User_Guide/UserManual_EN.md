@@ -19,7 +19,7 @@
 9. [MCP Server (AI Integration)](#9-mcp-server-ai-integration)
 9a. [AI Chat](#9a-ai-chat)
 9b. [OPC UA Tab](#9b-opc-ua-tab)
-9c. [Unit Testing (Enterprise)](#9c-unit-testing-enterprise)
+9c. [Unit Testing](#9c-unit-testing)
 9c. [AI Canvas](#9c-ai-canvas)
 10. [Project Library Management](#10-project-library-management)
 11. [Hardware Tab](#11-hardware-tab)
@@ -524,7 +524,7 @@ You can drag any block (FB, FC, OB, DB, UDT, Tag Table) from the TIA tree direct
 Metadata is displayed next to the code:
 - **Block Type:** OB, FB, FC, DB
 - **Number:** e.g., OB1, FB10
-- **Language:** SCL, STL, LAD, FBD, GRAPH
+- **Language:** Reflects the actual programming language reported by TIA Portal (`SCL`, `STL`, `LAD`, `FBD`, `GRAPH`, `F_LAD`, …). For files dropped from the file explorer, the label shows the file's language (`C#`, `Python`, `Markdown`, `TypeScript`, …) — unknown extensions show `Text`.
 - **Author:** If available
 - **Last Modified:** Timestamp
 
@@ -1221,10 +1221,6 @@ You can type and send messages while the AI agent is actively processing. Messag
 
 **Moving a sub-agent to the background:** When a blocking sub-agent has the main assistant waiting, press **Ctrl+B**. The sub-agent is detached and keeps running in the background while the main assistant is free to answer new messages. A small "(background)" badge appears on the sub-agent block. When the backgrounded sub-agent finishes, its result arrives in the chat as a notification, and the main assistant picks up from there. If more than one sub-agent is currently blocking, Ctrl+B sends all of them to the background at once.
 
-**Background main session (Ctrl+B):** When the assistant is busy on a turn (calling tools, generating a long response, or running a sub-agent), pressing **Ctrl+B** moves the entire turn into the background. The original session becomes immediately available for new input. The background turn keeps running, and you receive a toast and a sidebar badge in the new "Background Sessions" section when it finishes. Click the background-session item or press Ctrl+B again to bring it back to the foreground; you can keep talking to it from there. Press Ctrl+B once more to send it back to the background. When the background turn finishes, a short result notification is also appended to the original chat — the assistant can pick up the result the next time you write, so you don't have to manually open the background session to bring its result back into the conversation. Background sessions are cancelled when you close the app.
-
-**Disambiguation:** When blocking sub-agents are running, the first Ctrl+B sends them to the background (existing behavior). The next Ctrl+B (or Ctrl+B with no blocking sub-agents) backgrounds the entire main turn.
-
 **Queue processing:** After each AI turn completes, the system automatically checks the queue and processes the next message. If multiple messages are queued, they are processed one at a time in priority order (higher priority first, FIFO within the same priority).
 
 ---
@@ -1251,6 +1247,25 @@ Run multiple AI chat sessions simultaneously. Each session has its own conversat
 **Canvas per session:** Each session maintains its own canvas state. When switching sessions, the WebView is reset and the target session's canvas content is automatically replayed.
 
 **Live model switch:** Use the model picker button in the chat header to change the AI model for the current session only. Other sessions and the global setting are not affected.
+
+### Workspace — File System Access Control
+
+The AI chat's `fs` tool (read, write, create, edit, delete, list, search) is gated by a layered access policy. Configure scope in **AI Chat Settings → Workspace**.
+
+**Automatically allowed:**
+- The currently open TIA project's directory
+- Your Desktop, Documents, and Temp folders (defaults)
+
+**Adding folders:** In Settings → Workspace, click **Add Folder…** to grant the AI persistent access to additional directories (e.g. shared project drives, common SCL libraries). Folders inside system locations (Windows, Program Files, AppData root, drive root) are rejected.
+
+**Per-request prompt:** When the AI requests a path outside the allowed scope, a dialog appears with the operation type (read / write / delete) and the path:
+
+- **Allow Once** — grants this single operation only
+- **Allow This Session** — grants the path's parent directory until the app closes
+- **Allow Permanently** — adds the parent directory to your saved Workspace roots (warning shows the exact directory that will be persisted)
+- **Deny** — refuses the request
+
+**Always refused, regardless of scope:** vault, license, chat database, agent memory, app settings, SSH/AWS/Azure/Kubernetes credentials, Windows/Program Files/AppData internals, browser/OS lock files. The AI cannot bypass this list even by requesting allow-permanent on a parent that contains them.
 
 ---
 
@@ -1465,12 +1480,39 @@ A `CPU Protection` tab in the right-hand tool dock shows the live protection sta
 
 The values display as an em-dash (`—`) when no PLC is connected. If the read fails (for example because the CPU rejected the request), an inline red error message appears below the rows and the previous cached value is kept until the next successful refresh.
 
+### Diagnostic Buffer panel
+
+A `Diagnostic Buffer` tab in the right-hand tool dock lists the most recent CPU diagnostic events read from the SSL `0xA0` partial-list, mirroring what TIA Portal Online & Diagnostics shows under "Diagnostics buffer":
+
+- **Columns** — `Timestamp` (UTC, millisecond precision), `Event ID` (hex `0xXXXX`), `Class`, `Priority`, `OB` (organization-block reference).
+- **Refresh** — re-reads the diagnostic buffer on demand. The value also refreshes automatically once after every successful S7 connect on supported firmware.
+- **Empty state** — when the CPU reports zero events, a `No diagnostic events on this CPU.` placeholder is shown.
+- **Firmware requirement** — the SSL DS-248 SubrangeRead used here is a CPU **firmware V3.0 or newer** feature. On V2.x CPUs the tab shows `Diagnostic buffer requires CPU firmware V3.0 or newer.` instead of the table; the auto-refresh skips the wire call so no log spam is produced.
+
+### CPU Identity panel
+
+A `CPU Identity` tab in the right-hand tool dock shows the device-identification record (PROFINET I&M0) read from the active S7-1500 / S7-1500F CPU. Works on both V2.x and V3.0+ firmware.
+
+- **MLFB / Order number / Serial / Hardware version / Firmware version** — five rows extracted from the I&M0 record on the CPU's `theCPUProxy` submodule.
+- **Refresh** — re-reads the I&M0 record on demand. The value also refreshes automatically once after every successful S7 connect.
+
+### Memory Usage panel
+
+A `Memory Usage` tab in the right-hand tool dock shows live load/work/retain memory utilization for the connected S7-1500 / S7-1500F CPU, mirroring what TIA Portal Online & Diagnostics shows under "Memory":
+
+- **Load memory** — used/total in megabytes plus a horizontal progress bar (0–100 %, clamped).
+- **Work memory** — same shape.
+- **Retain memory** — same shape.
+- **Refresh** — re-reads the CPU memory-and-protection block on demand. The value also refreshes automatically once after every successful S7 connect.
+
+When no PLC is connected the rows show an em-dash (`—`) and the progress bars sit at zero. Read failures surface a localized error string below the rows; the previous cached value is cleared so stale numbers cannot mislead.
+
 ### Protocol-Aware Tool Tabs
 
 The tool tabs surrounding the connection workspace adapt to whichever protocol the active connection uses:
 
-- **OPC UA connection** — Address Space, Type Definitions, Node Attributes, References, Struct Fields, Event Log, Watch Table, History Chart, Server Diagnostics. No CPU Protection tab (S7-only).
-- **S7 Comm+ connection** — Address Space, Watch Table, History Chart, CPU Protection. The OPC-UA-only tabs (Type Definitions, Node Attributes, References, Struct Fields, Event Log, Server Diagnostics) are hidden because they need NodeIds, OPC events or other server-side surfaces that S7 Comm+ does not expose.
+- **OPC UA connection** — Address Space, Type Definitions, Node Attributes, References, Struct Fields, Event Log, Watch Table, History Chart, Server Diagnostics. No CPU Protection / Diagnostic Buffer / CPU Identity / Memory Usage tabs (those are S7-only).
+- **S7 Comm+ connection** — Address Space, Watch Table, History Chart, CPU Protection, Diagnostic Buffer, CPU Identity, Memory Usage. The OPC-UA-only tabs (Type Definitions, Node Attributes, References, Struct Fields, Event Log, Server Diagnostics) are hidden because they need NodeIds, OPC events or other server-side surfaces that S7 Comm+ does not expose.
 
 Tabs that are hidden retain their state — switching the active tab to an S7 connection and back to OPC UA restores the OPC-UA-only tabs in their previous places. Switching the protocol radio in the connection form mid-session re-applies the filter immediately.
 
@@ -1508,6 +1550,25 @@ Each row in the watch table shows:
 4. The value is written to the PLC immediately
 
 > **Note:** Write operations require the OPC UA user to have write permissions configured on the PLC.
+
+#### Write Errors
+
+If a write fails, the row stays in edit mode (your value remains visible) and a small red error message appears below the value cell explaining why the write was rejected:
+
+- **Variable is read-only** — the server rejected the write because the variable does not allow writes (`BadNotWritable` / `BadWriteNotSupported`).
+- **Permission denied** — the OPC UA user is connected but does not have write rights for this variable (`BadUserAccessDenied`).
+- **Type mismatch** — the value cannot be converted to the variable's data type (`BadTypeMismatch`).
+- **Value out of range** — the value is outside the valid range for the variable (`BadOutOfRange`).
+- **Server returned no result** — the server accepted the request but returned no per-item status; the write may not have taken effect.
+- **Write failed: {reason}** — generic fallback for any other server response or connection problem.
+
+To clear the error, edit the cell again or click another row. A successful write also clears the message.
+
+The same feedback appears as a banner above the **Struct Fields** panel for failed struct writes.
+
+#### Struct Write — No Changes
+
+If you press **Write** on the Struct Fields panel without having edited any field, the panel shows a **"No changes to write"** banner instead of silently doing nothing. As soon as you edit any field, the banner clears automatically and the next press of **Write** sends the changes to the server.
 
 ### Live Monitoring (Subscriptions)
 
@@ -1668,7 +1729,7 @@ Canvas dashboards can be saved to JSONL files and loaded later. **OPC UA binding
 
 ---
 
-## 9c. Unit Testing (Enterprise)
+## 9c. Unit Testing
 
 Integrated unit test framework for TIA blocks. Write, run and evaluate tests against a live PLCSIM Advanced instance without leaving the app.
 
@@ -1745,11 +1806,180 @@ Test results are persisted to `%LocalAppData%\TiaOpennessManager\db\test_results
 
 ### Creating a New Test Suite
 
-1. Analyze a block first (see above) so the interface is known
-2. Click **New Suite** — a new suite JSON is created next to the block name
-3. The document opens with the default JSON skeleton (empty `testCases` array)
-4. Switch to the **Visual** editor to build test cases with drag-and-drop, or edit JSON directly
-5. Click **Save** (`Ctrl+S`) — the suite is written to `.tia-tests/{SuiteName}.json`
+1. Select a PLC and a block (or run **Analyze** first so the interface is known)
+2. Click **New Suite** — the button stays disabled until a block is selected, so you cannot accidentally create an `Unknown_Tests` suite
+3. The new suite is **immediately written** to `<projectDir>/.tia-tests/{BlockName}_Tests.json` and appears in the Test Explorer without a project reload
+4. The document opens with **one ready-to-edit example test case** wired up with `arrange` / `act` / `assertions` / `watch` so you can see how all four pieces fit together. If you've already run **Analyze**, the example uses the first scalar Input/Output of the block; otherwise it uses generic `Enable` / `Running` placeholders you replace with real names.
+5. Switch to the **Visual** editor (form-based master-detail) to add / remove / duplicate test cases through fields and grids — Name, Description, Cycles, Tags, Priority + Arrange-Inputs grid + Assertions grid + Watch list. Edits sync back to the JSON tab in real time, so you can flip between modes freely
+6. Click **Save** (`Ctrl+S`) to persist further changes; the file already exists from step 3
+
+### Test Suite JSON Schema
+
+Every `.tia-tests/*.json` file follows the same shape. Top-level fields:
+
+| Field | Type | Required | Purpose |
+|---|---|---|---|
+| `name` | string | yes | Suite identifier (must match the file name without `.json`) |
+| `blockName` | string | yes | Exact TIA block name (case-sensitive) |
+| `plcName` | string | yes | PLC/CPU name in the TIA project (e.g. `PLC_1`) |
+| `config` | object | yes | Connection + transport settings (see below) |
+| `testCases` | array | yes | One entry per test case (see below) |
+
+`config` (all fields optional, defaults shown):
+
+| Field | Default | Purpose |
+|---|---|---|
+| `cycles` | `1` | Default PLC cycles per test case (overridable per case via `act.cycles`) |
+| `cycleWaitMs` | `100` | Wait between sampled reads when `cycles > 1` |
+| `timeoutMs` | `5000` | Hard timeout per test case |
+| `instanceDbName` | `""` | Instance-DB to read/write; empty → `<blockName>_DB` (Siemens convention) |
+| `preferFc` | `false` | Tolerate FC blocks (no Instance-DB); set when the target is a function instead of a function block |
+| `transport` | `"s7CommPlus"` | `"s7CommPlus"` for real PLC / TCP-PLCSIM, `"plcSimApi"` for direct PLCSIM Tag-API |
+| `s7IpAddress`, `s7Port`, `s7Rack`, `s7Slot` | `192.168.0.1` / `102` / `0` / `1` | S7 Comm+ target |
+| `s7UseTls` | `false` | TLS 1.3 (required on S7-1500 firmware ≥ 2.9) |
+| `s7User`, `s7PasswordKeyId` | `""` / null | Credentials reference (password lives in Windows Credential Manager) |
+| `plcSimInstanceName` | `"TiaUnitTest"` | PLCSIM Advanced instance name when `transport = "plcSimApi"` |
+| `plcSimIp` | `"192.168.0.100"` | PLCSIM Advanced Virtual-Adapter IP when `transport = "plcSimApi"` |
+| `preparationMode` | `"userPreloaded"` | `userPreloaded` (recommended) or `tiaTcpDownload` (auto-compile + download) |
+| `masterSecretPasswordKeyId` | null | Project master-secret password reference (required for `tiaTcpDownload` when the project uses confidential PLC config protection — password lives in Windows Credential Manager) |
+| `autoConnectS7` | `true` | Auto-connect S7 before run starts |
+| `keepInstanceAfterRun` | `false` | Keep PLCSIM instance alive after run |
+
+Each entry in `testCases`:
+
+| Field | Type | Required | Purpose |
+|---|---|---|---|
+| `name` | string | yes | PascalCase scenario name (e.g. `Start_FromIdle_Runs`) |
+| `description` | string | no | One-sentence what-and-why |
+| `arrange.inputs` | object | yes | `{ "MemberName": value, … }` — written to the DB before Act |
+| `act.cycles` | int | no (defaults to `config.cycles`) | PLC cycles between Arrange and Assert; **must be > 1 for `watch[]` to fire**. Mutually exclusive with `act.steps` (the schema's `oneOf` rejects both on the same `act`) |
+| `act.timeoutMs` | int | no (defaults to `config.timeoutMs`) | Per-case timeout. Covers the entire `steps` sequence end-to-end when `steps` is set |
+| `act.steps` | array | no | Optional ordered sequence of `write` / `wait` / `assert` steps that runs *between* Arrange and the top-level `assertions`. See **Multi-phase Steps** below. Mutually exclusive with `act.cycles` |
+| `assertions` | array | yes | `[ { "variable": "X", "operator": "equal", "expected": v, "tolerance": t? }, … ]` |
+| `watch` | string[] | no | Variables sampled once per cycle during Act → Variable Timeline chart in the Results panel |
+| `tags` | string[] | no | Free-form labels |
+| `priority` | string | no | `"low"` / `"normal"` (default) / `"high"` |
+| `requirements` | string[] | no | Traceability links |
+| `order` | int | no | Stable sort key in the UI |
+
+Supported `operator` values: `equal`, `notEqual`, `greaterThan`, `lessThan`, `inRange` (expects `expected: [min, max]`), `isTrue`, `isFalse`. `tolerance` is meaningful only on `Real`/`LReal` with `equal`/`notEqual` (default `0.0001`). `expected` is required by the schema for every assertion (set it to any value — `false`, `true`, `0` — for `isTrue`/`isFalse`, since the runner ignores it).
+
+> **Safety — example values are placeholders.** When `BuildExampleTestCase` cannot infer real Input/Output names from `Analyze`, the seeded example uses safe defaults (`Enable: false`, `Running: false`) so a one-click Run cannot accidentally activate motors, valves, or other outputs on real hardware. Always review every `arrange.inputs` value and every assertion before pointing the runner at a real PLC.
+
+> **Important — `watch[]` is the test case's diagnostic array, NOT the TIA Watch Table.**
+> Variables listed in `watch` are sampled once per PLC cycle during the Act phase (provided `act.cycles > 1`) and rendered as a time-series chart in the Results panel. This is independent of TIA Portal's external Watch Table or any OPC UA subscription.
+
+#### Complete example
+
+A full minimal suite with one test case that exercises every block and uses `watch[]`:
+
+```json
+{
+  "name": "FB_Motor_Tests",
+  "blockName": "FB_Motor",
+  "plcName": "PLC_1",
+  "config": {
+    "cycles": 1,
+    "timeoutMs": 5000,
+    "instanceDbName": "FB_Motor_DB",
+    "transport": "s7CommPlus",
+    "s7IpAddress": "192.168.0.1",
+    "s7Port": 102,
+    "s7Rack": 0,
+    "s7Slot": 1,
+    "s7UseTls": false,
+    "autoConnectS7": true,
+    "preparationMode": "userPreloaded"
+  },
+  "testCases": [
+    {
+      "name": "Start_FromIdle_RunsWithinThreeCycles",
+      "description": "Asserting Run goes high after StartCmd is set; watch shows trajectory.",
+      "arrange": {
+        "inputs": {
+          "StartCmd": true,
+          "Reset":    false,
+          "Speed":    50.0
+        }
+      },
+      "act": { "cycles": 5 },
+      "assertions": [
+        { "variable": "Run",       "operator": "equal",     "expected": true },
+        { "variable": "Speed_Act", "operator": "inRange",   "expected": [49.5, 50.5] },
+        { "variable": "Error",     "operator": "isFalse", "expected": false }
+      ],
+      "watch": ["Run", "Speed_Act", "StartCmd"],
+      "tags": ["happy-path", "smoke"],
+      "priority": "normal"
+    }
+  ]
+}
+```
+
+After the run, the Results panel shows pass/fail per assertion and a Variable Timeline chart for the three `watch` variables across the 5 cycles. To add more variables to watch on an existing case, append to the `watch` array and increase `act.cycles` to the smallest number that gives useful coverage (3-10 is typical).
+
+#### Multi-phase Steps (`act.steps`)
+
+When a single Arrange-then-Assert is not enough — for example *reset → wait → start → wait → check* — use `act.steps` instead of `act.cycles`. Three step types are available:
+
+| `type` | Required fields | Effect |
+|---|---|---|
+| `"write"` | `inputs` (object, same shape as `arrange.inputs`) | Writes the listed members **additively** on top of whatever is already in the DB. Members not listed keep their value. |
+| `"wait"` | `ms` (int, `0`..`3 600 000`) | Async delay. The PLC keeps cycling. When `watch[]` is non-empty and `config.cycleWaitMs > 0`, watched variables are sampled once every `config.cycleWaitMs` ms throughout the wait window. |
+| `"assert"` | `assertions` (array, same shape as the top-level `assertions`) | Per-step checkpoint. A failure aborts the case immediately and reports `Step <N> (assert): <reason>` (1-based). |
+
+**Order of operations:**
+
+1. `arrange.inputs` is written once at case start (not replayed between steps).
+2. Each entry in `steps` runs in declaration order.
+3. After the last step, the **top-level** `assertions[]` runs as a final gate. Per-step asserts and top-level asserts are independent — both must pass. The schema requires `minItems: 1` on the top-level `assertions`, so author at least one trivial top-level assertion even when relying mainly on per-step asserts.
+4. `watch[]` continues to sample throughout every `wait` step (under the conditions above); the time-series chart annotates step boundaries.
+
+**Caps (enforced by the runner):**
+
+| Limit | Value |
+|---|---|
+| Steps per case | `1024` |
+| Inputs per `write` step | `256` |
+| Assertions per `assert` step | `256` |
+| `wait.ms` | `0`..`3 600 000` (1 hour) |
+
+**Visual editor:** the case detail view shows a **Steps (optional)** section with **+ Write**, **+ Wait**, **+ Assert** buttons to append, per-step **↑ / ↓** buttons to reorder, and **−** to remove. The editor automatically omits `cycles` from the serialized JSON whenever the Steps section is non-empty (the schema rejects the `cycles + steps` combination, so the editor avoids ever producing it).
+
+**Backwards-compatibility:** a case without `steps` runs the existing single-phase `cycles`-based path with no behavioural change. Older suites need no migration.
+
+##### Complete example — timed motor start
+
+`StartCmd` is set after a 500 ms reset window, then we wait 2 s for the FB to reach `Run`, plus a final speed check.
+
+```json
+{
+  "name": "MotorStart_ReachesRun",
+  "description": "Reset, wait, start, wait, check Run.",
+  "arrange": { "inputs": { "Enable": true } },
+  "act": {
+    "timeoutMs": 10000,
+    "steps": [
+      { "type": "write", "inputs": { "Reset": true } },
+      { "type": "wait",  "ms": 500 },
+      { "type": "write", "inputs": { "Reset": false, "StartCmd": true } },
+      { "type": "wait",  "ms": 2000 },
+      { "type": "assert", "assertions": [
+          { "variable": "Run", "operator": "isTrue", "expected": true }
+        ]
+      }
+    ]
+  },
+  "assertions": [
+    { "variable": "Speed_Act", "operator": "greaterThan", "expected": 1000 }
+  ],
+  "watch": ["Run", "Speed_Act"]
+}
+```
+
+If the per-step `assert` fails (for example `Run` did not go true within 2 s), the runner emits `Step 5 (assert): variable Run is not true` and aborts the case. If the per-step asserts all pass but the top-level `Speed_Act > 1000` fails, the case fails with the top-level assertion message.
+
+When in doubt, write a plain Arrange + `cycles ≥ N` + Assert case first. Convert it into a `steps` sequence only when the plain form cannot express the timing the test actually depends on.
 
 ### Opening an Existing Suite
 
