@@ -36,6 +36,8 @@ TIA Portal requires that your Windows user is a member of the "Siemens TIA Openn
 
 On first launch, the Welcome tab opens — follow the Get Started walkthrough or jump straight into connecting to TIA Portal. You can reopen the Welcome tab anytime from **Help → Welcome Guide**, or turn off auto-open with the checkbox at the bottom of the page.
 
+> **Tip:** Press **Ctrl+Shift+P** anywhere in the application to open the Quick Open Bar in the title bar. Type `?` and press Enter to see what each prefix searches (commands, symbols, files, Git branches, goto-line). See [User Manual → Quick Open Bar](UserManual_EN.md#3a-quick-open-bar).
+
 ### 1. Connect to TIA Portal Project
 
 There are two ways to connect:

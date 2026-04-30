@@ -11,6 +11,7 @@
 1. [Einführung](#1-einführung)
 2. [Installation & Systemvoraussetzungen](#2-installation--systemvoraussetzungen)
 3. [Benutzeroberfläche](#3-benutzeroberfläche)
+3a. [Schnellzugriff (Quick Open)](#3a-schnellzugriff-quick-open)
 4. [Projekt-Management](#4-projekt-management)
 5. [Import/Export Tab](#5-importexport-tab)
 6. [Project Tab](#6-project-tab)
@@ -223,6 +224,84 @@ Das untere Panel enthält drei Tabs:
 - **Compare** - Nebeneinander-Bausteinvergleich
 
 Das Panel kann mit den Steuerelementen in der oberen rechten Ecke eingeklappt, erweitert oder maximiert werden.
+
+---
+
+## 3a. Schnellzugriff (Quick Open)
+
+### Was ist die Schnellzugriff-Leiste?
+
+Die Schnellzugriff-Leiste (Quick Open Bar) ist ein Suchfeld in der Titelleiste der Anwendung. Sie ist der schnellste Weg, in der Anwendung zu navigieren — zu einem Befehl, einem PLC- oder HMI-Symbol, einer Datei im Arbeitsverzeichnis, einem Git-Branch oder zu einer bestimmten Zeile im aktiven Code-Editor — ohne die Tastatur zu verlassen oder durch Menüs und Bäume zu klicken.
+
+### Schnellzugriff öffnen
+
+- Drücken Sie **Strg+Umschalt+P** an beliebiger Stelle der Anwendung. Das Suchfeld erhält den Fokus und wird mit **`>`** vorbelegt, sodass die Befehlsliste sofort erscheint.
+- Klicken Sie in der Titelleiste in das Suchfeld. Es ist kein Präfix vorgewählt; tippen Sie ein Präfix (oder `?`), um eine Kategorie zu wählen.
+
+Das Popup mit den Treffern öffnet sich, sobald das Suchfeld den Fokus bekommt, und bleibt offen, während Sie tippen. **Esc** schließt es; ein Klick außerhalb des Popups ebenfalls.
+
+### Discovery-Liste (Klick auf die Leiste)
+
+Wenn Sie ohne Tastenkürzel in das Suchfeld klicken, öffnet sich das Popup mit einer **Discovery-Liste**, die sieben Einträge anzeigt — einen pro Kategorie — jeweils mit Beschreibung und auslösendem Präfix:
+
+- **Datei öffnen** — kein Präfix, zuletzt geöffnete und aus dem Arbeitsverzeichnis erreichbare Workspace-Dateien
+- **Befehle anzeigen und ausführen** — Präfix `>`
+- **Symbol im aktiven Tab** — Präfix `@`
+- **Symbol im gesamten Workspace** — Präfix `#`
+- **Git-Branch wechseln** — Präfix `git:`
+- **Zu Zeile im Editor springen** — Präfix `:`
+- **Mehr** — Präfix `?` (öffnet die vollständige Hilfe-Liste)
+
+Unterhalb der Discovery-Liste werden zusätzlich Ihre **zuletzt geöffneten Dateien** gezeigt, damit der häufigste Treffer einen Klick entfernt ist. Klicken Sie eine Discovery-Zeile an, um das Suchfeld mit dem zugehörigen Präfix zu füllen und unter dieser Kategorie weiterzutippen, oder drücken Sie Enter auf einer kürzlich geöffneten Datei, um sie direkt zu öffnen.
+
+### Präfixe
+
+Das erste Zeichen Ihrer Eingabe wählt die Suchkategorie aus. Tippen Sie `?` und drücken Sie Enter auf einer Zeile, um das Präfix einzufügen, und tippen Sie weiter.
+
+| Präfix | Sucht | Beispiel |
+|--------|-------|----------|
+| `>` | **Befehle** — alle Aktionen aus Menüs, Symbolleisten und globalen Tastaturkürzeln | `>compile`, `>save` |
+| `@` | **Symbole im aktiven Kontext** — PLC-Symbole im TIA-Arbeitsbereich, HMI-Items im Screen-Editor, Testfälle im Unit Testing, Signale im Trace, OPC-UA-Knoten bei aktiver Verbindung | `@motor`, `@start` |
+| `#` | **Symbole im gesamten Workspace** — gleiche Quellen wie `@`, jedoch nicht auf den aktiven Tab gefiltert | `#fb_motor` |
+| `git:` | **Git-Branches** — lokale und Remote-Branches im offenen Repository | `git:main`, `git:feature/x` |
+| `?` | **Hilfe** — listet alle Präfixe mit einer Kurzbeschreibung; Enter füllt das Suchfeld mit dem gewählten Präfix und hält das Popup offen | `?` |
+| `:` | **Gehe zu Zeile** — springt im aktiven Code-Editor zur angegebenen Zeile; nur verfügbar, wenn ein Editor-Tab den Fokus hat | `:42` |
+
+Ohne Präfix sucht die Leiste in zuletzt geöffneten Dateien und in den Workspace-Dateien, die über das aktuell konfigurierte Arbeitsverzeichnis erreichbar sind.
+
+### Tastaturbedienung
+
+- **Pfeil hoch / runter** — Auswahl in der Trefferliste verschieben.
+- **Enter** — markierten Eintrag ausführen.
+- **Esc** — Popup schließen.
+- **Einfacher Mausklick** — führt eine Zeile sofort aus (entspricht Markieren + Enter).
+
+Mit Enter wird sofort der oberste Treffer ausgeführt — der erste Eintrag ist bei jeder Aktualisierung vorausgewählt.
+
+### Was bei Auswahl eines Treffers passiert
+
+Jeder Treffertyp hat seine eigene Aktion. Die meisten Aktionen wechseln zusätzlich den aktiven Arbeitsbereich, wenn das Ziel anderswo liegt.
+
+| Treffertyp | Aktion bei Enter / einfachem Klick |
+|------------|------------------------------------|
+| Befehl | Führt den Befehl aus (öffnet z.B. einen Dialog, startet einen Export). |
+| Gehe-zu-Zeile | Springt im aktiven Code-Editor zur angegebenen Zeile. |
+| Hilfe | Füllt das Suchfeld mit dem gewählten Präfix; Popup bleibt offen, damit Sie weitertippen können. |
+| PLC-Symbol | Wechselt in den TIA-Manager-Arbeitsbereich und markiert das Symbol im Projektbaum. |
+| Screen-Symbol | Wechselt in den Screen-Editor und markiert das passende Item. |
+| Unit-Test-Symbol | Wechselt zu Unit Testing und öffnet das Test-Suite-Dokument. *Die Auswahl des einzelnen Testfalls in der Suite folgt in einer späteren Version.* |
+| OPC-UA-Knoten | Wechselt in den PLC-Online-Arbeitsbereich. *Die Auswahl des passenden Knotens im Adressraum-Baum folgt in einer späteren Version.* |
+| Git-Branch | Checked den Branch aus (nur lokale, nicht aktive Branches). Remote-Branches und der aktuell ausgecheckte Branch verwenden den bestehenden Checkout-Dialog. |
+| Trace-Signal | Wechselt in den Trace-Arbeitsbereich. *Die Auswahl des passenden Signals in der Liste folgt in einer späteren Version.* |
+| Zuletzt geöffnete Datei / Workspace-Datei | Öffnet die Datei in einem Code-Editor-Tab. |
+
+### Zuletzt verwendete Treffer
+
+Die Schnellzugriff-Leiste merkt sich Ihre zuletzt gewählten Einträge über Anwendungs-Neustarts hinweg, sodass die Dinge, die Sie am häufigsten brauchen, oben in der Liste stehen. Es werden bis zu 50 Einträge gehalten; ältere als 30 Tage werden automatisch entfernt.
+
+### Verhältnis zur Git-Befehlspalette
+
+Der Git-Arbeitsbereich besitzt seine eigene **Strg+Umschalt+P**-Befehlspalette (siehe [Git-Client](#14a-git-client) → *Befehlspalette*) mit 14 Git-spezifischen Aktionen. Beide Tastaturkürzel existieren parallel: Die Git-Befehlspalette ist auf den Arbeitsbereich beschränkt und hat Vorrang, wenn der Git-Tab den Fokus hat; die globale Schnellzugriff-Leiste sitzt in der Titelleiste und ist aus jedem anderen Arbeitsbereich erreichbar.
 
 ---
 
@@ -1267,6 +1346,119 @@ Das `fs`-Tool des KI-Chats (lesen, schreiben, erstellen, bearbeiten, loeschen, a
 
 **Immer abgewiesen, unabhaengig vom Bereich:** Vault, Lizenz, Chat-Datenbank, Agent-Memory, App-Einstellungen, SSH/AWS/Azure/Kubernetes-Anmeldedaten, Windows/Program Files/AppData-Interna, Browser- und OS-Sperrdateien. Diese Liste kann der KI-Assistent auch durch Permanent-Approval auf ein Eltern-Verzeichnis nicht umgehen.
 
+### MCP-Server-Plugins (externe Tool-Integrationen)
+
+Der KI-Chat kann zusätzlich **nach aussen** zu externen MCP-Servern verbinden — Figma Remote, Notion, Linear, Atlassian, GitHub-MCP, eigene interne Dienste — und deren Tools neben den eingebauten TIA-Tools verfügbar machen. Konfiguration unter **KI-Chat-Einstellungen → MCP-Server**.
+
+**MCP-Server hinzufügen:**
+
+1. Klicken Sie im Bereich MCP-Server auf **+ Hinzufügen**.
+2. Wählen Sie einen Transport: **Stdio** (lokaler Subprozess) oder **HTTP** (Remote-URL).
+3. Für Stdio: **Befehl**, **Argumente**, **Arbeitsverzeichnis** und ggf. **Umgebungsvariablen** (eine `KEY=VALUE` pro Zeile) eintragen.
+4. Für HTTP: **Endpoint**-URL eintragen und einen **Auth-Modus** wählen.
+5. **Beim Öffnen des KI-Chats automatisch starten** aktivieren, wenn der Server beim Chat-Start mithochfahren soll.
+6. Auf **Speichern** klicken.
+
+**HTTP-Auth-Modi:**
+
+- **Keine** — kein Authorization-Header. Nur für vertrauenswürdige lokale MCP-Server, die keinen Zugriffsschutz erzwingen.
+- **Statischer Header** — fester `Authorization`-Header (oder anderer Custom-Header) wird mitgesendet, eingetragen im Headers-Feld. Geeignet für Server mit personal-access-token (z.B. selbstgehostete MCP-Gateways mit vorgegebenem Bearer-Token).
+- **OAuth 2.1** — vollständiger OAuth-2.1-+-PKCE-Login-Flow. Für gehostete MCP-Server (Figma Remote, Notion, Linear, Atlassian, GitHub-MCP), die ihren Authorization-Server via `WWW-Authenticate` oder das `.well-known/oauth-protected-resource`-Dokument bewerben.
+
+**OAuth-Flow:**
+
+Bei Auswahl von **OAuth 2.1** erscheint eine Autorisierungs-Statuszeile:
+
+1. Klicken Sie auf **Autorisieren…** — Ihr Standard-Browser öffnet die Login-Seite des Servers.
+2. Anmelden und die angeforderten Scopes bestätigen.
+3. Der Browser wird auf einen lokalen Callback (`http://127.0.0.1:<port>/callback`) zurückgeleitet und meldet das Ergebnis an den TIA Openness Manager zurück.
+4. Die Statuszeile wechselt auf **Autorisiert** (oder **Autorisiert als &lt;Ihr-Name&gt;**, wenn der Server ein OpenID-`id_token` zurückgegeben hat).
+5. Der Button wird zu **Abmelden** — ein Klick widerruft das lokale Token, die Zeile zeigt wieder **Nicht autorisiert**.
+
+Bei einem fehlgeschlagenen Flow zeigt die Statuszeile einen lokalisierten Hinweis:
+
+- **Discovery fehlgeschlagen** — der Server hat seine OAuth-Metadaten nicht beworben. Endpoint-URL prüfen und sicherstellen, dass der Server tatsächlich Authentifizierung verlangt.
+- **Server akzeptiert unauthentifizierte Anfragen** — der Server hat ohne Token-Anforderung geantwortet. **Auth-Modus** auf **Keine** umstellen.
+- **Client-Registrierung fehlgeschlagen** — der Dynamic-Client-Registration-Endpoint des Servers hat unsere Anfrage abgelehnt. Der Server erlaubt evtl. keine Public-Client-Registrierung; mit dem Server-Betreiber Kontakt aufnehmen.
+- **Autorisierung abgebrochen** — Sie haben das Browser-Fenster geschlossen oder Abbrechen geklickt.
+- **State-Mismatch — möglicher CSRF** — der Callback-State stimmt nicht mit dem gesendeten überein. Aus einem frischen Dialog erneut versuchen.
+- **Token-Tausch fehlgeschlagen** — der Token-Endpoint hat beim Code-gegen-Token-Tausch einen Fehler zurückgegeben. Nochmal versuchen; bei dauerhaftem Auftreten Subprozess-Log prüfen.
+- **Netzwerkfehler** — Browser-Redirect oder Token-Endpoint nicht erreichbar.
+- **Nicht autorisiert — zuerst auf Autorisieren klicken** — intern: ein Tool wollte den Server vor abgeschlossener Autorisierung benutzen.
+- **Autorisierung fehlgeschlagen** — generischer Fallback für andere Fehlerklassen.
+
+**Tokens werden im Windows Credential Manager gespeichert** (pro Server, indiziert über die Server-GUID). Abmelden löscht die lokale Credential; bestehende Tokens werden zudem automatisch zurückgerollt, wenn Sie den Dialog **MCP-Server hinzufügen** nach erfolgreicher Autorisierung abbrechen (Edit-Flow-Re-Autorisierungen behalten ihre neuen Tokens).
+
+**Lizenz-Gating:** Externe MCP-Server-Plugins folgen denselben Tier-Regeln wie das eingebaute MCP-Server-Feature — Trial-, Professional- und Enterprise-Tiers sind freigeschaltet; der Basic-Tier weist sie ab.
+
+---
+
+### Geplante Aufgaben
+
+Der Tab **AI Chat Einstellungen → Geplante Aufgaben** erlaubt es, autonome KI-Agent-Läufe nach Cron-Plan zu terminieren. Jeder geplante Lauf startet eine eigene Chat-Session, die in der Seitenleiste mit Uhren-Symbol und farblichem Hintergrund erscheint.
+
+#### Eine geplante Aufgabe erstellen
+
+1. **AI Chat Einstellungen** öffnen (Zahnrad in der Chat-Eingabe).
+2. Links **Geplante Aufgaben** wählen.
+3. **Neue Aufgabe** klicken.
+4. Felder ausfüllen:
+   - **Name** — 1-100 Zeichen, eindeutig pro Agent.
+   - **Agent** — der KI-Agent, der die Aufgabe ausführt.
+   - **Aufgaben-Prompt** — die Anweisung, die zur Laufzeit an den Agenten gesendet wird (max. 16 000 Zeichen).
+   - **Zeitplan** — eine Vorlage wählen (Alle 5/15/30 Min, Stündlich, Täglich, Wöchentlich, Monatlich) oder auf **Erweitert (Cron-Ausdruck)** umschalten und einen 5-Feld POSIX-Cron-Ausdruck eingeben.
+   - **Zeitlimit** — 30 bis 3600 Sekunden, Standard 300.
+   - **Verlauf-Aufbewahrung** — 1 bis 100 Läufe, Standard 10.
+   - **Aktiviert** — Ein/Aus-Schalter.
+5. **OK** klicken. Die Aufgabe erscheint in der Liste und läuft beim nächsten geplanten Termin.
+
+#### Cron-Ausdruck-Syntax
+
+Das Feld **Erweitert (Cron-Ausdruck)** akzeptiert einen 5-Feld-Cron-Ausdruck der Form `Minute Stunde Tag-im-Monat Monat Wochentag`. Jedes Feld akzeptiert `*` (beliebig), Komma-Listen (`1,15,30`), Bereiche (`1-5`) und Schrittwerte (`*/15`). Die Wochentag-Werte `0` und `7` stehen beide für Sonntag. Monate und Wochentage akzeptieren zusätzlich 3-Buchstaben-Namen (`JAN-DEC`, `SUN-SAT`).
+
+| Feld | Bereich | Hinweise |
+|------|---------|----------|
+| Minute | 0-59 | |
+| Stunde | 0-23 | 24-Stunden-Format |
+| Tag-im-Monat | 1-31 | |
+| Monat | 1-12 oder JAN-DEC | |
+| Wochentag | 0-6 oder SUN-SAT | 0 und 7 = Sonntag |
+
+Beispiele:
+
+| Ausdruck | Bedeutung |
+|----------|-----------|
+| `*/15 * * * *` | alle 15 Minuten |
+| `0 * * * *` | jede Stunde zur :00 |
+| `0 9 * * 1-5` | werktags um 09:00 |
+| `30 7 * * MON` | jeden Montag um 07:30 |
+| `0 0 1 * *` | am ersten Tag jedes Monats um Mitternacht |
+| `0 22 * * 0,6` | Samstag und Sonntag um 22:00 |
+
+Zeiten werden in der lokalen Zeitzone des Rechners ausgewertet, der die Anwendung ausführt. Sommer-/Winterzeit-Übergänge werden automatisch behandelt — Läufe, die in eine ausgefallene Stunde fallen, rücken auf den nächsten gültigen Termin vor.
+
+#### Aktionen pro Zeile
+
+- **Jetzt ausführen** — manueller Lauf. Wird abgelehnt, wenn bereits ein Lauf aktiv ist (*Scheduler ist beschäftigt — ein anderer Lauf ist bereits aktiv*).
+- **Bearbeiten** — Dialog mit aktuellen Werten.
+- **Löschen** — Aufgabe und Verlauf werden kaskadierend entfernt.
+
+#### Auto-Deaktivierung bei wiederholten Fehlern
+
+Nach drei aufeinanderfolgenden Fehlschlägen (Zeitüberschreitungen zählen) wird die Aufgabe **automatisch deaktiviert** und eine Warnmarkierung in der Zeile angezeigt. Zum Reaktivieren: Aufgabe öffnen, **Aktiviert** umschalten — der Fehlerzähler wird zurückgesetzt.
+
+#### Headless-Tool-Restriktionen
+
+Geplante Läufe nutzen den **Headless-Modus**: nur lesende/abfragende Tools sind aktiv (TIA-Abfrage/Explorer, OPC UA Browse/Read, Git Status/Log/Diff, Dateisystem List/Read, Web Fetch/Search, Schedule-Query). Schreib-Tools (`tia_delete`, `tia_import`, `editor_write`, `manage_schedule` u. a.) werden auf zwei Ebenen verweigert — der Katalog-Filter versteckt sie vor der LLM-Definition, und ein Laufzeit-Guard lehnt jeden Aufruf ab, der den Filter umgehen würde.
+
+#### Nachholen nach Neustart
+
+War die Anwendung offline, wenn ein geplanter Termin fiel, startet beim nächsten Start ein einzelner Nachhol-Lauf — solange der jüngste verpasste Termin nicht älter als 24 Stunden ist. Ältere verpasste Termine werden als **Übersprungen** mit Grund *Karenzzeit abgelaufen (24h-Grenze)* protokolliert und der Cursor rückt auf den nächsten zukünftigen Termin vor.
+
+#### Sidebar-Gruppe
+
+Jeder geplante Lauf startet eine neue Chat-Session mit Titel `[Geplant] {Aufgabenname} — {Zeitstempel}`. Sessions erscheinen in der Chat-Verlauf-Seitenleiste mit einem Uhren-Symbol und einem dezenten farbigen Hintergrund — so sind sie von interaktiven Chats unterscheidbar. Ein Klick auf eine geplante Session öffnet sie ganz normal; der vollständige Gesprächsverlauf bleibt erhalten.
+
 ---
 
 ## 9b. OPC UA Tab
@@ -1358,11 +1550,15 @@ Das **Verlaufsdiagramm** liegt als dritter Tab neben Beobachtungstabelle und Ere
 | Start | Beginn des Zeitbereichs (UTC). Standard: vor einer Stunde. |
 | Ende | Ende des Zeitbereichs (UTC). Standard: jetzt. |
 | 1h / 6h / 24h / 7T | Schnellauswahl: setzt Ende auf jetzt und Start auf jetzt minus das gewählte Intervall. |
-| Verlauf lesen | Holt die historischen Rohwerte für den Quellknoten zwischen Start und Ende. Während eines laufenden Lesevorgangs deaktiviert. |
+| Aggregat | Wählt die Form der gelesenen Werte: **Roh** (Standard — jeder aufgezeichnete Sample) oder eine der Funktionen **Mittelwert**, **Minimum**, **Maximum**, **Anzahl**, **Summe**, vom Server in festen Intervallen über den Zeitbereich berechnet. |
+| Intervall (s) | Breite jedes Aggregat-Bins in Sekunden. Nur sichtbar, wenn Aggregat ≠ Roh. Standard 60 s, Bereich 1..86400 s. |
+| Verlauf lesen | Holt die Werte für den Quellknoten zwischen Start und Ende. Bei Roh erscheint jeder Sample im Diagramm; bei einem Aggregat erscheint ein Punkt pro Bin. Während eines laufenden Lesevorgangs deaktiviert. |
 | CSV exportieren | Speichert die geladenen Werte als CSV (Source Timestamp / Server Timestamp / Value / Status Code). Der Schutz gegen Formel-Injektion ist identisch mit dem Ereignisprotokoll-Export. |
 | Diagramm leeren | Löscht das Diagramm und gibt den Speicher frei. |
 
-Nicht-numerische Werte, Werte mit `Bad`-Status sowie Samples mit ungültigen Zeitstempeln werden im Diagramm ausgelassen, bleiben aber im CSV-Export enthalten. Ein Lesevorgang ist auf 100.000 Werte pro Anfrage und 1.000.000 Werte gesamt begrenzt; liefert der Server mehr, zeigt das Diagramm das, was hineinpasst, und eine Warnung wird protokolliert. Das Diagramm wird automatisch beim Protokollwechsel oder bei der Trennung geleert — beim Navigieren im Adressraum bleibt der Inhalt jedoch erhalten, damit geladene Daten nicht durch einen Knotenwechsel verloren gehen.
+Nicht-numerische Werte, Werte mit `Bad`-Status sowie Samples mit ungültigen Zeitstempeln werden im Diagramm ausgelassen, bleiben aber im CSV-Export enthalten. Roh-Lesevorgänge sind auf 100.000 Werte pro Anfrage und 1.000.000 Werte gesamt begrenzt; liefert der Server mehr, zeigt das Diagramm das, was hineinpasst, und eine Warnung wird protokolliert. Das Diagramm wird automatisch beim Protokollwechsel oder bei der Trennung geleert — beim Navigieren im Adressraum bleibt der Inhalt jedoch erhalten, damit geladene Daten nicht durch einen Knotenwechsel verloren gehen.
+
+Bei aktivem Aggregat protokolliert die Anwendung, wie viele Bins als **partial** zurückgegeben wurden (Bin überlappt den Zeitbereichsrand oder enthält unvollständige Daten). Partial-Bins erscheinen weiterhin im Diagramm; die Anzahl ist eine Information. Welche Aggregat-Funktionen unterstützt sind, hängt vom Server ab: Siemens S7-1500-CPUs liefern in der Regel Mittelwert, Minimum, Maximum, Anzahl und Summe, sobald Historizing aktiv ist; selten gebrauchte Funktionen (Standardabweichung, Spannweite, …) sind im Service vorhanden, aber nicht in der Toolbar exponiert.
 
 Die Variable muss am Server `Historizing = true` haben und die Sitzung muss HistoryRead-Zugriff besitzen. Siemens S7-1500-CPUs aktivieren Historizing nicht automatisch — die meisten Variablen müssen in der PLC-Konfiguration explizit für den Verlaufszugriff markiert werden.
 
@@ -1435,6 +1631,8 @@ Rechtsklick auf einen **Variablenknoten**, dessen Wert eine zweidimensionale Mat
 Der Dialog lädt den aktuellen Wert und rendert jede Zelle als bearbeitbares Textfeld mit Zeilenüberschriften (`R0`, `R1`, ...) und Spaltenüberschriften (`C0`, `C1`, ...). Zellen einzeln bearbeiten — geänderte Zellen werden als geändert markiert. **Speichern** schreibt die gesamte Matrix zurück zum Server (nur tatsächlich geänderte Zellen werden neu geparst; unveränderte Zellen bleiben erhalten) oder **Neu laden** verwirft die Bearbeitung und holt eine frische Kopie vom Server.
 
 Wenn der Server die Variable als schreibgeschützt deklariert (kein Schreibzugriff für Ihre Sitzung), zeigt der Dialog ein **Nur lesen**-Etikett und der Speichern-Button bleibt deaktiviert. Matrizen mit mehr als zwei Dimensionen sind nicht bearbeitbar — der Dialog meldet "Rang nicht unterstützt" statt die Daten still zu flatten. Ungültige Zellwerte (zum Beispiel Text in einer numerischen Matrix) werden beim Speichern markiert; Zelle korrigieren und erneut versuchen.
+
+Beim Drücken von Speichern liest der Dialog zuerst den aktuellen Wert vom Server neu. Hat sich während Ihrer Bearbeitung eine Zelle auf dem Server geändert — etwa weil ein anderer Client oder die PLC selbst die Matrix aktualisiert hat — erscheint ein Hinweisbanner mit zwei Optionen: **Überschreiben** schreibt Ihre Bearbeitung trotzdem (und überschreibt die Server-Änderung), **Neu laden** verwirft Ihre Bearbeitung und lädt die frischen Server-Werte in den Editor. Meldet der Server eine andere Matrix-Form (mehr Zeilen oder Spalten als beim Öffnen des Dialogs), ist Überschreiben deaktiviert und Sie müssen vor dem Weiterarbeiten neu laden.
 
 ### Zertifikatsverwaltung
 
@@ -1815,6 +2013,38 @@ Um den Verlauf zu befüllen, füge ein `"watch": ["Var1", "Var2"]`-Array zu eine
 
 Test-Ergebnisse werden in `%LocalAppData%\TiaOpennessManager\db\test_results.db` persistiert — sie überleben App-Neustarts und erscheinen automatisch wieder im Test Explorer.
 
+### Lauf-Historie
+
+Das **Lauf-Historie**-Dock-Tool ist ein zweiter Tab im rechten Ergebnis-Panel (neben **Testergebnisse**). Es listet jeden Lauf, der jemals in die Datenbank geschrieben wurde — unabhängig davon, welche Suite ausgeführt wurde.
+
+- **Spalten:** Status-Icon, Gestartet (Lokalzeit), Dauer, Bestanden / Fehlgeschlagen / Fehler / Übersprungen, Suite, SPS, Hostname, TIA-Version
+- **Status-Icon:** ✓ grün, wenn alle Cases bestanden; ✗ rot bei beliebigem Fehler oder Fehlschlag
+- **Filterfeld:** Filtert die Liste clientseitig nach Hostname, Suite-Name, SPS oder Baustein-Name (case-insensitive)
+- **Aktualisieren:** `F5` lädt die Liste neu (oder per Eintrag im Kontextmenü)
+
+**Kontextmenü-Aktionen** (Rechtsklick auf einen Lauf):
+
+| Aktion | Ergebnis |
+|--------|--------|
+| Ergebnisse öffnen | Lädt diesen Lauf in den **Testergebnisse**-Tab zur Detail-Ansicht |
+| Vergleichen mit… | Markiert diesen Lauf als Baseline und öffnet den Dialog **Lauf zum Vergleichen wählen**. Nach Auswahl eines zweiten Laufs aktiviert sich der **Runs vergleichen**-Dock-Tool mit dem Diff |
+| Lauf löschen | Entfernt den Lauf-Eintrag samt aller Testfälle und Provenance-Metadaten dauerhaft. Block-Hashes bleiben erhalten, damit Block-Change-Vergleiche weiterfunktionieren |
+| HTML exportieren | Rendert den Lauf als eigenständige HTML-Report-Datei (`<run-id>.html`) im selben Stil wie das In-App-Ergebnis-Panel |
+| Manifest öffnen | Öffnet das SHA-256-Integrity-Manifest des Laufs (sofern eines beim Report-Render erzeugt wurde) |
+
+Die Liste zeigt standardmäßig die jüngsten 100 Läufe in absteigender Reihenfolge. Provenance-Werte wie Hostname und TIA-Version stammen aus den Metadaten, die beim Run-Start aufgezeichnet werden; der Projektpfad selbst wird **nie** im Klartext gespeichert — nur als irreversibler SHA-256-Hash, sodass Läufe maschinenübergreifend korreliert werden können, ohne Workspace-Pfade zu leaken.
+
+### Runs vergleichen
+
+Das **Runs vergleichen**-Dock-Tool ist der dritte Tab im rechten Ergebnis-Panel. Er wird bei Bedarf über **Vergleichen mit…** in der Lauf-Historie geöffnet — Sie wählen einen Baseline-Lauf, der Auswahl-Dialog fragt nach einem zweiten Lauf, und der Runs-vergleichen-Tab aktiviert sich mit dem Diff-Ergebnis.
+
+- **Header:** Baseline-/Aktuell-Run-IDs nebeneinander, **Tauschen**-Button kehrt den Vergleich um, **HTML exportieren** schickt den Diff an einen Phase-VI-Report-Renderer (Verkabelung folgt mit der CLI-Integration)
+- **Summary-Pills:** Fünf farb-kodierte Zähler — Regressionen (rot), Behoben (grün), Neu (blau), Entfernt (grau), Stabil (gedämpft). Stabil zählt nur Still-Passing- und Unchanged-Cases; Still-Failing-Cases bleiben als Warnung markiert, NICHT als stabil
+- **Filter-Leiste:** Fünf Radio-Buttons (Alle / Regressionen / Behoben / Neu / Entfernt) reduzieren die Case-Liste in-place
+- **Case-Zeilen:** Jede Zeile zeigt einen farbigen Bullet-Punkt (rot / grün / blau / grau / orange) plus `<Suite> / <Case>`, die Fehlermeldung (sofern vorhanden), das ChangeKind-Label und das Duration-Delta gegenüber der Baseline (`+12 ms` / `−5 ms`)
+
+Der Auswahl-Dialog listet die jüngsten 100 Läufe abzüglich der gewählten Baseline, sortiert neueste-zuerst. Doppelklick auf eine Zeile oder Klick auf **OK** übernimmt die Auswahl; **Abbrechen** schließt den Dialog ohne Vergleichswechsel.
+
 ### Baustein-Analyse (vor dem Testen)
 
 1. SPS aus dem Dropdown wählen
@@ -2033,9 +2263,9 @@ Der Runner erledigt automatisch:
 Der **Verbindungseinstellungen**-Dialog lässt Sie wählen, wie Test-Reads und -Writes zwischen App und PLC übertragen werden:
 
 - **PLCSim Advanced** — Direkter Zugriff über die Siemens-PLCSim-API, schneller und ohne aktive S7-Session. Ideal für reine Simulator-Tests.
-- **S7 Comm+** — Nutzt den S7-Communication-Treiber über TCP/IP. Wählen Sie diese Option für Tests gegen echte Hardware oder gegen PLCSim über den virtuellen Ethernet-Adapter mit Benutzerauthentifizierung.
+- **S7 Nativ** — Nutzt den S7-Communication-Treiber über TCP/IP. Wählen Sie diese Option für Tests gegen echte Hardware (in Kombination mit dem Vorbereitungsmodus **Reale PLC**) oder gegen PLCSim über den virtuellen Ethernet-Adapter mit Benutzerauthentifizierung. Gleiche Bezeichnung wie im PLC-Online-Tab.
 
-Beide Transports haben eine eigene Konfigurations-Sektion im selben Dialog, sodass jede Suite unabhängig konfiguriert werden kann. Bei S7 Comm+ hat die Suite eigene IP, Port, Rack, Slot, TLS-Einstellung, Benutzername und Passwort — kein Cross-Tab-Lookup aus der PLC-Online-Ansicht.
+Beide Transports haben eine eigene Konfigurations-Sektion im selben Dialog, sodass jede Suite unabhängig konfiguriert werden kann. Bei S7 Nativ hat die Suite eigene IP, Port, Rack, Slot, TLS-Einstellung, Benutzername und Passwort — kein Cross-Tab-Lookup aus der PLC-Online-Ansicht.
 
 ### Simulation-Arbeitsbereich
 
@@ -2052,10 +2282,29 @@ Der Sub-Mode wird zwischen Sitzungen gemerkt, und der Wechsel behält alle geöf
 
 ### PLCSIM-Vorbereitungsmodus
 
-Der **Verbindungseinstellungen**-Dialog hat eine Auswahl für den Vorbereitungsmodus (innerhalb der PLCSim-Sektion). Dieser steuert, wie der Runner das Projekt in die PLCSIM-Instanz bekommt, bevor der Testlauf startet:
+Der **Verbindungseinstellungen**-Dialog hat eine Auswahl für den Vorbereitungsmodus, der steuert, wie der Runner das Projekt vor dem Testlauf bereitstellt:
 
 - **Ich lade selbst (empfohlen)** — Der Runner erwartet, dass Sie die PLCSIM-Instanz bereits manuell via TIA Portal gestartet und das Projekt geladen haben. Compile und Download werden übersprungen, der Runner verbindet sich direkt und führt die Tests aus. Schnellste Option für wiederholte Läufe am selben Projekt.
 - **Automatischer TCP-Download** — Der Runner kompiliert das Projekt, startet eine frische PLCSIM-Instanz und lädt es via TCP über den PLCSIM Virtual Adapter. Keine manuelle TIA-Portal-Interaktion nötig — einfach Run klicken.
+- **Reale PLC (kein PLCSim)** — Überspringt den PLCSim-Lebenszyklus komplett. Der Runner verbindet sich via S7 Nativ direkt mit der echten S7-Hardware unter der konfigurierten IP/Port/Rack/Slot und führt die Tests dort aus. **Nur verwenden, wenn die Anlage in einem sicheren Testzustand ist.** Die Auswahl dieses Modus blendet die PLCSim-Sektion aus und erzwingt den Transport S7 Nativ; PLCSim API ist inkompatibel.
+
+### Tests gegen reale PLC ausführen
+
+Mit der Auswahl **Reale PLC** im Vorbereitungsmodus laufen Tests direkt gegen echte S7-1200/S7-1500-Hardware ohne PLCSim:
+
+1. Stellen Sie sicher, dass die Anlage **im sicheren Testzustand** ist — Aktoren freigeschaltet oder verriegelt, keine Produktionslast auf der PLC, Bediener informiert.
+2. Öffnen Sie **Verbindungseinstellungen…**, wählen Sie **S7 Nativ** als Transport, geben Sie die echte IP-Adresse, Port, Rack, Slot und (falls aktiviert) TLS-Benutzer/Passwort ein.
+3. Stellen Sie den Vorbereitungsmodus auf **Reale PLC (kein PLCSim)**. Die PLCSim-Sektion verschwindet.
+4. **OK** klicken, dann **▶ Run**.
+5. Bevor der Runner die PLC kontaktiert, erscheint ein Bestätigungsdialog: *„Tests gegen reale PLC ausführen?"* Lesen Sie die Warnung, setzen Sie den Haken bei **„Verstanden — die Anlage ist im sicheren Testzustand."**, dann klicken Sie **Tests starten**. Der Button bleibt deaktiviert, bis die Checkbox gesetzt ist. Mit **Abbrechen** wird der Lauf ohne Netzwerk-Verkehr verworfen.
+
+F-Bausteine (mit Safety-Attribut markiert) bleiben in diesem Modus weiterhin hart geblockt — der Runner verweigert den Start jedes Tests gegen einen Safety-Block, unabhängig vom Vorbereitungsmodus.
+
+Bricht der Lauf sofort mit **„S7 connection succeeded but access denied — verify username/password"** ab, hat die PLC den TLS-Handshake akzeptiert, aber die Credentials abgelehnt. Prüfen Sie Benutzer/Passwort im Verbindungseinstellungen-Dialog und den passenden Eintrag unter **Vault → S7-Passwort**. Der Runner meldet das jetzt direkt beim Connect statt den Test später mit irreführendem „tag not found" scheitern zu lassen.
+
+**Batch-Läufe und Reale-PLC-Suiten:** Wenn Sie **Alle ausführen** klicken oder anders einen Batch-Lauf starten, der eine oder mehrere Suiten im Modus **Reale PLC** enthält, werden diese Suiten übersprungen (der Pro-Suite-Bestätigungsdialog kann nicht aus einem Batch heraus angezeigt werden). Der Test-Explorer zeigt einen schliessbaren Banner, der die übersprungenen Suiten namentlich aufführt; öffnen Sie jede betroffene Suite und klicken Sie einzeln auf **Run**, um den Bestätigungsdialog zu durchlaufen. Übersprungene Suiten zählen nicht mehr als Fehler in der Batch-Zusammenfassung.
+
+**CPU-Betriebszustands-Gate:** Reale-PLC-Läufe lesen direkt nach Connect den Betriebszustand der CPU. Ist die CPU in **Stop**, **StartUp**, **Hold**, **Defect** oder einem anderen Nicht-RUN-Zustand, bricht der Runner sofort mit `Cannot run tests against real PLC: CPU is in <STATE>, not Run. Switch the CPU to Run before retrying.` ab. Damit schreibt der Runner nicht in den DB-Speicher, solange das Anwenderprogramm nicht läuft — sonst würde jeder Test residuale Daten zurücklesen und irreführende PASS/FAIL-Ergebnisse liefern. Schalten Sie die CPU auf RUN (TIA Portal Online & Diagnose, oder den Betriebsart-Wahlschalter an der CPU) und klicken Sie erneut auf Run.
 
 ### Test-Läufe gegen geschützte Projekte
 
@@ -2603,6 +2852,8 @@ Die Sidebar auf der linken Seite zeigt alle lokalen Branches, Remote-Branches, T
 ### Befehlspalette (Command Palette)
 
 Drücken Sie **Strg+Umschalt+P** im Git-Arbeitsbereich, um die Befehlspalette zu öffnen. Sie bietet schnellen, tastaturgesteuerten Zugriff auf die häufigsten Git-Operationen, ohne durch Menüs navigieren zu müssen.
+
+> **Zwei Paletten teilen sich Strg+Umschalt+P.** Diese Git-Befehlspalette ist auf den Arbeitsbereich beschränkt und enthält die 14 Git-spezifischen Aktionen unten. Die globale [Schnellzugriff-Leiste](#3a-schnellzugriff-quick-open) (ebenfalls Strg+Umschalt+P, vorbelegt mit `>`) liegt in der Titelleiste und arbeitet mit Präfixen (`>` `@` `#` `git:` `?` `:`). Die Git-Befehlspalette hat Vorrang, wenn der Git-Tab den Fokus hat; überall sonst öffnet sich die Schnellzugriff-Leiste.
 
 **Verfügbare Befehle:**
 

@@ -36,6 +36,8 @@ TIA Portal erfordert, dass Ihr Windows-Benutzer Mitglied der Gruppe "Siemens TIA
 
 Beim ersten Start öffnet sich der Willkommen-Tab — folge der „Erste Schritte"-Anleitung oder verbinde dich direkt mit TIA Portal. Über **Hilfe → Willkommen-Guide** kannst du den Willkommen-Tab jederzeit erneut öffnen; mit der Checkbox am unteren Rand der Seite schaltest du das automatische Öffnen beim Start aus.
 
+> **Tipp:** Drücke **Strg+Umschalt+P** an beliebiger Stelle der Anwendung, um die Schnellzugriff-Leiste in der Titelleiste zu öffnen. Tippe `?` und drücke Enter, um zu sehen, was jedes Präfix sucht (Befehle, Symbole, Dateien, Git-Branches, Gehe-zu-Zeile). Siehe [Benutzerhandbuch → Schnellzugriff (Quick Open)](UserManual_DE.md#3a-schnellzugriff-quick-open).
+
 ### 1. Mit TIA Portal Projekt verbinden
 
 Es gibt zwei Möglichkeiten, sich zu verbinden:

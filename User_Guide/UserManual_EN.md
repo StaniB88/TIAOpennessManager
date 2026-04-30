@@ -11,6 +11,7 @@
 1. [Introduction](#1-introduction)
 2. [Installation & System Requirements](#2-installation--system-requirements)
 3. [User Interface](#3-user-interface)
+3a. [Quick Open Bar](#3a-quick-open-bar)
 4. [Project Management](#4-project-management)
 5. [Import/Export Tab](#5-importexport-tab)
 6. [Project Tab](#6-project-tab)
@@ -223,6 +224,84 @@ The bottom panel contains three tabs:
 - **Compare** - Side-by-side block comparison viewer
 
 The panel can be collapsed, expanded, or maximized using the controls in the top-right corner.
+
+---
+
+## 3a. Quick Open Bar
+
+### What is the Quick Open Bar?
+
+The Quick Open Bar is a search box in the application title bar. It is the fastest way to jump to anything in the app — a command, a PLC or HMI symbol, a file in the working directory, a Git branch, or a specific line in the open code editor — without leaving the keyboard or hunting through menus and trees.
+
+### Opening the Quick Open Bar
+
+- Press **Ctrl+Shift+P** anywhere in the application. The search box receives focus and is prefilled with **`>`** so the Commands list populates immediately.
+- Click into the search box in the title bar. No prefix is preselected; type a prefix (or `?`) to choose a category.
+
+The popup with results opens as soon as the search box has focus and stays open while you type. Press **Esc** to close it; click anywhere outside the popup also closes it.
+
+### Discovery list (click into the bar)
+
+When you click the search bar without using the keyboard shortcut, the popup opens with a **discovery list** that shows seven entries — one per category — each labelled with what it searches and which prefix triggers it:
+
+- **Go to File** — no prefix, recent files and workspace files reachable from the working directory
+- **Show and Run Commands** — prefix `>`
+- **Go to Symbol in Active Tab** — prefix `@`
+- **Go to Symbol in Workspace** — prefix `#`
+- **Switch Git Branch** — prefix `git:`
+- **Go to Line in Editor** — prefix `:`
+- **More** — prefix `?` (opens the full help list)
+
+Below the discovery list you also see your **recently opened files** so the result you reach for most often is one click away. Click any discovery row to fill the search box with its prefix and keep typing under that category, or press Enter on a recent file to open it directly.
+
+### Prefixes
+
+The first character of your search selects which category is searched. Type `?` and press Enter on a row to fill the prefix in for you, then keep typing.
+
+| Prefix | Searches | Example |
+|--------|----------|---------|
+| `>` | **Commands** — any action exposed in the app menus, toolbars and global shortcuts | `>compile`, `>save` |
+| `@` | **Symbols in the active context** — PLC symbols when on the TIA workspace, HMI items on the Screen Editor, test cases in Unit Testing, signals in Trace, OPC UA nodes when connected | `@motor`, `@start` |
+| `#` | **Symbols across the whole workspace** — same sources as `@`, not filtered by the active tab | `#fb_motor` |
+| `git:` | **Git branches** — local and remote in the open repository | `git:main`, `git:feature/x` |
+| `?` | **Help** — lists all the prefixes above with a one-line description; pressing Enter prefills the search box with the chosen prefix and keeps the popup open for the next term | `?` |
+| `:` | **Go to line** — jumps to the given line in the active code editor; only available when an editor tab has focus | `:42` |
+
+Without a prefix the bar searches recently opened files and any other workspace files reachable from the currently configured working directory.
+
+### Keyboard navigation
+
+- **Up / Down arrows** — move the selection through the result list.
+- **Enter** — execute the selected row.
+- **Esc** — close the popup.
+- **Mouse single-click** — executes a row immediately (the same as selecting it and pressing Enter).
+
+Pressing Enter immediately runs the top match — the first result is preselected on every search update.
+
+### What happens when you select a result
+
+Each result type has its own action. Most actions also switch the active workspace if the target lives elsewhere.
+
+| Result type | What happens on Enter / single-click |
+|-------------|--------------------------------------|
+| Command | Runs the command (e.g. opens a dialog, triggers an export). |
+| Go-to-line | Jumps to the given line in the active code editor. |
+| Help | Prefills the search box with the chosen prefix; popup stays open so you can keep typing. |
+| PLC symbol | Switches to the TIA Manager workspace and selects the symbol in the project tree. |
+| Screen symbol | Switches to the Screen Editor and selects the matching item. |
+| Unit test symbol | Switches to Unit Testing and opens the test suite document. *Per-test-case selection inside the suite is coming in a later release.* |
+| OPC UA node | Switches to the PLC Online workspace. *Selecting the matching node in the address-space tree is coming in a later release.* |
+| Git branch | Checks out the branch (local non-current branches only). Remote branches and the currently checked-out branch use the existing checkout dialog. |
+| Trace signal | Switches to the Trace workspace. *Selecting the matching signal in the list is coming in a later release.* |
+| Recent file / cross-project file | Opens the file in a code editor tab. |
+
+### Recently used results
+
+The Quick Open Bar remembers your recent selections across application restarts so the things you reach for most are at the top of the list. The list keeps up to 50 entries and prunes anything older than 30 days automatically.
+
+### Relationship to the Git workspace command palette
+
+The Git workspace has its own **Ctrl+Shift+P** command palette (see [Git Client](#14a-git-client) → *Command Palette*) with 14 Git-specific actions. Both shortcuts coexist: the Git workspace palette is workspace-scoped and takes precedence when the Git tab has focus; the global Quick Open Bar lives in the title bar and is reachable from every other workspace.
 
 ---
 
@@ -1267,6 +1346,119 @@ The AI chat's `fs` tool (read, write, create, edit, delete, list, search) is gat
 
 **Always refused, regardless of scope:** vault, license, chat database, agent memory, app settings, SSH/AWS/Azure/Kubernetes credentials, Windows/Program Files/AppData internals, browser/OS lock files. The AI cannot bypass this list even by requesting allow-permanent on a parent that contains them.
 
+### MCP Server Plugins (External Tool Integrations)
+
+The AI Chat can also connect **outward** to external MCP servers — Figma Remote, Notion, Linear, Atlassian, GitHub-MCP, your own internal services — and surface their tools alongside the built-in TIA tools. Configure them in **AI Chat Settings → MCP Servers**.
+
+**Adding an MCP server:**
+
+1. Click **+ Add** in the MCP Servers section.
+2. Pick a transport: **Stdio** (local subprocess) or **HTTP** (remote URL).
+3. For Stdio, fill in **Command**, **Arguments**, **Working Directory**, and any **Environment Variables** (one `KEY=VALUE` per line).
+4. For HTTP, fill in the **Endpoint** URL and pick an **Auth Mode**.
+5. Tick **Auto-start when AI Chat opens** if you want the server to come up with the chat.
+6. Click **Save**.
+
+**HTTP Auth Modes:**
+
+- **None** — no authorization header. Use only for trusted local MCP servers that do not gate access.
+- **Static header** — send a fixed `Authorization` header (or other custom header) you fill into the Headers field. Use for personal-access-token servers (e.g. self-hosted MCP gateways with a bearer token you already have).
+- **OAuth 2.1** — full OAuth 2.1 + PKCE login flow. Use for hosted MCP servers (Figma Remote, Notion, Linear, Atlassian, GitHub-MCP) that advertise an authorization server via `WWW-Authenticate` or the `.well-known/oauth-protected-resource` document.
+
+**OAuth flow:**
+
+When you select **OAuth 2.1**, an Authorization status row appears:
+
+1. Click **Authorize…** — your default browser opens to the server's login page.
+2. Sign in and approve the requested scopes.
+3. The browser is redirected to a local callback (`http://127.0.0.1:<port>/callback`) and reports back to TIA Openness Manager.
+4. The status row flips to **Authorized** (or **Authorized as &lt;your-name&gt;** if the server returned an OpenID `id_token`).
+5. The button becomes **Sign out** — clicking it revokes the local token and the row returns to **Not authorized**.
+
+If the flow fails, the status row shows a localized hint:
+
+- **Discovery failed** — the server did not advertise its OAuth metadata. Check that the endpoint URL is correct and that the server actually requires authentication.
+- **Server accepts unauthenticated requests** — the server replied without ever asking for a token. Switch **Auth Mode** to **None**.
+- **Client registration failed** — the server's Dynamic Client Registration endpoint rejected our request. The server may not allow public-client registration; contact the server operator.
+- **Authorization canceled** — you closed the browser window or hit Cancel.
+- **State mismatch — possible CSRF** — the callback's state did not match what we sent. Try again from a fresh dialog.
+- **Token exchange failed** — the server's token endpoint returned an error during the code-for-token swap. Try again; if it persists, check the subprocess log.
+- **Network error** — the browser-redirect or token endpoint could not be reached.
+- **Not authorized — click Authorize first** — internal: a tool tried to use the server before you completed the Authorize step.
+- **Authorization failed** — generic fallback for any other error class.
+
+**Tokens are stored in Windows Credential Manager** (per server, indexed by the server's GUID). Sign out wipes the local credential; existing tokens are also rolled back automatically if you cancel the **Add MCP Server** dialog after authorizing (Edit-flow re-authorizations keep their new tokens).
+
+**License gating:** External MCP server plugins follow the same tier rules as the built-in MCP Server feature — Trial, Professional, and Enterprise tiers are licensed; the Basic tier rejects them.
+
+---
+
+### Scheduled Tasks
+
+The **Scheduled Tasks** tab in **AI Chat Settings → Scheduled tasks** lets you schedule autonomous AI agent runs on a cron expression. Each scheduled run starts a fresh chat session that appears in the sidebar with a clock icon and tinted background.
+
+#### Creating a scheduled task
+
+1. Open **AI Chat Settings** (gear icon in the chat input area).
+2. In the left sidebar select **Scheduled tasks**.
+3. Click **New task**.
+4. Fill in:
+   - **Name** — 1-100 characters, unique per agent.
+   - **Agent** — the AI agent that runs the task.
+   - **Task prompt** — the instruction sent to the agent at run time (max 16 000 characters).
+   - **Schedule** — pick a preset (Every 5/15/30 min, Hourly, Daily, Weekly, Monthly) or switch to **Advanced (raw cron)** and enter a 5-field POSIX cron expression.
+   - **Timeout** — 30 to 3600 seconds, default 300.
+   - **Run history retention** — 1 to 100 runs, default 10.
+   - **Enabled** — on/off toggle.
+5. Click **OK**. The task appears in the list and runs at its next scheduled occurrence.
+
+#### Cron expression syntax
+
+The **Advanced (raw cron)** field accepts a 5-field cron expression of the form `minute hour day-of-month month day-of-week`. Each field accepts `*` (any value), comma-lists (`1,15,30`), ranges (`1-5`), and step values (`*/15`). Day-of-week values `0` and `7` both mean Sunday. Months and weekdays also accept 3-letter names (`JAN-DEC`, `SUN-SAT`).
+
+| Field | Range | Notes |
+|-------|-------|-------|
+| Minute | 0-59 | |
+| Hour | 0-23 | 24-hour clock |
+| Day-of-month | 1-31 | |
+| Month | 1-12 or JAN-DEC | |
+| Day-of-week | 0-6 or SUN-SAT | 0 and 7 = Sunday |
+
+Examples:
+
+| Expression | Meaning |
+|------------|---------|
+| `*/15 * * * *` | every 15 minutes |
+| `0 * * * *` | every hour at :00 |
+| `0 9 * * 1-5` | weekdays at 09:00 |
+| `30 7 * * MON` | every Monday at 07:30 |
+| `0 0 1 * *` | first day of every month at midnight |
+| `0 22 * * 0,6` | Saturdays and Sundays at 22:00 |
+
+Times are evaluated in the local time zone of the machine running the application. Daylight-saving transitions are handled automatically — runs that fall inside a skipped hour shift to the next valid occurrence.
+
+#### Per-row actions
+
+- **Run now** — triggers an immediate manual run. If another run is already in progress, the request is rejected with the message *Scheduler is busy — another run is already in progress*.
+- **Edit** — opens the same dialog with the current values pre-filled.
+- **Delete** — removes the task and its run history (cascade delete).
+
+#### Auto-disable on repeated failures
+
+If a task fails three runs in a row (timeout counts as failure), the scheduler **automatically disables it** and a warning marker appears on the row. To resume, open the task and toggle **Enabled** back on — the failure counter resets.
+
+#### Headless tool restrictions
+
+Scheduled runs execute the agent in **headless mode**. Only read-only or query-style tools are available (TIA query/explore, OPC UA browse/read, Git status/log/diff, file-system list/read, web fetch/search, scheduled-task introspection). Write tools (`tia_delete`, `tia_import`, `editor_write`, `manage_schedule`, etc.) are denied at two layers — the catalog filter hides them from the LLM definition list and a runtime guard rejects any call that bypasses the filter.
+
+#### Catch-up after restart
+
+If the application was offline when a scheduled time passed, on the next start a single catch-up run fires for each task whose most recent missed slot is younger than 24 hours. Older missed slots are recorded as **Skipped** with the reason *grace expired (24h cutoff)* and the cursor advances to the next future occurrence.
+
+#### Sidebar group
+
+Every scheduled run starts a new chat session titled `[Scheduled] {task name} — {timestamp}`. Sessions appear in the chat-history sidebar with a clock icon prefix and a subtle tinted background to distinguish them from interactive chats. Clicking a scheduled session opens it normally — full conversation history is preserved.
+
 ---
 
 ## 9b. OPC UA Tab
@@ -1358,11 +1550,15 @@ The **History Chart** panel sits as a third tab next to the Watch Table and Even
 | Start | Start of the time range (UTC). Defaults to one hour ago. |
 | End | End of the time range (UTC). Defaults to now. |
 | 1h / 6h / 24h / 7d | Quick presets that set End to now and Start to now minus the chosen window. |
-| Read History | Fetches raw historical values for the source node between Start and End. The button is disabled while a read is in progress. |
+| Aggregate | Selects the value-shape returned by the server: **Raw** (default — every recorded sample) or one of **Average**, **Minimum**, **Maximum**, **Count**, **Total** computed in fixed-width bins across the time range. |
+| Interval (s) | Width of each aggregate bin in seconds. Visible only when Aggregate is not Raw. Default 60 s, range 1..86400 s. |
+| Read History | Fetches values for the source node between Start and End. With Raw selected the chart shows every sample; with an aggregate selected the chart shows one point per bin. The button is disabled while a read is in progress. |
 | Export CSV | Saves the loaded values to CSV (Source Timestamp / Server Timestamp / Value / Status Code). Formula-injection defanging is identical to the Event Log export. |
 | Clear Chart | Empties the chart and frees the in-memory buffer. |
 
-Non-numeric values, values with `Bad` status, and samples with out-of-range timestamps are omitted from the chart but remain in the CSV export. Reads are capped at 100,000 values per call and 1,000,000 values total; if the server returns more, the chart shows what fits and a warning is logged. The chart clears automatically on protocol switch or disconnect but keeps its content while you browse the address tree, so you do not lose loaded history just because you select a different node.
+Non-numeric values, values with `Bad` status, and samples with out-of-range timestamps are omitted from the chart but remain in the CSV export. Raw reads are capped at 100,000 values per call and 1,000,000 values total; if the server returns more, the chart shows what fits and a warning is logged. The chart clears automatically on protocol switch or disconnect but keeps its content while you browse the address tree, so you do not lose loaded history just because you select a different node.
+
+When an aggregate is selected the application log records how many bins came back marked **partial** (the bin straddles the time-range boundary or contains incomplete data). Partial bins still appear in the chart; the count is informational. Aggregate support depends on the server: Siemens S7-1500 CPUs typically expose Average, Minimum, Maximum, Count and Total when historizing is enabled; less common functions (Standard Deviation, Range, …) are also wired in the service layer but not exposed in the toolbar.
 
 The variable must have `Historizing = true` on the server, and the session must have HistoryRead access. Siemens S7-1500 CPUs do not enable historizing by default — most variables need to be flagged for historical access in the PLC configuration.
 
@@ -1435,6 +1631,8 @@ Right-click a **Variable node** whose value is a two-dimensional matrix (for exa
 The dialog loads the current value and renders every cell as an editable text box with row (`R0`, `R1`, ...) and column (`C0`, `C1`, ...) headers. Change values cell by cell — changed cells are tracked as dirty. Press **Save** to write the whole matrix back to the server (only cells you actually changed are re-parsed; untouched cells are preserved as-is) or **Reload** to throw away your edits and pull a fresh copy from the server.
 
 If the server declares the variable as read-only (no write access for your session), the dialog shows a **Read-only** badge and the Save button stays disabled. Matrices with more than two dimensions are not editable — the dialog reports "rank not supported" instead of silently flattening the data. Invalid cell values (for example text in a numeric matrix) are flagged when you press Save; fix the cell and try again.
+
+When you press Save the dialog re-reads the current value from the server first. If any cell has changed on the server while you were editing — for example because another client or the PLC itself updated the matrix — a warning banner appears with two options: **Overwrite** writes your edits anyway (and clobbers the server-side change), **Reload** discards your edits and pulls the fresh server values into the editor. If the server reports a different matrix shape (more rows or columns than when you opened the dialog), Overwrite is disabled and you must Reload before continuing.
 
 ### Certificate Management
 
@@ -1794,6 +1992,38 @@ To fill the timeline, add a `"watch": ["Var1", "Var2"]` array to a test case in 
 
 Test results are persisted to `%LocalAppData%\TiaOpennessManager\db\test_results.db` — they survive app restarts and reappear in the Test Explorer automatically.
 
+### Run History
+
+The **Run History** dock-tool is a second tab in the right results panel (next to **Test Results**). It lists every run that has been persisted to the database, regardless of which suite executed.
+
+- **Columns:** Status icon, Started At (local time), Duration, Pass / Fail / Error / Skipped counts, Suite, PLC, Hostname, TIA version
+- **Status icon:** ✓ green when all cases passed, ✗ red on any failure or error
+- **Filter box:** Filters the list client-side by hostname, suite name, PLC, or block name (case-insensitive)
+- **Refresh:** `F5` reloads the list (or use the Refresh entry in the context menu)
+
+**Context menu actions** (right-click a run):
+
+| Action | Result |
+|--------|--------|
+| Open Results | Loads that run into the **Test Results** tab so you can inspect each case |
+| Compare To… | Marks this run as the baseline and opens the **Select run to compare** dialog. Pick a second run and the **Compare Runs** dock-tool renders the diff |
+| Delete Run | Permanently removes the run row plus all its test cases and provenance metadata. Block hashes survive so block-change comparisons keep working |
+| Export HTML | Renders the run as a self-contained HTML report (`<run-id>.html`) with the same styling as the in-app Results panel |
+| Open Manifest | Opens the SHA-256 integrity manifest for the run (when one was generated by the report pipeline) |
+
+The list shows the most recent 100 runs by default, ordered newest-first. Provenance values such as hostname and TIA version come from the run-provenance metadata captured when the run started; the project path itself is **never** stored in plain text — only an irreversible SHA-256 hash, so you can correlate runs across machines without leaking workspace paths.
+
+### Compare Runs
+
+The **Compare Runs** dock-tool is the third tab in the right results panel. It is opened on demand by **Compare To…** in Run History — you pick a baseline run, the launcher dialog asks for a second run, and the Compare Runs tab activates with the diff.
+
+- **Header:** Baseline / Current run-IDs side by side, **Swap** button reverses the comparison, **Export HTML** sends the diff to a Phase-VI report renderer (wiring lands with the CLI integration)
+- **Summary pills:** Five colour-coded counters — Regressions (red), Fixed (green), New (blue), Removed (grey), Stable (muted). Stable counts only Still-Passing and Unchanged cases; Still-Failing cases stay flagged as warnings, not as stable
+- **Filter bar:** Five radio buttons (All / Regressions / Fixed / New / Removed) reduce the case list in place
+- **Case rows:** Each case shows a coloured bullet (red / green / blue / grey / orange) plus `<Suite> / <Case>`, the failure message (if any), the change-kind label, and the duration delta versus the baseline (`+12 ms` / `−5 ms`)
+
+The launcher dialog lists the most recent 100 runs minus the baseline you started from, sorted newest-first. Double-click a row or click **OK** to commit the pick; **Cancel** closes the dialog without changing the comparison.
+
 ### Block Analysis (before running tests)
 
 1. Select a PLC from the dropdown
@@ -2012,9 +2242,9 @@ The runner automatically:
 The **Connection Settings** dialog lets you pick how test reads and writes travel between the app and the PLC:
 
 - **PLCSim Advanced** — Direct access via the Siemens PLCSim API, faster and does not need an active S7 session. Best for simulator-only testing.
-- **S7 Comm+** — Uses the S7 Communication driver over TCP/IP. Pick this when you want to run the tests against real hardware or against PLCSim through the virtual Ethernet adapter with user authentication.
+- **S7 Native** — Uses the S7 Communication driver over TCP/IP. Pick this when you want to run the tests against real hardware (in combination with the **Real PLC** preparation mode) or against PLCSim through the virtual Ethernet adapter with user authentication. Same protocol label as the PLC Online tab.
 
-Both transports expose their own configuration section in the same dialog, so each suite can be targeted independently. For S7 Comm+, the suite owns its IP, port, rack, slot, TLS toggle, username, and password — no cross-tab lookup from the PLC Online view.
+Both transports expose their own configuration section in the same dialog, so each suite can be targeted independently. For S7 Native, the suite owns its IP, port, rack, slot, TLS toggle, username, and password — no cross-tab lookup from the PLC Online view.
 
 ### Simulation Workspace
 
@@ -2031,10 +2261,29 @@ The sub-mode choice is remembered between sessions, and switching modes keeps an
 
 ### PLCSIM Preparation Mode
 
-The **Connection Settings** dialog has a preparation-mode selector (inside the PLCSim section) that controls how the runner gets your project into the PLCSIM instance before the test run:
+The **Connection Settings** dialog has a preparation-mode selector that controls how the runner brings your project online before the test run:
 
 - **I load it myself (recommended)** — The runner expects a PLCSIM instance that you have already started and loaded manually via TIA Portal. It skips compile and download and connects directly to run the tests. Fastest option if you're iterating on the same project.
 - **Automatic TCP download** — The runner compiles the project, starts a fresh PLCSIM instance and downloads via TCP over the PLCSIM Virtual Adapter. No manual TIA Portal interaction needed — just click Run.
+- **Real PLC (no PLCSim)** — Skips the PLCSim lifecycle entirely. The runner connects S7 Native directly to the live S7 hardware at the IP/port/rack/slot you configured and runs the tests there. **Use only when the plant is in a safe test state.** Selecting this mode hides the PLCSim section and locks the transport to S7 Native; PLCSim API is incompatible.
+
+### Running Tests Against a Real PLC
+
+Picking **Real PLC** in the preparation-mode selector enables tests against live S7-1200 / S7-1500 hardware without any PLCSim involvement:
+
+1. Make sure the plant is in a **safe test state** — actuators isolated or interlocked, no production load on the PLC, operators informed.
+2. Open **Connection settings…**, choose **S7 Native** as the transport, enter the PLC's real IP address, port, rack, slot, and (if applicable) TLS user/password.
+3. Switch the preparation mode to **Real PLC (no PLCSim)**. The PLCSim section disappears.
+4. Click **OK**, then **▶ Run**.
+5. Before the runner contacts the PLC, an acknowledgement dialog appears: *"Run tests against live PLC?"* Read the warning, tick **"I understand — the plant is in a safe test state."**, then click **Run tests**. The button stays disabled until the checkbox is ticked. Cancel aborts the run with no network traffic.
+
+Safety blocks (F-CPU FBs marked with the safety attribute) are still hard-blocked in this mode — the runner refuses to start any test that targets a Safety block, regardless of preparation mode.
+
+If the run fails immediately with **"S7 connection succeeded but access denied — verify username/password"**, the PLC accepted the TLS handshake but rejected the credentials. Re-check the user/password on the Connection Settings dialog and confirm the matching entry under **Vault → S7 Password**. The runner now reports this at connect time instead of letting the test fail later with a misleading "tag not found".
+
+**Batch runs and Real PLC suites:** When you click **Run All** or otherwise trigger a batch run that contains one or more suites configured for **Real PLC** mode, those suites are skipped (the per-suite acknowledgement dialog cannot be rendered from a batch). The Test Explorer shows a dismissible banner naming the skipped suites; open each affected suite and click **Run** individually to walk through its acknowledgement dialog. Skipped suites are no longer counted as failures in the batch summary.
+
+**CPU operating-state gate:** Real PLC runs probe the CPU's operating state right after connect. If the CPU is in **Stop**, **StartUp**, **Hold**, **Defect** or any other non-RUN state, the runner aborts immediately with `Cannot run tests against real PLC: CPU is in <STATE>, not Run. Switch the CPU to Run before retrying.` This prevents the runner from writing to DB memory while the user program isn't executing — which would otherwise cause every test to read residual data and report misleading PASS/FAIL outcomes. Set the CPU to RUN (TIA Portal Online & Diagnostics, or the CPU mode-selector switch) and click Run again.
 
 ### Running Against a Protected Project
 
@@ -2582,6 +2831,8 @@ The sidebar on the left shows all local branches, remote branches, tags, worktre
 ### Command Palette
 
 Press **Ctrl+Shift+P** while working in the Git workspace to open the Command Palette. It provides quick keyboard-driven access to the most common Git operations without navigating menus.
+
+> **Two palettes share Ctrl+Shift+P.** This Git Command Palette is workspace-scoped and lists the 14 Git-only actions below. The global [Quick Open Bar](#3a-quick-open-bar) (also Ctrl+Shift+P, prefilled with `>`) lives in the title bar and routes through prefixes (`>` `@` `#` `git:` `?` `:`). The Git workspace palette takes precedence when the Git tab has focus; in any other tab the Quick Open Bar opens.
 
 **Available commands:**
 

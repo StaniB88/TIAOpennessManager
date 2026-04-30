@@ -1,8 +1,41 @@
 # TIA Openness Manager - Changelog
 
+## v3.5.3 (2026-04-30)
+
+### Quick Open
+- **Quick Open** — new title-bar search bar (Ctrl+Shift+P, or click) jumps to commands, symbols, files, Git branches, help and lines across the whole app.
+
+### Git
+- **Git** — Diff editor in commit details and revision compare now spans the full pane width instead of leaving empty margins on both sides.
+
+### Unit Testing
+- **Unit Testing** — Run-History dock-tool lists every persisted test run with status, counts, suite, PLC, hostname and TIA version, with one-click jump back to the detailed Results view.
+- **Unit Testing** — New "Real PLC" preparation mode runs tests directly against live S7 hardware via S7 Native, with an explicit acknowledgement dialog before the first write.
+- **Unit Testing** — S7 transport label renamed to "S7 Native" across the Connection Settings dialog to match the PLC Online tab.
+- **Unit Testing** — Tests against password-protected S7-1500 CPUs now authenticate with the credentials saved in the Connection Settings dialog instead of connecting anonymously.
+- **Unit Testing** — Suite validation rejects malformed S7 IP addresses and overlong user names earlier with a clearer error.
+- **Unit Testing** — JSON editor flags schema violations alongside JSON parse errors instead of only catching syntax issues.
+- **Unit Testing** — Compare-Runs dock-tool diffs two runs with summary pills, filter bar (regressions / fixed / new / removed) and color-coded case rows; launched from Run-History "Compare with…" via a run-picker dialog.
+
+### AI Chat
+- **AI Chat** — MCP OAuth display name now refreshes after token rotation instead of showing the stale login-time name.
+- **Scheduled Tasks** — schedule autonomous AI agent runs on a cron expression.
+
+### PLC Online
+- **OPC UA** — History chart now reads aggregate values (Average, Minimum, Maximum, Count, Total) over a configurable processing interval instead of only raw samples.
+- **OPC UA** — Matrix editor warns when cells changed on the server while you were editing, with Overwrite or Reload choice instead of silently overwriting.
+
+### Password Vault
+- **Password Vault** — Newly created vault files now reload correctly after closing and reopening the app.
+- **Password Vault** — Corrupted or incomplete vault files now show "vault file is corrupted" instead of repeated "wrong master password" prompts.
+- **Password Vault** — All vault error messages are now fully translated.
+- **Password Vault** — When the vault file is modified by another tool while the app has it open, the next save shows a clear "vault file changed on disk" warning instead of silently overwriting the external change.
+- **Tool Approvals** — A corrupted approval file is preserved as a timestamped backup for inspection instead of being silently overwritten when you grant the next tool.
+
 ## v3.5.2 (2026-04-29)
 
 ### AI Chat
+- **AI Chat** — External MCP servers protected by OAuth 2.1 now sign in through a one-click **Authorize…** flow in the Add/Edit MCP Server dialog.
 - **AI Chat** — Claude models on GitHub Copilot no longer time out during long reasoning calls.
 - **AI Chat** — Stream timeouts log the system proxy used for the failing endpoint.
 - **AI Chat** — AWL→SCL conversion catches self-IDB access, Bool bit-slices, and INT→DInt promotion before emitting SCL.

@@ -1,59 +1,41 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>3.5.2</version>
-    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v3.5.2/TiaOpennessManager_Setup_3.5.2.exe</url>
+    <version>3.5.3</version>
+    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v3.5.3/TiaOpennessManager_Setup_3.5.3.exe</url>
     <changelog>https://github.com/StaniB88/TIAOpennessManager/blob/main/CHANGELOG.md</changelog>
-    <release_date>2026-04-29</release_date>
+    <release_date>2026-04-30</release_date>
     <body>## What&apos;s Changed
 
-### AI Chat
-- **AI Chat** — Claude models on GitHub Copilot no longer time out during long reasoning calls.
-- **AI Chat** — Stream timeouts log the system proxy used for the failing endpoint.
-- **AI Chat** — AWL→SCL conversion catches self-IDB access, Bool bit-slices, and INT→DInt promotion before emitting SCL.
-- **AI Chat** — Ctrl+B sends blocking sub-agents to background; main-session detach is no longer offered.
-- **AI Chat** — File system tool can access the open TIA project&apos;s directory and any folders added in Settings → Workspace; out-of-scope paths trigger an allow/deny prompt.
-- **AI Chat** — File system tool keeps protected app files (vault, license, chat data, settings) off-limits even inside allow-listed folders.
-- **AI Chat** — Canvas snapshot tool now captures the visible canvas.
-- **AI Chat** — MCP servers with arbitrary display names (spaces, punctuation, accents) now start successfully.
-- **AI Chat** — Edit MCP Server dialog opens above the AI Chat Settings window.
-- **AI Chat** — MCP server commands at install paths containing parentheses (e.g. `C:\Program Files (x86)\…`) are now accepted.
-
-### PLC Online
-- **OPC UA** — Failed writes surface a localized reason (read-only / permission denied / type mismatch / out of range / generic) inline below the watch row, with the row staying in edit mode for retry.
-- **OPC UA** — Failed struct writes show a banner above the Struct Fields panel with the same localized reason.
-- **OPC UA** — Writes with no server result now report it instead of silently appearing to succeed.
-- **OPC UA** — Pressing Write on the struct editor with no field changes shows a &quot;No changes to write&quot; banner; starting a new edit clears it.
-- **OPC UA** — Watch-table polls, struct edits and writes survive transient server-side blips instead of failing outright.
+### Quick Open
+- **Quick Open** — new title-bar search bar (Ctrl+Shift+P, or click) jumps to commands, symbols, files, Git branches, help and lines across the whole app.
 
 ### Git
-- **Git** — Partial stage / unstage / discard now works on diff lines with non-UTF8 text.
-- **Git** — Create Branch popup hides the Local Changes radio when the working tree is clean.
-
-### Editor
-- **Editor** — Header `Language:` shows the real language for TIA Portal blocks (SCL/STL/LAD/FBD) and opened files (C#, Python, Markdown, TypeScript, …) instead of always SCL or XML.
+- **Git** — Diff editor in commit details and revision compare now spans the full pane width instead of leaving empty margins on both sides.
 
 ### Unit Testing
-- **Unit Testing** — Test suite files keep special characters (°, &lt;, +, accents) intact.
-- **Unit Testing** — Test Explorer picks up new suites without a project reload.
-- **Unit Testing** — New Suite button stays disabled until a block is selected.
-- **Unit Testing** — Suite names with invalid characters or path-traversal sequences are rejected at every entry point.
-- **Unit Testing** — Connection Settings persist when applied, and save errors appear in the status bar.
-- **Unit Testing** — New Suite opens with a ready-to-edit example test case; the user manual now includes a full schema reference.
-- **Unit Testing** — Example test case uses safe defaults (Bool inputs default to `false`) so a one-click Run cannot accidentally activate outputs on real hardware; user manual gains a safety callout.
-- **Unit Testing** — Visual editor lets you author test cases through a form (Name / Description / Cycles / Tags / Priority + grids for Inputs, Assertions, Watch) instead of an empty page.
-- **Unit Testing** — Multi-phase test steps — author write/wait/assert sequences in a single case for timing-dependent scenarios (reset → wait → start → wait → check) instead of chaining brittle multi-case state.
-- **Unit Testing** — PLCSim Advanced saved-instances list scrolls within its own panel instead of overlapping the active-instances row.
-- **AI Chat** — AI-generated unit tests are deterministic instead of depending on the PLC&apos;s current state.
-- **AI Chat** — Unit-test agent uses the test case&apos;s watch array directly instead of searching for non-existent watch / monitor / subscribe / trace tools.
-- **AI Chat** — Boundary-values tool no longer fails for blocks with Real/LReal inputs.
+- **Unit Testing** — Run-History dock-tool lists every persisted test run with status, counts, suite, PLC, hostname and TIA version, with one-click jump back to the detailed Results view.
+- **Unit Testing** — New &quot;Real PLC&quot; preparation mode runs tests directly against live S7 hardware via S7 Native, with an explicit acknowledgement dialog before the first write.
+- **Unit Testing** — S7 transport label renamed to &quot;S7 Native&quot; across the Connection Settings dialog to match the PLC Online tab.
+- **Unit Testing** — Tests against password-protected S7-1500 CPUs now authenticate with the credentials saved in the Connection Settings dialog instead of connecting anonymously.
+- **Unit Testing** — Suite validation rejects malformed S7 IP addresses and overlong user names earlier with a clearer error.
+- **Unit Testing** — JSON editor flags schema violations alongside JSON parse errors instead of only catching syntax issues.
+- **Unit Testing** — Compare-Runs dock-tool diffs two runs with summary pills, filter bar (regressions / fixed / new / removed) and color-coded case rows; launched from Run-History &quot;Compare with…&quot; via a run-picker dialog.
 
-### Screen Editor
-- **Screen Editor** — Item borders now render correctly.
+### AI Chat
+- **AI Chat** — MCP OAuth display name now refreshes after token rotation instead of showing the stale login-time name.
+- **Scheduled Tasks** — schedule autonomous AI agent runs on a cron expression.
 
-### Trace
-- **Trace** — Signal-color swatches render correctly when adding a computed signal.
-- **Trace** — Signal picker now enables Add for OPC UA variables whose data type is a numeric NodeId (e.g. `i=1`, `i=4`).</body>
+### PLC Online
+- **OPC UA** — History chart now reads aggregate values (Average, Minimum, Maximum, Count, Total) over a configurable processing interval instead of only raw samples.
+- **OPC UA** — Matrix editor warns when cells changed on the server while you were editing, with Overwrite or Reload choice instead of silently overwriting.
+
+### Password Vault
+- **Password Vault** — Newly created vault files now reload correctly after closing and reopening the app.
+- **Password Vault** — Corrupted or incomplete vault files now show &quot;vault file is corrupted&quot; instead of repeated &quot;wrong master password&quot; prompts.
+- **Password Vault** — All vault error messages are now fully translated.
+- **Password Vault** — When the vault file is modified by another tool while the app has it open, the next save shows a clear &quot;vault file changed on disk&quot; warning instead of silently overwriting the external change.
+- **Tool Approvals** — A corrupted approval file is preserved as a timestamped backup for inspection instead of being silently overwritten when you grant the next tool.</body>
     <mandatory>false</mandatory>
-    <size>255334760</size>
-    <sha256>EF76644FD701263A6A9E2A76503E1D8BCAF54867468B8ED8FBAB6D6A5247F33E</sha256>
+    <size>255780200</size>
+    <sha256>00B054A88D0D4745B617994F4E0F1E8077AD52C3DB77CFF184D0D67CF8946136</sha256>
 </item>
