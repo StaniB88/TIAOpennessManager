@@ -1,35 +1,7 @@
 # TIA Openness Manager - Benutzerhandbuch
 
-**Version:** 3.0
-**Stand:** Februar 2026
-
----
-
-## Inhaltsverzeichnis
-
-0. [Willkommen-Tab](#0-willkommen-tab)
-1. [Einführung](#1-einführung)
-2. [Installation & Systemvoraussetzungen](#2-installation--systemvoraussetzungen)
-3. [Benutzeroberfläche](#3-benutzeroberfläche)
-3a. [Schnellzugriff (Quick Open)](#3a-schnellzugriff-quick-open)
-4. [Projekt-Management](#4-projekt-management)
-5. [Import/Export Tab](#5-importexport-tab)
-6. [Project Tab](#6-project-tab)
-7. [Protected Items Tab](#7-protected-items-tab)
-8. [Passwort-Tresor (Vault Tab)](#8-passwort-tresor-vault-tab)
-9. [MCP Server (KI-Integration)](#9-mcp-server-ki-integration)
-9a. [KI-Chat](#9a-ki-chat)
-9b. [OPC UA Tab](#9b-opc-ua-tab)
-9c. [Unit Testing](#9c-unit-testing)
-9c. [AI Canvas](#9c-ai-canvas)
-10. [Projektbibliothek-Verwaltung](#10-projektbibliothek-verwaltung)
-11. [Hardware Tab](#11-hardware-tab)
-11a. [Im Projekt suchen (Cross-Reference-Suche)](#11a-im-projekt-suchen-cross-reference-suche)
-12. [Find Unused Blocks](#12-find-unused-blocks)
-13. [Einstellungen](#13-einstellungen)
-14. [Lizenzierung](#14-lizenzierung)
-14a. [Git-Client](#14a-git-client)
-15. [Fehlerbehebung & FAQ](#15-fehlerbehebung--faq)
+**Version:** 4.0
+**Stand:** Mai 2026
 
 ---
 
@@ -47,9 +19,10 @@ Der Willkommen-Tab ist das Erste, was Sie beim Start des TIA Openness Managers s
 
 ### Schnellzugriff-Aktionen
 
-Die linke Spalte bietet sieben Abkürzungen für die häufigsten ersten Schritte:
+Die linke Spalte bietet acht Abkürzungen für die häufigsten ersten Schritte:
 
 - **Mit TIA Portal verbinden…** — auf eine laufende TIA-Portal-Instanz aufsetzen.
+- **Neues TIA-Projekt…** — den Neues-Projekt-Wizard öffnen, um ein TIA-Projekt mit CPU, optionalen Modulen, Netzwerk und initialen Bausteinen anzulegen. TIA-Portal-Version direkt im Wizard wählen — keine vorherige Verbindung erforderlich. Siehe [Benutzerhandbuch → Neues-Projekt-Wizard](#4-projekt-management).
 - **TIA-Projekt öffnen…** — eine `.ap1x`- / `.ap2x`-Projektdatei von der Platte wählen.
 - **Export-Ordner auswählen…** — den Ordner festlegen, in den exportierte Blöcke geschrieben werden.
 - **Git-Repository klonen…** — ein Repository direkt in der Anwendung klonen.
@@ -147,6 +120,18 @@ Pro Windows-Sitzung läuft nur eine Instanz des TIA Openness Managers. Wenn Sie 
 
 Wenn ein anderes Programm den Namen belegt hat, den die Anwendung intern verwendet, verweigert sie den Start und zeigt eine Warnung. Schließen Sie das andere Programm (oder melden Sie sich ab und wieder an) und versuchen Sie es erneut.
 
+### Anmelden
+
+Beim ersten Start öffnet sich ein Anmelde-Dialog vor dem Hauptfenster. Klicken Sie auf **Sign in via browser** — Ihr Standard-Browser öffnet `tiaopenessmanager.ch/sign-in`, wo Sie Ihre E-Mail-Adresse und den 6-stelligen Verifizierungscode aus der zugesendeten E-Mail eingeben. Sobald der Browser den Vorgang bestätigt, schließt sich der Dialog automatisch und die Anwendung ist freigeschaltet.
+
+Sie bleiben über App-Neustarts hinweg angemeldet; der nächste Start führt direkt zum Hauptfenster. Die Lizenz hängt am Account, nicht an einer bestimmten Maschine. Sie können sich auf bis zu drei verschiedenen Rechnern pro 30-Tage-Fenster anmelden.
+
+Über **Einstellungen → License** wird das Lizenz-Panel geöffnet, das die angemeldete E-Mail, die aktive Tier-Stufe und einen **Sign out**-Button anzeigt. Beim Klick erscheint ein Bestätigungsdialog ("Abmelden und diese Maschine freigeben?") — ein versehentlicher Klick gibt die Maschinen-Bindung also nicht sofort frei. **Sign out** bestätigt, **Cancel** lässt die Anmeldung bestehen. Beim Abmelden wird die aktuelle Maschinen-Bindung freigegeben, sodass ein Kollege übernehmen kann. Die Anwendung benötigt eine aktive Anmeldung: unmittelbar nach dem Abmelden öffnet sich der Sign-In-Dialog erneut. Erneut anmelden um weiterzuarbeiten oder den Dialog schliessen um die Anwendung zu beenden.
+
+Falls die Anmeldung wiederholt scheitert, prüfen Sie, dass Ihr Netzwerk `tiaopenessmanager.ch` erreichen kann. Firmen-Firewalls mit TLS-Inspection benötigen ggf. eine Ausnahme (siehe „Cert-Pin-Bypass" im Troubleshooting-Abschnitt).
+
+Wenn der Lizenzserver beim Start nicht erreichbar ist (kein Internet, VPN nicht verbunden, Serverausfall), erscheint ein Dialog mit drei Optionen: **Erneut versuchen** versucht die Verbindung erneut, **Offline fortfahren** öffnet die Anwendung mit der gecachten Lizenz und der 14-Tage-Grace-Period (einige Funktionen sind ggf. bis zur nächsten erfolgreichen Anmeldung nicht verfügbar), und **Anwendung schliessen** beendet das Programm. Offline-Modus erteilt nie mehr Rechte als die letzte erfolgreiche Online-Prüfung; Subscription-Zugriff ist auf 14 Tage begrenzt, und es können weder neue Trials gestartet noch neue Lizenzen aktiviert werden solange offline.
+
 ---
 
 ## 3. Benutzeroberfläche
@@ -167,14 +152,14 @@ Die Anwendung ist in mehrere Bereiche unterteilt:
 ├─────────────────────────────────────────────────────────────┤
 │  Baumsteuerung: [F-Signatur] [Safety Printout]               │
 ├─────────────┬───────────────────────────────────────────────┤
-│             │  [Project] [Import/Export] [Find Unused]       │
-│  Projekt-   │  [Hardware]                                    │
-│  Baum       ├───────────────────────────────────────────────┤
-│             │                                               │
+│             │  [Project] [Import/Export] [Compare]           │
+│  Projekt-   │  [Find Unused] [Find in Project] [Hardware]    │
+│  Baum       │  [Vault]                                       │
+│             ├───────────────────────────────────────────────┤
 │  (Links)    │              Tab-Inhalt                       │
 │             │                                               │
 ├─────────────┴───────────────────────────────────────────────┤
-│  Unteres Panel: [Log Output] [Terminal] [Compare]            │
+│  Unteres Panel: [Log Output] [Terminal] [Git Output] …      │
 ├─────────────────────────────────────────────────────────────┤
 │  Statusleiste: ● Verbunden | Statusnachricht | Lizenz: ● Pro │
 └─────────────────────────────────────────────────────────────┘
@@ -190,8 +175,11 @@ Die Anwendung ist in mehrere Bereiche unterteilt:
 
 - **Project** - Code-Editor für ausgewählte Blöcke
 - **Import/Export** - Haupt-Arbeitsbereich für Datei-Operationen
+- **Compare** - Nebeneinander-Bausteinvergleich
 - **Find Unused** - Dead-Code-Erkennung und Aufräumen
+- **Find in Project** - Projektweite Symbol- und Referenzsuche
 - **Hardware** - Geräteliste mit PROFINET-Namen und IP-Konfiguration
+- **Vault** - Verschlüsselte Anmeldedaten-Verwaltung
 
 ### Menüleiste
 
@@ -199,8 +187,17 @@ Die Anwendung ist in mehrere Bereiche unterteilt:
 |------|-------------------|
 | File | Connect, Browse Folder, Archive Project, Disconnect, Exit |
 | Project | Rescan PLC, Save, Compile, Safety Login/Logoff |
-| View | Settings, Terminal, Import/Export Settings, Protection Profiles Folder |
+| View | Settings, Terminal, Import/Export Settings, Protection Profiles Folder, Vollbild, Tastaturkürzel |
 | Help | Documentation, Release Notes, Problem melden, About |
+
+### Benutzerhandbuch-Fenster
+
+Öffnen Sie dieses Handbuch über **Hilfe → Dokumentation**. Das Benutzerhandbuch-Fenster passt sich dem App-Theme an, zeigt links ein an der Seite fixiertes Inhaltsverzeichnis und unterstützt:
+
+- **Suchen** — über die Schaltfläche „Suchen" (oder Strg+F) eine seiteninterne Suche öffnen. Enter springt zum nächsten Treffer, Umschalt+Enter zum vorherigen, Esc schliesst die Suchleiste.
+- **Zoom** — `−` / `+` schalten in 25%-Schritten zwischen 50 und 200%.
+- **Sprache** — über das Dropdown ohne Seitenwechsel zwischen Deutsch und Englisch umschalten.
+- **Code-Hervorhebung** — Code-Blöcke werden passend zum aktiven Theme syntaktisch hervorgehoben.
 
 ### Symbolleiste
 
@@ -218,12 +215,22 @@ Die TIA Portal Version (z.B. V20) wird auf der rechten Seite der Symbolleiste an
 
 ### Unteres Panel
 
-Das untere Panel enthält drei Tabs:
+Das untere Panel enthält:
 - **Log Output** - Anwendungs-Logmeldungen mit farbcodierter Schwere
 - **Terminal** - Integriertes Terminal für Kommandozeilen-Operationen
-- **Compare** - Nebeneinander-Bausteinvergleich
+- **Git Output** - Ausgabestrom der Git-Operationen
+- **Probleme** - Diagnose über alle offenen Editor-Dateien; jede Zeile zeigt Dateiname mit Zeile und Spalte, und ein Klick springt im Editor an genau diese Stelle
+- **Referenzen** - vom Language Service ermittelte Symbol-Referenzen
 
-Das Panel kann mit den Steuerelementen in der oberen rechten Ecke eingeklappt, erweitert oder maximiert werden.
+Das Panel kann mit den Steuerelementen in der oberen rechten Ecke eingeklappt, erweitert oder maximiert werden. Der Nebeneinander-Bausteinvergleich (**Compare**) liegt jetzt im Workspace-Dock neben **Import/Export** — Sie öffnen ihn über das Workspace-Ansichtsmenü.
+
+### Werte aus Datenfeldern kopieren
+
+Schreibgeschützte Datenfelder in der gesamten Anwendung können mit der Maus markiert und mit **Strg+C** wie ein normales Texteingabefeld kopiert werden. Das umfasst CPU-Identität (MLFB, Seriennummer, Firmware), OPC UA Diagnose (Server-Build, Sitzungszähler, Capabilities), Lizenzinformationen (Konto-E-Mail, Hardware-ID, Ablaufdatum), Verbindungsdetails (Endpunkt-URL, IP-Adresse, Sicherheitsmodus), MCP-Sitzungs-IDs sowie Fehler- und Statusmeldungen. Statische Feldbezeichnungen sind nicht markierbar; die Werte schon.
+
+### Zeilen aus Tabellen kopieren
+
+Tabellen in den OPC UA Panels (Node Attributes, References, Struct Fields, Diagnostics Buffer, Event Log, Server Diagnostics, Type Definitions, Watch Table, Endpoint List) unterstützen das Kopieren ganzer Zeilen: Eine Zeile mit einem Klick auswählen, mit **Shift** oder **Strg** mehrere Zeilen markieren (wo unterstützt), und mit **Strg+C** als tab-separierte Werte inklusive Spaltenüberschriften in die Zwischenablage kopieren. Anschliessend in eine Tabellenkalkulation, einen Texteditor, ein Ticket oder einen Chat einfügen.
 
 ---
 
@@ -305,7 +312,304 @@ Der Git-Arbeitsbereich besitzt seine eigene **Strg+Umschalt+P**-Befehlspalette (
 
 ---
 
+## 3b. Tastenkombinationen
+
+### Tastenkürzel-Übersicht öffnen
+
+Drücken Sie **Strg+K, Strg+S** an einer beliebigen Stelle in der Anwendung, um den Dialog **Tastenkombinationen** zu öffnen. Er listet alle Belegungen, auf die die App reagiert, gruppiert nach Bereich:
+
+- **Allgemein** — anwendungsweite Belegungen: Projekt speichern, Einstellungen, Terminal, Arbeitsbereichswechsel, im Projekt suchen, Tastenkürzel-Übersicht selbst.
+- **Editor** — Belegungen, die auf den aktiven Code-Editor und sein Inline-Edit-Overlay wirken.
+- **Git** — Belegungen innerhalb des Git-Arbeitsbereichs (Tabs, Branches, Working Copy, Verlauf, Diff).
+- **KI-Chat** — Schnellumschalt-Tastenkürzel innerhalb des KI-Chat-Panels.
+- **Vergleich** — Belegungen innerhalb des Compare-Arbeitsbereichs.
+
+Jede Zeile zeigt die Tastenkombination und eine kurze Beschreibung; ein Suchfeld oben filtert nach beidem. Derselbe Dialog ist über **Ansicht → Tastenkombinationen** erreichbar.
+
+### Häufig benötigte Tastenkombinationen
+
+| Tastenkombination | Aktion |
+|-------------------|--------|
+| **Strg+1 … Strg+8** | Arbeitsbereich wechseln (TIA Manager, Versionsverwaltung, PLC Online, Explorer, Bildschirm-Editor, Unit Testing, Trace, KI-Agent) |
+| **Strg+Alt+1 … Strg+Alt+9** | Aktiven Assistenten innerhalb des KI-Chat-Panels umschalten |
+| **Strg+S** | Aktiven Editor speichern; im Git-Diff den fokussierten Hunk stagen; in Compare die fokussierte Seite speichern |
+| **Strg+Umschalt+S** | TIA-Portal-Projekt speichern |
+| **Strg+K, Strg+S** | Diesen Tastenkombinationen-Dialog öffnen |
+| **Strg+R** (Git-Tab) | Aktives Git-Repository aktualisieren |
+| **Strg+Ö** | Integriertes Terminal umschalten |
+| **F1** | Benutzerhandbuch öffnen |
+| **F5** | TIA-Portal-Projekt neu einlesen |
+| **F11** | Vollbildmodus umschalten |
+| **Strg+Umschalt+F** | Referenzen im aktuellen Projekt suchen |
+
+Wird eine Tastenkombination für zwei verschiedene Bereiche angezeigt (etwa **Strg+S** für *Projekt speichern* und *Hunk stagen*), entscheidet der Tastatur-Fokus, welche Belegung tatsächlich ausgeführt wird.
+
+---
+
+## 3c. Rechtsklick-Kontextmenüs
+
+Jede Tabelle, jedes auswählbare Text-Feld und jede Baumansicht der Anwendung öffnet bei Rechtsklick ein Kontextmenü. Die Menüs sind in der Applikations-Sprache lokalisiert (Englisch / Deutsch / Französisch / Italienisch).
+
+### Gemeinsame Standardeinträge (greifen auf jeder Tabelle / Text-Feld / Baum)
+
+| Oberfläche | Einträge |
+|------------|----------|
+| Beliebige Tabelle | Zelle kopieren · Zeile kopieren · Alles als CSV kopieren · Alles auswählen |
+| Beliebiges auswählbares Text-Feld | Kopieren · Kopieren (in Anführungszeichen) · Alles auswählen |
+| Beliebige Baumansicht | Name kopieren · Alle ausklappen · Alle einklappen |
+
+- **Zelle kopieren** — kopiert den Wert der Zelle unter dem Mauszeiger.
+- **Zeile kopieren** — kopiert alle Spalten der ausgewählten Zeile als Tab-getrennten Text.
+- **Alles als CSV kopieren** — kopiert sämtliche sichtbaren Zeilen inkl. Spaltenüberschriften im RFC-4180-CSV-Format. Bei sehr grossen Tabellen wird auf 10 000 Zeilen begrenzt; die Begrenzung erscheint im Log.
+- **Kopieren (in Anführungszeichen)** — umschliesst die Auswahl (oder den ganzen Text) mit doppelten Anführungszeichen; nützlich beim Einfügen einer E-Mail oder eines Pfades in einen Satz.
+
+### Feature-spezifische Einträge
+
+Zusätzlich zu den Standardeinträgen bieten einige Oberflächen Aktionen, die zu ihrem Inhalt passen:
+
+- **OPC UA — References-Tabelle** (PLC Online → References-Dock): NodeId kopieren · BrowseName kopieren · Als JSON kopieren · Abonnieren (fügt den referenzierten Knoten der Watch-Liste hinzu).
+- **Compare — Dateilisten** (linke und rechte Liste): Vollen Pfad kopieren · Dateinamen kopieren · Ordner öffnen (Datei-Explorer „Datei markieren"-Modus) · Entfernen aus dem Vergleich.
+- **Projektbaum** (TIA-Manager): Name kopieren · Nummer kopieren direkt nach Im Editor öffnen / Referenzen suchen im bestehenden Menü.
+- **Git Blame** — der SHA-Badge bietet SHA kopieren (kurz, erste 8 Zeichen) und SHA kopieren (vollständig); der Betreff bietet Kopieren.
+- **Git Commit-Detail** — der SHA bietet das gleiche Kurz/Voll-Paar; der Autor-Block bietet Name kopieren · E-Mail kopieren · „Name &lt;E-Mail&gt;" kopieren.
+
+Rechtsklick in Code-Editoren (SCL-Editor, Diff-Ansicht, Blame-Inhalt, Git-Kommando-Ausgabe) behält das editor-eigene Ausschneiden/Kopieren/Einfügen-Menü — die neuen Menüs überschreiben es nicht. Textfelder (Eingabefelder) behalten das systemeigene Ausschneiden/Kopieren/Einfügen-Flyout.
+
+---
+
+## 3d. Datei-Explorer
+
+Der Explorer-Arbeitsbereich (Strg+4) ist der Dateibaum auf der linken Seite. Er öffnet beliebige Ordner auf der Festplatte, zeigt Dateien und Unterordner und ermöglicht Erstellen, Umbenennen, Löschen, Verschieben und Suchen — und wenn der Ordner eine Git-Arbeitskopie ist, zeigt er dieselben Status-Markierungen wie ein Git-Client oder VS Code.
+
+### Ordner öffnen
+
+- Klick auf das Ordner-Symbol in der Toolbar (rechts) oder den „Ordner öffnen"-Button in der leeren Ansicht.
+- Der Explorer merkt sich sonst nichts über den Ordner — er liest das Dateisystem jedes Mal neu und aktualisiert sich automatisch, sobald sich Dateien auf der Festplatte ändern.
+
+### Toolbar
+
+| Symbol | Aktion |
+|--------|--------|
+| ➕📄 | Neue Datei im ausgewählten Ordner (oder im Root, wenn nichts ausgewählt ist) |
+| ➕📁 | Neuer Ordner im ausgewählten Ordner (oder im Root) |
+| ↻ | Baum aktualisieren |
+| ⌃ | Alle Ordner zuklappen |
+| 👁 | Von Git ignorierte Dateien anzeigen / ausblenden |
+| 📄 | Einzelne Datei öffnen, ohne den geöffneten Ordner zu wechseln |
+| 📁 | Anderen Ordner öffnen |
+
+### Datei- und Ordner-Symbole
+
+Jede Zeile erhält ein Symbol passend zur Dateiendung oder zum Ordnernamen:
+
+- Code-Dateien (`.cs`, `.scl`, `.xml`, `.axaml`, `.json`, `.html`, `.js`, `.ts`, `.py`, …) und bekannte Config-Dateien (`.csproj`, `.sln`, `.yaml`, `.toml`, `.ini`) erhalten eigene Symbole.
+- Medien (`.png`, `.jpg`, `.svg`, `.mp4`, `.wav`), Archive (`.zip`, `.tar`, `.7z`), Skripte (`.exe`, `.dll`, `.bat`, `.ps1`, `.sh`) und Git-Config-Dateien (`.gitignore`, `.gitattributes`, `.gitmodules`) haben jeweils ein eigenes Glyph.
+- Ordner mit Namen wie `src`, `lib`, `docs`, `tests`, `node_modules`, `.git`, `.vscode`, `scripts`, `assets`, `.worktrees` erhalten ebenfalls passende Symbole.
+
+### Git-Status
+
+Wenn der geöffnete Ordner in einem Git-Repository liegt, zeigt der Explorer den Working-Tree-Status für jede sichtbare Datei und jeden sichtbaren Ordner:
+
+- **Glyph-Badge** rechts in der Zeile zeigt den Änderungs-Typ mit einem farbigen 14×14-Symbol: `±` modifiziert, `+` hinzugefügt, `−` gelöscht, `➜` umbenannt, `❏` kopiert, `★` untracked, `!` Konflikt, `T` Typ-Änderung. Der Badge-Tooltip nennt den Status in Ihrer UI-Sprache.
+- **Folder-Bubble-Up:** ein Ordner erbt den *schlechtesten* Status aller darin enthaltenen Dateien und zeigt denselben Badge mit reduzierter Deckkraft, sodass eine einzelne modifizierte Datei tief im Baum von der Wurzel aus sichtbar bleibt.
+- **Dateinamen** bleiben in der Standard-Textfarbe; der Status wird allein durch das Badge getragen.
+- **Ignorierte Dateien** (von `.gitignore` erfasst) erscheinen in gedämpfter Farbe. Mit dem 👁-Toolbar-Toggle werden sie komplett ausgeblendet — die Auswahl bleibt sitzungsübergreifend erhalten.
+- Der Explorer überwacht `.git/index` und `.git/HEAD` und aktualisiert die Status-Markierungen automatisch nach Stage, Commit, Branch-Wechsel oder anderen Git-Operationen außerhalb des TIA Openness Managers.
+
+### Solution-Panel
+
+Enthält der geöffnete Ordner eine `.sln`-Datei, erscheint unterhalb des Datei-Baums ein **Solution**-Panel mit allen C#-Projekten der Solution:
+
+- **Frameworks** — jedes Ziel-Framework, für das das Projekt kompiliert (Multi-Targets werden aufgeteilt).
+- **Pakete** — jeder NuGet `<PackageReference>` mit deklarierter Version.
+- **Analysatoren** — Pakete, die Analyzer/Source-Generatoren beisteuern, erkannt aus expliziten `<Analyzer>`-Items, `PrivateAssets="all"` plus Name-Suffix wie `.Analyzers`, oder einer kuratierten Whitelist (StyleCop, .NET Analyzers, Roslynator, xUnit Analyzers, …). Transitive Analyzer aus SDK-Defaults werden nicht aufgelistet; der Empty-State weist explizit darauf hin, dass es sich um eine Best-Effort-Erkennung handelt.
+- **Projekte** — jeder `<ProjectReference>` aufgelöst auf den Projektnamen.
+
+Ein Refresh-Button in der Panel-Toolbar parst alles auf Anforderung neu; das Panel aktualisiert sich zudem automatisch, sobald sich `.sln` oder `.csproj` auf der Festplatte ändern (500 ms entprellt). Hat der geöffnete Ordner keine `.sln`, wird das Panel komplett ausgeblendet und der Datei-Baum nutzt die gesamte Panel-Höhe; sobald eine `.sln` erkannt wird, erscheint das Panel wieder. Doppelklick auf die Solution-Zeile oder einen Projekt-Eintrag öffnet die zugehörige `.sln`- bzw. `.csproj`-Datei im Editor.
+
+### Sprach-spezifische Datei-Icons
+
+Dateien im Explorer-Baum und im Solution-Panel zeigen das echte Brand-Glyph ihrer Sprache — das C#-Logo für `.cs` / `.csproj` / `.sln`, das TypeScript-Logo für `.ts` / `.tsx`, die Logos für JavaScript / Python / Rust / Go / Java / Kotlin / Swift / C / C++ / Ruby / PHP / Lua / R bei passender Erweiterung, die HTML5- / CSS3- / Sass-Marken für Web-Quellen, JSON- / YAML- / XML- / Markdown-Badges für Daten und Doku, die Shell- / Bash- / PowerShell-Prompts für Skripte, den Docker-Wal für `Dockerfile` und `.dockerignore` sowie das Git-Logo für `.gitignore` / `.gitattributes` / `.gitmodules`. Jedes Glyph wird in der Brand-Farbe der Sprache eingefärbt (C# Lila, TS Blau, JS Gelb, Python Blau, Rust Orange, Go Cyan, SCL/AWL/STL Siemens-Orange, …). Dateien ohne registrierte Sprache fallen auf das generische Datei-Glyph in der neutralen Sekundärtextfarbe zurück; ignorierte Dateien bleiben unabhängig von der Sprache gedämpft.
+
+### Mehrfach-Auswahl
+
+- **Klick** wählt eine Zeile aus.
+- **Strg+Klick** schaltet die Auswahl einer weiteren Zeile um.
+- **Umschalt+Klick** wählt einen zusammenhängenden Bereich aus.
+- Ausgewählte Zeilen werden bei Löschen und Ziehen gemeinsam berücksichtigt.
+
+### Datei öffnen
+
+- **Doppelklick** auf eine Datei im Baum öffnet sie im Editor.
+- Ordner-Zeilen werden bei Doppelklick aufgeklappt bzw. zugeklappt.
+
+### Neue Datei oder Ordner anlegen
+
+- Klick auf den ➕📄- oder ➕📁-Button, oder Rechtsklick und **Neue Datei** / **Neuer Ordner** wählen.
+- Ein kleiner Dialog fragt nach dem Namen. Das neue Element wird im aktuell ausgewählten Ordner (oder im Root, falls nichts ausgewählt ist) angelegt und öffnet sich sofort im Editor, wenn es eine Datei ist.
+
+### Umbenennen
+
+- Zeile auswählen und **F2** drücken, oder Rechtsklick und **Umbenennen** wählen.
+- Der Name wird zu einem Inline-Textfeld. Bei Dateien mit Erweiterung wählt der Cursor nur den Basis-Namen aus, damit das Tippen den Namen sofort ersetzt, ohne die Erweiterung zu stören.
+- **Enter** committet den neuen Namen, **Esc** bricht ab, ein Klick außerhalb committet ebenfalls.
+- Leere Namen, Namen mit ungültigen Pfad-Zeichen oder Namen, die mit einem bereits existierenden Geschwister kollidieren, werden stillschweigend abgelehnt.
+
+### Löschen
+
+- Eine oder mehrere Zeilen auswählen und **Entfernen** drücken, oder Rechtsklick und **Löschen** wählen.
+- Ein Bestätigungsdialog erscheint mit der Anzahl der Elemente und der Gesamtzahl der enthaltenen Einträge (z. B. „3 Elemente löschen (47 Einträge)?"), damit ein rekursives Löschen nie mit unerwarteter Reichweite überrascht.
+- Bestätigung verschiebt Dateien und Ordner in den Windows-Papierkorb (unter Windows), damit versehentliche Löschungen wiederhergestellt werden können. Symlinks und Junctions werden als Link selbst gelöscht, nie als Link-Ziel.
+- Der Baum wird automatisch nach der Operation aktualisiert.
+
+### Verschieben per Drag & Drop
+
+- Eine Zeile gedrückt halten und auf einen Ordner *im selben Baum* ziehen, um sie dorthin zu verschieben.
+- Die Drop-Markierung aktiviert sich nur, wenn das Ziel ein Ordner ist, nicht die Quelle selbst und nicht innerhalb des Quell-Teilbaums liegt — ein Ordner kann also nicht versehentlich in seine eigenen Kinder gezogen werden.
+- Mehrere ausgewählte Zeilen werden gemeinsam verschoben; die Ziel-Datei oder der Ziel-Ordner darf nicht bereits existieren.
+
+### Aus dem Explorer in ein anderes Fenster ziehen
+
+- Ziehen aus dem Explorer in den Chat-Eingabe-Bereich hängt die ausgewählten Dateien an die nächste Nachricht an.
+- Ziehen in den Windows-Explorer erstellt Kopien im Zielordner.
+
+### Suchen und Filtern
+
+- **Strg+F** im fokussierten Explorer-Panel klappt die Suchleiste oberhalb des Baums ein; das Feld erhält automatisch Fokus, der bestehende Inhalt ist vorselektiert.
+- **Esc** im Suchfeld oder Klick auf das **X**-Button schliesst die Leiste und leert die Eingabe.
+- Die Suche prüft den Datei- oder Ordnernamen, case-insensitive, an beliebiger Stelle im Namen. Ordner bleiben sichtbar, solange ein Nachkomme matched, und passende Nachkommen werden automatisch aufgeklappt, damit die Treffer im Blick sind.
+- Leeren des Felds stellt den vollständigen Baum wieder her.
+- Der `.gitignore`-Filter und der Such-Filter kombinieren sich: wenn „Von Git ignorierte Dateien anzeigen" aus ist, werden ignorierte Dateien auch aus den Suchergebnissen ausgeschlossen.
+
+### Rechtsklick-Kontextmenü
+
+| Eintrag | Aktion |
+|---------|--------|
+| Neue Datei | Datei in diesem Ordner erstellen |
+| Neuer Ordner | Unterordner erstellen |
+| Umbenennen | Inline-Umbenennen starten (wie F2) |
+| Löschen | Datei oder Ordner entfernen (mit Bestätigung) |
+| Im Explorer anzeigen | Übergeordneten Ordner im Windows-Explorer öffnen, Datei markiert |
+| Pfad kopieren | Absoluten Pfad in die Zwischenablage kopieren |
+| Relativen Pfad kopieren | Pfad relativ zum geöffneten Wurzelordner in die Zwischenablage kopieren |
+
+---
+
+## 3e. Arbeitsbereich-Layout
+
+Der Arbeitsbereich zeigt Werkzeuge (Projekt-Explorer, Datei-Explorer) und Dokumente (Editor, Import/Export, Find Unused, Find in Project, Hardware, Tresor) in einer flexiblen Dock-Anordnung. Sie können jedes Panel umsortieren und das Ergebnis in einer Datei persistieren, die sich später wieder laden oder mit Kollegen teilen lässt.
+
+### Panels umsortieren
+
+- **Tab-Header ziehen** dockt das Panel an einen anderen Rand des Arbeitsbereichs, splittet eine bestehende Region oder kombiniert es als Tab-Gruppe mit einem anderen Panel.
+- **Tab-Header aus dem Hauptfenster ziehen** löst ihn als freistehendes Fenster ab. Das schwebende Fenster bleibt synchron zum Projekt und lässt sich an seiner Titelleiste zurück in eine Andock-Hilfslinie ziehen.
+- **Splitter zwischen zwei Regionen ziehen** ändert deren Grössenverhältnis.
+- **Pin-Symbol** an einem Werkzeug-Tab klappt es auf einen seitlichen Streifen ein; ein erneuter Klick stellt das volle Panel wieder her.
+- **Tab schliessen** über die Schliessen-Schaltfläche oder per Mittelklick. Geschlossene Dokumente und Werkzeuge werden ausgeblendet, nicht gelöscht — sie lassen sich über das **Ansicht**-Dropdown in der Arbeitsbereich-Symbolleiste (oben rechts) wieder einblenden.
+
+### Ansicht-Dropdown
+
+Das **Ansicht**-Dropdown (oben rechts in der Arbeitsbereich-Symbolleiste) schaltet einzelne Panels ein und aus. Ein Klick auf einen Eintrag blendet ein verstecktes Panel ein oder ein sichtbares aus:
+
+| Gruppe | Einträge |
+|--------|----------|
+| Werkzeuge | Projekt-Explorer, Datei-Explorer |
+| Dokumente | Editor, Import / Export, Unbenutzte finden, Im Projekt suchen, Hardware, Tresor |
+
+### Arbeitsbereich-Dropdown
+
+Das **Arbeitsbereich**-Dropdown (neben **Ansicht**) bündelt drei Aktionen, die auf die gesamte Dock-Anordnung des Haupt-Arbeitsbereichs wirken:
+
+| Eintrag | Wirkung |
+|---------|---------|
+| Arbeitsbereich speichern unter… | Speichert das aktuelle Dock-Layout (Panel-Positionen, Splitter-Verhältnisse, Tab-Reihenfolge, schwebende Fenster) in eine `.tiamgr-workspace`-Datei. Die Datei ist ein kleines JSON-Dokument, das sich zwischen Maschinen kopieren oder als Teil eines Team-Setups versionieren lässt. |
+| Arbeitsbereich laden… | Öffnet eine `.tiamgr-workspace`-Datei und wendet sie auf das aktuelle Hauptfenster an. Geöffnete Dokumente werden wiederverwendet; ihre visuelle Anordnung entspricht der Datei. |
+| Arbeitsbereich zurücksetzen | Stellt die werkseitige Dock-Anordnung wieder her. Ein Bestätigungsdialog fragt vor der Änderung. Geöffnete Dokumente und Werkzeuge bleiben verfügbar — nur ihre Position wird zurückgesetzt. |
+
+Das Arbeitsbereich-Dropdown wirkt nur auf das Layout. Projekt-Inhalte (Dateien, Bausteine, Einstellungen) werden weder von Speichern noch von Laden oder Zurücksetzen beeinflusst.
+
+### Was wird gespeichert und was nicht
+
+Wird in der `.tiamgr-workspace`-Datei gespeichert:
+
+- Position und Ausrichtung jedes Werkzeug- und Dokument-Panels
+- Breite-/Höhe-Verhältnisse zwischen Regionen
+- Tab-Gruppierung und aktiver Tab pro Region
+- Ob ein Werkzeug angepinnt, schwebend oder angedockt ist
+- Aktives Dokument und aktives Werkzeug zum Zeitpunkt des Speicherns
+
+Wird nicht gespeichert:
+
+- Dokument-Inhalte (diese liegen im TIA-Portal-Projekt und in den Quelldateien)
+- Editor-Scrollposition oder Auswahl innerhalb eines Dokuments
+- Inhalt der KI-Chat-Seitenleiste
+- Verbindungsstatus, Lizenz, Einstellungen
+
+---
+
 ## 4. Projekt-Management
+
+### Neues-Projekt-Wizard
+
+Der Neues-Projekt-Wizard legt ein vollständiges TIA-Portal-Projekt an — mit CPU, optionalen Modulen, Netzwerk und initialen Programmbausteinen — ohne dass Sie den TIA Openness Manager verlassen müssen.
+
+**Wizard öffnen:**
+
+- Im **Willkommen**-Tab klicken Sie in der Schnellzugriff-Spalte auf **Neues TIA-Projekt…**.
+- Der Wizard öffnet sich direkt. Sie müssen nicht vorher mit TIA Portal verbunden sein — wählen Sie die Version in Schritt 1; beim Klick auf **Weiter** wird die passende TIA-Portal-Instanz automatisch gestartet. Während des Starts zeigt der Wizard ein „TIA Portal V… wird gestartet…"-Overlay; die Katalog-Suche in Schritt 2 funktioniert, sobald das Overlay verschwindet.
+
+**Schritt 1 — Projekt-Info:**
+
+1. Wählen Sie die **TIA-Portal-Version** (V15…V21) — wenn bereits eine Instanz verbunden ist, wird deren Version vorausgewählt.
+2. Geben Sie einen **Projektnamen** ein (bis zu 60 Zeichen; die üblichen Dateisystem-Zeichen `\\ / : * ? " < > |` sind nicht erlaubt).
+3. Klicken Sie auf **Durchsuchen…**, um ein **Zielverzeichnis** zu wählen (muss ein absoluter Pfad auf einem lokalen Laufwerk sein — UNC-Pfade werden abgelehnt).
+4. Optional **Autor** und **Kommentar** eingeben.
+
+Falls Sie beim Klick auf **Weiter** mit einer anderen TIA-Portal-Version verbunden sind, fragt der Wizard zuerst nach Bestätigung, bevor die laufende Sitzung getrennt und die gewählte Version gestartet wird.
+
+**Schritt 2 — CPU:**
+
+1. Geben Sie einen Suchbegriff im **Hardware-Katalog**-Feld ein (zum Beispiel `1516` oder `S7-1500`).
+2. Wählen Sie die gewünschte CPU aus der Trefferliste. F-CPUs werden zwar gelistet, sind aber nicht auswählbar — Safety-Konfiguration wird vom Wizard nicht unterstützt und muss manuell in TIA Portal erfolgen.
+3. Geben Sie einen **Gerätenamen** ein (Standardwert `PLC_1`).
+
+**Schritt 3 — Module (optional):**
+
+Fügen Sie I/O-Module, Kommunikationsprozessoren oder andere rack-fähige Komponenten hinzu:
+
+1. Klicken Sie auf **Modul hinzufügen**, durchsuchen Sie den Katalog und wählen Sie das Modul.
+2. Geben Sie eine **Slot**-Nummer ein.
+3. Wiederholen Sie den Vorgang für weitere Module. Namen müssen innerhalb der Liste eindeutig sein.
+4. Wenn Sie zurück zu Schritt 2 gehen und die CPU wechseln, wird die Modul-Liste geleert, weil die vorher gewählten Module nicht mehr zum neuen Rack passen müssen.
+
+**Schritt 4 — Netzwerk (optional):**
+
+Konfigurieren Sie ein einzelnes Ethernet-Subnetz:
+
+1. Geben Sie einen **Subnetz-Namen** ein (zum Beispiel `PN/IE_1`).
+2. Geben Sie den **Interface-Pfad** der PROFINET-Schnittstelle der CPU innerhalb des Gerätebaums ein (zum Beispiel `Rack_0/PROFINET interface_1`).
+3. Geben Sie die **IPv4-Adresse** in vier numerischen Feldern ein (jeweils 0–255).
+
+PROFIBUS, MPI und AS-i werden vom Wizard nicht unterstützt.
+
+**Schritt 5 — Initiale Bausteine (optional):**
+
+Leere Programmbausteine anlegen:
+
+1. Klicken Sie auf **Baustein hinzufügen**.
+2. Wählen Sie eine **Art** (FB, FC, OB oder Global-DB).
+3. Geben Sie einen **Namen** und optional eine **Nummer** ein (leere Nummer = automatische Nummerierung).
+4. Wählen Sie eine **Programmiersprache** (SCL, LAD, FBD, STL, GRAPH oder ProDiag).
+5. Wiederholen Sie den Vorgang für weitere Bausteine. F-Block-Namen (`F_*`, `Failsafe_*`, `Safety_*`, `F-…`) werden abgelehnt.
+
+**Schritt 6 — Prüfen und anlegen:**
+
+1. Prüfen Sie die Zusammenfassung (Projektname, Zielverzeichnis, CPU, Module, Netzwerk, Bausteine).
+2. Klicken Sie auf **Projekt anlegen**.
+3. Der Fortschritt wird unten im Wizard angezeigt. Der Wizard führt die gesamte Anlage als eine atomare Operation in TIA Portal aus — fällt ein Schritt aus, wird das gesamte Projekt zurückgerollt.
+4. Nach Erfolg schließt sich der Wizard und das neue Projekt wird automatisch in der Anwendung geöffnet.
+
+> **Hinweis:** F-CPU- und Safety-Konfiguration, mehrere CPUs in einem Projekt sowie PROFIBUS-/MPI-/AS-i-Netzwerke werden vom Wizard nicht unterstützt. Verwenden Sie für diese Szenarien direkt TIA Portal.
 
 ### Mit TIA Portal verbinden
 
@@ -398,6 +702,13 @@ Das Right Directory ist der Ordner auf Ihrem Dateisystem, in dem exportierte XML
 
 **Tipp:** Verwenden Sie einen Git-Repository-Ordner für automatische Versionskontrolle.
 
+Liegt der gewählte Ordner innerhalb eines Git-Repositories, dekoriert der Right-Directory-Baum jede Zeile mit denselben Git-Status-Badges und Dimm-Effekten wie der Explorer-Workspace:
+
+- Farbiges Status-Glyph (M, +, −, ➜, ❏, ★, ! oder T) neben dem Dateinamen (Modified, Added, Deleted, Renamed, Copied, Untracked, Conflicted, Type-changed). Tooltip beim Hovern zeigt die Änderungsart.
+- Ordner zeigen in gedimmter Form den schlechtesten Status einer enthaltenen Datei, damit nicht-committeter Stand auf einen Blick sichtbar ist — ohne den Baum aufzuklappen.
+- `.gitignore`-gematchte Dateien bleiben sichtbar, werden aber gedämpft grau dargestellt.
+- Badges aktualisieren sich automatisch nach Commits, Checkouts, Merges und Rebases — kein manueller Reload nötig.
+
 > **Hinweis:** Das "Working Directory" in den Einstellungen bezieht sich auf die "Find Unused Blocks" Funktion und ist ein separater Ordner.
 
 ### Suche im Datei-Baum (rechts)
@@ -408,6 +719,16 @@ Das Suchfeld über dem rechten Datei-Baum filtert die Datei-Liste während der E
 - Passende Zeichen werden in jeder sichtbaren Zeile in fetter Akzentfarbe hervorgehoben.
 - Die Filterung ist um 250 ms entprellt, damit auch lange Listen während der Eingabe reaktiv bleiben.
 - Das Leeren des Suchfelds stellt Ihre manuell aufgeklappten Ordner exakt so wieder her, wie sie vor der Eingabe waren.
+
+### Rechtsklick auf Ordner und Dateien (rechter Baum)
+
+Ein Rechtsklick auf einen beliebigen Knoten im rechten Datei-Baum öffnet ein Kontextmenü mit **Open in Editor**, **Import** und **Delete**:
+
+- **Open in Editor** lädt die ausgewählte Datei in den Editor-Arbeitsbereich (für Ordner deaktiviert).
+- **Import** führt denselben Import wie die *Import Selected*-Schaltfläche in der Seitenleiste auf den angehakten Zeilen aus.
+- **Delete** entfernt die ausgewählte Datei *oder den Ordner* von der Festplatte. Bei einem Ordner wird der gesamte Inhalt (alle Dateien und Unterordner) rekursiv entfernt. Vorher erscheint eine Bestätigungsabfrage.
+
+Dateien, deren Name mit einem Punkt beginnt (zum Beispiel der Delta-Import-Fingerprint-Cache, den *Preview Diff* neben Ihren Exports pflegt), werden jetzt im Baum angezeigt, damit Sie sie sehen und verwalten können. Dateien, die das Betriebssystem als „Versteckt" oder „System" markiert hat, bleiben weiterhin ausgeblendet.
 
 ### Export-Operationen
 
@@ -496,9 +817,19 @@ Preview Diff erkennt sowohl XML-seitige Änderungen (Block-Interface-Bearbeitung
 
 **Erste Nutzung:** Preview Diff funktioniert auf einem frischen Working Directory auch dann, wenn Sie Export All noch nie ausgeführt haben. Beim ersten Klick baut die Anwendung still eine Baseline auf, indem sie die SPS temporär exportiert, die temporären Dateien mit den bereits auf der Platte vorhandenen vergleicht und die Baseline (`.fingerprint-cache.json`) speichert — danach läuft jeder Folge-Vergleich über den schnellen Pfad. Der erste Durchlauf dauert länger als Folge-Durchläufe.
 
-**Linke und rechte Dateiliste:** Das Compare-Panel zeigt links eine Dateiliste für die TIA-Seite und rechts eine passende Dateiliste für die Disk-Seite. Geänderte Blöcke erscheinen in beiden Listen; Blöcke, die nur in TIA existieren (oder noch kompiliert werden müssen), erscheinen nur links, Blöcke, die nur auf der Platte existieren, nur rechts. Beide Listen haben einen eigenen Ein-/Ausblenden-Toggle in der Compare-Toolbar — Sie können sich wahlweise auf eine Seite konzentrieren oder beide nebeneinander anzeigen lassen.
+**Linke und rechte Dateiliste:** Das Compare-Panel zeigt links eine Dateiliste für die TIA-Seite und rechts eine passende Dateiliste für die Disk-Seite. Beide Listen, die Diff-Toolbar und die Seitenleisten sind sichtbar, sobald Sie den Compare-Tab öffnen — auch ohne geladene Inhalte —, damit Sie sofort sehen, wo welche Information landet. Im leeren Zustand erscheint im Diff-Bereich ein dezent halbtransparenter Drop-Hinweis, der verschwindet, sobald Inhalte geladen werden. Geänderte Blöcke erscheinen in beiden Listen; Blöcke, die nur in TIA existieren (oder noch kompiliert werden müssen), erscheinen nur links, Blöcke, die nur auf der Platte existieren, nur rechts. Beide Listen haben einen eigenen Ein-/Ausblenden-Toggle in der Compare-Toolbar — Sie können sich wahlweise auf eine Seite konzentrieren oder beide nebeneinander anzeigen lassen.
+
+**Mehrere Formate pro Block:** Wenn ein Block in mehreren Repräsentationen auf der Platte vorliegt (z. B. ein SCL-Baustein als `Block_2.scl` und `Block_2.xml` nebeneinander), erscheint pro Format eine eigene Zeile in der Dateiliste. Klicken Sie auf die Zeile mit der Endung, die Sie sehen möchten — der Diff lädt sofort. Es gibt keinen separaten SCL/XML-Umschalter mehr; die Endung der angeklickten Zeile entscheidet, welche Sicht der Editor zeigt.
 
 **Farbbalken am Zeilenrand:** Jede Zeile in beiden Dateilisten trägt am rechten Rand einen schmalen farbigen Balken, der den Änderungstyp ohne Textabgleich signalisiert: Grün für Hinzugefügt, Rot für Gelöscht, Orange für Geändert, Gelb für Inkonsistent (muss kompiliert werden), Blau für Blöcke, die nur auf einer Seite existieren (links oder rechts). Unveränderte Zeilen zeigen keinen Balken.
+
+### Sektionsweise Übernahme
+
+Wenn sich zwei Dateien unterscheiden, erscheinen Pfeil-Buttons (`←` / `→`) in der mittleren Spalte zwischen den Editoren — ein Paar pro Änderungs-Abschnitt. Klick auf `→` kopiert den linken Abschnitt in den rechten Buffer, `←` umgekehrt. Die Änderungen werden im Speicher-Buffer angewendet; klicken Sie **Speichern**, um sie zu persistieren. Für TIA-Seiten-Buffer (linke Seite im Sync-Modus gegen einen Temp-Export) wird das Speichern übersprungen — der Block muss neu importiert werden, um die Änderung in TIA zurückzuschreiben.
+
+### Identische Dateien
+
+Wenn beide Seiten identischen Inhalt haben, zeigen beide Editoren die Datei ohne `+`/`-`-Marker und ohne Übernahme-Pfeile. Die Identität ist visuell aus den fehlenden Änderungsmarkierungen ersichtlich; ein separates Banner wird nicht angezeigt.
 
 ### Ad-hoc Compare (Drag and Drop)
 
@@ -514,6 +845,7 @@ Für schnelle Side-by-Side-Überprüfungen ohne Projektweiten Scan ziehen Sie It
 
 - Die TIA-Seite wird kompiliert und genau gleich gestrippt wie bei einem normalen Export — der Vergleich erfolgt also Apfel gegen Apfel gegen eine Datei, die früher ins Working Directory exportiert wurde.
 - Weitere Drops auf dieselbe Seite werden an die bestehende Liste angehängt statt sie zu ersetzen — ein TIA-Block lässt sich so gegen mehrere Kandidat-Dateien prüfen, ohne neu zu exportieren, und die andere Seite behält, was sie bereits geladen hat.
+- Beim Überfahren einer Zeile in einer der beiden Dateilisten erscheint am rechten Rand ein `X`-Button — ein Klick entfernt genau diese Datei aus dem Vergleich, ohne den Rest zu berühren.
 - Die Splitter der Dateilisten sind zwischen 180 und 500 Pixeln resizebar und merken sich die von Ihnen gewählten Breiten.
 
 Für den projektweiten Vergleich mit selektivem Re-Import zurück in die SPS verwenden Sie stattdessen **Preview Diff** (Hash-basiert, produziert Modified / Only in TIA / Only on Disk-Kategorien und einen Sync-Mode Import-Button).
@@ -523,7 +855,7 @@ Für den projektweiten Vergleich mit selektivem Re-Import zurück in die SPS ver
 Die Toolbar des Diff-Editors enthält folgende Bedienelemente:
 
 - **Änderungsnavigation** — Buttons Erste / Vorherige / Nächste / Letzte Änderung plus ein `1/N`-Zähler springen durch alle Hunks der aktuellen Datei.
-- **Kontextzeilen** — `+=` und `-=` erhöhen oder verringern die Anzahl der unveränderten Zeilen um jede Änderung (Standard 3, Minimum 4). Die Bereiche zwischen Hunks werden hinter einer `@@ -a,b +c,d @@`-Kopfzeile eingeklappt.
+- **Kontextzeilen** — `+=` und `-=` erhöhen oder verringern die Anzahl der unveränderten Zeilen um jede Änderung (Standard 3, Minimum 1). Die Bereiche zwischen Hunks werden hinter einer `@@ -a,b +c,d @@`-Kopfzeile eingeklappt.
 - **Ganze Datei zeigen** — Jede Zeile der Datei sichtbar, keine Kontext-Faltung mehr.
 - **Syntax-Highlighting** — Ein/Aus (SCL, AWL, DB, XML und weitere Sprachen werden anhand der Dateiendung erkannt).
 - **Zeilenumbruch** — Lange Zeilen in der Unified-Ansicht umbrechen.
@@ -573,13 +905,13 @@ WinCC Unified Screens werden als JSON-Dateien exportiert (nicht XML wie bei Clas
 
 ### Hardware-Export
 
-Hardware-Konfiguration als AML/XML exportieren:
+Hardware-Konfiguration als AutomationML (.aml)-Datei exportieren:
 
-1. Erweitern Sie den **Hardware**-Knoten im Projektbaum
-2. Wählen Sie Geräte oder Module zum Export
-3. Klicken Sie auf **Export Selected**
+1. Stellen Sie die Kategorie im Import-/Export-Tab auf **Hardware**.
+2. Klicken Sie in der rechten Spalte auf **AML exportieren →**. Die Datei wird im konfigurierten Export-Ordner abgelegt.
+3. **← AML importieren** in der gleichen Spalte holt eine `.aml`-Datei wieder ins Projekt zurück.
 
-**Hinweis:** Der Hardware-Export erstellt AutomationML (.aml) Dateien, die reimportiert oder für Dokumentation verwendet werden können.
+**Hinweis:** Der AML-Export deckt die komplette Hardware-Konfiguration der gewählten SPS ab. Die erzeugte `.aml`-Datei kann reimportiert oder zu Dokumentationszwecken aufbewahrt werden.
 
 ---
 
@@ -592,7 +924,72 @@ Wenn Sie einen Block im Projektbaum auswählen, wird sein Quellcode im Code-Edit
 **Unterstützte Sprachen:**
 - SCL (Structured Control Language)
 - STL (Statement List)
-- LAD/FBD (als XML-Darstellung)
+- LAD/FBD/GRAPH (direkt als Netzwerke gerendert)
+
+### Grafische Bausteinansicht
+
+LAD-, FBD- und GRAPH-Bausteine öffnen sich im Tab **Grafisch** neben dem Code-Tab. Die Netzwerke werden direkt im Manager dargestellt — kein externes Vergleichs- oder Visualisierungswerkzeug ist erforderlich, und kein separates Siemens-Hilfsprogramm muss installiert sein. Jedes Netzwerk zeigt Titel, Kommentar und das LAD-/FBD-Layout so an, wie es im TIA Portal erscheint. Datenbausteine, UDTs und Variablentabellen werden ebenfalls inline strukturiert angezeigt.
+
+Die Ansicht ist schreibgeschützt; Änderungen erfolgen über den Code-Tab oder den Inline-Chat. Wechseln Sie jederzeit zurück zum Code-Tab, um den SCL-/STL-Quelltext einzusehen oder zu bearbeiten.
+
+### Schnittstellen-Tab
+
+Bei Datenbausteinen (DB), Funktionsbausteinen (FB), Funktionen (FC), Anwender-Datentypen (UDT) und PLC-Variablentabellen erscheint neben dem **Code**-Tab ein **Schnittstelle**-Tab. Er zeigt die Schnittstelle in der gleichen Tabellen-Form wie TIA Portal, mit einer Zeile pro Member und folgenden Spalten:
+
+- **Name** — Member-Name; verschachtelte Struct- oder UDT-Member werden unter dem Parent eingerückt dargestellt und lassen sich über den Pfeil-Chevron zuklappen.
+- **Datentyp** — SIMATIC-Typ wie ihn TIA exportiert (z. B. `Bool`, `Int`, `Array[0..9] of "myUdt"`).
+- **Startwert** — initialer Wert falls definiert, sonst leer.
+- **Remanenz** — `Nicht remanent`, `Remanent` oder `In DB festgelegt`.
+- **Erreichbar aus HMI / Beschreibbar aus HMI / Sichtbar in HMI** — die drei externen Zugriffs-Flags. Bei Datenbausteinen, Funktionsbausteinen, Funktionen und PLC-Variablentabellen zieht das Umschalten von **Erreichbar aus HMI** sowohl **Beschreibbar** als auch **Sichtbar** mit (aus → beide aus, ein → beide ein); bei Anwender-Datentypen bleiben die drei Flags unabhängig. **Beschreibbar** und **Sichtbar** lassen sich jederzeit einzeln umschalten, ohne die anderen zwei zu ändern.
+- **Sollwert** — bearbeitbare Checkbox, markiert das Member als Sollwert.
+- **Überwachung** — schreibgeschützter Text, zeigt die verknüpfte ProDiag-Überwachungs-Referenz (leer wenn keine zugewiesen).
+- **Kommentar** — Kommentar in der aktuellen UI-Sprache; falls dieser fehlt, wird Englisch (`en-US`) verwendet; sonst die erste verfügbare Sprache.
+
+Für PLC-Variablentabellen zeigt der gleiche Tab zwei Tabellen übereinander: oben die **Variablen**-Liste (Name · Datentyp · Logische Adresse · Remanenz · HMI-Flags · Überwachung · Kommentar) und unten die **Anwenderkonstanten**. Die **Überwachung**-Spalte ist schreibgeschützt und zeigt die verknüpfte ProDiag-Überwachungs-Referenz, analog zur gleichen Spalte auf Baustein-Schnittstellen. Variablen vom Typ Array oder Anwender-Datentyp klappen inline auf: jedes Array-Element wird als eigene Zeile mit berechneter Adresse angezeigt, und jedes UDT-Member erscheint darunter bis hinunter zur Primitive. Ist das Projekt nicht mit dem TIA Portal verbunden, lassen sich UDT-Definitionen nicht laden; ein gelber Hinweis über der Variablen-Liste erklärt, dass das Öffnen des Projekts im TIA Portal die vollständige Hierarchie nachlädt.
+
+Oberhalb der Variablen-Liste bietet eine Toolbar **Bearbeiten / Verwerfen / Speichern / Speichern unter … / In TIA hochladen** denselben Ablauf wie bei Baustein-Schnittstellen: Variablen umbenennen, Datentyp oder Logische Adresse ändern, Remanenz und HMI-Flags umschalten, Kommentare inline editieren. **Speichern** schreibt die geänderte Variablentabellen-XML in das konfigurierte Working Directory (`{Working Directory}/{SPS}/{Variablen-Ordner}/{Tabellenname}.xml`); **Speichern unter …** erlaubt einen beliebigen Pfad; **In TIA hochladen** bleibt verfügbar, sobald eine TIA-Portal-Verbindung aktiv ist, und re-importiert die Variablentabelle in das Projekt.
+
+#### Schnittstelle offline bearbeiten (File-Drop oder Dateiexplorer)
+
+Sowohl **Drag-and-Drop auf den Editor / Welcome-Tab** als auch **Dateiexplorer-Rechtsklick → Im Editor öffnen** laden Dateien mit aktivem Schnittstellen-Tab. Zwei Datei-Formen werden unterstützt:
+
+- **Quelldateien** — `.scl`, `.stl`, `.udt`, `.db`. Der Parser liest die Deklarationsbereiche (`VAR_INPUT` / `VAR_OUTPUT` / `VAR_IN_OUT` / `VAR_TEMP` / `VAR` / `VAR_STAT` / `STRUCT` / DB-Member) direkt aus der Datei. Für diesen Pfad ist keine TIA-Portal-Verbindung erforderlich.
+- **SimaticML-XML** — `.xml`-Exporte aus TIA Portal. Der Bausteintyp wird aus dem Root-Element erkannt: `<SW.Blocks.FB>` / `<SW.Blocks.FC>` / `<SW.Blocks.OB>` / `<SW.Blocks.GlobalDB>` / `<SW.Blocks.InstanceDB>` / `<SW.Blocks.ArrayDB>` / `<SW.Types>` öffnen den Baustein-Schnittstellen-Editor; `<SW.Tags.PlcTagTable>` öffnet direkt die Variablen-Tabelle mit aktivierter Toolbar Bearbeiten / Verwerfen / Speichern / Speichern unter … / In TIA hochladen.
+
+**Speichern** schreibt zurück in die abgelegte oder geöffnete Datei; **Speichern unter …** schreibt an einen beliebigen Pfad; **In TIA hochladen** bleibt deaktiviert, bis eine TIA-Portal-Verbindung aktiv ist.
+
+Im Bearbeitungsmodus können Sie:
+
+- einen Member umbenennen,
+- den Datentyp eines Members ändern (in der SCL-Syntax, wie TIA Portal sie exportiert — inklusive Arrays und UDT-Referenzen),
+- einen Startwert ändern,
+- den Kommentar in der aktuellen UI-Sprache bearbeiten,
+- einen neuen Member hinzufügen, einen Member löschen oder über den Drag-Griff links neben jeder Zeile umsortieren.
+
+**Speichern (Strg+S** oder die Schaltfläche **Speichern**)** schreibt die Änderungen atomar in die ursprüngliche Quelldatei zurück. Header-Attribute, Decorations (`VERSION`, `NON_RETAIN`, `READ_ONLY`, `KNOW_HOW_PROTECT`, `AUTHOR`, `FAMILY`, `NAME`), Body-Code und nicht-bearbeitete Deklarationsbereiche bleiben byte-identisch erhalten; nur die tatsächlich geänderten Sektionen werden neu emittiert. Zeilenenden (CRLF oder LF) werden pro Datei beibehalten.
+
+Ist die Quelldatei auf der Disk schreibgeschützt, wechselt das Speichern-Kommando automatisch in **Speichern unter…** und zeigt einen lokalisierten Hinweis-Banner, der den Fallback erklärt. **Speichern unter…** schreibt den Inhalt in einen neuen Pfad; nachfolgende Speichervorgänge zielen auf diesen neuen Pfad.
+
+**Upload to TIA** bleibt eine separate Aktion und ist nur sichtbar, wenn eine TIA-Portal-Verbindung aktiv ist. Speichern und Speichern unter funktionieren unabhängig vom Verbindungsstatus.
+
+#### Schnittstelle online bearbeiten (TIA-verbunden)
+
+Wenn ein Baustein aus dem Projektbaum eines verbundenen TIA-Portal-Projekts geöffnet wird, unterstützt der Schnittstellen-Tab denselben Editier-Umfang wie der Offline-Pfad (Umbenennen, Datentyp ändern, Startwert ändern, Kommentar ändern, Mitglieder hinzufügen, entfernen und umsortieren). Das Hochladen der Änderungen zurück nach TIA Portal durchläuft drei Sicherungsstufen:
+
+- **Querverweis-Auswirkungs-Vorschau** — vor dem Upload prüft der Manager bei Umbenennungen, Entfernungen und Datentyp-Änderungen projektweit, welche Aufrufstellen durch die Änderung brechen würden. Ein Bestätigungsdialog meldet die Anzahl betroffener Stellen, eine Stichprobe von bis zu zehn Aufrufern und einen Cap-Hinweis, falls die Suche gecapped wurde. **Abbrechen** bricht den Upload ab; **Fortfahren** erfordert eine Bestätigung und setzt fort.
+- **Automatische Kompilierung nach dem Upload** — sobald die Änderungen angekommen sind, wird die SPS automatisch kompiliert. Compiler-Meldungen erscheinen in einem aufklappbaren Panel **Compiler-Meldungen** über der Tabelle mit Schweregrad-Symbol (× / ⚠ / ⓘ) und dem fehlerhaften Bausteinnamen. Ein Klick auf eine Zeile springt im Projektbaum zu diesem Baustein und öffnet ihn im Editor.
+- **Edit-Modus-Sperre** — meldet TIA Portal den Baustein als Know-how-geschützt, schreibgeschützt oder konnten die Bausteinfähigkeiten nicht abgefragt werden, ist der **Bearbeiten**-Schalter deaktiviert und der Tooltip erklärt warum. Dieselbe Sperre greift auch direkt vor einem Upload — geschützte oder schreibgeschützte Bausteine sind über den Schnittstellen-Tab nicht editierbar, unabhängig vom Online-Status des Projekts.
+
+Das Editieren eines Safety-(F-)Bausteins zeigt nach wie vor eine separate Warnung, die vor dem Upload bestätigt werden muss. Die Re-Validierung des Safety-Programms nach einer Schnittstellen-Änderung bleibt ein manueller Schritt in TIA Portal — TIA Openness bietet keine "Safety-Programm jetzt validieren"-Schnittstelle, der Manager kann das daher nicht automatisieren.
+
+Beim Schließen eines Tabs mit ungespeicherten Schnittstellen-Änderungen erscheint dasselbe **Speichern / Verwerfen / Abbrechen**-Dialogfeld wie bei ungespeicherten Code-Änderungen. Speichern schreibt die Datei; Verwerfen schließt ohne Schreiben; Abbrechen lässt den Tab geöffnet.
+
+### Speichern und Schließen
+
+- **Strg+S** speichert die im Editor aktive Datei oder den aktiven Block. Bei Dateien wird auf Disk geschrieben. Bei TIA-Portal-Blöcken erscheint vor dem Hochladen ein Bestätigungsdialog („In TIA Portal übertragen?"); der *Upload to TIA*-Toolbar-Button fragt dieselbe Bestätigung ab.
+- **Strg+Umschalt+S** speichert das gesamte TIA-Portal-Projekt (das frühere Verhalten von Strg+S).
+- Beim Schließen eines Tabs oder des Managers mit ungespeicherten Änderungen erscheint ein Bestätigungsdialog mit den Optionen „Alle speichern", „Alle verwerfen" oder „Abbrechen".
+- Beim Trennen von TIA Portal werden alle aus TIA geöffneten Editor-Tabs geschlossen. Bei ungespeicherten Änderungen erscheint vorab ein Speichern/Verwerfen/Abbrechen-Dialog.
 
 ### Drag & Drop aus dem Project Explorer
 
@@ -661,7 +1058,7 @@ Das Schutz-System verhindert, dass wichtige Blöcke versehentlich überschrieben
 Geschützte Blöcke werden:
 - Beim Import übersprungen
 - Beim Export übersprungen (wenn "Geschützte Dateien exportieren" in den Import/Export-Einstellungen deaktiviert ist)
-- Mit einem grünen Schild-Symbol markiert
+- Im Projektbaum mit einem grünen Schloss-Badge markiert (rotes Schloss = nicht geschützt, Klick zum Umschalten)
 - In der Schutzliste angezeigt
 
 > **Tipp:** Auch wenn geschützte Blöcke vom Export ausgeschlossen sind, bleibt die Ordnerstruktur immer erhalten.
@@ -737,6 +1134,21 @@ Der Passwort-Tresor speichert TIA Portal Know-How-Schutz-Passwörter sicher. Er 
 
 > **Hinweis:** Geschützte Blöcke bleiben ihrem Tresoreintrag zugeordnet, auch wenn Sie den Tresor-Toggle deaktivieren. Um einen geschützten Block aus dem Tresor zu entfernen, müssen Sie ihn zuerst entschützen.
 
+### Safety-Blöcke (F-Blöcke) schützen
+
+Bevor ein Safety-Block (F_FB, F_FC, F_DB, F_OB) über den Tresor mit Know-How-Schutz versehen werden kann, muss das F-Programm in TIA Portal **vollständig übersetzt und konsistent** sein. Die Massen-Schutz-Operation ruft dieselbe Siemens-API auf, die TIA Portal intern verwendet — und Siemens lehnt diesen Aufruf für jeden F-Block ab, der nicht aktuell aus einer übersetzten F-Runtime-Gruppe referenziert wird.
+
+**Erforderlicher Schritt vor dem Tresor-Schutz von Safety-Blöcken:**
+
+1. In TIA Portal Rechtsklick auf den Programm-Ordner der F-CPU
+2. **Software → Alles übersetzen (alles neu generieren)** wählen (je nach TIA-Portal-Version und Sprache auch beschriftet als **Software → Übersetzen → Software (alles neu generieren)**)
+3. Warten Sie, bis die Neuübersetzung fehlerfrei abgeschlossen ist
+4. Zurück zu TIA Openness Manager wechseln und **Massen-Schutz (Tresor)** ausführen
+
+Wenn Sie die Neuübersetzung überspringen und versuchen, einen frisch hinzugefügten oder geänderten F-Block zu schützen, liefert der Tresor eine Safety-Block-Fehlermeldung mit den vier häufigsten Siemens-Ablehnungsgründen (Block nicht im Safety-Programm verwendet, Safety-Offline-Programm-Login fehlt, Block inkonsistent, Block im Editor geöffnet). Die Neuübersetzung beseitigt den Inkonsistenz-Fall für neu hinzugefügte oder geänderte Blöcke.
+
+> **Warum „alles neu generieren" und nicht nur „übersetzen"?** Ein normales Übersetzen aktualisiert nur geänderte Blöcke. Das Hinzufügen oder Ändern eines F-Blocks invalidiert die Siemens-generierten F-Runtime-Gruppen-Glue-Blöcke (`F_PLK`, `F_RTG_OB` usw.), die F-OBs in das Safety-Programm einhängen. Solange diese Glue-Blöcke nicht neu generiert sind, sieht die Openness-API den neuen F-Block nicht als „called" — Protect wird abgelehnt. Erst **„alles neu generieren"** erzwingt die vollständige Neuerstellung jedes Glue-Blocks.
+
 ### Crash-Recovery
 
 Falls die Anwendung abstürzt, während Blöcke ungeschützt sind:
@@ -783,7 +1195,7 @@ Das Model Context Protocol (MCP) erlaubt externen KI-Assistenten — Claude Desk
 
 ### So funktioniert es
 
-Es gibt keinen MCP-Tab im Hauptfenster mehr. Der MCP-Server läuft als Hintergrund-Subprocess, den der KI-Client bei Bedarf selbst startet, indem er `TiaOpennessManager.V3.exe` mit dem Argument `--mcp-stdio` aufruft. Solange TIA Openness Manager geöffnet ist und mit einem TIA Portal Projekt verbunden ist, leitet der Subprocess jeden Tool-Aufruf transparent an die laufende Instanz weiter — alle 37 MCP-Tools (Projekt-Queries, Block-Code lesen, Exports, Vergleiche, KI-gestützte Analysen, OPC UA, Canvas, Git, PowerShell, Trace etc.) arbeiten gegen das Projekt, das Sie aktuell offen haben.
+Es gibt keinen MCP-Tab im Hauptfenster mehr. Der MCP-Server läuft als Hintergrund-Subprocess, den der KI-Client bei Bedarf selbst startet, indem er `TiaOpennessManager.V3.exe` mit dem Argument `--mcp-stdio` aufruft. Solange TIA Openness Manager geöffnet ist und mit einem TIA Portal Projekt verbunden ist, leitet der Subprocess jeden Tool-Aufruf transparent an die laufende Instanz weiter — alle 47 MCP-Tools (Projekt-Queries, Block-Code lesen, Exports, Vergleiche, KI-gestützte Analysen, OPC UA, Canvas, Git, PowerShell, Trace etc.) arbeiten gegen das Projekt, das Sie aktuell offen haben.
 
 ### Einrichtung mit einem KI-Assistenten
 
@@ -795,7 +1207,7 @@ Es gibt keinen MCP-Tab im Hauptfenster mehr. Der MCP-Server läuft als Hintergru
 
 | Capability | Methoden | Was der KI-Client damit kann |
 |------------|----------|------------------------------|
-| Tools | `tools/list`, `tools/call` | 37 Tools — TIA-Projekt- und PLC-Operationen (Projekt-Queries, Code lesen, Exports, Vergleiche, OPC UA, Canvas, Trace, Unit Testing, Git) plus universelle Helfer: `fs` (Dateisystem-Lesen/Schreiben/Suchen), `web_fetch` (HTTP-Outbound), `web_search`. Jeder Aufruf wird durch Lizenzstufe und den Permission-Filter gegated |
+| Tools | `tools/list`, `tools/call` | 47 Tools — TIA-Projekt- und PLC-Operationen (Projekt-Queries, Projekterstellung, Code lesen, Exports, Vergleiche, Hardware-Geräteverwaltung, Netzwerk/Subnet, Tag-Tabellen, Screen-Tools, OPC UA, Canvas, Trace, Unit Testing, Git) plus universelle Helfer: `fs` (Dateisystem-Lesen/Schreiben/Suchen), `web_fetch` (HTTP-Outbound), `web_search`. Jeder Aufruf wird durch Lizenzstufe und den Permission-Filter gegated |
 | Resources | `resources/list`, `resources/read`, `notifications/resources/list_changed` | Live-Resource `tia://project` plus 4 URI-Templates; Clients erhalten eine List-Changed-Benachrichtigung wenn sich das Projekt ändert (per-URI-Subscribe ist bewusst nicht advertised) |
 | Sampling | `sampling/createMessage` | Das TIA-Portal-bewusste Tool `tia_ai_analyze` lässt den KI-Client ein Modell anstoßen — der Client steuert Modell und Credentials selbst |
 | Prompts | `prompts/list`, `prompts/get` | 4 vorgefertigte Prompts: `analyze-block`, `generate-unit-tests`, `compare-blocks`, `review-safety-function` |
@@ -944,14 +1356,25 @@ Skills sind Markdown-Dateien, die als Befehle in der `/`-Befehlspalette der Chat
 
 #### Eingebaute Skills
 
-Vier Standard-Skills werden mitgeliefert und beim ersten Start automatisch bereitgestellt:
+Standard-Skills werden mitgeliefert und beim ersten Start automatisch bereitgestellt:
 
-| Skill | Icon | Beschreibung |
-|-------|------|--------------|
-| Explore Project | 🧭 | Analysiert das verbundene TIA Portal-Projekt und erstellt eine Kontextdatei |
-| Explain Block | 💡 | Liest den Quellcode eines Bausteins und erklärt seine Logik |
-| Generate SCL | ⌨️ | Generiert SCL-Code nach Siemens-Programmierstandards |
-| Compare Blocks | 🔄 | Vergleicht Bausteinversionen zwischen Projekt und Exportordner |
+| Skill | Beschreibung |
+|-------|--------------|
+| Explore Project | Analysiert das verbundene TIA Portal-Projekt und erstellt eine Kontextdatei |
+| Explain Block | Liest den Quellcode eines Bausteins und erklärt seine Logik |
+| Generate SCL | Generiert SCL-Code nach Siemens-Programmierstandards |
+| Compare Blocks | Vergleicht Bausteinversionen zwischen Projekt und Exportordner |
+| Optimize SCL | Schlägt Refactorings vor, um einen Baustein schneller oder lesbarer zu machen |
+| Safety Check | Prüft einen Baustein (oder eine Auswahl) auf sicherheitsrelevante Muster |
+| Export Blocks | Begleitet den Export-Workflow inkl. Auswahl und Ordner-Handling |
+| Document Block | Erzeugt eine baustein-bezogene Dokumentationsdatei |
+| Document Project | Erzeugt projektweite Dokumentation |
+| Describe Block | Erstellt eine kurze, allgemeinverständliche Zusammenfassung eines Bausteins |
+| Describe Project | Erstellt eine kurze, allgemeinverständliche Projekt-Zusammenfassung |
+| Git Commit | Entwirft eine Commit-Message aus dem aktuellen Diff anhand der aktiven Commit-Vorlage |
+| Convert AWL → SCL | Konvertiert einen AWL-Baustein nach SCL gemäss den Siemens-Konvertierungsregeln |
+| Review SCL | Prüft SCL-Code gegen den Siemens-Styleguide und meldet Befunde |
+| Write Unit Tests | Erzeugt ein Unit-Testing-Suite-Skelett für den ausgewählten Baustein |
 
 Eingebaute Skills können bearbeitet werden. Um sie auf den Originalinhalt zurückzusetzen, klicken Sie auf **Skills-Ordner öffnen**, löschen Sie die geänderten Dateien und klicken Sie auf den **Neu laden**-Button (↻) — die Standards werden automatisch neu bereitgestellt.
 
@@ -1039,13 +1462,19 @@ Agenten definieren eine Persona für die KI, einschliesslich eines benutzerdefin
 
 **Speicherort:** `%LocalAppData%\TiaOpennessManager\agents\`
 
-**Format:** Jede `.json`-Datei definiert einen Agenten. Drei eingebaute Agenten werden bereitgestellt:
+**Format:** Jede `.json`-Datei definiert einen Agenten. Folgende eingebaute Agenten werden mit der Anwendung ausgeliefert und beim ersten Start bereitgestellt:
 
 | Agent | Zweck |
 |-------|-------|
-| General Assistant | Allgemeine Chat-Funktion mit vollem Tool-Zugriff |
+| Standard-Agent | Allgemeine Chat-Funktion mit vollem Tool-Zugriff |
 | Git Assistant | Fokussiert auf Git-Operationen; Datei-Tools eingeschränkt |
 | SCL Expert | Spezialisiert auf das Schreiben und Prüfen von SCL/SPS-Code |
+| TIA Analyzer | Read-only-Analyse des verbundenen TIA-Projekts (keine Schreib-Tools) |
+| TIA Modifier | Projekt-modifizierender Agent (Export, Import, Edit) mit expliziten Schreib-Rechten |
+| Canvas Creator | Baut und bearbeitet AI-Canvas-Layouts (A2UI) |
+| File Worker | Datei-fokussierter Agent (Lesen/Schreiben/Suchen über die registrierten Kontext-Ordner) |
+| AWL Converter | Begleitet den AWL → SCL-Konvertierungs-Workflow mit dem Benutzer |
+| Unit Test Author | Erzeugt Unit-Testing-Suites und Testfälle für die ausgewählten Bausteine |
 
 **Agenten wechseln:**
 Verwenden Sie das Agenten-Dropdown in der KI-Chat-Kopfzeile, um den aktiven Agenten auszuwählen. Die Änderung tritt mit der nächsten gesendeten Nachricht in Kraft.
@@ -1066,11 +1495,21 @@ Legen Sie eine `.json`-Datei in `%LocalAppData%\TiaOpennessManager\agents\` ab m
 
 **Mehrere Azure-Deployments pro Agent:** Ein einzelner Azure-OpenAI-Agent kann mehrere Deployments bedienen. Im Azure-Abschnitt des Agenten enthält die Liste **Zusätzliche Deployments** eine Zeile pro zusätzlichem Deployment-Namen; klicken Sie auf **Deployment hinzufügen**, um eine neue Zeile anzulegen, tippen Sie den Deployment-Namen ein, oder klicken Sie auf den ×-Button einer Zeile, um sie zu entfernen. Jedes registrierte Deployment erscheint als eigene Zeile in „Sprachmodelle verwalten"; über **Für aktiven Agent verwenden** schalten Sie zwischen den Deployments um. Das Haupt-Deployment oben ist immer Teil der Liste.
 
+**Wissen & Referenzen (Einstellungen → KI-Chat → Agents → Bearbeiten):** Jeder Agent verfügt unter Name / Beschreibung / System-Prompt über einen Abschnitt **Wissen & Referenzen**. Hier steuern Sie, welches Referenzmaterial die KI beim Ausführen des Agents zu sehen bekommt.
+
+- **Instruction-Dateien beim Start laden** (Schalter) — Wenn aktiviert, werden die unter **Instruction-Dateien (Eager)** aufgelisteten Dateien bei jedem Dispatch dieses Agents vollständig in den System-Prompt eingefügt. Wenn deaktiviert, liest der Agent die Liste **Verfügbare Referenzen (Lazy)** als kurzen Index und lädt den vollständigen Inhalt bei Bedarf per Tool-Call nach (spart typischerweise 30 + Sekunden pro Dispatch).
+- **Instruction-Dateien (Eager)** — Liste aus Pfaden oder `builtin:<name>.md`-Einträgen, die der Agent vorab lädt. **Instruction-Datei hinzufügen** öffnet einen Dateipicker; **Eingebaute einfügen…** bietet die fünf mitgelieferten Referenzen (Siemens-Styleguide, AWL → SCL, SCL-Sprache, Canvas, Unit-Testing).
+- **Auf Lazy umstellen** (Button, nur sichtbar wenn die Instruction-Dateien-Liste nicht leer ist) — Öffnet einen Bestätigungsdialog. Bestätigen verschiebt jede aufgelistete Instruction-Datei in die **Verfügbare Referenzen**-Liste mit vor-ausgefülltem Namen und Beschreibung und schaltet danach den Eager-Load-Schalter aus. Eine Statuszeile unter dem Button meldet, wie viele Referenzen hinzugefügt und wie viele als Duplikate übersprungen wurden, damit Sie auf einen Blick sehen, ob die bestehende Liste alles aufgenommen hat. Sie können jederzeit über den Schalter wieder in den Eager-Modus zurückwechseln; nichts geht verloren.
+- **Verfügbare Referenzen (Lazy)** — Eine Zeile pro Referenz. Jede Zeile hat einen Namen (Lookup-Key), eine Quelle und eine frei formulierbare Beschreibung (wird der KI als Hinweis angezeigt, wann sie die Referenz laden soll). Buttons pro Zeile: nach oben / unten verschieben, **Durchsuchen…** für eine Markdown-Datei, **Eingebaute einfügen…** für eine bekannte Referenz und × zum Entfernen. Der Validierungs-Banner warnt vor doppelten Namen und vor Zeilen, in denen nur Name oder nur Quelle ausgefüllt ist — solche Zeilen werden beim Speichern verworfen.
+- **Quellpfade** — Verwenden Sie `builtin:<name>.md` für den eingebauten Katalog. Für eigene Dateien wählen Sie eine beliebige Markdown-Datei unter `%LocalAppData%\TiaOpennessManager\instructions\` oder `%LocalAppData%\TiaOpennessManager\references\` (andere Verzeichnisse werden aus Sicherheitsgründen abgelehnt). Pro Referenz gilt ein Limit von 1 MiB.
+
+Änderungen speichern automatisch mit kurzer Verzögerung, wirken ab dem nächsten Dispatch und überleben App-Updates: Eingebaute Agents erhalten weiterhin neue System-Prompt- und Capability-Updates, aber Ihre angepasste Referenzliste bleibt über Versions-Bumps erhalten.
+
 **Reasoning-Aufwand (Niedrig / Mittel / Hoch):** Für Agents, deren Modell Deep Thinking unterstützt, legen Sie fest, wie intensiv das Modell vor der Antwort nachdenkt. Einstellbar pro Agent unter **Einstellungen → Agents → Capabilities → Reasoning-Aufwand** oder direkt in der Composer-Bar über das Gehirn-Chip neben der Tool-Call-Schaltfläche. Höher = besseres Reasoning, aber langsamer und mehr Tokens. Mit **App-Standard verwenden** heben Sie die Agent-Überschreibung wieder auf und der Agent folgt dem globalen Standard.
 
 **Anbieter-Einstellungen (Einstellungen → Anbieter):** Agentenübergreifende Übersicht der unterstützten KI-Anbieter. Die GitHub-Copilot-Karte zeigt Anmeldestatus, alle von Copilot-Agents verwendeten Enterprise-Domains, den Status der Reasoning-Modell-Policy sowie Schaltflächen, um die Policy-Freigabe erneut auszulösen oder den Copilot-Modellkatalog zu prüfen — alles aus dem Einstellungs-Dialog heraus. Platzhalter-Karten für Anthropic, OpenAI, Google Gemini, Azure OpenAI, AWS Bedrock, Ollama und OpenRouter verweisen auf den Modell-Browser. Anmeldung und Enterprise-Domain bleiben pro Copilot-Agent im Agents-Tab gepflegt — der Anbieter-Tab ist eine Read-only-Konsole.
 
-**Sprachmodelle verwalten (Manage Language Models):** Das Zahnrad-Symbol neben dem Assistenten-Wähler in der Composer-Bar öffnet einen provider-übergreifenden Katalog aller Modelle, die die App kennt. Das Fenster kombiniert drei Zeilenarten: den gemergten statischen und server-discovered Copilot-Katalog; die OAuth-Kataloge für OpenAI Codex, Google Gemini CLI und Antigravity; und — neu — eine **live abgefragte** Modell-Liste für jeden Agent, den Sie mit API-Key konfiguriert haben. Die App fragt das `/models`-Endpoint jedes Anbieters direkt ab, also erscheinen Anthropic, OpenAI, OpenRouter, Mistral, XAI, Groq, Cerebras, DeepSeek, Perplexity, Together, HuggingFace, Z.AI, MiniMax, Fireworks, Moonshot, Vercel AI Gateway, SGLang, vLLM, Qwen, Alibaba Model Studio, Arcee, Cloudflare AI Gateway, Ollama, LM Studio und Custom-OpenAI-kompatible Endpoints jeweils mit dem, was der Anbieter aktuell anbietet. AWS-Bedrock-Zeilen bleiben statisch, weil AWS kein öffentliches Modell-Discovery-Endpoint bereitstellt. Suchen nach Modellname oder ID, Filtern nach Anbieter. Die Spalte **Quelle** unterscheidet die drei Zeilenarten. Die Statuszeile zeigt eine Live-Zählung (z. B. *120 von 240 Modellen · 75 live*), sobald mindestens eine sichtbare Zeile live geholt wurde. Die Spalte **Fähigkeiten** zeigt pro Modell Tool-, Vision- und Reasoning-Badges; die Spalte **Request-Multiplikator** zeigt die Copilot-Premium-Request-Kosten pro Modell (`0x`, `0.33x`, `1x`, `3x`, `7.5x`, …). Die Spalte **Richtlinie** ist Copilot-spezifisch: *Aktiviert* zeigt Modelle, die Ihr Account erfolgreich eingeschaltet hat; *Fehlgeschlagen* markiert Modelle, bei denen die letzte Aktivierung abgelehnt wurde (Mouseover zeigt den genauen Fehler); *Admin-verwaltet* erscheint, wenn Ihr Copilot-Plan die Modellverfügbarkeit den Tenant-Admin überlässt. Bei *Fehlgeschlagen* öffnet Rechtsklick → **Copilot-Modellrichtlinie erneut anwenden** einen neuen Aktivierungsdurchlauf gegen Ihren Copilot-Tenant. Rechtsklick auf eine Zeile oder **Für aktiven Agent verwenden** setzt das Modell des aktiven Agents (nur verfügbar, wenn der Anbieter zur Zeile passt). Die Schaltfläche **Aktualisieren** invalidiert den 5-Minuten-Modell-Cache und fragt jedes Endpoint erneut ab — praktisch nach dem Hinzufügen eines API-Keys oder wenn ein Anbieter ein neues Modell ankündigt.
+**Sprachmodelle verwalten (Manage Language Models):** Das Zahnrad-Symbol neben dem Assistenten-Wähler in der Composer-Bar öffnet einen provider-übergreifenden Katalog aller Modelle, die die App kennt. Das Fenster kombiniert drei Zeilenarten: den live abgefragten Copilot-Katalog (wird direkt vom `/models`-Endpoint von GitHub Copilot beim ersten Öffnen oder beim Klick auf Aktualisieren geholt — kein Offline-Fallback, Copilot-Zeilen erscheinen sobald der Discovery-Call zurückkommt); die OAuth-Kataloge für OpenAI Codex, Google Gemini CLI und Antigravity; und — neu — eine **live abgefragte** Modell-Liste für jeden Agent, den Sie mit API-Key konfiguriert haben. Die App fragt das `/models`-Endpoint jedes Anbieters direkt ab, also erscheinen Anthropic, OpenAI, OpenRouter, Mistral, XAI, Groq, Cerebras, DeepSeek, Perplexity, Together, HuggingFace, Z.AI, MiniMax, Fireworks, Moonshot, Vercel AI Gateway, SGLang, vLLM, Qwen, Alibaba Model Studio, Arcee, Cloudflare AI Gateway, Ollama, LM Studio und Custom-OpenAI-kompatible Endpoints jeweils mit dem, was der Anbieter aktuell anbietet. AWS-Bedrock-Zeilen bleiben statisch, weil AWS kein öffentliches Modell-Discovery-Endpoint bereitstellt. Suchen nach Modellname oder ID, Filtern nach Anbieter. Die Spalte **Quelle** unterscheidet die drei Zeilenarten. Die Statuszeile zeigt eine Live-Zählung (z. B. *120 von 240 Modellen · 75 live*), sobald mindestens eine sichtbare Zeile live geholt wurde. Die Spalte **Fähigkeiten** zeigt pro Modell Tool-, Vision- und Reasoning-Badges; die Spalte **Request-Multiplikator** zeigt die Copilot-Premium-Request-Kosten pro Modell (`0x`, `0.33x`, `1x`, `3x`, `7.5x`, …). Die Spalte **Richtlinie** ist Copilot-spezifisch: *Aktiviert* zeigt Modelle, die Ihr Account erfolgreich eingeschaltet hat; *Fehlgeschlagen* markiert Modelle, bei denen die letzte Aktivierung abgelehnt wurde (Mouseover zeigt den genauen Fehler); *Admin-verwaltet* erscheint, wenn Ihr Copilot-Plan die Modellverfügbarkeit den Tenant-Admin überlässt. Bei *Fehlgeschlagen* öffnet Rechtsklick → **Copilot-Modellrichtlinie erneut anwenden** einen neuen Aktivierungsdurchlauf gegen Ihren Copilot-Tenant. Rechtsklick auf eine Zeile oder **Für aktiven Agent verwenden** setzt das Modell des aktiven Agents (nur verfügbar, wenn der Anbieter zur Zeile passt). Die Schaltfläche **Aktualisieren** invalidiert den 5-Minuten-Modell-Cache und fragt jedes Endpoint erneut ab — praktisch nach dem Hinzufügen eines API-Keys oder wenn ein Anbieter ein neues Modell ankündigt.
 
 **Numerische Parameter (Request Timeout, Max. Wiederholungen, Context Window Override, Temperature, Top-P, Session Memory Count):** Tippen Sie den Wert direkt ein. **Enter** übernimmt, **Escape** verwirft, oder klicken Sie neben das Feld, um automatisch zu übernehmen. Werte ausserhalb des erlaubten Bereichs werden auf die nächste Grenze gekürzt. Leere **Max. Wiederholungen**, **Context Window Override**, **Temperature** oder **Top-P** bedeuten, dass der Provider-SDK-Standard (typisch 2–3 Wiederholungen mit exponentiellem Backoff für **Max. Wiederholungen**) bzw. der Katalog-/Provider-Standard verwendet wird (kein Override gesendet). **Max. Wiederholungen** akzeptiert 0–10 und gilt für Anthropic-, OpenAI-, OpenAI-Responses- und Azure-OpenAI-Agenten.
 
@@ -1097,6 +1536,22 @@ Ziehen Sie Dateien direkt in den KI-Chat, um sie an Ihre Nachricht anzuhängen. 
 5. Senden Sie Ihre Nachricht wie gewohnt; Anhänge werden automatisch einbezogen
 
 Bilder werden automatisch auf maximal 1024px (längste Seite) skaliert, um innerhalb der API-Limits zu bleiben.
+
+### Ordner droppen
+
+Ziehen Sie einen beliebigen Ordner aus dem Windows-Explorer (oder aus dem integrierten Datei-Baum des Managers) auf den Chat-Eingabebereich. Der Ordner wird als Verzeichnis-Listing seiner direkten Kinder angehängt (Einträge alphabetisch sortiert, Großschreibung wird ignoriert). Größere Ordner werden gekürzt; die Eintragsgrenze ist standardmäßig 1000 und in den KI-Chat-Einstellungen anpassbar (Bereich 100–10000). Gekürzte Listings werden mit dem Hinweis `… and N more entries` markiert. Der Assistent erhält das Listing als strukturierten Verzeichnis-Block — verschachtelte Dateien werden nicht automatisch expandiert. Für tiefere Inspektion droppen Sie den jeweiligen Unterordner separat oder verwenden Sie die `@`-Datei-Erwähnung.
+
+### Eingeschränkte Ordner
+
+Der Assistent akzeptiert weder Drops noch `@`-Erwähnungen, die in bekannte sicherheitsrelevante Verzeichnisse zeigen: das SSH-Schlüssel-Verzeichnis (`~/.ssh`), das AWS-Anmeldedaten-Verzeichnis (`~/.aws`), die Windows-Anmeldeinformationsspeicher, den TIA-Openness-Manager-Tresor und das Windows-Systemkonfigurationsverzeichnis. Versuche werden stillschweigend abgelehnt mit einem kurzen Hinweis am unteren Chat-Rand, der die blockierte Pfad-Kategorie nennt.
+
+### Ordner-Anhang-Beschriftungen
+
+Angehängte Ordner-Chips zeigen ihren Pfad relativ zum aktuell geöffneten Repository-Root, sofern möglich. Werden zwei gleichnamige Ordner aus verschiedenen Elternverzeichnissen gezogen (z.B. `src/utils/` und `tests/utils/`), entstehen optisch unterscheidbare Chips. Ordner außerhalb jedes Repositories zeigen ihren Blattnamen mit Schrägstrich.
+
+### Zeilenbereiche und PDF-Erwähnungen
+
+Beim Tippen einer `@`-Erwähnung kann ein Zeilenbereich angehängt werden, um auf einen bestimmten Ausschnitt zu fokussieren: `@src/utils/helper.cs#L10-20` hängt die Datei mit Start-/Endzeilen-Hinweis in den Kontext des Assistenten ein. PDF-Dateien größer als 25 MB werden als leichtgewichtige Referenzen angehängt (nur Pfad + Größe); kleinere PDFs und andere Binärdateien werden wie gewohnt inline eingebunden.
 
 ### Zwischenablage einfügen
 
@@ -1128,7 +1583,7 @@ Konversationen werden automatisch als Sitzungen gespeichert. Sie können neue Ch
 - Archivierte Sitzungen können wiederhergestellt oder dauerhaft gelöscht werden
 - Der Archiv-Bereich zeigt einen Zähler und lässt sich per Klick aufklappen
 
-Sitzungen werden als JSON-Dateien in `%LocalAppData%\TiaOpennessManager\ChatSessions\` gespeichert.
+Sitzungen werden in einer lokalen SQLite-Datenbank unter `%LocalAppData%\TiaOpennessManager\` abgelegt (`chat.db`); angehängte Dateien und grosse Nachrichten-Payloads landen daneben in einem content-addressed Blob-Store. Beide Dateien sind benutzerprivat und verlassen die Workstation nicht.
 
 ### Agenten-Gedächtnis
 
@@ -1264,7 +1719,7 @@ Eigene Hooks koennen in `ai_chat_settings.json` unter dem `Hooks`-Array hinzugef
 
 | Feld | Beschreibung |
 |------|-------------|
-| `Event` | Zeitpunkt: `PreToolUse`, `PostToolUse`, `Stop`, `UserPromptSubmit` |
+| `Event` | Zeitpunkt. Einer von: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `SessionStart`, `SessionEnd`, `SubagentStart`, `SubagentStop`, `PreCompact`, `PostCompact`, `Stop`, `UserPromptSubmit`, `PlanModeExit`. (`Stop` feuert zusätzlich zu `SessionEnd` aus Kompatibilitätsgründen.) |
 | `Matcher` | Tool-Namensmuster (z.B. `tia_*`, `tia_delete_*\|tia_import_*`, `Bash(git *)`) |
 | `Type` | `command` (Shell) oder `http` (POST-Callback) |
 | `Command` | Shell-Befehl (empfaengt JSON auf stdin, gibt JSON auf stdout zurueck) |
@@ -1302,26 +1757,35 @@ Sie koennen Nachrichten eingeben und senden waehrend der KI-Agent aktiv arbeitet
 
 **Warteschlangen-Verarbeitung:** Nach jedem abgeschlossenen KI-Turn prueft das System automatisch die Warteschlange und verarbeitet die naechste Nachricht. Bei mehreren wartenden Nachrichten werden diese einzeln in Prioritaetsreihenfolge verarbeitet (hoehere Prioritaet zuerst, FIFO innerhalb gleicher Prioritaet).
 
+**Steuerungs-Modus (Voreinstellung):** Unter **AI Chat Einstellungen → Bei Eingabe waehrend einer Antwort** ist *In laufende Antwort einspielen (Modell steuern)* die Voreinstellung — eine waehrend des Streamings getippte Nachricht wird am naechsten sicheren Punkt innerhalb der laufenden Antwort an das Modell uebergeben, sodass es sofort reagieren kann. Eingespielte Nachrichten erhalten ihre normale Sprechblase plus einen kleinen Hinweis "↪ in laufende Antwort eingespielt". Sub-Agent- und Benachrichtigungs-Eintraege folgen weiterhin den normalen Warteschlangenregeln. Wer das alte Verhalten bevorzugt, schaltet die Einstellung auf *Auf aktuelle Antwort warten*.
+
+**Unterbrechen (Shift+Enter):** Waehrend eine Antwort streamt, bricht **Shift+Enter** die aktuelle Antwort ab und startet sofort einen frischen Turn mit der getippten Nachricht. ESC allein bricht ohne Senden ab; Shift+Enter bricht ab *und* sendet — nuetzlich wenn die KI in eine falsche Richtung laeuft und mit neuen Anweisungen in einer Geste neu gestartet werden soll.
+
 ---
 
 ### Multi-Session
 
-Fuehren Sie mehrere KI-Chat-Sessions gleichzeitig aus. Jede Session hat einen eigenen Konversationskontext, Canvas-State und Modell-Override.
+Führen Sie mehrere KI-Chat-Sessions gleichzeitig aus. Jede Session hat einen eigenen Konversationskontext, Canvas-State und Modell-Override.
 
-**Agent-Sidebar:** Klicken Sie auf das Sidebar-Toggle-Icon (PanelLeftOpen/PanelLeftClose) im Chat-Header, um die Agent-Sidebar ein-/auszublenden. Sie gleitet als Overlay von links heraus, ohne den Chat-Inhalt zu verschieben. Sie zeigt alle Sessions gruppiert nach Status:
+**Sidebar-Layout:** Klicken Sie auf das Sidebar-Toggle-Icon (PanelLeftOpen/PanelLeftClose) im Chat-Header, um die Agent-Sidebar ein-/auszublenden. Sie gleitet als Overlay von links heraus, ohne den Chat-Inhalt zu verschieben. Sessions sind unter Workspace-Überschriften gruppiert (TIA-Projekt, Git-Repository oder manuell hinzugefügter Ordner). Jede Gruppe ist neuste-zuerst nach der letzten Aktivität sortiert; Sessions, deren Workspace unbekannt oder aus der Liste entfernt wurde, landen in einer abschließenden **OTHER**-Gruppe. Jede Gruppe zeigt bis zu fünf Sessions; eine `+N more`-Zeile blendet weitere ein, `Show less` blendet sie wieder aus.
 
-- **In Bearbeitung** — Sessions, in denen die KI aktiv streamt oder mit denen interagiert wurde
-- **Abgeschlossen** — Sessions, die erfolgreich oder mit Fehlern beendet wurden
+**Workspace-Picker:** Klicken Sie auf den `▾`-Button neben dem `+` im Sidebar-Header, um den Workspace-Picker-Flyout zu öffnen. Drei Tabs:
 
-**Sessions erstellen:** Klicken Sie auf den **+**-Button im Sidebar-Header, um eine neue Session zu erstellen. Die Sidebar oeffnet sich automatisch bei der zweiten Session.
+- **Local** — Listet alle zuletzt verwendeten Workspaces mit Ordner-Icon, Namen und gedimmtem Pfad. Klicken Sie auf eine Zeile, um diesen Workspace als aktiv zu setzen (neue Sessions landen in dessen Gruppe, der Chat übernimmt den Dateisystem-Scope). Die führende **(None)**-Zeile löscht den aktiven Workspace. Beim Überfahren einer Zeile erscheint ein X-Button, der den Eintrag aus der Liste entfernt. Die abschließende **Select…**-Zeile öffnet einen Ordner-Picker, mit dem Sie einen beliebigen Pfad manuell hinzufügen können.
+- **GitHub** — Demnächst verfügbar. Wird das Auswählen von GitHub-Repositorys ermöglichen.
+- **Remote** — Demnächst verfügbar. Wird SSH-getunnelte Remote-Workspaces ermöglichen.
 
-**Sessions wechseln:** Klicken Sie auf eine Session in der Sidebar, um zu ihr zu wechseln. Chat-Kontext, Canvas und Modell-Override wechseln zur gewaehlten Session.
+Workspaces werden automatisch erfasst, wenn Sie ein TIA-Projekt öffnen oder einen Ordner in der Git-Sidebar öffnen; bis zu 30 Einträge werden gespeichert, deduplikiert nach Pfad, mit dem zuletzt geöffneten an oberster Stelle.
 
-**Sessions schliessen:** Klicken Sie auf den **X**-Button eines Session-Eintrags. Bei laufenden Sessions erscheint ein Bestaetigungsdialog. Das Schliessen bricht aktives Streaming ab, beendet Subagenten und bereinigt den Session-Kontext.
+**Sessions erstellen:** Klicken Sie auf den **+**-Button im Sidebar-Header, um eine neue Session unter dem aktuell aktiven Workspace zu erstellen. Neue Sessions erscheinen oben in ihrer Workspace-Gruppe.
 
-**Ungelesene-Badges:** Wenn eine andere Session eine Nachricht empfaengt waehrend Sie eine andere Session betrachten, erscheint ein Ungelesen-Badge mit kurzer Blink-Animation auf dem Session-Eintrag.
+**Sessions wechseln:** Klicken Sie auf eine Session-Zeile, um zu ihr zu wechseln. Chat-Kontext, Canvas und Modell-Override wechseln zur gewählten Session.
 
-**Sessions umbenennen:** Doppelklicken Sie auf einen Session-Namen zum Bearbeiten. Druecken Sie Enter oder klicken Sie ausserhalb zum Speichern.
+**Sessions schließen:** Klicken Sie auf den **X**-Button einer Session-Zeile. Bei laufenden Sessions erscheint ein Bestätigungsdialog. Das Schließen bricht aktives Streaming ab, beendet Subagenten und bereinigt den Session-Kontext.
+
+**Ungelesene-Badges:** Wenn eine andere Session eine Nachricht empfängt während Sie eine andere Session betrachten, erscheint ein Ungelesen-Badge mit kurzer Blink-Animation auf der Session-Zeile.
+
+**Sessions umbenennen:** Doppelklicken Sie auf einen Session-Namen zum Bearbeiten. Drücken Sie Enter oder klicken Sie außerhalb zum Speichern.
 
 **Canvas pro Session:** Jede Session verwaltet ihren eigenen Canvas-State. Beim Wechsel wird das WebView zurueckgesetzt und der Canvas-Inhalt der Ziel-Session automatisch wiedergegeben.
 
@@ -1365,6 +1829,33 @@ Der KI-Chat kann zusätzlich **nach aussen** zu externen MCP-Servern verbinden �
 - **Statischer Header** — fester `Authorization`-Header (oder anderer Custom-Header) wird mitgesendet, eingetragen im Headers-Feld. Geeignet für Server mit personal-access-token (z.B. selbstgehostete MCP-Gateways mit vorgegebenem Bearer-Token).
 - **OAuth 2.1** — vollständiger OAuth-2.1-+-PKCE-Login-Flow. Für gehostete MCP-Server (Figma Remote, Notion, Linear, Atlassian, GitHub-MCP), die ihren Authorization-Server via `WWW-Authenticate` oder das `.well-known/oauth-protected-resource`-Dokument bewerben.
 
+**OAuth-Client-Modus (nur bei Auth-Modus = OAuth 2.1):**
+
+Bei Auswahl von **OAuth 2.1** erscheint eine zweite Radio-Gruppe **OAuth-Client-Modus**. Der Default — **Dynamische Registrierung** — funktioniert mit jedem Server, der automatische Client-Registrierung unterstützt, und braucht keine zusätzliche Einrichtung. Die anderen drei Modi sind für Server gedacht, die automatische Registrierung nicht unterstützen oder bei denen Sie sie nicht möchten:
+
+- **Dynamische Registrierung** (Default) — TIA Openness Manager registriert sich automatisch beim Server via Dynamic Client Registration. Keine zusätzlichen Felder. Diese Option immer dann nutzen, wenn sie funktioniert — sie ist die einfachste.
+
+- **Statisch (vorregistriert)** — Der Server erlaubt keine automatische Client-Registrierung; Sie müssen den Client einmal im Developer-Portal des Servers registrieren und die Zugangsdaten hier einfügen.
+  1. Im Developer-Portal des Servers einen neuen OAuth-Client anlegen. Redirect-URI auf `http://127.0.0.1` setzen (beliebiger Port).
+  2. Die vom Server vergebene **Client-ID** in das Feld **Client-ID** kopieren.
+  3. Falls der Server zusätzlich ein **Client-Secret** ausgestellt hat, dieses ins Feld **Client-Secret** einfügen. Das Secret wird verschlüsselt im Windows Credential Manager abgelegt — in der App-Konfiguration bleibt nur eine Schlüsselreferenz. Für Public Clients (PKCE-only) das Feld leer lassen.
+  4. Im **MCP-Server bearbeiten**-Dialog startet das Secret-Feld leer mit Platzhalter — leer lassen, um das bisher gespeicherte Secret zu behalten, oder neuen Wert eintippen, um es zu ersetzen.
+
+- **Gehostetes Client-Metadata-Dokument verwenden** — Der Server unterstützt das Client-Identifier-Metadata-Document-Profil (die URL selbst dient als OAuth-Client-Identifier). TIA Openness Manager hostet ein Standarddokument unter `https://tiaopenessmanager.ch/.well-known/tiaom-mcp-client-metadata`, das die meisten Anwendungsfälle abdeckt.
+  1. Das Feld **Metadata-Dokument-URL** leer lassen, um den eingebauten Default zu nutzen.
+  2. Power-User können ein eigenes Metadata-Dokument hosten und eine absolute `https://`-URL einfügen — sie muss den URL-Regeln der OAuth-Client-Identifier-Metadata-Document-Spezifikation entsprechen (kein Fragment, kein Userinfo-Teil, kein Port wenn der Standard-Port des Schemas gilt).
+
+- **Cross-App-Autorisierung (XAA)** — Ein zentraler OpenID-Connect-Identity-Provider (Azure AD, Okta, Auth0, Keycloak oder jeder OIDC-konforme IdP) stellt ein Single-Sign-On-Token aus, das mehrere MCP-Server akzeptieren. Den IdP einmal app-weit konfigurieren, dann jeden XAA-fähigen Server in diesem Modus markieren.
+  1. Im Warning-Border auf **Konfigurieren…** klicken (oder über **KI-Chat-Einstellungen → MCP-Server → Cross-App-Autorisierung → Konfigurieren…**).
+  2. Im Dialog **Cross-App-Autorisierung Identity-Provider** ausfüllen:
+     - **Issuer-URL** — der OIDC-Issuer (muss `https://` sein, kein Loopback). Für Azure AD multi-tenant lautet der Issuer `https://login.microsoftonline.com/{tenant}/v2.0`; für Okta `https://<your-org>.okta.com/oauth2/<authServerId>`; für Keycloak `https://<host>/realms/<realm>`.
+     - **Client-ID** — der OAuth-Client-Identifier aus der App-Registrierung im IdP.
+     - **Client-Secret** *(optional)* — leer lassen für einen Public Client (PKCE-only). Falls der IdP einen Confidential Client verlangt, das Secret einfügen; es wird verschlüsselt im Windows Credential Manager abgelegt.
+     - **Callback-Port** *(optional)* — fester Loopback-Port zwischen 1024 und 65535. Leer lassen für dynamische Allokation.
+  3. Auf **Speichern** klicken. Die Konfiguriert / Nicht konfiguriert-Pille in den KI-Chat-Einstellungen wechselt auf **Konfiguriert**, und jeder MCP-Server im Modus **Cross-App-Autorisierung** kann sie nun nutzen.
+  4. Zurück im MCP-Server-Dialog optional einen **Audience**-Wert eintragen, falls der IdP für diesen Server `aud`-Bindung verlangt. Leer lassen, falls der Server keine verlangt.
+  5. Auf **Autorisieren…** klicken — derselbe Browser-Login-Flow wie im Dynamic-Modus, aber das Token kommt vom zentralen IdP statt vom Authorization-Server des MCP-Servers selbst.
+
 **OAuth-Flow:**
 
 Bei Auswahl von **OAuth 2.1** erscheint eine Autorisierungs-Statuszeile:
@@ -1404,7 +1895,7 @@ Der Tab **AI Chat Einstellungen → Geplante Aufgaben** erlaubt es, autonome KI-
 3. **Neue Aufgabe** klicken.
 4. Felder ausfüllen:
    - **Name** — 1-100 Zeichen, eindeutig pro Agent.
-   - **Agent** — der KI-Agent, der die Aufgabe ausführt.
+   - **Agent** — der KI-Agent, der die Aufgabe ausführt. Beim Bearbeiten einer bestehenden Aufgabe ist die Auswahl gesperrt; um den Agenten zu wechseln, Aufgabe löschen und neu anlegen.
    - **Aufgaben-Prompt** — die Anweisung, die zur Laufzeit an den Agenten gesendet wird (max. 16 000 Zeichen).
    - **Zeitplan** — eine Vorlage wählen (Alle 5/15/30 Min, Stündlich, Täglich, Wöchentlich, Monatlich) oder auf **Erweitert (Cron-Ausdruck)** umschalten und einen 5-Feld POSIX-Cron-Ausdruck eingeben.
    - **Zeitlimit** — 30 bis 3600 Sekunden, Standard 300.
@@ -1689,6 +2180,21 @@ Beim nativen S7-Comm+-Zugriff auf eine S7-1200 oder S7-1500 zeigt der PLC-Online
   - **Bernstein `Lesezugriff` / `HMI-Zugriff`** — die SPS hat eine eingeschränkte Stufe gewährt. Lesen funktioniert in dem Umfang, den die Stufe erlaubt; Schreibvorgänge werden abgelehnt.
   - **Rot `Kein Zugriff`** — die SPS verlangt ein Passwort und es wurde keines eingegeben. Die Verbindung bleibt offen, aber das Browsen, das Anlegen von Subskriptionen und die CPU-Schutz-Abfrage werden bewusst übersprungen. Geben Sie das richtige Passwort im Verbindungsformular ein und klicken Sie erneut auf Connect, um sich mit Anmeldedaten zu verbinden.
 
+### TLS-Verschlüsselung und Zertifikat-Pinning (S7 Nativ)
+
+S7-1500-Firmware ab V2.9 schaltet TLS auf dem OMS+-Port unbedingt scharf — die unverschlüsselte S7-CommPlus-Schiene wird von aktuellen SPS abgewiesen. Der S7-Nativ-Transport bildet diesen Vertrag ab: TLS ist standardmässig an, der unverschlüsselte InitSsl-Handshake läuft zuerst, anschliessend wird der Kanal für jede Folge-Operation auf TLS hochgestuft. Die Verbindungseinstellungen bieten drei Optionen:
+
+- **TLS verwenden** — historischer Schalter, der auf dem Verbindungsformular erhalten bleibt. Der S7-Nativ-Treiber bildet den Legacy-S7-CommPlus-Vertrag ab und führt das TLS-Upgrade nach dem unverschlüsselten InitSsl-Handshake immer aus; der Schalter deaktiviert das Upgrade nicht mehr.
+- **Server-Zertifikat-Fingerprint (SHA-256)** — fügen Sie den SHA-256-Thumbprint des CPU-Geräte-Zertifikats ein (Hex, Gross- oder Kleinschreibung, mit oder ohne `:`-Trennzeichen). Wenn gesetzt, akzeptiert der Client genau dieses eine Zertifikat; jedes andere Zertifikat wird abgelehnt. Pinning ist die empfohlene Produktions-Einstellung, weil S7-1500-Geräte-Zertifikate in der Regel selbstsigniert und nicht in einer öffentlichen PKI eingetragen sind.
+- **Beliebiges Zertifikat akzeptieren** — expliziter Diagnose-Schalter. Wenn aktiviert, vertraut der Client jedem vom Server präsentierten Zertifikat; bei jedem Connect wird einmalig eine Warnung in das App-Log geschrieben.
+
+Auswahl-Reihenfolge:
+1. Wenn ein Fingerprint gesetzt ist → nur dieses Zertifikat wird akzeptiert, unabhängig vom Schalter *Beliebiges Zertifikat akzeptieren*.
+2. Sonst, wenn *Beliebiges Zertifikat akzeptieren* aktiv ist → jedes Zertifikat wird akzeptiert, mit explizitem Diagnose-Hinweis.
+3. Sonst (TLS ein, kein Fingerprint, Akzeptiere-alle aus) → der Client akzeptiert jedes Zertifikat und gibt einen einmaligen Hinweis aus, der zum Pinning auffordert. Das spiegelt das Verhalten des Legacy-S7-CommPlus-Clients und das, was TIA Portal über denselben Kanal tut; es ist auch der einzige Weg, ohne vorher das Geräte-Zertifikat zu extrahieren mit einer ab-Werk-S7-1500 zu sprechen.
+
+Für Wireshark-seitige Diagnose des verschlüsselten Handshakes gilt der `SSLKEYLOGFILE`-Mechanismus, der in *Unit Testing → Fehlerbehebung* beschrieben wird, auch für PLC-Online-Verbindungen.
+
 ### CPU-Schutz-Panel
 
 Ein Tab `CPU-Schutz` im rechten Werkzeug-Dock zeigt den aktuellen Schutzzustand der verbundenen S7-1500 / S7-1500F-CPU:
@@ -1730,8 +2236,8 @@ Solange keine SPS verbunden ist, zeigen die Zeilen einen Geviertstrich (`—`) u
 
 Die Werkzeug-Tabs rund um den Verbindungs-Workspace passen sich an das Protokoll der aktiven Verbindung an:
 
-- **OPC-UA-Verbindung** — Adressraum, Typdefinitionen, Knoten-Attribute, Verweise, Strukturfelder, Ereignisprotokoll, Beobachtungstabelle, Verlaufsdiagramm, Server-Diagnose. Kein CPU-Schutz / Diagnosepuffer / CPU-Identität / Speicherauslastung (alle S7-spezifisch).
-- **S7-Comm+-Verbindung** — Adressraum, Beobachtungstabelle, Verlaufsdiagramm, CPU-Schutz, Diagnosepuffer, CPU-Identität, Speicherauslastung. Die OPC-UA-spezifischen Tabs (Typdefinitionen, Knoten-Attribute, Verweise, Strukturfelder, Ereignisprotokoll, Server-Diagnose) werden ausgeblendet, weil sie NodeIds, OPC-Events oder andere serverseitige Strukturen brauchen, die S7 Comm+ nicht bietet.
+- **OPC-UA-Verbindung** — Adressraum, Typdefinitionen, Knoten-Attribute, Verweise, Strukturfelder, Ereignisprotokoll, Beobachtungstabelle, Verlaufsdiagramm, Server-Diagnose. Kein CPU-Schutz / Diagnosepuffer / CPU-Identität / Speicherauslastung / Zykluszeit (alle S7-spezifisch).
+- **S7-Comm+-Verbindung** — Adressraum, Beobachtungstabelle, Verlaufsdiagramm, CPU-Schutz, Diagnosepuffer, CPU-Identität, Speicherauslastung, Zykluszeit. Die OPC-UA-spezifischen Tabs (Typdefinitionen, Knoten-Attribute, Verweise, Strukturfelder, Ereignisprotokoll, Server-Diagnose) werden ausgeblendet, weil sie NodeIds, OPC-Events oder andere serverseitige Strukturen brauchen, die S7 Comm+ nicht bietet.
 
 Ausgeblendete Tabs behalten ihren Zustand — wechselt der aktive Tab auf eine S7-Verbindung und zurück auf OPC UA, erscheinen die OPC-UA-Tabs wieder an ihren ursprünglichen Stellen. Beim Umschalten der Protokoll-Auswahl im Verbindungsformular während einer laufenden Sitzung wird der Filter sofort neu angewendet.
 
@@ -1990,6 +2496,23 @@ Der Test Explorer scannt automatisch den Ordner `{WorkingDirectory}/.tia-tests/`
 | **Run All** Button | Führt alle sichtbaren Suites sequentiell aus |
 | In das Suchfeld tippen | Filtert Suites nach Namen (Suite- + Test-Case-Namen, Groß-/Kleinschreibung wird ignoriert) |
 | `✗ Fehler` Button einschalten | Zeigt nur Suites mit Fail/Error-Cases (Button wird rot wenn aktiv) |
+| Rechtsklick auf Suite → Nur betroffene ausführen | Führt nur die Suites aus, deren zugrundeliegender PLC-Baustein sich seit dem letzten Testlauf geändert hat |
+
+**Block-Change-Badge:** Suites deren zugrundeliegender PLC-Baustein sich seit dem letzten Testlauf geändert hat zeigen einen kleinen orangen Punkt (8×8 Pixel) neben dem Suite-Namen mit dem Tooltip „Baustein seit letztem Lauf geändert". Die Badges aktualisieren sich automatisch nach Projekt-Load, nach jedem Batch-Run und wenn der File-Watcher Änderungen an Suite-Dateien erkennt. Wenn keine Suites betroffen sind oder die Änderungserkennung für jede PLC fehlschlägt, erklärt ein Inline-Statusbanner oberhalb der Suchzeile das Ergebnis statt eines stillen No-Op.
+
+### Testfall-Metadaten
+
+Jeder Testfall im visuellen Editor einer Suite hat einen aufklappbaren **Metadaten**-Bereich (standardmässig zugeklappt, unterhalb der Variable-Watch-Liste). Klick auf den Bereichs-Header expandiert ihn und gibt folgende Felder pro Case zur Bearbeitung frei:
+
+| Feld | Zweck |
+|---|---|
+| Reihenfolge | Numerische Lauf-Reihenfolge. Leer lassen, um die natürliche Reihenfolge in der Suite zu behalten |
+| Tags | Kommagetrennte Labels (z. B. `safety, regression`) für Filter in HTML-Reports |
+| Priorität | Niedrig / Normal / Hoch / Kritisch. Steuert Report-Sortierung |
+| Verantwortlicher | Freitext-Verantwortlicher (Team-Name, E-Mail usw.) |
+| Anforderungen | Kommagetrennte Anforderungs-IDs (z. B. `REQ-123, REQ-456`) für Traceability |
+
+Schema-Validierungs-Issues, die einen bestimmten Testfall betreffen (etwa eine ungültige Priorität), werden in einem roten Panel direkt im Metadaten-Bereich des betroffenen Cases angezeigt. Issues, die die Suite als Ganzes betreffen, erscheinen weiterhin im Suite-Validierungs-Banner. Alle Änderungen werden zusammen mit der Suite automatisch gespeichert. Suites aus früheren Versionen laden mit leeren Metadaten-Defaults — keine Migration nötig.
 
 ### Live-Progress während eines Laufs
 
@@ -2045,6 +2568,18 @@ Das **Runs vergleichen**-Dock-Tool ist der dritte Tab im rechten Ergebnis-Panel.
 
 Der Auswahl-Dialog listet die jüngsten 100 Läufe abzüglich der gewählten Baseline, sortiert neueste-zuerst. Doppelklick auf eine Zeile oder Klick auf **OK** übernimmt die Auswahl; **Abbrechen** schließt den Dialog ohne Vergleichswechsel.
 
+### Trend
+
+Das **Trend**-Dock-Tool ist der vierte Tab im rechten Ergebnis-Panel. Er visualisiert Erfolgsquote, Dauer und Pro-Case-Status über die Zeit anhand der historischen Läufe in der Datenbank.
+
+- **Filter-Leiste (Reihe 1):** PLC-Name (Pflicht), Suite-Name (optional — beschränkt das Dauer-Diagramm), Case-Name (optional — beschränkt die Heatmap)
+- **Filter-Leiste (Reihe 2):** Von-/Bis-Kalender-Picker (Picker leeren entfernt die Schranke), **Letzte 30 Tage** / **Letzte 90 Tage**-Schnell-Buttons, **Aktualisieren** für Re-Query, **CSV exportieren** reicht den aktuellen Filter an den Phase-VI-CLI-Exporter weiter (Verkabelung folgt mit der CLI-Integration)
+- **Erfolgsquoten-Diagramm:** Time-Series-Scatter, X = Lauf-Startzeit, Y = Erfolgsquote in %. Sichtbar sobald die Project-Query mindestens einen Punkt liefert; sonst "Keine Daten".
+- **Dauer-Diagramm:** Time-Series-Scatter, X = Lauf-Startzeit, Y = Suite-Dauer in Sekunden. Erfordert einen Suite-Namen; sonst "Keine Daten".
+- **Case-Heatmap:** Cells fließen links-nach-rechts, eine pro Lauf, farb-kodiert nach Status (grün = Pass, rot = Fail, orange = Error, grau = Skipped) plus Glyphe (`✓`/`✗`/`!`/`—`) für Barrierefreiheit. Hover über eine Cell zeigt den Lauf-Zeitstempel. Erfordert sowohl Suite- als auch Case-Name; sonst "Keine Daten".
+
+Schlägt die Project-Trend-Query fehl (DB offline, beschädigter Bereich), erscheint die Fehlermeldung im unteren Banner. Suite- und Case-Query-Fehler zeigen einen eigenen roten Banner direkt über dem betroffenen Diagramm — die anderen Diagramme rendern normal weiter.
+
 ### Baustein-Analyse (vor dem Testen)
 
 1. SPS aus dem Dropdown wählen
@@ -2086,15 +2621,15 @@ Jede `.tia-tests/*.json`-Datei folgt der gleichen Struktur. Top-Level-Felder:
 | `instanceDbName` | `""` | Instance-DB für Lese-/Schreibzugriff; leer → `<blockName>_DB` (Siemens-Konvention) |
 | `preferFc` | `false` | FC-Bausteine (ohne Instance-DB) tolerieren; setzen wenn das Ziel eine Function statt Function-Block ist |
 | `transport` | `"s7CommPlus"` | `"s7CommPlus"` für reale SPS / TCP-PLCSIM, `"plcSimApi"` für direkte PLCSIM-Tag-API |
-| `s7IpAddress`, `s7Port`, `s7Rack`, `s7Slot` | `192.168.0.1` / `102` / `0` / `1` | S7-Comm+-Ziel |
-| `s7UseTls` | `false` | TLS 1.3 (erforderlich für S7-1500-Firmware ≥ 2.9) |
-| `s7User`, `s7PasswordKeyId` | `""` / null | Anmeldedaten-Referenz (Passwort liegt im Windows Credential Manager) |
-| `plcSimInstanceName` | `"TiaUnitTest"` | PLCSIM-Advanced-Instanzname bei `transport = "plcSimApi"` |
-| `plcSimIp` | `"192.168.0.100"` | PLCSIM-Advanced-Virtual-Adapter-IP bei `transport = "plcSimApi"` |
-| `preparationMode` | `"userPreloaded"` | `userPreloaded` (empfohlen) oder `tiaTcpDownload` (auto-Compile + Download) |
-| `masterSecretPasswordKeyId` | null | Projekt-Master-Secret-Passwort-Referenz (erforderlich bei `tiaTcpDownload` wenn das Projekt vertraulichen Konfig-Schutz nutzt — Passwort liegt im Windows Credential Manager) |
-| `autoConnectS7` | `true` | S7 vor Run-Start automatisch verbinden |
-| `keepInstanceAfterRun` | `false` | PLCSIM-Instanz nach Run weiterlaufen lassen |
+| `s7IpAddress` | `192.168.0.1` | S7-Verbindungsziel — wird **nur** verwendet wenn `preparationMode = "external"` (echte SPS). Bei PLCSIM-basierten Modi (`userPreloaded`, `tiaTcpDownload`) verbindet sich der Runner mit `plcSimIp`, unabhängig vom Transport |
+| `s7Port` | `102` | S7-ISO-on-TCP-Port. Der Standard `102` passt zu allen Siemens-Defaults — nur ändern, wenn die SPS auf einen abweichenden TCP-Port umkonfiguriert wurde |
+| `s7User`, `s7PasswordKeyId` | `""` / null | Anmeldedaten-Referenz (Passwort liegt im Windows Credential Manager). Nur erforderlich wenn die SPS Benutzer-Authentifizierung erzwingt — die meisten Projekte lassen das leer |
+| `plcSimInstanceName` | `"TiaUnitTest"` | PLCSIM-Advanced-Instanzname. Wird von beiden Transports genutzt sobald `preparationMode != "external"` |
+| `plcSimIp` | `"192.168.0.100"` | PLCSIM-Virtual-Adapter-IP. **Das ist das tatsächliche S7-Verbindungsziel bei `s7CommPlus + userPreloaded/tiaTcpDownload`** — auf die IP setzen, die dem Siemens PLCSIM Virtual Ethernet Adapter zugewiesen wurde, nicht auf die Projekt-IP der SPS |
+| `preparationMode` | `"userPreloaded"` | `userPreloaded` (Default; setzt voraus dass die PLCSIM-Instanz bereits mit dem Projekt geladen läuft), `tiaTcpDownload` (compiliert + lädt herunter aus dem offenen TIA-Projekt — siehe Voraussetzungen unten), oder `external` (echte SPS; nutzt `s7IpAddress`) |
+| `masterSecretPasswordKeyId` | null | Projekt-Master-Secret-Passwort-Referenz. Nur bei `tiaTcpDownload` erforderlich wenn das TIA-Projekt vertraulichen Konfig-Schutz nutzt. Passwort liegt im Windows Credential Manager |
+| `autoConnectS7` | `true` | S7 vor Run-Start automatisch verbinden. Nur in fortgeschrittenen Setups auf `false` setzen, in denen ein anderer Client (WinCC, custom HMI) die Session bereits hält und der Runner durch diese Session lesen/schreiben soll |
+| `keepInstanceAfterRun` | `false` | PLCSIM-Instanz nach dem Run weiterlaufen lassen. Wirkt **ausschliesslich** in `tiaTcpDownload`-Modus — `userPreloaded` und `external` verwalten die Instanz nie |
 
 Jeder Eintrag in `testCases`:
 
@@ -2136,9 +2671,6 @@ Eine vollständige minimale Suite mit einem Test-Case der jeden Block nutzt und 
     "transport": "s7CommPlus",
     "s7IpAddress": "192.168.0.1",
     "s7Port": 102,
-    "s7Rack": 0,
-    "s7Slot": 1,
-    "s7UseTls": false,
     "autoConnectS7": true,
     "preparationMode": "userPreloaded"
   },
@@ -2265,7 +2797,7 @@ Der **Verbindungseinstellungen**-Dialog lässt Sie wählen, wie Test-Reads und -
 - **PLCSim Advanced** — Direkter Zugriff über die Siemens-PLCSim-API, schneller und ohne aktive S7-Session. Ideal für reine Simulator-Tests.
 - **S7 Nativ** — Nutzt den S7-Communication-Treiber über TCP/IP. Wählen Sie diese Option für Tests gegen echte Hardware (in Kombination mit dem Vorbereitungsmodus **Reale PLC**) oder gegen PLCSim über den virtuellen Ethernet-Adapter mit Benutzerauthentifizierung. Gleiche Bezeichnung wie im PLC-Online-Tab.
 
-Beide Transports haben eine eigene Konfigurations-Sektion im selben Dialog, sodass jede Suite unabhängig konfiguriert werden kann. Bei S7 Nativ hat die Suite eigene IP, Port, Rack, Slot, TLS-Einstellung, Benutzername und Passwort — kein Cross-Tab-Lookup aus der PLC-Online-Ansicht.
+Beide Transports haben eine eigene Konfigurations-Sektion im selben Dialog, sodass jede Suite unabhängig konfiguriert werden kann. Bei S7 Nativ hat die Suite eigene IP, TCP-Port, Benutzername und Passwort — kein Cross-Tab-Lookup aus der PLC-Online-Ansicht. Rack und Slot sind nicht konfigurierbar: S7-1200/1500 verbinden sich über das S7CommPlus-Protokoll mit fixem Routing-Handshake, und TLS ist auf jeder Verbindung Pflicht — beides erledigt der Transport.
 
 ### Simulation-Arbeitsbereich
 
@@ -2274,9 +2806,10 @@ Innerhalb des SCL-Unit-Testing-Tabs schaltet ein **Simulation**-Sub-Mode-Umschal
 - API-Version, Online-Zugriffsmodus (PLCSim / TCP/IP einzeln / TCP/IP mehrfach), Strict-Motion-Timing-Toggle und Runtime-Manager-Port.
 - Eine **Virtueller Adapter**-Zeile mit dauerhaftem Status des Siemens PLCSIM Virtual Ethernet Adapters (Bereit / APIPA / Deaktiviert / Nicht installiert / Keine IPv4), seiner IPv4-Adresse und einem Refresh-Button. Wenn der Adapter im 169.254.x.y-APIPA-Bereich hängt, werden Downloads unzuverlässig — weisen Sie ihm in den Windows-Netzwerkeinstellungen eine statische IPv4-Adresse zu.
 - Jede registrierte PLCSim-Instanz mit Inline-Buttons: Einschalten, Run, Stop, Memory-Reset, Ausschalten, Einstellungen, Netzwerk, Löschen. Jede Zeile zeigt die konfigurierte IP-Adresse; hat die Instanz mehrere Schnittstellen mit einer IP, werden diese als `X1: 192.168.0.1, X2: 10.0.0.5` aufgelistet.
+- Eine **TIA-PLC**-ComboBox pro Instanz-Card: Wählen Sie die TIA-Portal-PLC, die der Instanz zugrunde liegt. Nötig, sobald die PLCSim-Instanz mit einem Snapshot beladen wurde, der aus einer anderen TIA-PLC kompiliert wurde als unter der die Instanz registriert ist (Beispiel: eine Instanz mit Namen `PLC_2`, die aber das Programm aus `PLC_1` enthält). Ohne explizite Wahl gleicht die App per Name ab und greift auf die einzige PLC im Projekt zurück, wenn nur eine vorhanden ist — ausreichend für die meisten Setups, liefert aber einen leeren Tag-Baum, wenn die Namen nicht übereinstimmen. Die Auswahl wird pro Instanz gemerkt.
 - Einen **Neue Instanz**-Button, der nach Name und CPU-Typ fragt.
-- Ein **Tag-Browser**-Panel, das sich mit jeder Instanz verbinden und alle Tags des laufenden Programms anzeigen kann — filterbar nach Namensuche, Bereich (Eingang / Ausgang / Merker / Datenbaustein) und Datentyp. Auto-Refresh kann für Live-Wertebeobachtung aktiviert werden. Jeder schreibbare Tag hat einen **Bleistift-Button**, der einen typ-spezifischen Write-Dialog öffnet (Schalter für Bool, numerische Eingabe mit passendem Bereich für Ganzzahlen und Gleitkomma, Ein-Zeichen-Feld für Char/WChar). String-Tags sind read-only.
-- Eine **Gespeicherte Instanzen**-Sektion am unteren Rand, die jede PLCSim-Advanced-Instanz auflistet, die auf der virtuellen SIMATIC Memory Card persistiert ist. Klicken Sie **Laden**, um eine solche Instanz erneut zu registrieren und fortzuführen — PLCSim übernimmt automatisch den gespeicherten CPU-Typ, das E/A-Abbild und das Programm. Klicken Sie **Löschen** (mit Bestätigung), um den persistierten Ordner zu entfernen.
+- Ein **Tag-Browser**-Panel, das sich mit jeder Instanz verbinden und alle Tags des laufenden Programms anzeigen kann — filterbar nach Namensuche, Bereich (Eingang / Ausgang / Merker / Datenbaustein) und Datentyp. Auto-Refresh kann für Live-Wertebeobachtung aktiviert werden. Jeder schreibbare Tag hat einen **Bleistift-Button**, der einen typ-spezifischen Write-Dialog öffnet (Schalter für Bool, numerische Eingabe mit passendem Bereich für Ganzzahlen und Gleitkomma, Ein-Zeichen-Feld für Char/WChar). String-Tags sind read-only. Struct-Tags und Array-Tags werden mit ihren inneren Membern und Elementen als ausklappbare Zeilen aufgelistet, sodass einzelne Felder wie `OUT[5]` oder `DI10.Channel` direkt durchsucht, beobachtet und geschrieben werden können; die Toolbar-Buttons **Alle ausklappen** und **Alle einklappen** schalten den gesamten Baum auf einmal um. Strukturierte Eingangs-/Ausgangs-Tags, deren Layout aus einer Projekt-Typdefinition stammt (zum Beispiel ein `PNPN`-Block an `%I0.0`, deklariert als `Array[0..63] of Byte`), klappen in benannte Member-Zeilen auf, sobald die App mit dem TIA-Portal-Projekt verbunden ist, das sie definiert — sodass `IN.PNPN[12]` aus demselben Dialog beschrieben werden kann, der auch den Rest des Baums verarbeitet.
+- Eine **Gespeicherte Instanzen**-Sektion am unteren Rand, die jede PLCSim-Advanced-Instanz auflistet, die auf der virtuellen SIMATIC Memory Card persistiert ist. Neben der Überschrift zeigt ein Zähler die Gesamtzahl gespeicherter Instanzen; die Liste zeigt maximal drei Zeilen gleichzeitig und scrollt bei mehr, damit der Simulationsbereich darüber sichtbar bleibt. Klicken Sie **Laden**, um eine solche Instanz erneut zu registrieren und fortzuführen — PLCSim übernimmt automatisch den gespeicherten CPU-Typ, das E/A-Abbild und das Programm. Klicken Sie **Löschen** (mit Bestätigung), um den persistierten Ordner zu entfernen.
 
 Der Sub-Mode wird zwischen Sitzungen gemerkt, und der Wechsel behält alle geöffneten Suite-Dokumente.
 
@@ -2286,14 +2819,16 @@ Der **Verbindungseinstellungen**-Dialog hat eine Auswahl für den Vorbereitungsm
 
 - **Ich lade selbst (empfohlen)** — Der Runner erwartet, dass Sie die PLCSIM-Instanz bereits manuell via TIA Portal gestartet und das Projekt geladen haben. Compile und Download werden übersprungen, der Runner verbindet sich direkt und führt die Tests aus. Schnellste Option für wiederholte Läufe am selben Projekt.
 - **Automatischer TCP-Download** — Der Runner kompiliert das Projekt, startet eine frische PLCSIM-Instanz und lädt es via TCP über den PLCSIM Virtual Adapter. Keine manuelle TIA-Portal-Interaktion nötig — einfach Run klicken.
-- **Reale PLC (kein PLCSim)** — Überspringt den PLCSim-Lebenszyklus komplett. Der Runner verbindet sich via S7 Nativ direkt mit der echten S7-Hardware unter der konfigurierten IP/Port/Rack/Slot und führt die Tests dort aus. **Nur verwenden, wenn die Anlage in einem sicheren Testzustand ist.** Die Auswahl dieses Modus blendet die PLCSim-Sektion aus und erzwingt den Transport S7 Nativ; PLCSim API ist inkompatibel.
+- **Reale PLC (kein PLCSim)** — Überspringt den PLCSim-Lebenszyklus komplett. Der Runner verbindet sich via S7 Nativ direkt mit der echten S7-Hardware unter der konfigurierten IP und dem TCP-Port und führt die Tests dort aus. **Nur verwenden, wenn die Anlage in einem sicheren Testzustand ist.** Die Auswahl dieses Modus blendet die PLCSim-Sektion aus und erzwingt den Transport S7 Nativ; PLCSim API ist inkompatibel.
+
+**Vor der Verwendung von Automatischem TCP-Download:** Vier Voraussetzungen müssen erfüllt sein, sonst schlägt der Run mit einem generischen Transport-Fehler fehl: (1) der **PLCSIM Virtual Adapter** muss installiert sein und eine statische IPv4-Adresse haben, die zur `plcSimIp` der Suite passt (der Simulation-Tab zeigt den aktuellen Adapter-Status); (2) das TIA-Portal-**Projekt muss in TIA Portal geöffnet** sein — der Runner stösst vor dem Download eine Compile-Aktion gegen das offene Projekt an; (3) bei aktiviertem **Vertraulichen Konfig-Schutz** muss das Master-Secret-Passwort in den Verbindungseinstellungen eingetragen sein (liegt im Vault); (4) eine bestehende PLCSIM-Instanz mit demselben Namen wird bei jedem Run **zerstört und neu angelegt**, sodass andere Anwendungen, die mit dieser Instanz verbunden sind, ihre Session verlieren.
 
 ### Tests gegen reale PLC ausführen
 
 Mit der Auswahl **Reale PLC** im Vorbereitungsmodus laufen Tests direkt gegen echte S7-1200/S7-1500-Hardware ohne PLCSim:
 
 1. Stellen Sie sicher, dass die Anlage **im sicheren Testzustand** ist — Aktoren freigeschaltet oder verriegelt, keine Produktionslast auf der PLC, Bediener informiert.
-2. Öffnen Sie **Verbindungseinstellungen…**, wählen Sie **S7 Nativ** als Transport, geben Sie die echte IP-Adresse, Port, Rack, Slot und (falls aktiviert) TLS-Benutzer/Passwort ein.
+2. Öffnen Sie **Verbindungseinstellungen…**, wählen Sie **S7 Nativ** als Transport, geben Sie die echte IP-Adresse und (falls die SPS auf einen abweichenden TCP-Port konfiguriert wurde) den Port ein; Benutzer/Passwort nur falls die SPS Authentifizierung erzwingt.
 3. Stellen Sie den Vorbereitungsmodus auf **Reale PLC (kein PLCSim)**. Die PLCSim-Sektion verschwindet.
 4. **OK** klicken, dann **▶ Run**.
 5. Bevor der Runner die PLC kontaktiert, erscheint ein Bestätigungsdialog: *„Tests gegen reale PLC ausführen?"* Lesen Sie die Warnung, setzen Sie den Haken bei **„Verstanden — die Anlage ist im sicheren Testzustand."**, dann klicken Sie **Tests starten**. Der Button bleibt deaktiviert, bis die Checkbox gesetzt ist. Mit **Abbrechen** wird der Lauf ohne Netzwerk-Verkehr verworfen.
@@ -2324,7 +2859,7 @@ Das Passwort wird nie in die Suite-Datei, in Logs oder Einstellungs-Dateien gesc
 
 - **Rechtsklick auf eine Test-Suite** im Test Explorer, um sie umzubenennen oder zu löschen. Beim Löschen wird auch die Testlauf-Historie dieser Suite entfernt.
 - **Rechtsklick auf einen Testfall**, um Name oder Beschreibung zu ändern, ihn zu duplizieren, zu löschen oder in der Liste nach oben bzw. unten zu verschieben.
-- Der **Verbindungseinstellungen…**-Button in der Toolbar erlaubt die Konfiguration von Transport, PLCSim-Instanz (aus der Simulation-Registry wählbar oder frei eingebbar), IP-Adresse, Zyklus-Wartezeit, S7-Comm+-Ziel (IP, Port, Rack, Slot, TLS, Benutzer, Passwort) und Auto-Connect für die aktive Suite. Setzen Sie den Haken bei *Als Default speichern*, damit neu erstellte PLCSim-Suites dieselben Werte übernehmen. Der Dialog hat einen **Verwalten…**-Button in der PLCSim-Sektion, der ohne Verlust der aktuellen Eingaben in den Simulation-Sub-Mode springt, um Instanzen anzulegen oder anzupassen.
+- Der **Verbindungseinstellungen…**-Button in der Toolbar erlaubt die Konfiguration von Transport, PLCSim-Instanz (aus der Simulation-Registry wählbar oder frei eingebbar), IP-Adresse, Zyklus-Wartezeit, S7-Comm+-Ziel (IP, TCP-Port, Benutzer, Passwort) und Auto-Connect für die aktive Suite. Setzen Sie den Haken bei *Als Default speichern*, damit neu erstellte PLCSim-Suites dieselben Werte übernehmen. Der Dialog hat einen **Verwalten…**-Button in der PLCSim-Sektion, der ohne Verlust der aktuellen Eingaben in den Simulation-Sub-Mode springt, um Instanzen anzulegen oder anzupassen.
 - **Verbindungseinstellungen werden pro Suite gespeichert.** Ein Klick auf **OK** schreibt Ihre Auswahl — Transport, Instanzname, IP, S7-Verbindungsdaten und alle weiteren Felder — zurück in die Suite-Datei. Beim nächsten Öffnen zeigt der Dialog genau die zuletzt gewählten Werte, statt auf Defaults zurückzuspringen. Passwörter bleiben weiterhin im Windows Credential Manager — die Suite-Datei speichert nur eine Referenz, nie ein Klartext-Passwort.
 - Vor jedem Lauf prüft der Manager, dass jeder Variablenname in Ihrer Suite exakt dem Baustein-Interface entspricht — inklusive Gross-/Kleinschreibung. Werden Abweichungen gefunden, zeigt ein Warndialog die Korrekturvorschläge an; Sie können den Lauf nach Bestätigung trotzdem starten.
 - Schlägt ein Testfall fehl, wird die betroffene Variable direkt im generierten SCL-Code **rot unterstrichen**, die Fehlermeldung erscheint als Tooltip. **Doppelklicken Sie einen fehlgeschlagenen Testfall** im Ergebnis-Panel, um direkt zu der Variable im Suite-Editor zu springen.
@@ -2446,15 +2981,7 @@ Die Projektbibliothek speichert wiederverwendbare Elemente (Master Copies und Ty
 
 ### MCP-Integration (KI-Assistenten)
 
-Die folgenden MCP-Tools stehen für KI-Assistenten zur Verfügung:
-
-- `library_create_master_copy` - Master Copy aus Baustein erstellen
-- `library_instantiate` - Master Copy in SPS instanziieren
-- `library_delete_item` - Bibliothekselement löschen
-- `library_rename_item` - Bibliothekselement umbenennen
-- `library_export_type` - Typversion exportieren
-- `library_create_folder` - Neuen Ordner erstellen
-- `library_cleanup` - Ungenutzte Typen aufräumen
+Library-Master-Copy- und Typversions-Operationen sind für KI-Assistenten nur über die oben beschriebenen Kontextmenü-Aktionen im Projektbaum verfügbar. Aktuell existieren keine dedizierten `library_*` MCP-Tools — KI-Clients können Bibliotheksinhalte über die Standard-Projekt-Resource (`tia://project`) lesen, aber keine Bibliothekselemente per MCP erstellen, instanziieren, umbenennen, löschen, exportieren oder aufräumen.
 
 ---
 
@@ -2486,7 +3013,13 @@ Lädt die Geräteliste aus dem TIA Portal Projekt neu.
 Exportiert die komplette Hardware-Liste als CSV-Datei für Dokumentation oder Weiterverarbeitung.
 
 **Save Changes:**
-Speichert geänderte PROFINET-Namen und IP-Adressen zurück ins TIA Portal Projekt.
+Speichert geänderte PROFINET-Namen, IP-Adressen und Karten-E/A-Startadressen zurück ins TIA Portal Projekt.
+
+Wenn beim Schließen des Managers oder beim Trennen von TIA Portal noch ungespeicherte Hardware-Änderungen vorhanden sind, fragt der Manager nach: speichern, verwerfen oder abbrechen.
+
+### Karten-Bereich
+
+Bei Auswahl einer Station in der Geräteliste werden deren Karten in einem zweiten Raster darunter geladen. Jede Zeile zeigt eine Karte mit Steckplatz, Name, Bestellnummer sowie den Eingangs- und Ausgangs-Adressbereichen als **Start / Ende / Länge** in Bytes — in denselben Byte-Einheiten wie die TIA Portal Geräteansicht, sodass eine in TIA Portal als `I 160...223` angezeigte Karte hier mit Eingang Start `160`, Eingang Ende `223`, Eingang Länge `64` erscheint. Editierbar sind nur die Spalten „Eingang Start" und „Ausgang Start"; Ende und Länge sind schreibgeschützt und aktualisieren sich automatisch mit dem Start-Wert. Änderungen werden zusammen mit den Stations-Änderungen verfolgt — „Save Changes" schreibt beide in einem Vorgang zurück nach TIA Portal, „Discard" verwirft beide. „Refresh" lädt sowohl die Stationsliste als auch den Karten-Bereich neu, damit Änderungen, die woanders in TIA Portal gemacht wurden, in beiden Ansichten erscheinen.
 
 ### Unterstützte Gerätetypen
 
@@ -2506,7 +3039,66 @@ Speichert geänderte PROFINET-Namen und IP-Adressen zurück ins TIA Portal Proje
 
 ---
 
-## 11a. Im Projekt suchen (Cross-Reference-Suche)
+## 11a. Hardware-Simulation
+
+Der Tab Hardware-Simulation schreibt simulierte Tag-Werte in eine laufende PLCSim-Advanced-Instanz, sodass SPS-Logik gegen wechselnde Eingangswerte getestet werden kann — ohne physische Hardware. Verfügbar in Trial- und Enterprise-Abonnements; in Basic- und Professional-Abonnements zeigt der Tab ein "Lizenz erforderlich"-Overlay.
+
+### Öffnen
+
+Den Tab Hardware-Simulation öffnen Sie über die Activity-Bar links. Der Workspace enthält oben eine Symbolleiste sowie vier andockbare Panels: Geräte-Panel, Override-Liste, Linker-Regeln und Funktions-Editor.
+
+### Mit PLCSim Advanced verbinden
+
+1. Wählen Sie in der Symbolleiste eine PLCSim-Advanced-Instanz aus dem **Instance**-Dropdown.
+2. (Optional) Wählen Sie die zugehörige TIA-Portal-PLC im **TIA-PLC**-Dropdown, damit Topologie-Namen sauber aufgelöst werden.
+3. Klicken Sie **Connect**. Der Status-Text zeigt das hergestellte Transport-Protokoll.
+4. Klicken Sie **Reload topology**, um das Geräte-Panel mit Hardware-Modulen und Tag-Baum aus TIA Portal zu füllen.
+
+### Engine und Tick-Intervall
+
+Die Simulations-Engine führt alle konfigurierten Funktionen in einem periodischen Tick aus. Mit dem **Tick**-Slider in der Symbolleiste stellen Sie ein Intervall zwischen 10 ms und 1000 ms ein. Die Start-, Pause- und Stop-Buttons steuern die Engine; der aktuelle Zustand erscheint im Status-Text.
+
+### Sim-Funktionen (Funktions-Editor)
+
+Rechtsklick im Funktions-Editor-Tab fügt eine neue Funktion hinzu; Doppelklick auf eine Zeile bearbeitet sie. Jede Funktion schreibt auf einen Tag und ist einer der folgenden Typen:
+
+- **Constant** — Schreibt jeden Tick einen festen Wert.
+- **Ramp** — Linearer Verlauf zwischen zwei Werten über eine konfigurierbare Dauer.
+- **Sine** — Sinuswelle mit Amplitude, Offset, Frequenz und Phase.
+- **Square** — Rechteckwelle mit High-Level, Low-Level und Frequenz.
+- **Triangle** — Dreieckwelle mit Amplitude, Offset und Frequenz.
+- **Random** — Zufallswert in einem [min, max]-Bereich pro Tick.
+
+Jeder Funktionstyp wird in der Dropdown-Liste mit einem Wellenform-Symbol dargestellt, sodass die Form auf einen Blick erkennbar ist. Der Dialog füllt den Datentyp aus dem gewählten Tag automatisch aus. Über den Tag-Picker auf der rechten Seite durchsuchen Sie die Topologie und wählen einen Tag aus; der Picker umfasst Hardware-Kanal-Tags, Merker-Tags, System-Tags und Datenbaustein-Variablen.
+
+### Force-Overrides (Override-Liste)
+
+Mit einem Force-Override schreiben Sie einen festen Wert auf einen Tag, unabhängig von den Engine-Funktionen. Rechtsklick im Override-Liste-Tab fügt einen neuen Override hinzu. Ein Override hat Vorrang vor jeder Engine-Funktion, die denselben Tag schreibt; Sie können ihn aktivieren oder deaktivieren, ohne ihn zu entfernen.
+
+### Watch-Liste
+
+Der Watch-List-Tab zeigt die Live-Werte ausgewählter Tags. Über das Augen-Icon im Tag-Baum des Geräte-Panels fügen Sie Tags zur Watch-Liste hinzu. Werte aktualisieren sich bei jedem Engine-Tick, solange die Engine läuft; auch Tag-Tabellen-Tags erhalten Live-Updates auf dieselbe Weise wie Hardware-Kanal-Tags.
+
+### Linker-Regeln
+
+Eine Linker-Regel schreibt den Wert eines Tags auf einen anderen Tag, sobald ein boolescher Ausdruck wahr ist. Öffnen Sie den Linker-Regeln-Tab, um Regeln hinzuzufügen oder zu bearbeiten. Der Tag-Picker umfasst IO-Bereich-, Merker-, System- und Datenbaustein-Variablen. Der Regel-Editor bietet zwei Tabs:
+
+- **Guided builder** — Bis zu acht Bedingungen mit Operator, Wert und AND/OR-Verknüpfungen. Wählen Sie Quell-Tag, Ziel-Tag und Zuweisungswert.
+- **Expression text** — Freie Ausdrucks-Syntax `WHEN <Bedingungen> THEN <Ziel> := <Wert>` mit IEC-Operatoren (`=`, `<>`, `<`, `>`, `<=`, `>=`).
+
+Beide Tabs bleiben synchron — Edits in einem aktualisieren den anderen, sobald der Ausdruck sauber parst.
+
+### F-Safety-Auto-Acknowledge
+
+PLCSim Advanced verlangt nach jedem PLC-Neustart ein manuelles Acknowledge für geforcte F-Kanäle. Mit geladener Hardware-Topologie klicken Sie **Acknowledge F-tags** in der Geräte-Panel-Symbolleiste, um alle F-Kanäle in einem Klick zu acknowledgen; **Revoke** macht das rückgängig. Der Acknowledge-Zustand wird pro PLC gespeichert.
+
+### Verbindung trennen
+
+Klicken Sie **Disconnect** in der Symbolleiste, um die PLCSim-Advanced-Session freizugeben und die Engine zu stoppen. Watch-Liste, Override-Liste, Linker-Regeln und Funktions-Editor-Inhalte bleiben über Reconnects erhalten.
+
+---
+
+## 11b. Im Projekt suchen (Cross-Reference-Suche)
 
 ### Was sie tut
 
@@ -2649,28 +3241,33 @@ Alle Einstellungen werden automatisch gespeichert und bleiben nach dem Neustart 
 
 ## 13. Einstellungen
 
+Ein einziges Einstellungs-Fenster ersetzt die bisherigen separaten Dialoge für Anwendungs-Einstellungen, Import/Export, Git-Preferences und AI Chat. Das Fenster hat oben eine Suchleiste, links eine Kategorien-Baumstruktur und rechts die zugehörigen Einstellungen.
+
 ### Öffnen
 
-Wählen Sie **View → Settings** aus der Menüleiste.
+- Menüleiste: **View → Settings** (oder `Strg+,`).
+- AI-Chat-Eingabeleiste: Zahnrad-Symbol → öffnet das Fenster direkt auf der AI-Chat-Sektion.
+- Import/Export-Tab: Zahnrad-Symbol → öffnet auf der Import/Export-Sektion.
+- Git-Repository-Panel: Einstellungs-Zahnrad → öffnet auf der Git-Sektion.
 
-### Verfügbare Einstellungen
+Änderungen werden automatisch gespeichert — kein Save- oder Cancel-Button. Ein farbiger Akzent-Balken am linken Rand einer Sektion zeigt an, dass darin etwas vom Wert abweicht, der beim Öffnen des Fensters geladen wurde.
 
-| Einstellung | Beschreibung |
-|-------------|--------------|
-| Working Directory | Standard-Exportordner für Find Unused Blocks |
-| Log Path | Pfad für Log-Dateien |
-| Language | Sprache der Benutzeroberfläche (DE, EN, FR, IT) |
-| Theme Mode | Dunkel- oder Hell-Modus |
-| Akzentfarbe | Cyan, Blau, Grün, Bernstein oder Teal |
-| Debug Logging | Aktiviert erweiterte Protokollierung |
-| Auf Updates prüfen | Automatisch beim Start nach Updates suchen |
-| Source-Ordner erstellen | Einen Source-Ordner-Wrapper in Exporte einfügen |
+### Kategorien
 
-### Ordnernamen-Anpassung
+| Kategorie | Was darin liegt |
+|-----------|-----------------|
+| General | UI-Sprache, Theme (Dark-, Light- oder Midnight-Modus + Akzentfarbe), Auf-Updates-prüfen beim Start. Midnight ist eine echte Schwarz-Variante, optimiert für OLED-Displays. |
+| Files & Folders | Log-Verzeichnis, Working-Folder für Import/Export, Ordnernamen-Anpassung, "Create Source folder"-Schalter. |
+| Import/Export | Import-Optionen (Strukturänderungen ignorieren, fehlende Referenzen ignorieren, fault-tolerant), Export-Optionen pro Typ (DBs / UDTs / Tags / Technologieobjekte / HMI), zusätzlicher S7-DCL-Export (V20+), Fingerprint-Cache, Version-Control-Normalisierung. |
+| Git | Datumsformat, Default-Klon-Verzeichnis, History-Limits, Erscheinungsbild (Fonts), Git User/Email/CRLF/Fetch, GPG-Signierung, Shell- und externe Diff/Merge-Integration, KI-Commit-Message-Prompt. |
+| AI Chat | Agents, Chat-Tools, Approvals, Instructions, Templates, Providers, MCP-Servers, Memory, Geplante Aufgaben, Dictation, Workspace, Storage. |
+| Compare | Diff-Editor- und Minimap-Farben, Deckkraft und Minimap-Breite. |
+| Editor | C#-Sprachfunktionen (standardmässig aus — mitgelieferter Sprachserver, Neustart erforderlich). |
+| Logging | Debug-Logging-Schalter. |
 
-Passen Sie die Ordnernamen für Export-Pfade und Baumansicht an:
+### Ordnernamen-Anpassung (unter Files & Folders → Ordnernamen)
 
-| TIA Portal Name | Standard Export-Name | Konfigurierbar |
+| TIA-Portal-Name | Standard-Export-Name | Konfigurierbar |
 |-----------------|----------------------|----------------|
 | (Gerät) | Source | ✓ |
 | Programmbausteine | Blocks | ✓ |
@@ -2679,21 +3276,88 @@ Passen Sie die Ordnernamen für Export-Pfade und Baumansicht an:
 | Technologieobjekte | Technology Objects | ✓ |
 | Software Units | Software Units | ✓ |
 
-### Source-Ordner Option
-
-Die **"Create Source folder"** Checkbox steuert, ob Exporte einen Source-Ordner-Wrapper enthalten:
+Die "Create Source folder"-Checkbox steuert, ob Exporte einen Source-Wrapper enthalten:
 
 | Einstellung | Export-Pfad |
 |-------------|-------------|
 | ✓ Aktiviert | `WorkingDir/Source/PLC_1/Blocks/...` |
 | ☐ Deaktiviert | `WorkingDir/PLC_1/Blocks/...` |
 
-Diese Einstellung beeinflusst auch die Projektbaumstruktur und die Import-Pfaderkennung.
+Diese Einstellung beeinflusst auch die Projekt-Baumstruktur und die Import-Pfaderkennung.
 
+### File Explorer — Watcher-Excludes (unter Files & Folders → File Explorer)
+
+Der File-Explorer-Baum überspringt beim Einlesen des geöffneten Working-Folders alle Ordner, die auf die **Watcher-Excludes**-Liste passen. Vorgaben: `.git`, `.vs`, `.idea`, `bin`, `obj`, `node_modules`, `.claude`, `.worktrees`.
+
+Die Liste lässt sich bearbeiten, um:
+
+- **Zusätzliche Ordner auszublenden** — pro Zeile ein Ordnername (z. B. `dist`, `coverage`, `.next`).
+- **File-Watcher-Last zu reduzieren** — grosse Build-Output-Ordner (`bin/obj`) können den Betriebssystem-Watcher-Puffer überfüllen; werden sie ausgeschlossen, entfällt unnötige Scan-Arbeit bei jedem Build.
+- **Die Standardliste wiederherzustellen** — Textfeld leeren; beim nächsten Refresh greifen wieder die Vorgaben.
+
+Änderungen werden wirksam, sobald der Working-Folder neu geöffnet oder aktualisiert wird.
+
+### Editor — Rechtsklick-Kontextmenü
+
+Ein Rechtsklick innerhalb eines Editor-Tabs öffnet ein Menü mit fünf Gruppen. Einträge, die an der aktuellen Cursor-Position oder Auswahl nicht anwendbar sind, werden ausgeblendet — die Menü-Länge folgt also den verfügbaren Aktionen:
+
+- **KI-Unterstützung** — *Inline-Chat öffnen* (Strg+I), *Markdown-Vorschau*, *Datei zu Chat hinzufügen*, *Erklären* (auswahlabhängig), *Überprüfen* (auswahlabhängig).
+- **Bearbeiten** — *Alle Vorkommen ändern* (Strg+F2, benennt nach einer kurzen Eingabe jedes Vorkommen des Bezeichners am Cursor im aktuellen Dokument um), *Symbol umbenennen* (F2, sprachserver-basierte Umbenennung, die das Symbol über Dateien hinweg im Workspace verfolgt; erscheint nur, wenn der aktive Server die Fähigkeit anbietet), *Dokument formatieren* (Shift+Alt+F) und *Auswahl formatieren* (Strg+K Strg+F). Wenn ein Sprachserver mit Formatierungs-Unterstützung gebunden ist (z. B. C# über den mitgelieferten Server), nutzt der Editor dessen Formatter; SCL fällt auf den eingebauten Formatter zurück. *Auswahl formatieren* erscheint nur, wenn der aktive Server Bereichs-Formatierung anbietet und der Editor eine Auswahl hat.
+- **Navigation** — *Gehe zu Definition* (F12) und *Verweise suchen* (LSP-basiert; beide erscheinen, sobald der Sprachserver der geöffneten Datei die Fähigkeit meldet).
+- **Git** — *Dateiverlauf anzeigen* (Alt+H) wechselt die Activity-Bar zu Version Control, öffnet das Repository-Tab der Datei und listet jeden Revision-Eintrag, der die Datei berührt hat. Dateien ausserhalb eines Git-Repositorys zeigen stattdessen einen kurzen Status-Hinweis.
+- **Zwischenablage** — *Ausschneiden* (Strg+X), *Kopieren* (Strg+C), *Einfügen* (Strg+V), *Alles auswählen* (Strg+A).
+
+Tastatur-Shortcuts funktionieren weiterhin auch ohne Menü-Öffnung — die Einträge machen die gleichen Aktionen nur sichtbarer.
+
+### Editor — C#-Sprachfunktionen
+
+Unter **Einstellungen → Editor** aktiviert der Schalter **C#-Sprachfunktionen aktivieren** einen mitgelieferten Sprachserver für `.cs`-Dateien, die im File Explorer geöffnet werden. Mit eingeschaltetem Schalter:
+
+- Werden Compiler-Fehler und Warnungen direkt während des Tippens mit Wellenlinien unterstrichen.
+- Erscheint jede Diagnose über alle offenen `.cs`-Dateien hinweg im neuen Tab **Probleme** am unteren Rand des Arbeitsbereichs (neben Log Output, Terminal, Git Output). Ein Klick auf eine Zeile springt an die Stelle im Editor.
+- Zeigt eine Banner-Zeile über der Problems-Liste den Status des Sprachservers (startet, bereit, startet neu, deaktiviert).
+- Öffnet beim Verweilen mit der Maus über einem Symbol einen Tooltip mit Typ, Signatur und XML-Kommentaren.
+- Springt mit **F12** oder **Strg+Klick** zur Definition eines Symbols; bei mehreren Treffern erscheint eine kleine Auswahl.
+- Listet jede Aufruf-Stelle eines Symbols auf, wenn du das Symbol rechtsklickst und **Verweise suchen** wählst. Die Treffer erscheinen im neuen Tab **References** am unteren Rand des Arbeitsbereichs (Datei, Zeile, Vorschau). Ein Klick auf eine Zeile springt an die Stelle. Der Menü-Eintrag ist ausgeblendet, solange keine Sprachsitzung für die aktuelle Datei verhandelt wurde.
+- Blendet beim Tippen von `(` oder `,` innerhalb eines Aufrufs ein kleines Popup mit der Methoden-Signatur ein, in dem der aktive Parameter hervorgehoben ist. **Escape**, ein Klick ausserhalb oder ein Caret-Move aus dem Aufruf schliesst es.
+- Bietet während des Tippens eine Vervollständigungsliste mit Member- und Symbol-Vorschlägen. Die Liste öffnet sich ab dem zweiten Zeichen, sortiert nach Relevanz und dedupliziert nach Name. Pfeiltasten navigieren, **Eingabe** oder **Tab** fügt den hervorgehobenen Eintrag ein. SCL, AWL und andere Siemens-Baustein-Formate behalten ihre bestehende Schlüsselwort- und Wortvervollständigung; nur `.cs`-Dateien nutzen die Vorschläge des Sprachservers.
+- Bietet Quick-Fixes für Diagnosen unter dem Caret an. Eine kleine Glühbirne erscheint im Editor-Rand auf der Caret-Zeile, sobald Fixes oder Refaktorierungen verfügbar sind; ein Klick auf die Glühbirne oder **Strg+.** öffnet das Aktionsmenü. Die ausgewählte Aktion wird als einzelner rückgängig-machbarer Edit angewendet, das Ergebnis erscheint in der Statuszeile (Anwenden… → Aktion angewendet / Keine Quick-Fixes verfügbar / Aktion konnte nicht angewendet werden / Details konnten nicht geladen werden).
+- Benennt ein Symbol und alle Verweise darauf über den Workspace hinweg per Sprachserver um. Cursor auf den Bezeichner setzen und **F2** drücken (oder Rechtsklick → **Symbol umbenennen**); im Inline-Overlay den neuen Namen tippen und mit **Eingabe** anwenden oder mit **Escape** abbrechen. Die Statuszeile meldet Umbenennen… → Umbenannt / Dokument hat sich während des Umbenennens geändert / Ungültiger Bezeichner / Umbenennen fehlgeschlagen. Wird das Dokument während des laufenden Vorgangs geändert, wird die Änderung verworfen und der Editor behält seinen Zustand.
+- Formatiert das gesamte Dokument (**Shift+Alt+F**) oder die aktuelle Auswahl (**Strg+K Strg+F**) über den Sprachserver. Die Statuszeile meldet Formatiere… → Formatiert / Dokument ist bereits formatiert / Formatieren fehlgeschlagen / Dokument hat sich während der Formatierung geändert. Wenn kein Sprachserver gebunden ist oder dieser keine Formatierung anbietet, behält SCL seinen eingebauten Formatter und andere Sprachen zeigen einen kurzen Status-Hinweis.
+- Öffnet decompilierte Metadaten als schreibgeschütztes Tab, wenn **F12** auf ein Symbol einer externen Bibliothek oder einer generierten Quelle landet. Die Statuszeile meldet Externe Quelle wird geladen… → ein neuer Tab öffnet sich mit dem synthetisierten Quellcode (BCL-Typen, NuGet-Assemblies, Source-Generator-Output). Der Puffer kann nicht bearbeitet werden; **F12** im Puffer löst weitere Symbole transitiv auf. URI-Schemata, die der Sprachserver nicht unterstützt, zeigen weiterhin einen kurzen Hinweis.
+- Aktualisiert die Probleme-Liste auf Knopfdruck: eine kleine Aktualisieren-Schaltfläche in der Toolbar der Probleme-Anzeige holt die Diagnosen für jede offene `.cs`-Datei in einer Runde neu. Der Sprachserver fordert die Aktualisierung zudem automatisch an, wenn sich Pakete, Analyzer oder Projektstand ändern, sodass die Probleme-Liste ohne Eingreifen aktuell bleibt.
+
+Der Schalter ist **standardmässig deaktiviert**, weil der Sprachserver beim Indexieren grosser Lösungen zwischen 1 GB und 10 GB Arbeitsspeicher belegen kann. Aktiviere ihn, wenn du regelmässig C#-Dateien im Manager bearbeitest.
+
+**Neustart erforderlich.** Die Sprachserver-Registrierung wird beim Programmstart entschieden, die Änderung greift also erst beim nächsten Start der Anwendung.
+
+#### Eine .NET-Solution für volle IntelliSense laden
+
+Nur den Schalter zu aktivieren weckt den Sprachserver für Einzeldatei-Funktionen — du bekommst Inline-IDE-Hinweise (z.B. *Using-Direktive ist unnötig*), Syntax-Hervorhebung und Vervollständigung, aber dateiübergreifende Funktionen bleiben aus: keine `CS0246` / `CS0103`-Compiler-Fehler, kein F12 über Dateien hinweg, keine Method-vs-Variable-Unterscheidung in der Färbung. Um diese zu aktivieren, muss der Sprachserver eine `.sln` (oder `.csproj`) laden, damit er einen Projektgraph bauen kann.
+
+Unter **Einstellungen → Editor → C#-Sprachfunktionen** steuern zwei zusätzliche Bedienelemente das Laden der Solution:
+
+- **Solution automatisch laden** — wenn aktiv, sucht der Sprachserver ausgehend von der geöffneten `.cs`-Datei aufwärts nach der nächsten `.sln`/`.slnx` (mit Fallback auf `.csproj`) und lädt diese. **Standardmässig deaktiviert**, weil der Sprachserver beim Laden einer Solution Analyzer-Code aus dem Projekt ausführen kann; nur für vertrauenswürdige Solutions aktivieren. Nach dem Umschalten muss die Anwendung neu gestartet werden.
+- **Expliziter Solution-Pfad** — optionaler absoluter Pfad zu einer `.sln`-, `.slnx`- oder `.csproj`-Datei. Wenn gesetzt, wird diese Datei unabhängig vom Auto-Load-Schalter geladen, sodass du eine einzelne vertrauenswürdige Solution gezielt freigeben kannst, ohne die Aufwärtssuche generell zu erlauben. Per **Durchsuchen…**-Schaltfläche eine Datei auswählen oder leer lassen, um auf die Aufwärtssuche zurückzufallen.
+
+Sobald ein Pfad aktiv ist und ein Projekt geladen wird, zeigt der Editor kurz den Status *Projektinitialisierung läuft…* in der Probleme-Anzeige, bis die Design-Time-Builds abgeschlossen sind, danach wechselt er auf *Bereit*. Dateiübergreifende Diagnosen, Verweise suchen und Metadata-as-Source funktionieren dann wie oben beschrieben.
+
+C#-Dateien behalten ihre Syntax-Hervorhebung, Vervollständigung und übliche Editor-Funktionalität unabhängig von diesen Einstellungen — nur die Live-Diagnose und die Problems-Anzeige hängen am Schalter. SCL-, AWL-, UDT- und andere Siemens-Baustein-Formate sind nicht betroffen; sie nutzen den eigenen Editor-Stack des Managers.
+
+### Suche
+
+In das Suchfeld eintippen, um den Kategorien-Baum nach Sektion-Namen oder einem Stichwort aus den Such-Tags einer Sektion zu filtern. Übergeordnete Kategorien bleiben sichtbar, solange mindestens eine ihrer Unter-Kategorien matched.
+
+<!-- feature:eplan start -->
+### Lizenz
+
+Lizenz-Aktivierung, Trial-Status, Hardware-ID und das EPLAN-Add-on werden weiterhin in einem eigenen, fokussierten Fenster verwaltet — erreichbar über die Startup-Abfrage, das Trial-Banner oder den **Manage License**-Einstieg.
+
+<!-- feature:eplan end -->
 ### Log-Dateien
 
-Bei aktiviertem Debug Logging werden detaillierte Logs erstellt:
-- Speicherort: Konfigurierbar in Einstellungen
+Bei aktiviertem Debug-Logging werden detaillierte Logs erstellt:
+- Speicherort: konfigurierbar unter Files & Folders → Log Directory.
 - Format: `TIA_Openness_Log_YYYYMMDD_HHMMSS.txt`
 
 ---
@@ -2713,7 +3377,10 @@ Bei aktiviertem Debug Logging werden detaillierte Logs erstellt:
 | Safety Blocks | Nein | Ja | Ja |
 | Protection Profiles | Nein | Ja | Ja |
 | MCP Server | Nein | Ja | Ja |
-| Multi-User | Nein | Nein | Ja |
+| KI-Chat | Nein | Ja | Ja |
+| Projektbibliothek | Nein | Ja | Ja |
+| Passwort-Tresor | Nein | Nein | Ja |
+| Unit Testing | Nein | Nein | Ja |
 
 ### Testphase
 
@@ -2735,7 +3402,7 @@ Testphase starten:
 
 **Abrechnung:** Sie können im Lizenz-Dialog zwischen monatlicher und jährlicher Abrechnung wechseln. Jahresabos sparen ca. 17%.
 
-**Wichtig:** Die Software validiert die Lizenz alle 7 Tage online. Bei fehlender Internetverbindung kann die Software **bis zu 14 Tage offline** genutzt werden. Nach 14 Tagen ist eine erneute Online-Validierung erforderlich.
+**Wichtig:** Die Software erfordert **mindestens alle 14 Tage** eine Online-Validierung der Lizenz. Bei fehlender Internetverbindung kann die Software **bis zu 14 Tage offline** genutzt werden. Nach 14 Tagen ist eine erneute Online-Validierung erforderlich.
 
 ### Hardware-Bindung
 
@@ -2743,6 +3410,33 @@ Jede Lizenz ist an eine eindeutige Hardware-ID gebunden, die generiert wird aus:
 - CPU-ID (Prozessor-Seriennummer)
 - Mainboard-Seriennummer
 - Primäre MAC-Adresse
+
+### Maschinen-Wechsel-Limit
+
+Die Lizenz hängt am **Konto**, nicht an einer einzelnen Maschine — Sie können sie ohne Support-Kontakt zwischen Rechnern umziehen. Die Anwendung erzwingt ein gleitendes Limit von **bis zu 3 verschiedenen Maschinen pro 30-Tage-Fenster**: jede Anmeldung auf einer bisher unbekannten Hardware-ID zählt als ein Wechsel. Die vierte unterschiedliche Maschine im gleichen 30-Tage-Fenster wird bei der Anmeldung abgelehnt. Das Fenster gleitet — Wechsel, die älter als 30 Tage sind, zählen nicht mehr. Bei der Anmeldung auf einer neuen Maschine wird die Bindung der vorherigen automatisch freigegeben.
+
+Die aktuelle Nutzung ist im Lizenz-Fenster sichtbar (siehe unten). Bei 3/3 erscheint ein Banner im Fenster mit Hinweis, wann der nächste Slot wieder frei wird.
+
+### Lizenz-Fenster
+
+Öffnen über **View → Einstellungen → Lizenz verwalten** (oder über den Lizenz-Eintrag in der Hauptsymbolleiste). Das Lizenz-Fenster vereint zwei Bereiche an einer Stelle:
+
+- **Konto & Lizenz** (oben, sichtbar wenn angemeldet) — die gleichen Zeilen, die zuvor in einem separaten Einstellungs-Tab lebten. Aktive Subskription prüfen und sich von dieser Maschine abmelden.
+- **Pläne & Aktivierung** (unten, immer sichtbar) — die bestehende Hardware-ID-Anzeige, das Aktivierungscode-Feld, die Monats-/Jahres-Preiskarten und der Aktiv-Tarif-Indikator.
+
+| Zeile | Bedeutung |
+|-------|-----------|
+| **Angemeldet als** | Die zur Anmeldung verwendete E-Mail-Adresse. |
+| **Tier** | Aktive Stufe — Basic / Trial / Professional / Enterprise. |
+| **Status** | Aktiv, Abgelaufen oder Validierung ausstehend. |
+| **Läuft ab am** | Ende der aktuellen Abrechnungsperiode (Trial: Ende des 30-Tage-Fensters). |
+| **Hardware-ID** | Die aus dieser Maschine abgeleitete 16-stellige ID. |
+| **Gebunden seit** | Wann diese Maschine die Lizenz erstmals aktiviert hat. |
+| **Ausstellungs-Datum** | Wann die Lizenz ursprünglich ausgestellt wurde. |
+| **Maschinen-Wechsel** | Wechsel im letzten 30-Tage-Fenster, z. B. *2 von 3 Maschinen in 30 Tagen genutzt*. |
+| **Sign out** | Gibt die Bindung dieser Maschine frei. Ein Bestätigungsdialog ("Abmelden und diese Maschine freigeben?") erscheint zuerst — **Sign out** bestätigt, **Cancel** bricht ab. Nach dem Abmelden öffnet sich der Sign-In-Dialog erneut; ein Schliessen dieses Dialogs beendet die Anwendung. |
+| **Auf Webseite verwalten** | Öffnet die Konto-Seite im Browser für Subscription-Änderungen, Rechnungen und Lizenz-Transfer. |
+| **Manuell migrieren** | Erscheint nur, wenn eine lokale Trial-Signatur ohne gebundenes Konto existiert oder eine automatische Migration einen Fehler gemeldet hat. Öffnet einen Dialog für die Eingabe der ursprünglichen 16-Zeichen-Hardware-ID, unter der die Testversion registriert wurde. Recovery für DPAPI-Korruption oder Hardware-Wechsel, bei denen die Legacy-Hardware-ID nicht mehr automatisch erkannt werden kann. |
 
 ### Abonnement verwalten
 
@@ -2771,10 +3465,59 @@ Zwei Ereignisse können hier auftauchen:
 
 Beide Hinweise sind informell. Ihre Lizenz bleibt aktiv, während sie eingeblendet sind. Der Balken verschwindet automatisch, sobald der Auslöser nicht mehr zutrifft.
 
+### Trial-Migrations-Banner
+
+Findet die App eine bestehende Testphase auf dieser Maschine, ohne dass ein Konto angemeldet ist, erscheint oben im Fenster ein gelber Banner mit der Bitte, sich vor Ablauf der Frist anzumelden. Klicken Sie auf **Sign in** im Banner — der Anmelde-Dialog öffnet sich. Nach erfolgreicher Anmeldung wird die Testphase auf Ihr Konto übertragen, und der Banner wird durch eine "Trial migriert"-Bestätigung ersetzt. Die Migration läuft automatisch — Sie müssen ausser der Anmeldung nichts tun.
+
+Schlägt die Migration fehl (Server-Fehler, abgelaufenes Fenster, Trial gehört bereits einem anderen Konto), ersetzt ein roter Banner den ursprünglichen mit der Fehlerursache. Starten Sie die Anwendung neu und versuchen Sie es erneut, oder kontaktieren Sie den Support bei wiederkehrendem Fehler.
+
+Kann die automatische Migration die Legacy-Hardware-ID nicht finden (z. B. nach Plattenwechsel oder Wiederherstellung eines Windows-Backups), öffnen Sie **View → Einstellungen → Lizenz** und klicken Sie auf **Manuell migrieren**. Geben Sie die 16-stellige Hardware-ID aus einer Sicherung, einer Support-E-Mail oder einem alten Registry-Export ein und bestätigen Sie — der manuelle Pfad benutzt dieselbe Trial-Migrations-Pipeline wie der automatische Banner, sodass Fehler unmittelbar unterhalb des Buttons in derselben Diagnose-Sprache erscheinen.
+
+### Account-Seite (Browser)
+
+Klicken Sie im Lizenz-Fenster auf **Auf Webseite verwalten** (oder rufen Sie nach der Anmeldung `https://tiaopenessmanager.ch/profile` auf), um Ihre browserbasierte Account-Seite zu öffnen. Die Seite bietet vier Operationen über das hinaus, was das Desktop-Lizenz-Fenster zeigt:
+
+- **Profil** — E-Mail, Konto-Erstellungs-Datum und letzte Anmeldung.
+- **Abonnement verwalten** — öffnet das Stripe-Kunden-Portal in einem neuen Tab für Zahlungsmethode, Rechnungen oder Kündigung.
+- **Diese Maschine freigeben** — gibt die aktuelle Maschinen-Bindung frei, sodass Sie ohne Warten auf das 30-Tage-Fenster auf einem anderen Computer aktivieren können. Ein Bestätigungsdialog erscheint vor der Freigabe. Die nächste Anmeldung auf einer neuen Maschine wird zur neuen aktiven Bindung.
+- **Konto löschen** (Gefahren-Zone) — löscht Ihr Konto endgültig, widerruft alle angemeldeten Sitzungen und gibt die Lizenz frei. Der Dialog verlangt die Eingabe von **DELETE** in Grossbuchstaben zur Bestätigung. Nicht umkehrbar.
+
+Die Seite ist nur über HTTPS erreichbar und erfordert eine aktive Anmeldung. Nach dem Abmelden (entweder aus der Desktop-App oder von der Seite selbst) leitet die Seite Sie beim nächsten Besuch zur Anmeldung um.
+
 **Nicht vertrauenswürdige Umgebung (Basic-Modus)**
 
 Wenn ein Debugger an den App-Prozess angehängt ist oder die Haupt-EXE nicht mit dem erwarteten Certum-Zertifikat signiert ist, schaltet die App still auf den Basic-Tier. Das ist eine Tiefen-Absicherung gegen Manipulation. Release-Builds haben immer die korrekte Signatur — erscheint diese Degradierung bei einer Standard-Installation, wurde die Binary verändert. Installieren Sie dann neu von https://www.tiaopenessmanager.ch.
 
+### Unternehmenslizenz verwalten
+
+Volume Pro und Volume Enterprise sind Mehrplatz-Subscriptions für Unternehmen. Der Owner (die Person, die die Subscription gekauft hat) verwaltet die Sitze über das Web-Dashboard, Mitarbeiter melden sich mit ihrer eigenen E-Mail an und nutzen jeweils einen Sitz.
+
+**Owner — Subscription anlegen.** Gehen Sie auf https://www.tiaopenessmanager.ch und wählen Sie **Volume Professional** oder **Volume Enterprise** mit der gewünschten Sitzanzahl (2-200). Nach dem Stripe-Checkout erhalten Sie zwei E-Mails: einen Magic-Login-Code für die Owner-Anmeldung in der Desktop-App und eine Org-Bestätigung mit Org-ID + Owner-Rolle.
+
+**Owner — Mitarbeiter einladen.** Öffnen Sie nach Anmeldung in der Desktop-App den Lizenz-Dialog (**View → Einstellungen → Lizenz verwalten**) und klicken Sie auf **Auf Webseite verwalten**. Das Web-Dashboard zeigt belegte und freie Sitze. Tragen Sie die E-Mail eines Mitarbeiters ein und klicken Sie auf **Einladen** — der Mitarbeiter erhält eine E-Mail mit einem Magic-Link, der 7 Tage gültig ist.
+
+**Mitarbeiter — Einladung annehmen.** Klick auf den Magic-Link öffnet die Web-Seite mit dem Org-Namen und einem **Annehmen**-Button. Nach Annahme wird der Account an die Org gebunden. In der Desktop-App melden Sie sich mit derselben E-Mail an — der Lizenz-Dialog zeigt die Mitgliedschaft mit Rolle "Mitglied" und einem Hinweis, dass die Verwaltung beim Owner liegt.
+
+**Owner — Sitz freigeben.** Im Web-Dashboard klicken Sie auf **Sitz freigeben** neben der Mitarbeiter-Zeile. Der Sitz wird sofort frei und kann erneut eingeladen werden. Der ehemalige Mitglieds-Account fällt auf den Basic-Tier zurück (sofern keine eigene Solo-Subscription vorhanden ist).
+
+**Sitzanzahl ändern.** Im Stripe-Kunden-Portal können Sie `quantity` jederzeit erhöhen — die zusätzlichen Sitze stehen sofort zum Einladen bereit. Reduzieren ist nur möglich, wenn entsprechend viele Sitze frei sind; geben Sie ggf. erst Sitze frei, bevor Sie die Sitzanzahl im Stripe-Portal senken.
+
+<!-- feature:eplan start -->
+**Add-ons im Volume-Modell.** Das EPLAN-Add-on kann Org-weit gebucht werden — alle Mitglieder erben den Zugang automatisch beim nächsten Login. Owner sieht das im Lizenz-Dialog unter Add-ons → EPLAN als "Org-aktiviert"; Mitglieder sehen "Aktiviert (Org)" ohne eigenen Verwalten-Button.
+
+### EPLAN-Add-on aktivieren
+
+Das EPLAN-Add-on ist eine separat lizenzierbare Erweiterung für die Anbindung an EPLAN Electric P8. Verfügbar für Pro, Enterprise, Trial und Volume-Subscriptions.
+
+**Solo-Aktivierung.** Im Lizenz-Dialog → Abschnitt **Add-ons** → Karte **EPLAN** → **Erwerben**-Button öffnet den Stripe-Checkout für CHF 19.99/Monat oder CHF 199.99/Jahr (Jahresabo spart 17 %). Nach Zahlung schaltet die Karte auf "Aktiviert"; einmal abmelden + anmelden (oder **Aktualisieren** im Lizenz-Dialog) lädt die neue Berechtigung — der EPLAN-Tab erscheint links in der Aktivitätsleiste.
+
+**Volume-Aktivierung (Owner).** Im Web-Dashboard → **Add-ons → EPLAN → Hinzufügen** öffnet einen Stripe-Checkout für die org-weite Add-on-Subscription mit `quantity` passend zur Sitzanzahl. Nach Zahlung erbt jeder Mitarbeiter beim nächsten Validate-Cycle den EPLAN-Zugang automatisch.
+
+**Trial-Konten.** Während der 30-tägigen Testphase ist das EPLAN-Add-on automatisch enthalten — keine separate Aktivierung nötig.
+
+**Add-on kündigen.** Solo: über Stripe-Portal die Add-on-Subscription beenden — der EPLAN-Tab verschwindet beim nächsten Validate-Cycle. Volume: Owner kündigt im Web-Dashboard, alle Mitarbeiter verlieren den Zugang gleichzeitig.
+
+<!-- feature:eplan end -->
 ---
 
 ## 14a. Git-Client
@@ -3029,6 +3772,71 @@ $0 * 0.5 + 1.25         # Verstärkung + Offset
 
 Über **CSV exportieren** wird die Aufzeichnung auf die Festplatte geschrieben. Jedes Signal (Quell- wie berechnetes) wird zu einer Spalte, jedes Sample zu einer Zeile, mit dem Zeitstempel in der ersten Spalte.
 
+<!-- feature:eplan start -->
+---
+
+## 14c. EPLAN-Integration (Add-on)
+
+Die EPLAN-Integration ist ein optionales, separat lizenziertes Add-on. Sie verbindet die Anwendung mit einer lokalen Installation von **EPLAN Electric P8** (2025.0.3 oder kompatibel), so dass Sie EPLAN-Projekte durchsuchen und exportieren können, ohne den Manager zu verlassen.
+
+### Voraussetzungen
+
+- Eine gültige EPLAN-Electric-P8-Installation auf demselben Rechner.
+- Eine aktive EPLAN-License-Manager-Sitzung (ELM) — das Add-on hält keine eigene EPLAN-Lizenz, es nutzt Ihre bestehende.
+- Das EPLAN-Add-on auf Ihrer Manager-Lizenz freigeschaltet. Das Add-on wird vom Lizenz-Backend gewährt und erscheint unter **Lizenz → Add-ons** als grünes "Aktiviert"-Badge. Ohne Add-on bleibt der EPLAN-Tab ausgeblendet.
+
+### Aktivierung
+
+Das Add-on wird separat erworben. Nach Freischaltung melden Sie sich einmal ab und wieder an (oder lösen über die Lizenzseite eine erneute Validierung aus), damit die neue Berechtigung übernommen wird. Die Karte unter **Lizenz → Add-ons → EPLAN** wechselt von "Nicht aktiviert" auf "Aktiviert", und der EPLAN-Tab erscheint links in der Aktivitätsleiste.
+
+### Projekt öffnen
+
+Klicken Sie auf den EPLAN-Tab. Der Arbeitsbereich zeigt Ihre zuletzt geöffneten EPLAN-Projekte (neueste zuerst) und einen **EPLAN-Projekt öffnen…**-Button. Wählen Sie eine `.elk`-Datei über den Dateidialog oder klicken Sie auf einen Eintrag in der Liste — der Manager startet beim ersten Mal einen versteckten EPLAN-Bridge-Prozess und öffnet anschliessend das Projekt.
+
+Falls mehr als eine EPLAN-Variante installiert ist (Electric P8, ProPanel, Preplanning …), erscheint ein einmaliger Variantenwähler. Die Auswahl wird zwischen Sitzungen gemerkt; pro Anwendungssitzung läuft aufgrund der ELM-Lizenz-Beschränkung nur eine Bridge / eine Variante.
+
+Die Bridge-Statusanzeige im Header des Arbeitsbereichs zeigt den aktuellen Zustand:
+
+- **Bridge verbunden** — Bridge läuft und ein Projekt ist geöffnet.
+- **Bridge wird verbunden …** — Bridge startet oder verbindet sich neu.
+- **Bridge getrennt** — keine Bridge läuft.
+
+Stürzt die Bridge mitten in der Sitzung ab, erscheint ein Hinweisbanner mit einem **Neu verbinden**-Button. Neu verbinden startet die Bridge und öffnet automatisch das zuvor offene Projekt erneut.
+
+### Projekt durchsuchen
+
+Im rechten Bereich liegt der **Projekt-Explorer**. Er gruppiert den Projektinhalt in zwei Oberkategorien:
+
+- **Seiten** — alle Schaltplanseiten des Projekts mit Bezeichner, Dokumenttyp und Beschreibung.
+- **Funktionen** — die aus den Schaltplänen extrahierten Hauptfunktionen mit Tag (z. B. `=A1+K2-K1`), dem Bezeichner der zugehörigen Seite und ggf. einer Artikelnummer.
+
+Über das Filterfeld am oberen Rand filtern Sie beide Kategorien per Teilstring-Suche über alle sichtbaren Spalten. Die Kategorien-Header aktualisieren die Trefferanzahl live.
+
+### Export
+
+Der Toolbar-Button **Export…** öffnet einen Dialog mit zwei Formaten:
+
+- **PXF (EPLAN-Austausch)** — verlustfreies EPLAN-Austauschformat, geeignet für den Re-Import in EPLAN.
+- **PDF** — flache PDF aller Schaltplanseiten.
+
+Wählen Sie über **Durchsuchen…** eine Zieldatei aus und klicken Sie auf **Exportieren**. Längere Exporte laufen mit einer unbestimmten Fortschrittsanzeige — die EPLAN-Engine liefert in dieser Version keine seitenweise Fortschrittsmeldung. Die exportierte Datei landet am gewählten Pfad.
+
+### Zuletzt verwendete Projekte
+
+Jedes erfolgreich geöffnete Projekt landet in der Liste der zuletzt verwendeten Projekte (max. 10 sichtbar, 50 gespeichert). Klicken Sie auf einen Eintrag, um ihn erneut zu öffnen; das kleine **×** entfernt einen Eintrag, ohne die EPLAN-Datei auf der Festplatte zu berühren. Wurde die Datei verschoben oder gelöscht, entfernt der Manager den toten Eintrag automatisch und zeigt einen Hinweis.
+
+### Seiten-Vorschau
+
+Doppelklick auf eine Seite im EPLAN-Baum öffnet die Vorschau-Tab. Mausrad zum Zoomen, mittlere Maustaste zum Verschieben, ein Fadenkreuz folgt dem Mauszeiger über die gesamte Seite. Die Seite wird auf weißem Hintergrund dargestellt, damit der Seitenrand bei jedem Zoom-Level sichtbar bleibt.
+
+### Einschränkungen dieser Version
+
+- **Authoring nur über MCP-Tools, nicht direkt in der UI.** Seiten- und Funktions-Anlegen/Löschen/Umbenennen, Symbol-Einfügen, Stückliste/PDF/Label-Report-Erzeugung sind ausschliesslich über AI-Chat oder externe MCP-Clients zugänglich — der Arbeitsbereich selbst bleibt read-only plus Export aus der Toolbar; Tag-Synchronisation mit TIA wird noch nicht unterstützt.
+- **Eine EPLAN-Variante pro Sitzung.** Da der EPLAN-License-Manager pro Maschine nur eine Electric-P8-Sitzung lizenziert, erfordert ein Variantenwechsel einen Neustart des Managers.
+
+Sollte der EPLAN-Tab nach Aktivierung des Add-ons nicht erscheinen, starten Sie den Manager einmal neu, damit die Aktivitätsleiste die neue Berechtigung übernimmt.
+
+<!-- feature:eplan end -->
 ---
 
 ## 15. Fehlerbehebung & FAQ

@@ -1,35 +1,7 @@
 # TIA Openness Manager - User Manual
 
-**Version:** 3.0
-**Date:** February 2026
-
----
-
-## Table of Contents
-
-0. [Welcome Tab](#0-welcome-tab)
-1. [Introduction](#1-introduction)
-2. [Installation & System Requirements](#2-installation--system-requirements)
-3. [User Interface](#3-user-interface)
-3a. [Quick Open Bar](#3a-quick-open-bar)
-4. [Project Management](#4-project-management)
-5. [Import/Export Tab](#5-importexport-tab)
-6. [Project Tab](#6-project-tab)
-7. [Protected Items Tab](#7-protected-items-tab)
-8. [Password Vault Tab](#8-password-vault-tab)
-9. [MCP Server (AI Integration)](#9-mcp-server-ai-integration)
-9a. [AI Chat](#9a-ai-chat)
-9b. [OPC UA Tab](#9b-opc-ua-tab)
-9c. [Unit Testing](#9c-unit-testing)
-9c. [AI Canvas](#9c-ai-canvas)
-10. [Project Library Management](#10-project-library-management)
-11. [Hardware Tab](#11-hardware-tab)
-11a. [Find in Project (Cross-Reference Search)](#11a-find-in-project-cross-reference-search)
-12. [Find Unused Blocks](#12-find-unused-blocks)
-13. [Settings](#13-settings)
-14. [Licensing](#14-licensing)
-14a. [Git Client](#14a-git-client)
-15. [Troubleshooting & FAQ](#15-troubleshooting--faq)
+**Version:** 4.0
+**Date:** May 2026
 
 ---
 
@@ -47,9 +19,10 @@ The Welcome tab is the first thing you see when you start TIA Openness Manager. 
 
 ### Quick Start actions
 
-The left column offers seven shortcuts for the most common first steps:
+The left column offers eight shortcuts for the most common first steps:
 
 - **Connect to TIA Portal…** — attach to a running TIA Portal instance.
+- **New TIA Project…** — open the New Project Wizard to create a TIA project with CPU, optional modules, network and initial blocks. Pick the TIA Portal version inside the wizard — no prior connection required. See [User Manual → New Project Wizard](#4-project-management).
 - **Open TIA Project…** — pick a `.ap1x` / `.ap2x` project file from disk.
 - **Browse Export Folder…** — choose the folder where exported blocks are written.
 - **Clone Git Repository…** — clone a repository directly into the app.
@@ -147,6 +120,18 @@ Only one instance of TIA Openness Manager runs per Windows session. Opening a fi
 
 If another program has claimed the name the application uses internally, startup is refused with a warning. Close the other program (or sign out and back in) and try again.
 
+### Signing in
+
+The first time you launch the application a Sign-In dialog opens before the main window. Click **Sign in via browser** — your default browser opens `tiaopenessmanager.ch/sign-in`, where you enter your email address and the 6-digit verification code we mail you. Once the browser confirms, the dialog closes automatically and the application unlocks.
+
+You stay signed in across application restarts; the next launch goes straight to the main window. The license is anchored to your account, not to a specific machine. You can sign in on up to three different machines per 30-day window.
+
+To sign out, open **Settings → License**. The License panel shows the email address you signed in with, the active tier, and a **Sign out** button. Pressing it opens a confirmation dialog ("Sign out and release this machine?") so an accidental click does not release the binding — choose **Sign out** to confirm or **Cancel** to stay signed in. Signing out releases the current machine's binding so a teammate can pick it up. The application requires an active sign-in to be usable: immediately after signing out, the Sign-In dialog re-opens. Sign in again to continue working, or close the dialog to exit the application.
+
+If sign-in fails repeatedly, check that your network can reach `tiaopenessmanager.ch`. Corporate firewalls that intercept TLS may need an exception (see "Cert pin bypass" in the troubleshooting section).
+
+If the licensing server is unreachable when the application starts (no internet, VPN not connected, server outage), a dialog appears with three choices: **Retry** re-attempts the connection, **Continue offline** opens the application using the cached license and the 14-day grace period (some features may be unavailable until the next successful sign-in), and **Close application** exits. Continue offline never grants more rights than your last successful online check; subscription access is capped at 14 days, and you cannot start a new trial or activate a new license while offline.
+
 ---
 
 ## 3. User Interface
@@ -167,14 +152,14 @@ The application is divided into several areas:
 ├─────────────────────────────────────────────────────────────┤
 │  Tree Controls: [F-Signature] [Safety Printout]              │
 ├─────────────┬───────────────────────────────────────────────┤
-│             │  [Project] [Import/Export] [Find Unused]       │
-│  Project    │  [Hardware]                                    │
-│  Tree       ├───────────────────────────────────────────────┤
-│             │                                               │
+│             │  [Project] [Import/Export] [Compare]           │
+│  Project    │  [Find Unused] [Find in Project] [Hardware]    │
+│  Tree       │  [Vault]                                       │
+│             ├───────────────────────────────────────────────┤
 │  (Left)     │              Tab Content                      │
 │             │                                               │
 ├─────────────┴───────────────────────────────────────────────┤
-│  Bottom Panel: [Log Output] [Terminal] [Compare]             │
+│  Bottom Panel: [Log Output] [Terminal] [Git Output] …       │
 ├─────────────────────────────────────────────────────────────┤
 │  Status Bar: ● Connected | Status Message | License: ● Pro   │
 └─────────────────────────────────────────────────────────────┘
@@ -190,8 +175,11 @@ The application is divided into several areas:
 
 - **Project** - Code editor for selected blocks
 - **Import/Export** - Main workspace for file operations
+- **Compare** - Side-by-side block comparison viewer
 - **Find Unused** - Dead code detection and cleanup
+- **Find in Project** - Project-wide symbol and reference search
 - **Hardware** - Device list with PROFINET names and IP configuration
+- **Vault** - Encrypted credential storage
 
 ### Menu Bar
 
@@ -199,8 +187,17 @@ The application is divided into several areas:
 |------|-----------|
 | File | Connect, Browse Folder, Archive Project, Disconnect, Exit |
 | Project | Rescan PLC, Save, Compile, Safety Login/Logoff |
-| View | Settings, Terminal, Import/Export Settings, Protection Profiles Folder |
+| View | Settings, Terminal, Import/Export Settings, Protection Profiles Folder, Fullscreen, Keyboard Shortcuts |
 | Help | Documentation, Release Notes, Report Issue, About |
+
+### User Guide window
+
+Open this manual from **Help → Documentation**. The User Guide window matches the rest of the app's theme, includes a sticky table of contents on the left, and supports:
+
+- **Find** — click the Find button (or press Ctrl+F) to search the current page. Enter jumps to the next match; Shift+Enter to the previous; Esc closes the bar.
+- **Zoom** — `−` / `+` step through 50–200% in 25% increments.
+- **Language switch** — the dropdown swaps between English and German without leaving the page.
+- **Code highlighting** — code blocks render with syntax highlighting tuned to the active theme.
 
 ### Toolbar
 
@@ -218,12 +215,22 @@ The TIA Portal version (e.g., V20) is displayed on the right side of the toolbar
 
 ### Bottom Panel
 
-The bottom panel contains three tabs:
+The bottom panel contains:
 - **Log Output** - Application log messages with color-coded severity
 - **Terminal** - Integrated terminal for command-line operations
-- **Compare** - Side-by-side block comparison viewer
+- **Git Output** - Output stream of Git operations
+- **Problems** - Diagnostics aggregated across open editor files; every row shows the file name with line and column, and a click jumps the editor to that exact location
+- **References** - Symbol references found by the language service
 
-The panel can be collapsed, expanded, or maximized using the controls in the top-right corner.
+The panel can be collapsed, expanded, or maximized using the controls in the top-right corner. The side-by-side block comparison viewer (**Compare**) now lives in the workspace dock next to **Import/Export** — open it from the workspace View menu.
+
+### Copying Values from Data Fields
+
+Read-only data fields throughout the application can be selected with the mouse and copied with **Ctrl+C** like any text input. This includes CPU identity (MLFB, serial number, firmware), OPC UA diagnostics (server build, session counters, capabilities), license information (account email, hardware ID, expiry date), connection details (endpoint URL, IP address, security mode), MCP session IDs, and error or status messages. Static field labels are not selectable; values are.
+
+### Copying Rows from Tables
+
+Tables in the OPC UA panels (Node Attributes, References, Struct Fields, Diagnostics Buffer, Event Log, Server Diagnostics, Type Definitions, Watch Table, Endpoint List) support row-level copy: click a row to select it, hold **Shift** or **Ctrl** to select multiple rows where supported, and press **Ctrl+C** to copy the selected rows as tab-separated values including the column headers. Paste into a spreadsheet, text editor, ticket, or chat to share the data.
 
 ---
 
@@ -305,7 +312,304 @@ The Git workspace has its own **Ctrl+Shift+P** command palette (see [Git Client]
 
 ---
 
+## 3b. Keyboard Shortcuts
+
+### Opening the shortcut overview
+
+Press **Ctrl+K, Ctrl+S** anywhere in the application to open the **Keyboard Shortcuts** dialog. It lists every binding the app responds to, grouped by area:
+
+- **Global** — application-wide bindings: project save, settings, terminal, workspace switching, find in project, the shortcut overview itself.
+- **Editor** — bindings that act on the active code editor and its inline-edit overlay.
+- **Git** — bindings used inside the Git workspace (tabs, branches, working copy, history, diff).
+- **AI Chat** — quick-switch shortcuts inside the AI Chat panel.
+- **Compare** — bindings inside the Compare workspace.
+
+Each row shows the key combination and a short description; a search box at the top filters by either part. The same dialog is reachable from **View → Keyboard Shortcuts**.
+
+### Frequently used shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| **Ctrl+1 … Ctrl+8** | Switch workspace (TIA Manager, Version Control, PLC Online, Explorer, Screen Editor, Unit Testing, Trace, AI Agent) |
+| **Ctrl+Alt+1 … Ctrl+Alt+9** | Quick-switch the active assistant inside the AI Chat panel |
+| **Ctrl+S** | Save the active editor; in the Git diff view, stage the focused hunk; in Compare, save the focused side |
+| **Ctrl+Shift+S** | Save the TIA Portal project |
+| **Ctrl+K, Ctrl+S** | Open this Keyboard Shortcuts dialog |
+| **Ctrl+R** (Git tab) | Refresh the active Git repository |
+| **Ctrl+Ö** | Toggle the integrated terminal |
+| **F1** | Open the user manual |
+| **F5** | Rescan the TIA Portal project |
+| **F11** | Toggle full-screen window |
+| **Ctrl+Shift+F** | Find references in the current project |
+
+If a key combination is shown for two different areas (for example **Ctrl+S** for *Save project* and *Stage hunk*), the binding that fires depends on which workspace and panel currently has the keyboard focus.
+
+---
+
+## 3c. Right-Click Context Menus
+
+Every table, selectable text label, and tree view in the application responds to a right click with a context menu. The menus are localised in the application language (English / German / French / Italian).
+
+### Shared defaults (work on any table, text label, or tree)
+
+| Surface | Entries |
+|---------|---------|
+| Any table | Copy Cell · Copy Row · Copy All as CSV · Select All |
+| Any selectable text label | Copy · Copy (Quoted) · Select All |
+| Any tree view | Copy Name · Expand All · Collapse All |
+
+- **Copy Cell** — copies the value of the cell under the pointer to the clipboard.
+- **Copy Row** — copies all columns of the selected row as tab-separated text.
+- **Copy All as CSV** — copies every visible row including the header row in RFC-4180 CSV format. Truncated to 10 000 rows for very large grids; the log records the truncation.
+- **Copy (Quoted)** — wraps the selected text (or full label) in double quotes; useful for pasting an email or path into a sentence.
+
+### Feature-specific entries
+
+In addition to the shared defaults, several surfaces expose actions that fit their content:
+
+- **OPC UA — References table** (PLC Online → References dock): Copy NodeId · Copy BrowseName · Copy as JSON · Subscribe (adds the referenced node to the watch list).
+- **Compare — file lists** (left and right panes): Copy Full Path · Copy Filename · Open Folder (Windows Explorer / Finder reveal) · Remove from comparison.
+- **Project Tree** (TIA Manager): Copy Name · Copy Number directly after Open in Editor / Find References on the existing menu.
+- **Git Blame** — the SHA badge offers Copy SHA (short, first 8 characters) and Copy SHA (full); the subject offers Copy.
+- **Git Commit detail** — the SHA offers the same short/full pair; the author block offers Copy Name · Copy Email · Copy "Name &lt;Email&gt;".
+
+Right-click in code editors (the SCL editor, diff view, blame body, and Git command output) keeps the editor's own cut/copy/paste menu — the new menus do not override it. Text boxes (input fields) keep the operating-system native cut/copy/paste flyout.
+
+---
+
+## 3d. File Explorer
+
+The Explorer workspace (Ctrl+4) is the file tree on the left side. It opens any folder on disk, shows files and subfolders, and lets you create, rename, delete, move and search items — and when the folder is a Git working copy, it shows the same status decorations you would see in a Git client or in VS Code.
+
+### Open a folder
+
+- Click the folder icon in the toolbar (right side) or the "Open Folder" button in the empty state.
+- The Explorer remembers nothing else about the folder — it walks the file system each time and refreshes automatically when files change on disk.
+
+### Toolbar
+
+| Icon | Action |
+|------|--------|
+| ➕📄 | New file in the selected folder (or in the root if nothing is selected) |
+| ➕📁 | New folder in the selected folder (or in the root) |
+| ↻ | Refresh the tree |
+| ⌃ | Collapse all folders |
+| 👁 | Show / hide Git-ignored files |
+| 📄 | Open a single file in the editor without changing the open folder |
+| 📁 | Open a different folder |
+
+### File and folder icons
+
+Each row gets an icon that matches the file extension or the folder name:
+
+- Code files (`.cs`, `.scl`, `.xml`, `.axaml`, `.json`, `.html`, `.js`, `.ts`, `.py`, …) and well-known config files (`.csproj`, `.sln`, `.yaml`, `.toml`, `.ini`) get distinct icons.
+- Media (`.png`, `.jpg`, `.svg`, `.mp4`, `.wav`), archives (`.zip`, `.tar`, `.7z`), scripts (`.exe`, `.dll`, `.bat`, `.ps1`, `.sh`) and Git config files (`.gitignore`, `.gitattributes`, `.gitmodules`) each have their own glyph.
+- Folders with names like `src`, `lib`, `docs`, `tests`, `node_modules`, `.git`, `.vscode`, `scripts`, `assets`, `.worktrees` also pick up matching icons.
+
+### Git status
+
+When the open folder is inside a Git repository, the Explorer displays the working-tree status for every visible file and folder:
+
+- **Glyph badge** on the right edge of the row shows the change type with a colored 14×14 icon: `±` modified, `+` added, `−` deleted, `➜` renamed, `❏` copied, `★` untracked, `!` conflicted, `T` type-changed. The badge tooltip names the state in your UI language.
+- **Folder bubble-up:** a folder inherits the *worst* status of any file inside it and shows the same badge at reduced opacity, so a single modified file deep inside a tree is visible from the root.
+- **File names** stay in the regular text color so the status is carried by the badge alone.
+- **Ignored files** (matched by `.gitignore`) appear in a muted colour. Use the 👁 toolbar toggle to hide them entirely — the choice is remembered between sessions.
+- The Explorer watches `.git/index` and `.git/HEAD` and refreshes the decorations automatically when you stage, commit, switch branch or run any other Git operation outside of TIA Openness Manager.
+
+### Solution panel
+
+When the opened folder contains a `.sln` file, a **Solution** panel appears below the file tree and lists each C# project in the solution:
+
+- **Frameworks** — every target framework the project compiles for (multi-targets are split out).
+- **Packages** — every NuGet `<PackageReference>` with its declared version.
+- **Analyzers** — packages contributing analyzers / source generators, detected from explicit `<Analyzer>` items, `PrivateAssets="all"` plus a name suffix like `.Analyzers`, or a curated whitelist (StyleCop, .NET Analyzers, Roslynator, xUnit Analyzers, …). Transitive analyzers pulled in by SDKs are not listed; the empty-state explicitly notes this is a best-effort detection.
+- **Projects** — every `<ProjectReference>` resolved to its project name.
+
+A refresh button in the panel toolbar re-parses everything on demand; the panel also re-parses automatically whenever a `.sln` or `.csproj` changes on disk (debounced to 500 ms). If the opened folder has no `.sln`, the panel is hidden entirely and the file tree gets the full panel height; the panel reappears as soon as a `.sln` is detected. Double-click the solution row or any project row to open the matching `.sln` / `.csproj` file in the editor.
+
+### Language-aware file icons
+
+Files in both the Explorer tree and the Solution panel draw the actual brand glyph of their language — the C# logo for `.cs` / `.csproj` / `.sln`, the TypeScript logo for `.ts` / `.tsx`, the JavaScript / Python / Rust / Go / Java / Kotlin / Swift / C / C++ / Ruby / PHP / Lua / R logos for the matching extensions, the HTML5 / CSS3 / Sass marks for web sources, JSON / YAML / XML / Markdown badges for data and docs, the shell / Bash / PowerShell prompts for scripts, the Docker whale for `Dockerfile` and `.dockerignore`, and the Git logo for `.gitignore` / `.gitattributes` / `.gitmodules`. Each glyph is tinted in its language's brand color (C# purple, TS blue, JS yellow, Python blue, Rust orange, Go cyan, SCL/AWL/STL Siemens orange, …). Files without a registered language fall back to the generic file glyph in the neutral secondary text color; ignored files stay dimmed regardless of their language.
+
+### Multi-select
+
+- **Click** selects one row.
+- **Ctrl+Click** toggles selection of one more row.
+- **Shift+Click** selects a continuous range.
+- Selected rows participate together in Delete and Drag operations.
+
+### Open a file
+
+- **Double-click** a file in the tree to open it in the editor.
+- Folder rows expand or collapse on double-click instead.
+
+### Create new file or folder
+
+- Click the ➕📄 or ➕📁 button, or right-click and choose **New File** / **New Folder**.
+- A small dialog asks for the name. The new item is created in the currently selected folder (or in the root if nothing is selected) and opens immediately in the editor if it is a file.
+
+### Rename
+
+- Select a row and press **F2**, or right-click and choose **Rename**.
+- The name turns into an inline text box. For files with an extension the cursor pre-selects only the base name, so typing immediately overwrites it without disturbing the extension.
+- Press **Enter** to commit the new name, **Escape** to cancel, or click somewhere else to commit.
+- Empty names, names containing invalid path characters, and names that would collide with an existing sibling are rejected silently.
+
+### Delete
+
+- Select one or more rows and press **Delete**, or right-click and choose **Delete**.
+- A confirmation dialog appears with the number of items and the total entry count inside (e.g. "Delete 3 items (47 entries)?"), so a recursive delete never surprises you with an unexpected blast radius.
+- Confirming sends the files and folders to the Windows Recycle Bin (on Windows) so a wrong delete can be restored. Symlinks and junctions are deleted as the link itself, never as the link target.
+- The tree refreshes automatically after the operation.
+
+### Move via drag and drop
+
+- Press and hold on a row, then drag it onto a folder *in the same tree* to move it there.
+- The drop highlight only activates when the target is a folder, not the source itself, and not inside the source's own subtree, so a folder cannot be accidentally dragged into its own children.
+- Multiple selected rows move together; the destination file or folder must not already exist.
+
+### Drag out to another window
+
+- Dragging from the Explorer out to the chat input area attaches the selected files to the next message.
+- Dragging out to the Windows Explorer creates copies in the target folder.
+
+### Search and filter
+
+- Press **Ctrl+F** with the Explorer focused to slide the search bar in above the tree; the box receives focus and its text is pre-selected.
+- Press **Esc** in the search box, or click the **X** button, to close the bar and clear the query.
+- The match runs against the file or folder name, case-insensitively, anywhere in the name. Folders stay visible whenever any descendant matches, and matching descendants are auto-expanded so the hits land in view.
+- Clearing the field restores the full tree.
+- The `.gitignore` filter and the search filter combine: when "Show Git-ignored files" is off, ignored files are excluded from search results too.
+
+### Right-click context menu
+
+| Entry | Action |
+|-------|--------|
+| New File | Create a file in this folder |
+| New Folder | Create a subfolder |
+| Rename | Start inline rename (same as F2) |
+| Delete | Remove the file or folder (with confirmation) |
+| Reveal in File Explorer | Open the parent folder in Windows Explorer with the file selected |
+| Copy Path | Copy the absolute path to the clipboard |
+| Copy Relative Path | Copy the path relative to the open folder root |
+
+---
+
+## 3e. Workspace Layout
+
+The workspace shows tools (Project Explorer, File Explorer) and documents (Editor, Import/Export, Find Unused, Find in Project, Hardware, Vault) in a flexible dock arrangement. You can rearrange every panel and persist the result to a file you can re-load later or share with a colleague.
+
+### Rearranging panels
+
+- **Drag a tab header** to dock the panel to a new edge of the workspace, to split an existing region, or to combine it with another panel as a tab group.
+- **Drag a tab header outside the main window** to float it as an independent window. The floating window stays in sync with the project and can be redocked by dragging its title bar back into a docking guide.
+- **Drag the splitter between two regions** to change their proportions.
+- **Click the pin icon** on a tool tab to collapse it into a side strip; click again to restore the full panel.
+- **Close a tab** with the close button or middle-click. Closed documents and tools are hidden, not destroyed — re-open them from the **View** dropdown in the workspace toolbar (top-right of the workspace area).
+
+### View dropdown
+
+The **View** dropdown (top-right of the workspace toolbar) toggles individual panels. Selecting an entry shows a hidden panel or hides a visible one:
+
+| Group | Items |
+|-------|-------|
+| Tools | Project Explorer, File Explorer |
+| Documents | Editor, Import / Export, Find Unused, Find in Project, Hardware, Vault |
+
+### Workspace dropdown
+
+The **Workspace** dropdown (next to **View**) groups three actions that operate on the entire dock arrangement of the main workspace:
+
+| Item | Action |
+|------|--------|
+| Save Workspace As… | Saves the current dock layout (panel positions, splitter proportions, tab order, floating windows) to a `.tiamgr-workspace` file. The file is a small JSON document that you can copy between machines or commit to source control as part of a team setup. |
+| Load Workspace… | Opens a `.tiamgr-workspace` file and applies it to the current main window. Open documents are reused; their visual placement matches the file. |
+| Reset Workspace | Restores the factory-default dock arrangement. A confirmation dialog asks before the layout changes. Open documents and tools remain available — only their position is reset. |
+
+The Workspace dropdown acts on the layout only. Project content (files, blocks, settings) is never affected by Save, Load, or Reset.
+
+### What is and is not saved
+
+Saved to the `.tiamgr-workspace` file:
+
+- Position and orientation of every tool and document panel
+- Width / height proportions between regions
+- Tab grouping and active tab in each region
+- Whether a tool is pinned, floated, or docked
+- Active document and active tool at the time of saving
+
+Not saved:
+
+- Document contents (those live in your TIA Portal project and source files)
+- Editor scroll position or selection inside a document
+- The contents of the AI Chat sidebar
+- Connection state, license, or settings
+
+---
+
 ## 4. Project Management
+
+### New Project Wizard
+
+The New Project Wizard creates a complete TIA Portal project — with CPU, optional modules, network and initial program blocks — without leaving TIA Openness Manager.
+
+**Open the wizard:**
+
+- From the **Welcome** tab, click **New TIA Project…** in the Quick-Start column.
+- The wizard opens directly. You do not need to be connected to TIA Portal beforehand — pick the version on Step 1 and the matching TIA Portal instance is started for you when you leave Step 1 by clicking **Next**. The wizard shows a "Starting TIA Portal V…" overlay while the instance comes up; the catalog search on Step 2 works as soon as the overlay disappears.
+
+**Step 1 — Project info:**
+
+1. Pick the **TIA Portal version** (V15…V21) — pre-filled with the currently connected version when applicable.
+2. Enter a **Project name** (up to 60 characters; the usual filesystem characters `\\ / : * ? " < > |` are not allowed).
+3. Click **Browse…** to choose a **Target directory** (must be an absolute path on a local drive — UNC paths are rejected).
+4. Optionally enter an **Author** and a **Comment**.
+
+If you are already connected to a different TIA Portal version when you click **Next**, the wizard asks for confirmation before disconnecting the current session and starting the version you picked.
+
+**Step 2 — CPU:**
+
+1. Type a search term in the **Hardware catalog** field (for example `1516` or `S7-1500`).
+2. Pick the CPU you want from the result list. F-CPUs are listed but cannot be selected — Safety configuration is not supported by the wizard and must be done manually in TIA Portal.
+3. Enter a **Device name** (defaults to `PLC_1`).
+
+**Step 3 — Modules (optional):**
+
+Add I/O modules, communication processors or other rack-pluggable items:
+
+1. Click **Add module**, search the catalog and pick the module.
+2. Enter a **Slot** number.
+3. Repeat for additional modules. Names within the list must be unique.
+4. If you go back to Step 2 and change the CPU, the modules list is cleared because the previously chosen modules may no longer fit the new rack.
+
+**Step 4 — Network (optional):**
+
+Configure a single Ethernet subnet:
+
+1. Enter a **Subnet name** (for example `PN/IE_1`).
+2. Enter the **Interface path** of the CPU's PROFINET interface inside the device tree (for example `Rack_0/PROFINET interface_1`).
+3. Enter the **IPv4 address** in four numeric fields (each 0–255).
+
+PROFIBUS, MPI and AS-i subnets are not supported by the wizard.
+
+**Step 5 — Initial blocks (optional):**
+
+Pre-create empty program blocks:
+
+1. Click **Add block**.
+2. Pick a **Kind** (FB, FC, OB or Global DB).
+3. Enter a **Name** and optionally a **Number** (leave the number empty for auto-numbering).
+4. Pick a **Programming language** (SCL, LAD, FBD, STL, GRAPH or ProDiag).
+5. Repeat for additional blocks. F-block names (`F_*`, `Failsafe_*`, `Safety_*`, `F-…`) are rejected.
+
+**Step 6 — Review and create:**
+
+1. Review the summary (project name, target directory, CPU, modules, network, blocks).
+2. Click **Create project**.
+3. Progress is shown at the bottom of the wizard. The wizard runs the entire creation as one atomic operation in TIA Portal — if any step fails, the whole project is rolled back.
+4. After success the wizard closes and the new project is opened automatically in the application.
+
+> **Note:** F-CPU + Safety configuration, multiple CPUs in one project, and PROFIBUS/MPI/AS-i networks are not supported by the wizard. Use TIA Portal directly for these scenarios.
 
 ### Connect to TIA Portal
 
@@ -398,6 +702,13 @@ The Right Directory is the folder on your file system where exported XML files a
 
 **Tip:** Use a Git repository folder for automatic version control.
 
+When the chosen folder is inside a Git repository, the Right Directory tree decorates each row with the same Git status badges and dimming as the Explorer workspace:
+
+- Coloured status glyph (M, +, −, ➜, ❏, ★, ! or T) next to the file name (Modified, Added, Deleted, Renamed, Copied, Untracked, Conflicted, Type-changed). Hover for a tooltip with the change type.
+- Folders show a dimmed version of the worst status of any file inside them, so you can spot uncommitted work without expanding the tree.
+- `.gitignore`-matched files stay visible but are rendered in muted grey.
+- Badges refresh automatically after commits, checkouts, merges, and rebases — no manual reload needed.
+
 > **Note:** The "Working Directory" in Settings refers to the "Find Unused Blocks" function and is a separate folder.
 
 ### File Tree Search (Right)
@@ -408,6 +719,16 @@ The search field above the right file tree filters the file list as you type. Th
 - Matching characters in each visible result are highlighted in bold accent color.
 - Filtering is debounced (250 ms) so very long lists stay responsive while you type.
 - Clearing the search field restores your manually expanded folders exactly as they were before you started typing.
+
+### Right-click on Folders and Files (Right Tree)
+
+Right-clicking any node in the right file tree opens a context menu with **Open in Editor**, **Import**, and **Delete**:
+
+- **Open in Editor** loads the selected file into the Editor workspace (disabled for folders).
+- **Import** runs the same import as the *Import Selected* sidebar button against the checked rows.
+- **Delete** removes the selected file *or folder* from disk. Selecting **Delete** on a folder removes the folder recursively (all files and subfolders inside it). A confirmation prompt appears first.
+
+Files whose names start with a dot (for example the delta-import fingerprint cache that *Preview Diff* maintains alongside your exports) are now shown in the tree so you can see and manage them. Files that the operating system has marked as Hidden or System are still excluded.
 
 ### Export Operations
 
@@ -496,9 +817,19 @@ Preview Diff detects both XML-side changes (block interface edits in TIA) and so
 
 **First-time use:** Preview Diff works on a fresh working directory even if you have never run Export All. On the first click the application silently builds a baseline by temporarily exporting the PLC, comparing the temporary files against what is already on disk, and then saving the baseline (`.fingerprint-cache.json`) so subsequent runs use the fast path. The first run takes longer than follow-up runs.
 
-**Left and right file lists:** The Compare panel shows a file list on the left for the TIA side and a matching file list on the right for the disk side. Modified blocks appear in both lists; blocks that only exist in TIA (or that still need compiling) show only on the left, blocks that only exist on disk show only on the right. Each list has its own show/hide toggle in the Compare toolbar, so you can focus on either side or keep both visible.
+**Left and right file lists:** The Compare panel shows a file list on the left for the TIA side and a matching file list on the right for the disk side. Both lists, the diff toolbar, and the side panes are visible from the moment you open the Compare tab — even before you load anything — so you can see where everything will appear. When the panel is empty, a subtle drop-files watermark sits in the diff area; it disappears as soon as content is loaded. Modified blocks appear in both lists; blocks that only exist in TIA (or that still need compiling) show only on the left, blocks that only exist on disk show only on the right. Each list has its own show/hide toggle in the Compare toolbar, so you can focus on either side or keep both visible.
+
+**Multiple formats per block:** When a block is present in more than one representation on disk (for example an SCL block stored as both `Block_2.scl` and `Block_2.xml`), each format gets its own row in the file list. Click the row of the extension you want to see — the diff loads immediately. There is no separate SCL/XML toggle; the extension of the clicked row decides which representation the editor renders.
 
 **Change strip at the row edge:** Every row in both file lists carries a thin colored bar at its right edge that tells you the change type without reading the label: green for added, red for deleted, orange for modified, yellow for inconsistent (needs compiling), and blue for blocks that only exist on one side (left or right). Unchanged rows show no bar.
+
+### Section-by-section merge
+
+When two files differ, arrow buttons (`←` / `→`) appear in the middle column between the editors — one pair per change-section. Click `→` to copy the left section into the right buffer, or `←` for the opposite direction. Changes are applied to the in-memory buffer; click **Save** to persist them. For TIA-side buffers (left side in Sync mode against a temp-export), saves are skipped — re-import the block to apply the change back to TIA.
+
+### Identical files
+
+When both sides have identical content, both editors show the file with no `+`/`-` markers and no merge arrows. Identity is visually clear from the absence of change markers; no separate banner is shown.
 
 ### Ad-hoc Compare (Drag and Drop)
 
@@ -514,6 +845,7 @@ For quick side-by-side checks without scanning the whole project, drag items dir
 
 - The TIA side is compiled and stripped the same way a regular export would be, so the comparison is apples-to-apples against a file that was exported earlier to your working directory.
 - Additional drops on the same side append to the existing list instead of replacing it — one block in TIA can be checked against several candidate files without re-exporting, and the other side keeps whatever is already loaded.
+- Hover over a row in either file list to reveal an `X` button at the right end; click it to remove just that file without affecting the rest of the comparison.
 - The file list splitters are resizable between 180 and 500 pixels and remember the widths you picked.
 
 For project-wide comparison with selective re-import back into the PLC, use **Preview Diff** instead (hash-based, produces Modified / Only in TIA / Only on Disk categories and a Sync-Mode Import button).
@@ -523,7 +855,7 @@ For project-wide comparison with selective re-import back into the PLC, use **Pr
 The diff editor has a built-in toolbar with the following controls:
 
 - **Change navigation** — First / Previous / Next / Last change buttons plus a `1/N` counter jump through all hunks in the current file.
-- **Context lines** — The `+=` and `-=` buttons increase or decrease how many unchanged lines are shown around each change (default 3, minimum 4). The stretches between hunks are folded behind a `@@ -a,b +c,d @@` header.
+- **Context lines** — The `+=` and `-=` buttons increase or decrease how many unchanged lines are shown around each change (default 3, minimum 1). The stretches between hunks are folded behind a `@@ -a,b +c,d @@` header.
 - **Show entire file** — Expand every line of the file, no context folding.
 - **Syntax highlighting** — Toggle on/off (SCL, AWL, DB, XML, and other languages are recognised by extension).
 - **Word wrap** — Wrap long lines in unified view.
@@ -573,13 +905,13 @@ WinCC Unified screens are exported as JSON files (not XML like Classic HMI). The
 
 ### Hardware Export
 
-Export hardware configuration as AML/XML:
+Export the device configuration as an AutomationML (.aml) file:
 
-1. Expand the **Hardware** node in the project tree
-2. Select devices or modules to export
-3. Click **Export Selected**
+1. Switch the category in the Import / Export tab to **Hardware**.
+2. Click **AML Export →** in the right column. The file is written into the configured export folder.
+3. Use **← AML Import** in the same column to bring an `.aml` file back into the project.
 
-**Note:** Hardware export creates AutomationML (.aml) files that can be re-imported or used for documentation.
+**Note:** AML export covers the full hardware configuration of the selected PLC. The resulting `.aml` file can be re-imported or kept for documentation.
 
 ---
 
@@ -592,7 +924,72 @@ When you select a block in the project tree, its source code is displayed in the
 **Supported Languages:**
 - SCL (Structured Control Language)
 - STL (Statement List)
-- LAD/FBD (as XML representation)
+- LAD/FBD/GRAPH (rendered inline as networks)
+
+### Graphical block view
+
+LAD, FBD and GRAPH blocks open in the **Graphical** tab next to the Code tab. Networks render directly in the manager — no external Compare or Visualizer tool is required, and no separate Siemens utility needs to be installed. Each network shows its title, comment and the LAD/FBD layout exactly as it appears in TIA Portal. Data blocks, UDTs and tag tables likewise display their structure inline.
+
+The view is read-only; edits are made through the Code tab or the inline chat. Switch back to the Code tab at any time to see or modify the SCL/STL source.
+
+### Interface Tab
+
+When a Data Block (DB), Function Block (FB), Function (FC), User Data Type (UDT), or PLC tag table is loaded, an **Interface** tab appears next to the **Code** tab. It renders the block's interface in the same tabular layout TIA Portal uses, with one row per member and the columns:
+
+- **Name** — member name; nested struct or UDT members appear indented under their parent and can be collapsed via the chevron in front of the name.
+- **Data type** — the SIMATIC type as TIA exports it (e.g. `Bool`, `Int`, `Array[0..9] of "myUdt"`).
+- **Start value** — the initial value if defined, otherwise empty.
+- **Retain** — `Non-retain`, `Retain`, or `Set in DB`.
+- **Accessible from HMI / Writable from HMI / Visible in HMI** — the three external-access flags. On data blocks, function blocks, functions and PLC tag tables, toggling **Accessible from HMI** carries **Writable** and **Visible** along (switching it off clears both, switching it back on restores both); on user data types the three flags stay independent. **Writable** and **Visible** can always be flipped individually without affecting the other two.
+- **Setpoint** — editable checkbox marking the member as a setpoint.
+- **Supervision** — read-only text showing the linked ProDiag supervision reference (empty when none is assigned).
+- **Comment** — the comment in the current UI language; if it is missing, the English (`en-US`) text is used; otherwise the first available language.
+
+For PLC tag tables the same tab shows two tables stacked vertically: the **Tags** list (Name · Data type · Logical address · Retain · HMI flags · Supervision · Comment) on top and the **User constants** list at the bottom. The **Supervision** column is read-only and shows the linked ProDiag supervision reference, matching the same column on block interfaces. Array-typed and UDT-typed tags expand inline: each array element appears as its own row with the computed address, and each UDT member appears underneath the tag down to the primitive level. When no TIA Portal connection is active the UDT definitions cannot be fetched; a yellow banner above the Tags list explains that opening the project in TIA Portal will reveal the full hierarchy.
+
+An **Edit / Discard / Save / Save As / Upload to TIA** toolbar above the Tags list offers the same workflow as block interfaces: rename tags, change data types or logical addresses, toggle Retain and the HMI flags, and edit comments inline. **Save** writes the modified tag-table XML to the configured Working Directory (`{Working Directory}/{PLC}/{Tags folder}/{TableName}.xml`); **Save As…** lets you choose any path; **Upload to TIA** stays available when a TIA Portal connection is active and re-imports the edited tag table into the project.
+
+#### Editing the Interface offline (file drop or File Explorer)
+
+Both **drag-and-drop onto the editor / Welcome tab** and **File Explorer right-click → Open in Editor** open files with the Interface tab populated. Two file shapes are supported:
+
+- **Source files** — `.scl`, `.stl`, `.udt`, `.db`. The parser reads the declaration sections (`VAR_INPUT` / `VAR_OUTPUT` / `VAR_IN_OUT` / `VAR_TEMP` / `VAR` / `VAR_STAT` / `STRUCT` / DB members) directly from the file. No TIA Portal connection is required.
+- **SimaticML XML** — `.xml` exports from TIA Portal. The block type is detected from the root element: `<SW.Blocks.FB>` / `<SW.Blocks.FC>` / `<SW.Blocks.OB>` / `<SW.Blocks.GlobalDB>` / `<SW.Blocks.InstanceDB>` / `<SW.Blocks.ArrayDB>` / `<SW.Types>` open into the block-interface editor; `<SW.Tags.PlcTagTable>` opens directly into the Tags table editor with the Edit / Discard / Save / Save As / Upload toolbar enabled.
+
+**Save** writes back to the dropped or opened file path; **Save As…** writes to a chosen path; **Upload to TIA** stays disabled until a TIA Portal connection is active.
+
+In edit mode you can:
+
+- Rename a member.
+- Change a member's data type (using the SCL syntax TIA Portal exports, including arrays and UDT references).
+- Edit a start value.
+- Edit the comment in the current UI language.
+- Add a new member, remove a member, or reorder members via the drag handle to the left of each row.
+
+**Save (Ctrl+S** or the **Save** button**)** writes the changes atomically back to the original source file. The header attributes, decorations (`VERSION`, `NON_RETAIN`, `READ_ONLY`, `KNOW_HOW_PROTECT`, `AUTHOR`, `FAMILY`, `NAME`), body code and untouched declaration sections are preserved byte-for-byte; only the sections you actually edited are re-emitted. Line endings (CRLF or LF) are preserved per file.
+
+If the source file is read-only on disk, the Save command automatically switches to **Save As…** with a localized info banner explaining the fallback. **Save As…** lets you write the contents to a new path; subsequent saves target that new path.
+
+**Upload to TIA** stays available as a separate action and is only visible when a TIA Portal connection is active. Save and Save As work regardless of connection state.
+
+#### Editing the Interface online (TIA-connected)
+
+When a block is opened from the project tree of a connected TIA Portal project, the Interface tab supports the same set of edits as the offline path (rename, change data type, edit start value, edit comment, add, remove and reorder members). Uploading the edits back to TIA Portal goes through three guards:
+
+- **Cross-reference impact preview** — before the upload starts, renames, removals and data-type changes are checked across the project for call sites that the edit would break. A confirmation dialog reports the affected count, a sample of up to ten callers, and a cap indicator if the search was capped. Clicking **Cancel** aborts the upload; clicking **Proceed** requires acknowledging the change and continues.
+- **Automatic compile after upload** — once the edits land, the PLC is compiled automatically. Any compile messages are listed in an expandable **Compile diagnostics** panel above the table with a severity glyph (× / ⚠ / ⓘ) and the failing block name. Clicking a row jumps to that block in the project tree and opens it in the editor for fixing.
+- **Edit-mode gate** — if TIA Portal reports the block as know-how-protected, read-only, or the capability probe could not determine its state, the **Enter edit mode** toggle is disabled and the tooltip explains why. The same gate applies before any upload attempt — read-only or protected blocks cannot be modified through the Interface tab regardless of the project's online state.
+
+Editing a Safety (F-) block still surfaces a separate warning that must be acknowledged before the upload proceeds. Re-validation of the Safety program after an interface edit is a manual step in TIA Portal — TIA Openness does not expose a "validate Safety program now" call, so the manager cannot automate it.
+
+Closing a tab whose Interface has unsaved changes prompts to **Save**, **Discard** or **Cancel** — the same dialog used for unsaved code edits. Save writes the file; Discard closes without writing; Cancel keeps the tab open.
+
+### Saving and closing
+
+- **Ctrl+S** saves the file or block currently shown in the editor. For files this writes to disk. For TIA Portal blocks Ctrl+S asks for confirmation ("Upload to TIA Portal?") before sending changes back to the project; clicking the *Upload to TIA* toolbar button asks the same question.
+- **Ctrl+Shift+S** saves the entire TIA Portal project (the previous Ctrl+S behavior).
+- Closing a tab or the application with unsaved changes shows a confirmation dialog. The dialog lets you save all, discard all, or cancel.
+- Disconnecting from TIA Portal closes any editor tabs that were opened from TIA. If those tabs have unsaved changes you are prompted to save (upload), discard, or cancel the disconnect.
 
 ### Drag & Drop from the Project Explorer
 
@@ -661,7 +1058,7 @@ The protection system prevents important blocks from being accidentally overwrit
 Protected blocks will:
 - Be skipped during import
 - Be skipped during export (when "Export Protected Files" is unchecked in Import/Export Settings)
-- Be marked with a green shield icon
+- Be marked with a green padlock badge in the project tree (red padlock = unprotected, click to toggle)
 - Appear in the protection list
 
 > **Tip:** Even when protected blocks are excluded from export, folder structure is always preserved.
@@ -737,6 +1134,21 @@ The Password Vault securely stores TIA Portal know-how protection passwords. It 
 
 > **Note:** Protected blocks remain assigned to their vault entry even if you uncheck the vault toggle. To remove a protected block from the vault, you must unprotect it first.
 
+### Protecting Safety (F-) Blocks
+
+Before any Safety block (F_FB, F_FC, F_DB, F_OB) can be know-how-protected through the vault, the F-program in TIA Portal must be **fully built and consistent**. The Bulk Protect operation calls the same Siemens API that TIA Portal uses internally — and Siemens rejects that call for any F-block that is not currently referenced from a compiled F-runtime group.
+
+**Required step before vault-protecting Safety blocks:**
+
+1. In TIA Portal, right-click the F-CPU's program folder
+2. Select **Software → Rebuild all** (also labelled **Software → Compile → Software (rebuild all)** depending on TIA Portal version and language)
+3. Wait for the rebuild to finish without errors
+4. Switch back to TIA Openness Manager and run **Bulk Protect (Vault)**
+
+If you skip the rebuild and try to protect a freshly added or changed F-block, the vault surfaces a Safety-block error listing the four most common Siemens rejection reasons (block not used in the safety program, safety-offline-program login missing, block inconsistent, block open in the editor). The rebuild closes the inconsistency case for new or modified blocks.
+
+> **Why "rebuild all" and not just "compile"?** A normal compile only touches changed blocks. Adding or modifying an F-block invalidates the Siemens-generated F-runtime-group glue blocks (`F_PLK`, `F_RTG_OB`, etc.) that chain F-OBs into the safety program. Until those glue blocks regenerate, the Openness API does not see the new F-block as "called" and Protect is refused. **Rebuild all** forces full regeneration of every glue block.
+
 ### Crash Recovery
 
 If the application crashes while blocks are unprotected:
@@ -783,7 +1195,7 @@ The Model Context Protocol (MCP) lets external AI assistants — Claude Desktop,
 
 ### How it works
 
-There is no MCP tab inside the application. The MCP server runs as a background subprocess that the AI client launches on demand by spawning `TiaOpennessManager.V3.exe` with the `--mcp-stdio` argument. As long as TIA Openness Manager is open and connected to a TIA Portal project, the subprocess transparently relays each tool call to the running instance, so all 37 MCP tools (project queries, code reading, exports, comparisons, AI-aware analyses, OPC UA, Canvas, Git, PowerShell, Trace, etc.) operate against the project you currently have open.
+There is no MCP tab inside the application. The MCP server runs as a background subprocess that the AI client launches on demand by spawning `TiaOpennessManager.V3.exe` with the `--mcp-stdio` argument. As long as TIA Openness Manager is open and connected to a TIA Portal project, the subprocess transparently relays each tool call to the running instance, so all 47 MCP tools (project queries, code reading, exports, comparisons, AI-aware analyses, OPC UA, Canvas, Git, PowerShell, Trace, etc.) operate against the project you currently have open.
 
 ### Setup with an AI assistant
 
@@ -795,7 +1207,7 @@ There is no MCP tab inside the application. The MCP server runs as a background 
 
 | Capability | Methods | What it gives the AI client |
 |------------|---------|-----------------------------|
-| Tools | `tools/list`, `tools/call` | 37 tools — TIA project & PLC operations (project queries, code reading, exports, compares, OPC UA, Canvas, Trace, Unit Testing, Git) plus general-purpose helpers: `fs` (filesystem read/write/search), `web_fetch` (outbound HTTP), `web_search`. All gated per call by license tier and the permission filter |
+| Tools | `tools/list`, `tools/call` | 47 tools — TIA project & PLC operations (project queries, project creation, code reading, exports, compares, hardware device management, network/subnet, tag tables, screen tools, OPC UA, Canvas, Trace, Unit Testing, Git) plus general-purpose helpers: `fs` (filesystem read/write/search), `web_fetch` (outbound HTTP), `web_search`. All gated per call by license tier and the permission filter |
 | Resources | `resources/list`, `resources/read`, `notifications/resources/list_changed` | A live `tia://project` resource and 4 URI templates; clients receive a list-changed notification when the project changes (per-URI subscribe is deliberately not advertised) |
 | Sampling | `sampling/createMessage` | The TIA Portal-aware tool `tia_ai_analyze` asks the AI client to run a model — the client controls the model and its credentials |
 | Prompts | `prompts/list`, `prompts/get` | 4 ready-made prompts: `analyze-block`, `generate-unit-tests`, `compare-blocks`, `review-safety-function` |
@@ -944,14 +1356,25 @@ Skills are Markdown files that appear as commands in the chat input's `/` comman
 
 #### Built-in Skills
 
-Four default skills are included and automatically deployed on first launch:
+Default skills are included and automatically deployed on first launch:
 
-| Skill | Icon | Description |
-|-------|------|-------------|
-| Explore Project | 🧭 | Analyzes the connected TIA Portal project and generates a context file |
-| Explain Block | 💡 | Reads a block's source code and explains its logic |
-| Generate SCL | ⌨️ | Generates SCL code following Siemens programming standards |
-| Compare Blocks | 🔄 | Compares block versions between project and export folder |
+| Skill | Description |
+|-------|-------------|
+| Explore Project | Analyzes the connected TIA Portal project and generates a context file |
+| Explain Block | Reads a block's source code and explains its logic |
+| Generate SCL | Generates SCL code following Siemens programming standards |
+| Compare Blocks | Compares block versions between project and export folder |
+| Optimize SCL | Suggests refactorings to make a block faster or easier to read |
+| Safety Check | Inspects a block (or selection) for safety-relevant patterns |
+| Export Blocks | Walks the export workflow with the user, including selection and folder handling |
+| Document Block | Generates a block-level documentation file |
+| Document Project | Generates project-wide documentation |
+| Describe Block | Produces a short, plain-language summary of a block |
+| Describe Project | Produces a short, plain-language project summary |
+| Git Commit | Drafts a commit message from the current diff using the active commit template |
+| Convert AWL → SCL | Converts an AWL block to SCL following the Siemens conversion rules |
+| Review SCL | Reviews SCL against the Siemens style guide and reports findings |
+| Write Unit Tests | Generates a Unit-Testing suite skeleton for the selected block |
 
 Built-in skills can be edited. To restore them to their original content, click **Open Skills Folder**, delete the modified files, and use the **Reload** button (↻) — the defaults will be re-deployed automatically.
 
@@ -1039,13 +1462,19 @@ Agents define a persona for the AI, including a custom system prompt and a speci
 
 **Location:** `%LocalAppData%\TiaOpennessManager\agents\`
 
-**Format:** Each `.json` file defines one agent. Three built-in agents are provided:
+**Format:** Each `.json` file defines one agent. The following built-in agents ship with the application and are deployed on first launch:
 
 | Agent | Purpose |
 |-------|---------|
-| General Assistant | All-purpose chat with full tool access |
+| Standard Agent | All-purpose chat with full tool access |
 | Git Assistant | Focused on git operations; file tools restricted |
 | SCL Expert | Specialized for writing and reviewing SCL/PLC code |
+| TIA Analyzer | Read-only analysis of the connected TIA project (no write tools) |
+| TIA Modifier | Project-modifying agent (export, import, edit) with explicit write permissions |
+| Canvas Creator | Builds and edits the AI Canvas (A2UI) layouts |
+| File Worker | Filesystem-focused agent (read/write/search across registered context folders) |
+| AWL Converter | Drives the AWL → SCL conversion workflow with the user |
+| Unit Test Author | Generates Unit-Testing suites and test cases for the selected blocks |
 
 **Switching agents:**
 Use the agent dropdown in the AI Chat header to select the active agent. The change takes effect for the next message sent.
@@ -1066,11 +1495,21 @@ Place a `.json` file in `%LocalAppData%\TiaOpennessManager\agents\` with the fol
 
 **Additional Azure deployments per agent:** A single Azure OpenAI agent can serve multiple deployments. In the agent's Azure section, the **Additional deployments** list holds one row per extra deployment name; click **Add deployment** to append a new row, type the deployment name, or click the × button on a row to remove it. Each registered deployment surfaces as its own row in Manage Language Models; pick any of them as the active deployment via **Use in active agent**. The primary deployment above is always included in the list.
 
+**Knowledge & References (Settings → AI Chat → Agents → Edit):** Every agent has a Knowledge & References section under its Name / Description / System Prompt block. It controls what reference material the AI sees when the agent runs.
+
+- **Eager-load instruction files** (toggle) — When on, the files listed under **Instruction files (eager)** are concatenated into every dispatch of this agent. When off, the agent reads the **Available references (lazy)** list as a short index and loads the full text on demand via a tool call (typically saves 30 + seconds per dispatch).
+- **Instruction files (eager)** — A list of paths or `builtin:<name>.md` entries that the agent loads up front. **Add instruction file** opens a file picker; **Insert built-in…** offers the five shipped references (Siemens styleguide, AWL → SCL, SCL language, Canvas, Unit testing).
+- **Migrate to lazy** (button, shown only when the instruction-files list is non-empty) — Opens a confirmation dialog. Confirming moves every listed instruction file into the **Available references** list with a pre-filled name and description, then turns the eager-load toggle off. A status line under the button reports how many references were added and how many were skipped as duplicates so you can see at a glance whether the existing list absorbed everything. You can switch back to eager mode any time by re-enabling the toggle; nothing is lost.
+- **Available references (lazy)** — One row per reference. Each row has a name (used as the lookup key), a source path, and a free-form description (shown to the AI as a hint of when to load the reference). Buttons per row: move up / down, **Browse…** to pick a Markdown file, **Insert built-in…** to seed a known reference, and × to remove. The validation banner warns about duplicate names and about rows that have only a name or only a source — those rows are dropped on save.
+- **Source paths** — Use `builtin:<name>.md` for the built-in catalog. For custom files, pick any Markdown file under `%LocalAppData%\TiaOpennessManager\instructions\` or `%LocalAppData%\TiaOpennessManager\references\` (other directories are rejected as a safety measure). Files are capped at 1 MiB per reference.
+
+Changes save automatically with a short debounce, take effect on the next dispatch, and survive application updates: built-in agents continue to receive new system-prompt and capability updates, but your customised reference list is preserved across version bumps.
+
 **Reasoning effort (Low / Medium / High):** For agents whose model supports deep thinking, pick how hard the model should think before replying. Set it per agent in **Settings → Agents → Capabilities → Reasoning Effort**, or switch it on the fly via the brain chip next to the tool-call button in the composer bar. Higher levels produce better reasoning at the cost of latency and tokens. Selecting **Use app default** clears the per-agent override so the agent follows the global default configured elsewhere.
 
 **Provider settings tab (Settings → Providers):** A cross-agent overview of the AI providers the app can talk to. The GitHub Copilot card shows sign-in status, every enterprise domain used by a Copilot agent, the reasoning-model policy state, and buttons to retry the policy enablement or verify the Copilot model catalog without leaving Settings. Placeholder cards for Anthropic, OpenAI, Google Gemini, Azure OpenAI, AWS Bedrock, Ollama, and OpenRouter link through to the Manage Language Models browser. Copilot sign-in and enterprise domain still live on each Copilot agent in the Agents tab — the Providers tab is a read-only console for those values.
 
-**Manage Language Models window:** Click the gear icon next to the assistant selector in the composer bar to open a cross-provider catalog of every model the app knows about. The window combines three kinds of rows: GitHub Copilot's merged static and server-discovered list; the OAuth catalogs shipped for OpenAI Codex, Google Gemini CLI, and Antigravity; and — new — a **live-fetched** list of models for every agent you have configured with an API key. The app asks each vendor's `/models` endpoint directly, so Anthropic, OpenAI, OpenRouter, Mistral, XAI, Groq, Cerebras, DeepSeek, Perplexity, Together, HuggingFace, Z.AI, MiniMax, Fireworks, Moonshot, Vercel AI Gateway, SGLang, vLLM, Qwen, Alibaba Model Studio, Arcee, Cloudflare AI Gateway, Ollama, LM Studio, and Custom OpenAI-compatible endpoints surface whatever their vendor is offering right now. AWS Bedrock rows remain static because AWS has no public model-discovery endpoint. Search by model name or ID and filter by provider. The **Source** column distinguishes the three kinds. The status bar shows a live count (e.g. *120 of 240 models · 75 live*) when at least one visible row was fetched live. The **Capabilities** column shows per-model Tool, Vision, and Reasoning badges; the **Request Multiplier** column shows the Copilot premium-request cost for Copilot models (`0x`, `0.33x`, `1x`, `3x`, `7.5x`, …). The **Policy** column is Copilot-specific: it shows *Enabled* for models your account has successfully turned on, *Failed* for models the last enablement attempt rejected (hover the badge to read the exact error), or *Admin-managed* when your Copilot plan lets the tenant administrator control model availability. When a row shows *Failed*, right-click it and choose **Retry Copilot model policy** to kick off a fresh enablement pass against your Copilot tenant. Right-click a row or press **Use in active agent** to switch the active agent's model in one step (enabled only when the row's provider matches the agent's provider). The **Refresh** button invalidates the 5-minute model-list cache and re-queries every endpoint — use it after adding a new API key or after a vendor announces a new model.
+**Manage Language Models window:** Click the gear icon next to the assistant selector in the composer bar to open a cross-provider catalog of every model the app knows about. The window combines three kinds of rows: GitHub Copilot's live server-discovered list (fetched directly from the Copilot `/models` endpoint when the window first opens or Refresh is pressed — no offline fallback, so Copilot rows appear once the discovery call returns); the OAuth catalogs shipped for OpenAI Codex, Google Gemini CLI, and Antigravity; and — new — a **live-fetched** list of models for every agent you have configured with an API key. The app asks each vendor's `/models` endpoint directly, so Anthropic, OpenAI, OpenRouter, Mistral, XAI, Groq, Cerebras, DeepSeek, Perplexity, Together, HuggingFace, Z.AI, MiniMax, Fireworks, Moonshot, Vercel AI Gateway, SGLang, vLLM, Qwen, Alibaba Model Studio, Arcee, Cloudflare AI Gateway, Ollama, LM Studio, and Custom OpenAI-compatible endpoints surface whatever their vendor is offering right now. AWS Bedrock rows remain static because AWS has no public model-discovery endpoint. Search by model name or ID and filter by provider. The **Source** column distinguishes the three kinds. The status bar shows a live count (e.g. *120 of 240 models · 75 live*) when at least one visible row was fetched live. The **Capabilities** column shows per-model Tool, Vision, and Reasoning badges; the **Request Multiplier** column shows the Copilot premium-request cost for Copilot models (`0x`, `0.33x`, `1x`, `3x`, `7.5x`, …). The **Policy** column is Copilot-specific: it shows *Enabled* for models your account has successfully turned on, *Failed* for models the last enablement attempt rejected (hover the badge to read the exact error), or *Admin-managed* when your Copilot plan lets the tenant administrator control model availability. When a row shows *Failed*, right-click it and choose **Retry Copilot model policy** to kick off a fresh enablement pass against your Copilot tenant. Right-click a row or press **Use in active agent** to switch the active agent's model in one step (enabled only when the row's provider matches the agent's provider). The **Refresh** button invalidates the 5-minute model-list cache and re-queries every endpoint — use it after adding a new API key or after a vendor announces a new model.
 
 **Numeric parameters (Request Timeout, Max Retries, Context Window Override, Temperature, Top-P, Session Memory Count):** Type the value directly. Press **Enter** to apply, **Escape** to revert, or click away to apply automatically. Values outside the allowed range are clamped to the nearest bound. Leaving **Max Retries**, **Context Window Override**, **Temperature**, or **Top-P** empty means the provider SDK default (typically 2–3 retries with exponential backoff for **Max Retries**) or the catalog/provider default is used (no override sent). **Max Retries** accepts 0–10 and applies to Anthropic, OpenAI, OpenAI Responses, and Azure OpenAI agents.
 
@@ -1097,6 +1536,22 @@ Drag and drop files directly into the AI Chat to attach them to your message. Th
 5. Send your message as usual; attachments are included automatically
 
 Images are automatically resized to a maximum of 1024px (longest side) to stay within API limits.
+
+### Dropping folders
+
+Drag any folder from Windows Explorer (or the Manager's built-in file tree) onto the chat input area. The folder is attached as a directory listing of its immediate children (entries sorted alphabetically, case-insensitive). Larger folders are truncated; the entry cap defaults to 1000 and can be adjusted in AI Chat settings (range 100–10000). Truncated listings are marked with an `… and N more entries` hint. The assistant receives the listing as a structured directory block — nested files are not auto-expanded. To inspect deeper, re-drop the specific subfolder or use the file-mention `@` syntax.
+
+### Restricted folders
+
+The assistant will not accept drops or `@`-mentions pointing into well-known sensitive locations: your SSH key directory (`~/.ssh`), AWS credentials directory (`~/.aws`), Windows credentials stores, the TIA Openness Manager vault, and the Windows system configuration directory. Attempts are silently rejected with a transient hint at the bottom of the chat indicating which class of path was blocked.
+
+### Folder attachment labels
+
+Attached folder chips show their path relative to the currently open repository root when possible. Dragging two same-named folders from different parents (e.g. `src/utils/` and `tests/utils/`) produces visually distinct chips. Folders outside any repository show their leaf name with a trailing slash.
+
+### Line-range and PDF mentions
+
+When typing an `@`-mention, append a line range to focus on a specific slice: `@src/utils/helper.cs#L10-20` attaches the file with the start/end line range carried into the assistant's context. PDF files larger than 25 MB are attached as lightweight references (path + size only); smaller PDFs and other binaries are inlined as usual.
 
 ### Clipboard Paste
 
@@ -1128,7 +1583,7 @@ Conversations are saved automatically as sessions. You can create new chats, swi
 - Archived sessions can be restored or permanently deleted
 - The archived section shows a count badge and expands on click
 
-Sessions are stored as JSON files in `%LocalAppData%\TiaOpennessManager\ChatSessions\`.
+Sessions are stored in a local SQLite database under `%LocalAppData%\TiaOpennessManager\` (`chat.db`); attached files and large message payloads land in a content-addressed blob store next to it. Both files are user-private and never leave the workstation.
 
 ### Agent Memory
 
@@ -1264,7 +1719,7 @@ You can add custom hooks in `ai_chat_settings.json` under the `Hooks` array:
 
 | Field | Description |
 |-------|-------------|
-| `Event` | When to run: `PreToolUse`, `PostToolUse`, `Stop`, `UserPromptSubmit` |
+| `Event` | When to run. One of: `PreToolUse`, `PostToolUse`, `PostToolUseFailure`, `SessionStart`, `SessionEnd`, `SubagentStart`, `SubagentStop`, `PreCompact`, `PostCompact`, `Stop`, `UserPromptSubmit`, `PlanModeExit`. (`Stop` fires alongside `SessionEnd` for backwards compatibility.) |
 | `Matcher` | Tool name pattern (e.g. `tia_*`, `tia_delete_*\|tia_import_*`, `Bash(git *)`) |
 | `Type` | `command` (shell) or `http` (POST callback) |
 | `Command` | Shell command to execute (receives JSON on stdin, returns JSON on stdout) |
@@ -1302,24 +1757,33 @@ You can type and send messages while the AI agent is actively processing. Messag
 
 **Queue processing:** After each AI turn completes, the system automatically checks the queue and processes the next message. If multiple messages are queued, they are processed one at a time in priority order (higher priority first, FIFO within the same priority).
 
+**Steer mode (default):** In **AI Chat Settings → When typing during a response**, the default is *Send into running response (steer the model)* — a message typed while the AI is working is handed to the model at the next safe boundary inside the current response so it can react immediately. Steered messages keep their normal bubble plus a small "↪ steered into running response" indicator. Sub-agent and notification entries continue to follow the regular queue rules. If you prefer the legacy behaviour, switch the setting to *Wait for current response to finish*.
+
+**Interrupt (Shift+Enter):** While a response is streaming, press **Shift+Enter** to cancel the current response and immediately start a fresh turn with the message you typed. ESC alone cancels without sending; Shift+Enter cancels *and* sends — useful when the AI heads in the wrong direction and you want to restart with new instructions in one gesture.
+
 ---
 
 ### Multi-Session
 
 Run multiple AI chat sessions simultaneously. Each session has its own conversation context, canvas state, and model override.
 
-**Agent Sidebar:** Click the sidebar toggle icon (PanelLeftOpen/PanelLeftClose) in the chat header to toggle the Agent Sidebar. It slides out as an overlay from the left without pushing the chat content. It shows all sessions grouped by status:
+**Sidebar layout:** Click the sidebar toggle icon (PanelLeftOpen/PanelLeftClose) in the chat header to toggle the Agent Sidebar. It slides out as an overlay from the left without pushing the chat content. Sessions are grouped under a header for each workspace (TIA project, Git repository, or manually added folder). Each group is sorted newest-first by the most recent activity in the group; sessions whose workspace is unknown or has been removed land in a trailing **OTHER** group. Each group shows up to five sessions, with a `+N more` row to expand and a `Show less` row to collapse again.
 
-- **In Progress** — Sessions where the AI is actively streaming or has been interacted with
-- **Completed** — Sessions that finished successfully or with errors
+**Workspace picker:** Click the `▾` button next to the `+` in the sidebar header to open the workspace picker flyout. Three tabs:
 
-**Creating sessions:** Click the **+** button in the sidebar header to create a new session. The sidebar opens automatically when a second session is created.
+- **Local** — Lists all recent workspaces with a folder icon, name, and dimmed full path. Click any row to make that workspace active (new sessions land in its group, the chat picks up its file-system scope). The leading **(None)** row clears the active workspace. Hover a row to reveal an X button that removes it from the recent list. The trailing **Select…** row opens a folder picker for any directory you want to add manually.
+- **GitHub** — Coming soon. Will let you browse and pick GitHub repositories.
+- **Remote** — Coming soon. Will let you pick SSH-tunnelled remote workspaces.
 
-**Switching sessions:** Click any session in the sidebar to switch to it. The chat context, canvas, and model override all switch to the selected session.
+Workspaces are auto-tracked when you open a TIA project or open a folder in the Git sidebar; up to 30 entries are kept, deduplicated by path, with the most recently opened on top.
 
-**Closing sessions:** Click the **X** button on a session item. If the session is still running, a confirmation dialog appears. Closing cancels active streaming, kills sub-agents, and cleans up the session context.
+**Creating sessions:** Click the **+** button in the sidebar header to create a new session under the currently active workspace. New sessions appear at the top of their workspace group.
 
-**Unread badges:** When another session receives a message while you are viewing a different session, an unread badge appears on the session item with a brief blink animation.
+**Switching sessions:** Click any session row to switch to it. The chat context, canvas, and model override all switch to the selected session.
+
+**Closing sessions:** Click the **X** button on a session row. If the session is still running, a confirmation dialog appears. Closing cancels active streaming, kills sub-agents, and cleans up the session context.
+
+**Unread badges:** When another session receives a message while you are viewing a different session, an unread badge appears on the session row with a brief blink animation.
 
 **Renaming sessions:** Double-click a session name to edit it. Press Enter or click away to save.
 
@@ -1365,6 +1829,33 @@ The AI Chat can also connect **outward** to external MCP servers — Figma Remot
 - **Static header** — send a fixed `Authorization` header (or other custom header) you fill into the Headers field. Use for personal-access-token servers (e.g. self-hosted MCP gateways with a bearer token you already have).
 - **OAuth 2.1** — full OAuth 2.1 + PKCE login flow. Use for hosted MCP servers (Figma Remote, Notion, Linear, Atlassian, GitHub-MCP) that advertise an authorization server via `WWW-Authenticate` or the `.well-known/oauth-protected-resource` document.
 
+**OAuth Client Mode (only when Auth Mode = OAuth 2.1):**
+
+When you select **OAuth 2.1**, a second radio group appears: **OAuth Client Mode**. The default — **Dynamic registration** — works with any server that supports automatic client registration and needs no extra setup. The other three modes are for servers that do not support, or where you do not want, automatic client registration:
+
+- **Dynamic registration** (default) — TIA Openness Manager registers itself with the server automatically via Dynamic Client Registration. No extra fields. Use this whenever it works — it is the simplest option.
+
+- **Static (pre-registered)** — The server does not allow automatic client registration; you must register the client once in the server's developer portal and paste the credentials here.
+  1. Open the server's developer portal and create a new OAuth client. Set the redirect URI to `http://127.0.0.1` (any port).
+  2. Copy the **Client ID** the server gave you into the **Client ID** field.
+  3. If the server also issued a **Client Secret**, paste it into the **Client Secret** field. The secret is encrypted and stored in the Windows Credential Manager — only its key reference is kept in the app config. Leave the field blank for public clients (PKCE-only).
+  4. In the **Edit MCP Server** dialog, the secret field starts blank with a placeholder — leave it blank to keep the previously stored secret, or type a new value to replace it.
+
+- **Use a hosted client metadata document** — The server supports the Client Identifier Metadata Document profile (the URL itself acts as the OAuth client identifier). TIA Openness Manager hosts a default document at `https://tiaopenessmanager.ch/.well-known/tiaom-mcp-client-metadata` that covers most use cases.
+  1. Leave the **Metadata document URL** field blank to use the built-in default.
+  2. Power users may host their own metadata document and paste an absolute `https://` URL — it must follow the URL rules from the OAuth Client Identifier Metadata Document specification (no fragment, no userinfo, no port if the scheme's default applies).
+
+- **Cross-app authorization (XAA)** — One central OpenID Connect identity provider (Azure AD, Okta, Auth0, Keycloak, or any OIDC-compliant IdP) issues a single sign-on token that several MCP servers accept. Configure the IdP once for the whole app, then mark each XAA-capable server with this mode.
+  1. Click **Configure…** in the warning border (or open **AI Chat Settings → MCP Servers → Cross-app authorization → Configure…**).
+  2. In the **Cross-app authorization identity provider** dialog, fill in:
+     - **Issuer URL** — the OIDC issuer (must be `https://`, no loopback). For Azure AD multi-tenant the issuer is `https://login.microsoftonline.com/{tenant}/v2.0`; for Okta it is `https://<your-org>.okta.com/oauth2/<authServerId>`; for Keycloak it is `https://<host>/realms/<realm>`.
+     - **Client ID** — the OAuth client identifier from the IdP's app registration.
+     - **Client Secret** *(optional)* — leave blank for a public client (PKCE-only). If the IdP requires a confidential client, paste the secret; it is encrypted in the Windows Credential Manager.
+     - **Callback port** *(optional)* — fixed loopback port between 1024 and 65535. Leave blank to allocate dynamically.
+  3. Click **Save**. The Configured / Not configured pill in the AI Chat settings flips to **Configured**, and any MCP server set to **Cross-app authorization** can now use it.
+  4. Back in the MCP Server dialog, optionally enter an **Audience** value if the IdP requires `aud`-binding for that server. Leave blank if the server does not require it.
+  5. Click **Authorize…** — the same browser-based sign-in flow as Dynamic mode, but the token comes from the central IdP instead of the MCP server's own authorization server.
+
 **OAuth flow:**
 
 When you select **OAuth 2.1**, an Authorization status row appears:
@@ -1404,7 +1895,7 @@ The **Scheduled Tasks** tab in **AI Chat Settings → Scheduled tasks** lets you
 3. Click **New task**.
 4. Fill in:
    - **Name** — 1-100 characters, unique per agent.
-   - **Agent** — the AI agent that runs the task.
+   - **Agent** — the AI agent that runs the task. The picker is locked when editing an existing task; to switch agents, delete the task and recreate it.
    - **Task prompt** — the instruction sent to the agent at run time (max 16 000 characters).
    - **Schedule** — pick a preset (Every 5/15/30 min, Hourly, Daily, Weekly, Monthly) or switch to **Advanced (raw cron)** and enter a 5-field POSIX cron expression.
    - **Timeout** — 30 to 3600 seconds, default 300.
@@ -1668,6 +2159,21 @@ When connected to an S7-1200 or S7-1500 PLC over the native S7 Comm+ protocol, t
   - **Amber `Read access` / `HMI access`** — the PLC granted a degraded level. Reads work for the categories the level allows; writes will be rejected.
   - **Red `No access`** — the PLC requires a password and none was supplied. The connection stays open but the post-connect browse, watch-table subscribe and CPU-protection probe are skipped on purpose. Supply the correct password in the connection form and click Connect again to re-attempt with credentials.
 
+### TLS encryption and certificate pinning (S7 Native)
+
+S7-1500 firmware V2.9 and later activates TLS unconditionally on the OMS+ port — the unencrypted plain S7-CommPlus path is rejected by current PLCs. The S7 Native transport mirrors that contract: TLS is on by default, the unencrypted InitSsl handshake runs first, and the channel is upgraded to TLS for every operation that follows. The connection settings expose three options:
+
+- **Use TLS** — historical toggle preserved on the connection form. The S7 Native driver mirrors the legacy S7-CommPlus contract and always performs the TLS upgrade after the unencrypted InitSsl handshake; the toggle no longer disables that upgrade.
+- **Server-certificate fingerprint (SHA-256)** — paste the SHA-256 thumbprint of the CPU's device certificate (lowercase or uppercase hex, with or without `:` separators). When set, the client accepts that one certificate only; any mismatching certificate is rejected. Pinning is the recommended production setting because S7-1500 device certificates are typically self-signed and not enrolled into a public PKI.
+- **Accept any certificate** — explicit diagnostics toggle. When enabled the client trusts whatever certificate the server presents and a one-shot warning is written to the app log on every connect.
+
+Selection precedence:
+1. If a fingerprint is set → only that certificate is accepted, regardless of the *Accept any certificate* toggle.
+2. Else, if *Accept any certificate* is on → any certificate is accepted, with an explicit-diagnostics warning.
+3. Else (TLS on, no fingerprint, accept-any off) → the client accepts any certificate and emits a one-shot warning recommending fingerprint pinning. This mirrors the behaviour of the legacy S7-CommPlus client and matches what TIA Portal does over the same channel; it is also the only way to talk to a stock S7-1500 without first extracting the device certificate.
+
+For Wireshark-side diagnostics of the encrypted handshake, the `SSLKEYLOGFILE` mechanism described under *Unit Testing → Troubleshooting* applies to PLC Online connections as well.
+
 ### CPU Protection panel
 
 A `CPU Protection` tab in the right-hand tool dock shows the live protection state of the connected S7-1500 / S7-1500F CPU:
@@ -1709,8 +2215,8 @@ When no PLC is connected the rows show an em-dash (`—`) and the progress bars 
 
 The tool tabs surrounding the connection workspace adapt to whichever protocol the active connection uses:
 
-- **OPC UA connection** — Address Space, Type Definitions, Node Attributes, References, Struct Fields, Event Log, Watch Table, History Chart, Server Diagnostics. No CPU Protection / Diagnostic Buffer / CPU Identity / Memory Usage tabs (those are S7-only).
-- **S7 Comm+ connection** — Address Space, Watch Table, History Chart, CPU Protection, Diagnostic Buffer, CPU Identity, Memory Usage. The OPC-UA-only tabs (Type Definitions, Node Attributes, References, Struct Fields, Event Log, Server Diagnostics) are hidden because they need NodeIds, OPC events or other server-side surfaces that S7 Comm+ does not expose.
+- **OPC UA connection** — Address Space, Type Definitions, Node Attributes, References, Struct Fields, Event Log, Watch Table, History Chart, Server Diagnostics. No CPU Protection / Diagnostic Buffer / CPU Identity / Memory Usage / Cycle Time tabs (those are S7-only).
+- **S7 Comm+ connection** — Address Space, Watch Table, History Chart, CPU Protection, Diagnostic Buffer, CPU Identity, Memory Usage, Cycle Time. The OPC-UA-only tabs (Type Definitions, Node Attributes, References, Struct Fields, Event Log, Server Diagnostics) are hidden because they need NodeIds, OPC events or other server-side surfaces that S7 Comm+ does not expose.
 
 Tabs that are hidden retain their state — switching the active tab to an S7 connection and back to OPC UA restores the OPC-UA-only tabs in their previous places. Switching the protocol radio in the connection form mid-session re-applies the filter immediately.
 
@@ -1969,6 +2475,23 @@ The Test Explorer auto-scans the `{WorkingDirectory}/.tia-tests/` folder and sho
 | **Run All** button | Runs all visible suites sequentially |
 | Type in search box | Filters suites by name (suite + test case names, case-insensitive) |
 | Toggle `✗ Failed` button | Shows only suites with Fail/Error cases (button turns red when active) |
+| Right-click a suite → Run Affected Only | Runs only the suites whose underlying PLC block changed since the last test run |
+
+**Block-Change Badge:** Suites whose underlying PLC block has changed since the last test run show a small orange dot (8×8 px) next to the suite name with the tooltip "Block changed since last run". The badges refresh automatically after the project loads, after every batch run, and when the file watcher detects suite-file changes. If no suites are affected, or if change detection fails for every PLC, an inline status banner above the search box explains the result instead of a silent no-op.
+
+### Test-Case Metadata
+
+Each test case in the visual editor of a suite has an expandable **Metadata** pane (collapsed by default, located below the variable-watch list). Click the section header to expand it and edit the following fields per case:
+
+| Field | Purpose |
+|---|---|
+| Order | Numeric run order. Leave empty to keep the natural order in the suite |
+| Tags | Comma-separated labels (e.g. `safety, regression`) used for filters in HTML reports |
+| Priority | One of Low / Normal / High / Critical. Drives report sort order |
+| Owner | Free-text owner (team name, e-mail, etc.) |
+| Requirements | Comma-separated requirement IDs (e.g. `REQ-123, REQ-456`) for traceability |
+
+Schema-validation issues that target a specific test case (such as an out-of-range priority) are shown in a red panel directly inside the affected case's Metadata pane. Issues that target the suite as a whole still appear in the suite-level validation banner. All edits are auto-saved with the rest of the suite. Suites created before this release load with empty metadata defaults — no migration is required.
 
 ### Live Progress During a Run
 
@@ -2024,6 +2547,18 @@ The **Compare Runs** dock-tool is the third tab in the right results panel. It i
 
 The launcher dialog lists the most recent 100 runs minus the baseline you started from, sorted newest-first. Double-click a row or click **OK** to commit the pick; **Cancel** closes the dialog without changing the comparison.
 
+### Trend
+
+The **Trend** dock-tool is the fourth tab in the right results panel. It visualises pass-rate, duration, and per-case status over time using historical runs from the database.
+
+- **Filter bar (row 1):** PLC name (required), suite name (optional — narrows the duration chart), case name (optional — narrows the heatmap)
+- **Filter bar (row 2):** From / To calendar pickers (clear a picker to remove the bound), **Last 30 days** / **Last 90 days** quick buttons, **Refresh** to re-query, **Export CSV** to forward the current filter to the Phase-VI CLI exporter (wiring lands with the CLI integration)
+- **Pass rate chart:** Time-series scatter, X = run start time, Y = pass rate %. Visible once the project query returns at least one point; otherwise shows "No data".
+- **Duration chart:** Time-series scatter, X = run start time, Y = suite duration in seconds. Requires a suite name; otherwise shows "No data".
+- **Case heatmap:** Wraps cells left-to-right, one per run, colour-coded by status (green = pass, red = fail, orange = error, grey = skipped) plus a glyph (`✓`/`✗`/`!`/`—`) for accessibility. Hover any cell to see the run timestamp. Requires both suite and case names; otherwise shows "No data".
+
+If the project trend query fails (database offline, corrupt range), the bottom banner shows the error message. Suite and case query failures show their own red banner above the affected chart so it is clear which section failed; the other charts still render normally.
+
 ### Block Analysis (before running tests)
 
 1. Select a PLC from the dropdown
@@ -2065,15 +2600,15 @@ Every `.tia-tests/*.json` file follows the same shape. Top-level fields:
 | `instanceDbName` | `""` | Instance-DB to read/write; empty → `<blockName>_DB` (Siemens convention) |
 | `preferFc` | `false` | Tolerate FC blocks (no Instance-DB); set when the target is a function instead of a function block |
 | `transport` | `"s7CommPlus"` | `"s7CommPlus"` for real PLC / TCP-PLCSIM, `"plcSimApi"` for direct PLCSIM Tag-API |
-| `s7IpAddress`, `s7Port`, `s7Rack`, `s7Slot` | `192.168.0.1` / `102` / `0` / `1` | S7 Comm+ target |
-| `s7UseTls` | `false` | TLS 1.3 (required on S7-1500 firmware ≥ 2.9) |
-| `s7User`, `s7PasswordKeyId` | `""` / null | Credentials reference (password lives in Windows Credential Manager) |
-| `plcSimInstanceName` | `"TiaUnitTest"` | PLCSIM Advanced instance name when `transport = "plcSimApi"` |
-| `plcSimIp` | `"192.168.0.100"` | PLCSIM Advanced Virtual-Adapter IP when `transport = "plcSimApi"` |
-| `preparationMode` | `"userPreloaded"` | `userPreloaded` (recommended) or `tiaTcpDownload` (auto-compile + download) |
-| `masterSecretPasswordKeyId` | null | Project master-secret password reference (required for `tiaTcpDownload` when the project uses confidential PLC config protection — password lives in Windows Credential Manager) |
-| `autoConnectS7` | `true` | Auto-connect S7 before run starts |
-| `keepInstanceAfterRun` | `false` | Keep PLCSIM instance alive after run |
+| `s7IpAddress` | `192.168.0.1` | S7 connect target — used **only** when `preparationMode = "external"` (real PLC). For PLCSIM-backed modes (`userPreloaded`, `tiaTcpDownload`) the runner connects to `plcSimIp` instead, regardless of transport |
+| `s7Port` | `102` | S7 ISO-on-TCP port. Default `102` matches every Siemens default — change only when the PLC was reconfigured to a non-standard TCP port |
+| `s7User`, `s7PasswordKeyId` | `""` / null | Credentials reference (password lives in Windows Credential Manager). Required only when the PLC enforces user authentication — most projects leave this empty |
+| `plcSimInstanceName` | `"TiaUnitTest"` | PLCSIM Advanced instance name. Used by both transports whenever `preparationMode != "external"` |
+| `plcSimIp` | `"192.168.0.100"` | PLCSIM Virtual-Adapter IP. **This is the actual S7 connect target for `s7CommPlus + userPreloaded/tiaTcpDownload`** — set it to the IP you assigned to the Siemens PLCSIM Virtual Ethernet Adapter, not to the PLC project IP |
+| `preparationMode` | `"userPreloaded"` | `userPreloaded` (default; assumes the PLCSIM instance is already running with your project loaded), `tiaTcpDownload` (compiles + downloads from the open TIA project — see prerequisites below), or `external` (real PLC; uses `s7IpAddress`) |
+| `masterSecretPasswordKeyId` | null | Project master-secret password reference. Required for `tiaTcpDownload` only when the TIA project uses confidential PLC configuration protection. Password lives in Windows Credential Manager |
+| `autoConnectS7` | `true` | Auto-connect S7 before run starts. Set to `false` only in advanced setups where another client (WinCC, custom HMI) already holds the session and the runner should read/write through it |
+| `keepInstanceAfterRun` | `false` | Keep PLCSIM instance alive after the run. Has effect **only** in `tiaTcpDownload` mode — `userPreloaded` and `external` never manage the instance lifecycle |
 
 Each entry in `testCases`:
 
@@ -2115,9 +2650,6 @@ A full minimal suite with one test case that exercises every block and uses `wat
     "transport": "s7CommPlus",
     "s7IpAddress": "192.168.0.1",
     "s7Port": 102,
-    "s7Rack": 0,
-    "s7Slot": 1,
-    "s7UseTls": false,
     "autoConnectS7": true,
     "preparationMode": "userPreloaded"
   },
@@ -2244,7 +2776,7 @@ The **Connection Settings** dialog lets you pick how test reads and writes trave
 - **PLCSim Advanced** — Direct access via the Siemens PLCSim API, faster and does not need an active S7 session. Best for simulator-only testing.
 - **S7 Native** — Uses the S7 Communication driver over TCP/IP. Pick this when you want to run the tests against real hardware (in combination with the **Real PLC** preparation mode) or against PLCSim through the virtual Ethernet adapter with user authentication. Same protocol label as the PLC Online tab.
 
-Both transports expose their own configuration section in the same dialog, so each suite can be targeted independently. For S7 Native, the suite owns its IP, port, rack, slot, TLS toggle, username, and password — no cross-tab lookup from the PLC Online view.
+Both transports expose their own configuration section in the same dialog, so each suite can be targeted independently. For S7 Native, the suite owns its IP, TCP port, username, and password — no cross-tab lookup from the PLC Online view. Rack and slot are not configurable: S7-1200/1500 connect via the S7CommPlus protocol with a fixed routing handshake, and TLS is unconditional on every connection — both are taken care of by the transport.
 
 ### Simulation Workspace
 
@@ -2253,9 +2785,10 @@ Inside the Unit Testing tab, a **Simulation** sub-mode switcher at the top lets 
 - API version, online-access mode (PLCSim / TCP/IP single / TCP/IP multi), strict motion timing toggle, and Runtime Manager Port.
 - A **Virtual Adapter** row showing the permanent status of the Siemens PLCSIM virtual Ethernet adapter (Ready / APIPA / Disabled / Not Installed / No IPv4), its IPv4 address, and a refresh button. If the adapter is stuck in the 169.254.x.y APIPA range, downloads will be unreliable — assign a static IPv4 address in Windows network settings.
 - Every registered PLCSim instance with inline action buttons: Power On, Run, Stop, Memory Reset, Power Off, Settings, Network, Delete. Each row shows the configured IP address; if the instance has more than one interface with an IP, they are listed as `X1: 192.168.0.1, X2: 10.0.0.5`.
+- A **TIA PLC** combobox per instance card: pick the TIA Portal PLC that backs the instance. Use this when the PLCSim instance was loaded with a snapshot compiled from a different TIA PLC than the one it is registered under (for example: an instance named `PLC_2` actually holding the program from `PLC_1`). Without an explicit choice, the app matches by name and falls back to the only PLC in the project when there is one — which is enough for most setups but produces an empty tag tree when the names disagree. The choice is remembered per instance.
 - A **New Instance** button that prompts for a name and CPU type.
-- A **Tag Browser** pane that connects to any listed instance and shows all tags the running program exposes, filterable by name search, area (Input / Output / Marker / Data Block), and data type. Auto-refresh can be toggled for live value observation. Each writable tag has a **pencil button** that opens a type-aware write dialog (toggle for Bool, numeric input with type-specific range for integers and floats, one-character field for Char/WChar). String tags are read-only.
-- A **Saved Instances** section at the bottom listing every PLCSim Advanced instance persisted on the virtual SIMATIC memory card. Click **Load** to re-register and resume one — PLCSim picks up the stored CPU type, I/O image and program automatically. Click **Delete** (with confirmation) to remove the persisted folder.
+- A **Tag Browser** pane that connects to any listed instance and shows all tags the running program exposes, filterable by name search, area (Input / Output / Marker / Data Block), and data type. Auto-refresh can be toggled for live value observation. Each writable tag has a **pencil button** that opens a type-aware write dialog (toggle for Bool, numeric input with type-specific range for integers and floats, one-character field for Char/WChar). String tags are read-only. Struct tags and array tags are listed with their inner members and elements as expandable rows so you can search, watch and edit individual fields like `OUT[5]` or `DI10.Channel` directly; **Expand all** and **Collapse all** toolbar buttons toggle the whole tree at once. Structured input/output tags whose layout comes from a project type definition (for example a `PNPN` block at `%I0.0` declared as `Array[0..63] of Byte`) drill down into named member rows when the app is connected to the TIA Portal project that defines them — letting you write `IN.PNPN[12]` from the same dialog that handles the rest of the tree.
+- A **Saved Instances** section at the bottom listing every PLCSim Advanced instance persisted on the virtual SIMATIC memory card. The heading shows a counter with the total number of saved instances; the list shows up to three rows at a time and scrolls if there are more so the simulation area above stays visible. Click **Load** to re-register and resume one — PLCSim picks up the stored CPU type, I/O image and program automatically. Click **Delete** (with confirmation) to remove the persisted folder.
 
 The sub-mode choice is remembered between sessions, and switching modes keeps any open suite documents intact.
 
@@ -2265,14 +2798,16 @@ The **Connection Settings** dialog has a preparation-mode selector that controls
 
 - **I load it myself (recommended)** — The runner expects a PLCSIM instance that you have already started and loaded manually via TIA Portal. It skips compile and download and connects directly to run the tests. Fastest option if you're iterating on the same project.
 - **Automatic TCP download** — The runner compiles the project, starts a fresh PLCSIM instance and downloads via TCP over the PLCSIM Virtual Adapter. No manual TIA Portal interaction needed — just click Run.
-- **Real PLC (no PLCSim)** — Skips the PLCSim lifecycle entirely. The runner connects S7 Native directly to the live S7 hardware at the IP/port/rack/slot you configured and runs the tests there. **Use only when the plant is in a safe test state.** Selecting this mode hides the PLCSim section and locks the transport to S7 Native; PLCSim API is incompatible.
+- **Real PLC (no PLCSim)** — Skips the PLCSim lifecycle entirely. The runner connects S7 Native directly to the live S7 hardware at the IP and TCP port you configured and runs the tests there. **Use only when the plant is in a safe test state.** Selecting this mode hides the PLCSim section and locks the transport to S7 Native; PLCSim API is incompatible.
+
+**Before using Automatic TCP download:** Four prerequisites must be met or the run will fail with a generic transport error: (1) the **PLCSIM Virtual Adapter** must be installed and have a static IPv4 address that matches the suite's `plcSimIp` (the Simulation tab shows the adapter's current status); (2) the TIA Portal **project must be open** in TIA Portal — the runner triggers a compile against the open project before the download; (3) if the project enables **Protect confidential PLC configuration data**, you must enter the master-secret password in Connection Settings (it lives in the Vault); (4) any existing PLCSIM instance with the same name is **destroyed and recreated** for every run, so other applications attached to that instance lose their session.
 
 ### Running Tests Against a Real PLC
 
 Picking **Real PLC** in the preparation-mode selector enables tests against live S7-1200 / S7-1500 hardware without any PLCSim involvement:
 
 1. Make sure the plant is in a **safe test state** — actuators isolated or interlocked, no production load on the PLC, operators informed.
-2. Open **Connection settings…**, choose **S7 Native** as the transport, enter the PLC's real IP address, port, rack, slot, and (if applicable) TLS user/password.
+2. Open **Connection settings…**, choose **S7 Native** as the transport, enter the PLC's real IP address and (if the PLC was reconfigured to a non-standard TCP port) the port; supply user/password if the PLC enforces authentication.
 3. Switch the preparation mode to **Real PLC (no PLCSim)**. The PLCSim section disappears.
 4. Click **OK**, then **▶ Run**.
 5. Before the runner contacts the PLC, an acknowledgement dialog appears: *"Run tests against live PLC?"* Read the warning, tick **"I understand — the plant is in a safe test state."**, then click **Run tests**. The button stays disabled until the checkbox is ticked. Cancel aborts the run with no network traffic.
@@ -2425,15 +2960,7 @@ The Project Library stores reusable items (Master Copies and Types) that can be 
 
 ### MCP Integration (AI Assistants)
 
-The following MCP tools are available for AI assistants:
-
-- `library_create_master_copy` - Create Master Copy from block
-- `library_instantiate` - Instantiate Master Copy to PLC
-- `library_delete_item` - Delete library item
-- `library_rename_item` - Rename library item
-- `library_export_type` - Export Type version
-- `library_create_folder` - Create new folder
-- `library_cleanup` - Clean up unused types
+Library Master-Copy / Type operations are exposed to AI assistants only through the project-tree context-menu actions described above. There are currently no dedicated `library_*` MCP tools — AI clients can read library contents via the standard project-resource (`tia://project`) but cannot create, instantiate, rename, delete, export, or clean up library items through MCP.
 
 ---
 
@@ -2465,7 +2992,13 @@ Reloads the device list from the TIA Portal project.
 Exports the complete hardware list to a CSV file for documentation or further processing.
 
 **Save Changes:**
-Saves modified PROFINET names and IP addresses back to the TIA Portal project.
+Saves modified PROFINET names, IP addresses, and per-card I/O start addresses back to the TIA Portal project.
+
+If you close the application or disconnect from TIA Portal while you still have unsaved hardware changes, the application asks whether to save them, discard them, or cancel the close/disconnect.
+
+### Cards Pane
+
+Selecting a station in the device grid loads the cards belonging to that station into a second grid below. Each row shows one card with its slot, name, article number, and the input and output address ranges as **Start / End / Length** bytes — the same byte units shown in TIA Portal Device-View, so a card displayed as `I 160...223` in TIA Portal also shows as Input Start `160`, Input End `223`, Input Length `64` here. Only the Input Start and Output Start columns are editable; End and Length are read-only and update automatically as you edit Start. Edits are tracked alongside the station-level changes — Save Changes writes both back to TIA Portal in one operation, and discarding rolls them back. Refresh reloads the stations grid and the cards pane together so any changes made elsewhere in TIA Portal show up in both views.
 
 ### Supported Device Types
 
@@ -2485,7 +3018,66 @@ Saves modified PROFINET names and IP addresses back to the TIA Portal project.
 
 ---
 
-## 11a. Find in Project (Cross-Reference Search)
+## 11a. Hardware Simulation
+
+The Hardware Simulation tab drives simulated tag values into a running PLCSim Advanced instance so PLC logic can be exercised against varying inputs without physical hardware. Available on Trial and Enterprise plans; the tab shows a "license required" overlay on Basic and Professional plans.
+
+### Opening
+
+Open the Hardware Simulation tab from the activity bar on the left. The workspace contains a toolbar at the top and four dockable panels: Device Panel, Override List, Linker Rules, and Function Editor.
+
+### Connect to PLCSim Advanced
+
+1. In the toolbar, pick a PLCSim Advanced instance from the **Instance** dropdown.
+2. (Optional) Select the matching TIA Portal PLC from the **TIA PLC** dropdown so topology names resolve correctly.
+3. Click **Connect**. The status text shows the established transport.
+4. Click **Reload topology** to populate the Device Panel with the hardware modules and tag tree from TIA Portal.
+
+### Engine and tick interval
+
+The simulation engine runs all configured functions on a periodic tick. Use the **Tick** slider in the toolbar to choose an interval between 10 ms and 1000 ms. Start, Pause, and Stop buttons control the engine; the current state is shown in the status text.
+
+### Sim functions (Function Editor)
+
+Right-click in the Function Editor tab to add a new function or double-click an existing row to edit it. Each function drives one tag and is one of:
+
+- **Constant** — Writes a fixed value every tick.
+- **Ramp** — Linear sweep between two values over a configurable duration.
+- **Sine** — Sine wave with amplitude, offset, frequency and phase.
+- **Square** — Square wave with high level, low level and frequency.
+- **Triangle** — Triangle wave with amplitude, offset and frequency.
+- **Random** — Random value in a [min, max] range each tick.
+
+Each kind displays a waveform icon in the dropdown so the shape is recognisable at a glance. The dialog autofills the data type from the selected tag. Use the tag picker on the right to browse the topology and select a tag; the picker covers hardware-channel tags, marker tags, system tags and data-block variables.
+
+### Force overrides (Override List)
+
+Force a tag to a fixed value independent of the engine functions. Right-click in the Override List tab to add a new override. An override holds priority over any engine function writing to the same tag; toggle the override active or inactive without removing it.
+
+### Watch list
+
+The Watch List tab shows the live values of selected tags. Use the eye icon in the Device Panel tag tree to add tags to the watch list. Values refresh on each engine tick while the engine is running, and tag-table tags receive live updates the same way hardware-channel tags do.
+
+### Linker rules
+
+A linker rule conditionally writes one tag's value to another tag when a boolean expression evaluates to true. Open the Linker Rules tab to add or edit rules. The tag picker covers IO-area, marker, system and data-block variables. The rule editor offers two tabs:
+
+- **Guided builder** — Add up to eight conditions with operator, value, and AND/OR combinators between them. Pick the source tag, target tag, and the assignment value.
+- **Expression text** — Free-form expression syntax `WHEN <conditions> THEN <target> := <value>` with full IEC-style operators (`=`, `<>`, `<`, `>`, `<=`, `>=`).
+
+The expression text and the guided builder stay in sync — editing one updates the other when the expression parses cleanly.
+
+### F-safety auto-acknowledge
+
+PLCSim Advanced needs manual acknowledgement for forced F-channels after each PLC restart. With a hardware topology loaded, click **Acknowledge F-tags** in the device-panel toolbar to acknowledge all F-channels in one click; **Revoke** undoes it. The acknowledge state is remembered per PLC.
+
+### Disconnect
+
+Click **Disconnect** in the toolbar to release the PLCSim Advanced session and stop the engine. The Watch List, Override List, Linker Rules and Function Editor contents persist across reconnects.
+
+---
+
+## 11b. Find in Project (Cross-Reference Search)
 
 ### What it does
 
@@ -2628,28 +3220,33 @@ All settings are saved automatically and persist across application restarts.
 
 ## 13. Settings
 
+A single Settings window replaces the previous separate dialogs for app settings, Import/Export, Git Preferences and AI Chat. The window has a search bar at the top, a category tree on the left, and the matching settings on the right.
+
 ### Opening
 
-Select **View → Settings** from the menu bar.
+- Menu bar: **View → Settings** (or `Ctrl+,`).
+- AI Chat input bar: gear icon → opens the window directly on the AI Chat section.
+- Import/Export tab: gear icon → opens on the Import/Export section.
+- Git repository panel: settings gear → opens on the Git section.
 
-### Available Settings
+Changes are saved automatically — no Save or Cancel button. A colored accent bar on the left edge of a section indicates that something inside it differs from the values that were loaded when the window opened.
 
-| Setting | Description |
-|---------|-------------|
-| Working Directory | Default export folder for Find Unused Blocks |
-| Log Path | Path for log files |
-| Language | User interface language (EN, DE, FR, IT) |
-| Theme Mode | Dark or Light mode |
-| Accent Color | Cyan, Blue, Green, Amber, or Teal |
-| Debug Logging | Enables extended logging |
-| Check for Updates | Automatically check for updates at startup |
-| Create Source Folder | Include a Source folder wrapper in exports |
+### Categories
 
-### Folder Name Customization
+| Category | What lives inside |
+|----------|-------------------|
+| General | UI language, theme (Dark, Light or Midnight mode + accent color), Check-for-Updates at startup. Midnight is a true-black variant tuned for OLED displays. |
+| Files & Folders | Log file directory, working folder for import/export, folder-name customization, "Create Source folder" toggle. |
+| Import/Export | Import options (ignore structural changes, ignore missing references, fault-tolerant), Export options per type (DBs / UDTs / Tags / Technology Objects / HMI), additional S7-DCL export (V20+), Fingerprint Cache, Version Control normalization. |
+| Git | Date format, default clone directory, history limits, appearance fonts, Git user/email/CRLF/fetch, GPG signing, shell and external diff/merge integration, AI commit-message prompt. |
+| AI Chat | Agents, Chat Tools, Approvals, Instructions, Templates, Providers, MCP Servers, Memory, Scheduled Tasks, Dictation, Workspace, Storage. |
+| Compare | Diff-editor and minimap colors, opacity, and minimap width. |
+| Editor | C# language features (off by default — bundled language server, restart required). |
+| Logging | Debug Logging toggle. |
 
-Customize the folder names used in export paths and tree view:
+### Folder Name Customization (under Files & Folders → Folder Names)
 
-| TIA Portal Name | Default Export Name | Configurable |
+| TIA Portal name | Default export name | Configurable |
 |-----------------|---------------------|--------------|
 | (Device) | Source | ✓ |
 | Program blocks | Blocks | ✓ |
@@ -2658,21 +3255,88 @@ Customize the folder names used in export paths and tree view:
 | Technology objects | Technology Objects | ✓ |
 | Software units | Software Units | ✓ |
 
-### Create Source Folder Option
+The "Create Source folder" checkbox controls whether exports include a Source wrapper:
 
-The **"Create Source folder"** checkbox controls whether exports include a Source folder wrapper:
-
-| Setting | Export Path |
+| Setting | Export path |
 |---------|-------------|
 | ✓ Enabled | `WorkingDir/Source/PLC_1/Blocks/...` |
 | ☐ Disabled | `WorkingDir/PLC_1/Blocks/...` |
 
-This setting also affects the project tree structure and import path detection.
+This also affects the project tree structure and import path detection.
 
+### File Explorer — Watcher Excludes (under Files & Folders → File Explorer)
+
+The File Explorer tree skips folders that match the **Watcher Excludes** list when scanning the open working folder. Defaults: `.git`, `.vs`, `.idea`, `bin`, `obj`, `node_modules`, `.claude`, `.worktrees`.
+
+Edit the list to:
+
+- **Hide additional folders** — add one folder name per line (e.g. `dist`, `coverage`, `.next`).
+- **Reduce file-watcher noise** — heavy build output (`bin/obj`) can flood the operating-system file-change buffer; keeping these in the exclude list prevents wasted scan work on every build.
+- **Restore the default list** — clear the text box; the defaults apply on the next refresh.
+
+Changes take effect when the working folder is reopened or refreshed.
+
+### Editor — Right-click context menu
+
+Right-click anywhere inside a code editor tab to open a menu organised into five groups. Entries that don't apply at the current caret position or selection are hidden, so the menu length follows the available actions:
+
+- **AI assistance** — *Open Inline Chat* (Ctrl+I), *Markdown Preview*, *Add File to Chat*, *Explain* (selection-aware), *Review* (selection-aware).
+- **Edit** — *Change All Occurrences* (Ctrl+F2, renames every match of the word at the caret in the current document after a quick prompt), *Rename Symbol* (F2, language-server-backed rename that follows the symbol across files in the same workspace; only appears when the active server advertises it), *Format Document* (Shift+Alt+F) and *Format Selection* (Ctrl+K Ctrl+F). When a language server with formatting support is attached (e.g. C# via the bundled server) the editor uses its formatter; SCL falls back to the built-in formatter. Format Selection only appears when the active server supports it and the editor has a selection.
+- **Navigation** — *Go to Definition* (F12) and *Find References* (LSP-backed; both appear when the open file's language server advertises the capability).
+- **Git** — *Show File History* (Alt+H) switches the activity bar to Version Control, opens the file's repository tab, and lists every revision that touched the file. Files outside a Git repository show a brief status hint instead.
+- **Clipboard** — *Cut* (Ctrl+X), *Copy* (Ctrl+C), *Paste* (Ctrl+V), *Select All* (Ctrl+A).
+
+Keyboard shortcuts continue to work without opening the menu — the entries simply expose the same actions for discoverability.
+
+### Editor — C# Language Features
+
+Under **Settings → Editor**, the **Enable C# language features** toggle attaches a bundled language server to `.cs` files opened from the File Explorer. When enabled, the editor:
+
+- Underlines compiler errors and warnings with squiggles inline while you type.
+- Lists every diagnostic across all open `.cs` files in the new **Problems** tab at the bottom of the workspace (next to Log Output, Terminal, Git Output). Click a row to jump to the location.
+- Surfaces the language server status (starting, ready, restarting, disabled) as a banner above the Problems list.
+- Shows a documentation tooltip with type, signature and XML comments when you rest the pointer over a symbol.
+- Jumps to a symbol's definition when you press **F12** or **Ctrl+Click** on it; multiple matches open a small picker so you can choose one.
+- Lists every call site of a symbol when you right-click the symbol and choose **Find References**. Results appear in a new **References** tab at the bottom of the workspace (file, line, preview). Click a row to jump to the location. The menu entry is hidden when no language session has been negotiated for the current file.
+- Shows a small popup with the method signature, including a highlighted active parameter, when you type `(` or `,` inside a call. Press **Escape**, click elsewhere or move the caret out of the call to dismiss it.
+- Offers member and symbol suggestions in a completion list as you type. The list opens after the second character, sorts by relevance and dedupes by name. Arrow keys navigate, **Enter** or **Tab** inserts the highlighted entry. SCL, AWL and other Siemens block formats keep their existing keyword-and-word completion; only `.cs` files use the bundled language server's suggestions.
+- Offers quick-fixes for diagnostics under the caret. A small lightbulb appears in the editor margin at the caret line when fixes or refactorings are available; click the lightbulb or press **Ctrl+.** to open the action menu. Picking an entry applies the change as a single undoable edit, with the result reported in the status bar (Applying… → Action applied / No quick-fixes available / Could not apply action / Could not load action details).
+- Renames a symbol and every reference to it across the workspace through the language server. Place the caret on the identifier and press **F2** (or right-click → **Rename Symbol**); type the new name in the inline overlay and press **Enter** to apply or **Escape** to cancel. The status bar reports Renaming… → Renamed N occurrences across N files / Document changed during rename / Invalid identifier / Rename failed. If the document is edited while the rename is in flight, the change is abandoned and the editor keeps its current state.
+- Formats the whole document (**Shift+Alt+F**) or the current selection (**Ctrl+K Ctrl+F**) through the language server. The status bar reports Formatting… → Formatted / Document is already formatted / Format failed / Document changed during formatting. When no language server is bound or it does not advertise formatting, SCL files keep their built-in formatter and other languages show a short status hint.
+- Opens decompiled metadata as a read-only buffer when **F12** lands on a symbol in an external library or generated source. The status bar reports Loading external source… → and a new tab opens with the synthesised source (BCL types, NuGet referenced assemblies, source-generator output). The buffer cannot be edited; **F12** inside it resolves further symbols transitively. URI schemes the language server does not handle still surface a short notice.
+- Refreshes the Problems panel on demand: a small refresh-icon button in the panel toolbar re-fetches diagnostics for every open `.cs` file in one round-trip. The language server also requests a refresh automatically after package, analyzer or project-state changes, so the Problems list stays current without user action.
+
+The toggle is **off by default** because the bundled language server can consume between 1 GB and 10 GB of memory while indexing very large solutions. Flip it on if you regularly edit C# files in the manager.
+
+**Restart required.** The language server registration is decided at startup, so the change takes effect the next time the application launches.
+
+#### Loading a .NET solution for full IntelliSense
+
+Enabling the toggle alone wakes the language server for single-file features only — you get inline IDE hints (e.g. *Using directive is unnecessary*), syntax colouring, and completion, but cross-file features stay dark: no `CS0246` / `CS0103` compiler errors, no F12 across files, no method-vs-variable distinction in the colouring. To unlock those, the language server has to load a `.sln` (or `.csproj`) so it can build a project graph.
+
+Under **Settings → Editor → C# Language Features**, two additional controls govern solution loading:
+
+- **Load solution automatically** — when on, the language server walks up from the opened `.cs` file to the nearest `.sln`/`.slnx` (and falls back to `.csproj`) and loads it. **Off by default** because loading a solution lets the language server execute analyzer code shipped with the project; only enable this for solutions you trust. After flipping the toggle, restart the application.
+- **Explicit solution path** — optional absolute path to a `.sln`, `.slnx`, or `.csproj`. When set, this file is loaded regardless of the auto-load toggle, so you can opt-in for a single trusted solution without enabling walk-up everywhere. Use the **Browse…** button to pick a file. Leave empty to fall back to walk-up search.
+
+With either path active and a project loaded, the editor shows a brief *Project initialization in progress…* status in the Problems panel while the design-time builds finish, then transitions to *Ready*. Cross-file diagnostics, Find References, and metadata-as-source then work as documented above.
+
+C# files keep their normal syntax highlighting, completion, and editing behaviour regardless of these settings; only the live diagnostics and the Problems panel depend on the toggle. SCL, AWL, UDT and other Siemens block formats are unaffected — they use the manager's own editor stack.
+
+### Search
+
+Type into the search box to filter the category tree by section name or by a keyword from a section's descriptive tags. Parent categories stay visible while at least one of their children matches the query.
+
+<!-- feature:eplan start -->
+### License
+
+License activation, trial status, hardware ID and the EPLAN add-on are still managed in their own focused window — accessed from the startup prompt, the Trial banner, or the **Manage License** entry-point.
+
+<!-- feature:eplan end -->
 ### Log Files
 
 When Debug Logging is enabled, detailed logs are created:
-- Location: Configurable in settings
+- Location: configurable under Files & Folders → Log Directory.
 - Format: `TIA_Openness_Log_YYYYMMDD_HHMMSS.txt`
 
 ---
@@ -2692,7 +3356,10 @@ When Debug Logging is enabled, detailed logs are created:
 | Safety Blocks | No | Yes | Yes |
 | Protection Profiles | No | Yes | Yes |
 | MCP Server | No | Yes | Yes |
-| Multi-User | No | No | Yes |
+| AI Chat | No | Yes | Yes |
+| Project Library | No | Yes | Yes |
+| Password Vault | No | No | Yes |
+| Unit Testing | No | No | Yes |
 
 ### Trial Period
 
@@ -2714,7 +3381,7 @@ To start a trial:
 
 **Billing:** You can toggle between monthly and yearly billing in the license dialog. Yearly plans save approximately 17%.
 
-**Important:** The software validates the license every 7 days online. If no internet connection is available, the software can be used **offline for up to 14 days**. After 14 days, a new online validation is required.
+**Important:** The software requires an online license validation **at least every 14 days**. If no internet connection is available, the software can be used **offline for up to 14 days**. After 14 days, a new online validation is required.
 
 ### Hardware Binding
 
@@ -2722,6 +3389,33 @@ Each license is bound to a unique hardware ID generated from:
 - CPU ID (Processor Serial Number)
 - Motherboard Serial Number
 - Primary MAC Address
+
+### Machine Switch Limit
+
+Your license is bound to your **account**, not to a single machine — you can move it between computers without contacting support. The application enforces a rolling limit of **up to 3 different machines per 30-day window**: each new sign-in on a previously-unseen hardware ID counts as one switch. The fourth distinct machine within the same 30-day window is rejected at sign-in time. The window slides — switches that fall out of the past 30 days no longer count against the limit. Sign in on a new machine and the previous machine's binding is released automatically.
+
+The current usage is visible in the License window (see below). When you reach 3/3, an in-panel banner explains the next free slot and when it becomes available.
+
+### License Window
+
+Open the window via **View → Settings → Manage License** (or click the License entry in the main toolbar). The Manage License window now combines two sections in one place:
+
+- **Account & License** (top, visible while signed in) — the same set of rows previously hosted in a separate Settings tab. Use it to review the active subscription and sign out of this machine.
+- **Plans & Activation** (bottom, always visible) — the existing Hardware ID display, activation-code field, monthly/yearly pricing cards, and current-plan indicator.
+
+| Row | Meaning |
+|-----|---------|
+| **Signed in as** | The email address you used to sign in. |
+| **Tier** | Active tier — Basic / Trial / Professional / Enterprise. |
+| **Status** | Active, Expired, or Validation pending. |
+| **Expires at** | The end of the current billing period (Trial: end of the 30-day window). |
+| **Hardware ID** | The 16-character ID derived from this machine. |
+| **Bound since** | When this machine first activated the license. |
+| **Issue date** | When the license was originally issued. |
+| **Machine switches** | Switches used in the past 30 days, e.g. *2 of 3 machines used in 30 days*. |
+| **Sign out** | Releases this machine's binding. A confirmation dialog ("Sign out and release this machine?") appears first; choose **Sign out** to confirm or **Cancel** to abort. After sign-out the Sign-In dialog re-opens; cancelling that dialog closes the application. |
+| **Manage on website** | Opens your account page in the browser to change subscription, view invoices, or transfer the license. |
+| **Migrate manually** | Appears only when a local trial signature exists without a bound account, or when an automatic migration attempt has reported a failure. Opens a dialog asking for the legacy 16-character hardware ID under which the trial was originally registered. Recovers DPAPI-corruption and hardware-move cases where the legacy hardware ID can no longer be detected automatically. |
 
 ### Manage Subscription
 
@@ -2750,10 +3444,59 @@ Two event types surface here:
 
 Both alerts are informational. Your license stays active while they are visible. The banner automatically disappears the next time the condition clears.
 
+### Trial migration banner
+
+If the app finds a legacy trial on this machine but no account is signed in, a yellow banner at the top of the window invites you to sign in before the deadline. Click **Sign in** in the banner to open the sign-in dialog; once signed in, the trial transfers to your account and the banner is replaced by a "Trial migrated" confirmation. The migration is automatic — there is no manual step beyond signing in.
+
+If the migration fails (server error, expired window, the trial already belongs to a different account), a red banner replaces the original explaining the cause; restart the application and try again, or contact support if the failure persists.
+
+If the automatic migration cannot find the legacy hardware ID (for example after replacing the disk or restoring a Windows backup), open **View → Settings → Manage License** and click **Migrate manually**. Enter the 16-character hardware ID from a backup, a support email, or an old registry export and submit — the manual flow uses the same trial-migration pipeline as the automatic banner, so any failure surfaces the same diagnostic message immediately below the button.
+
+### Account page (browser)
+
+Click **Manage on website** in the License window (or visit `https://tiaopenessmanager.ch/profile` after signing in) to open your browser-based account page. The page covers four operations beyond what the desktop License panel exposes:
+
+- **Profile** — your email, account-creation date, and last sign-in timestamp.
+- **Manage subscription** — opens the Stripe customer portal in a new tab to change payment method, download invoices, or cancel.
+- **Release this machine** — frees the current machine binding so you can reactivate on a different computer without waiting for the 30-day window. A confirmation prompt appears before the release. The next sign-in on a new machine becomes the new active binding.
+- **Delete account** (Danger zone) — permanently deletes your account record, revokes all signed-in sessions, and releases the license. The dialog asks you to type **DELETE** in capitals to confirm. This cannot be undone.
+
+The page is HTTPS-only and requires you to be signed in. After sign-out (from either the desktop app or the page itself), the page redirects you to the sign-in form on the next visit.
+
 **Untrusted Environment (Basic mode)**
 
 If the app detects a debugger attached to its process, or if the main executable is not signed with the expected Certum certificate, the app silently downgrades to Basic tier. This is a defense-in-depth measure against tampering. Release builds always have the correct signature; if you see this behaviour in a normal install, the binary has been modified — reinstall from https://www.tiaopenessmanager.ch.
 
+### Manage Organization License
+
+Volume Pro and Volume Enterprise are multi-seat subscriptions for organizations. The owner (the person who purchased the subscription) manages seats from a web dashboard; team members sign in with their own email and each occupies one seat.
+
+**Owner — Set up the subscription.** Go to https://www.tiaopenessmanager.ch and choose **Volume Professional** or **Volume Enterprise** with the desired seat count (2-200). After Stripe checkout, you receive two emails: a magic-login code for owner sign-in to the desktop app, and an organization confirmation with the org ID and owner role.
+
+**Owner — Invite team members.** After signing in, open the license dialog (**View → Settings → Manage License**) and click **Manage on website**. The web dashboard shows occupied and available seats. Enter a team member's email address and click **Invite** — the team member receives an email with a magic link, valid for 7 days.
+
+**Member — Accept the invitation.** Clicking the magic link opens the web page with the org name and an **Accept** button. After accepting, the account is bound to the organization. In the desktop app, sign in with the same email — the license dialog shows membership with role "Member" and a note that management is handled by the owner.
+
+**Owner — Release a seat.** In the web dashboard, click **Release seat** next to the member row. The seat becomes free immediately and can be reassigned. The former member account falls back to Basic tier (unless they have their own solo subscription).
+
+**Change seat count.** In the Stripe customer portal, you can increase `quantity` at any time — the additional seats are immediately available for invitation. Reductions require enough free seats first; release the right number of seats before lowering `quantity` in the Stripe portal.
+
+<!-- feature:eplan start -->
+**Add-ons under the volume model.** The EPLAN add-on can be activated organization-wide — every member inherits access automatically at next sign-in. Owners see this in the license dialog under Add-ons → EPLAN as "Org activated"; members see "Active (Org)" without their own manage button.
+
+### Activate the EPLAN Add-on
+
+The EPLAN add-on is a separately licensed extension for connecting to EPLAN Electric P8. Available for Pro, Enterprise, Trial, and Volume subscriptions.
+
+**Solo activation.** In the license dialog → **Add-ons** section → **EPLAN** card → **Purchase** opens Stripe checkout for CHF 19.99/month or CHF 199.99/year (annual saves 17 %). After payment, the card switches to "Activated"; sign out and back in (or click **Refresh** in the license dialog) to load the new entitlement — the EPLAN tab appears in the left activity bar.
+
+**Volume activation (owner).** In the web dashboard → **Add-ons → EPLAN → Add** opens a Stripe checkout for the organization-wide add-on subscription with `quantity` matching the seat count. After payment, every team member inherits EPLAN access at the next validate cycle.
+
+**Trial accounts.** During the 30-day trial period, the EPLAN add-on is included automatically — no separate activation needed.
+
+**Cancel the add-on.** Solo: end the add-on subscription via the Stripe portal — the EPLAN tab disappears at the next validate cycle. Volume: owner cancels in the web dashboard, all team members lose access simultaneously.
+
+<!-- feature:eplan end -->
 ---
 
 ## 14a. Git Client
@@ -3008,6 +3751,71 @@ $0 * 0.5 + 1.25         # gain + offset
 
 Click **Export CSV** to save the recording to disk. Every signal (source and computed) becomes a column, every sample a row, with the timestamp in the first column.
 
+<!-- feature:eplan start -->
+---
+
+## 14c. EPLAN Integration (Add-on)
+
+The EPLAN integration is an optional, separately licensed add-on. It connects the application to a local installation of **EPLAN Electric P8** (2025.0.3 or compatible) so you can browse and export EPLAN projects without leaving the manager.
+
+### Prerequisites
+
+- A valid EPLAN Electric P8 installation on the same machine.
+- An active EPLAN License Manager (ELM) session — the add-on never holds a separate EPLAN license, it uses your existing one.
+- The EPLAN add-on enabled on your manager license. The add-on is granted by the licensing back-end and is visible under **License → Add-ons** as a green "Active" badge. Without the add-on, the EPLAN tab is hidden.
+
+### Enabling the Add-on
+
+The add-on is purchased separately. Once granted to your account, sign out and sign back in (or trigger a license re-validate from the License panel) so the new entitlement is fetched. The card under **License → Add-ons → EPLAN** flips from "Not active" to "Active" and the EPLAN tab appears in the activity bar on the left.
+
+### Opening a Project
+
+Click the EPLAN tab. The workspace shows your recent EPLAN projects (most recent first) and an **Open EPLAN project…** button. Pick a `.elk` file via the file picker or click a recent entry — the manager spawns a hidden EPLAN bridge process the first time and then opens the project.
+
+If you have more than one EPLAN variant installed (Electric P8, ProPanel, Preplanning…), a one-time picker lets you select which variant to use. The choice is remembered between sessions; only one bridge / variant runs per application session because of the EPLAN license-server constraint.
+
+The bridge status indicator in the workspace header shows the live state:
+
+- **Connected** — bridge is running and a project is loaded.
+- **Connecting…** — bridge is starting up or reconnecting.
+- **Disconnected** — no bridge running.
+
+If the bridge crashes mid-session, a banner appears with a **Reconnect** button. Reconnect re-spawns the bridge and re-opens the previously open project automatically.
+
+### Browsing the Project
+
+The right pane is the **Project Explorer**. It groups the project content into two top-level categories:
+
+- **Pages** — every drawing page in the project, with identifier, document type and description.
+- **Functions** — main functions extracted from the schematics, with tag (e.g. `=A1+K2-K1`), the parent page identifier and any linked article number.
+
+Type into the filter box at the top to filter both categories by a substring match across all visible columns. The category headers update with the live match count.
+
+### Exporting
+
+The toolbar **Export…** button opens a dialog with two formats:
+
+- **PXF (EPLAN exchange)** — the lossless EPLAN exchange format, suitable for re-import into EPLAN.
+- **PDF** — flat PDF of all drawing pages.
+
+Pick a target file via **Browse…** and click **Export**. Long exports run with an indeterminate progress indicator — the EPLAN engine does not emit per-page progress in this version. The exported file lands at the path you picked.
+
+### Recent Projects
+
+Every successful project open is added to the recent-projects list (max 10 visible, 50 stored). Click an entry to re-open it; the small **×** button removes a single entry without affecting the EPLAN file on disk. If the file has moved or been deleted, the manager removes the dead entry from the list with a status hint.
+
+### Page Preview
+
+Double-click a page in the EPLAN tree to open it in the preview tab. The preview supports mouse-wheel zoom, middle-click pan, and a crosshair cursor that follows the pointer across the page surface. The page renders on a white sheet so the page border is visible at any zoom level.
+
+### Limitations in this version
+
+- **Authoring is MCP-tool driven, not direct UI.** Page and function create/delete/rename, symbol insert, parts-list/PDF/label report generation are exposed via AI Chat or external MCP clients only — the workspace itself remains read-only plus export from the toolbar; tag synchronisation with TIA is not yet supported.
+- **One EPLAN variant per session.** Because EPLAN's License Manager only licenses one Electric P8 session per machine, switching variants requires restarting the manager.
+
+If you do not see the EPLAN tab even after the add-on appears as "Active" on your license, restart the manager once so the activity bar picks up the new entitlement.
+
+<!-- feature:eplan end -->
 ---
 
 ## 15. Troubleshooting & FAQ

@@ -12,9 +12,12 @@
 
 1. Extract the TiaOpennessManager archive to a folder of your choice
 2. Run `TiaOpennessManager.V3.exe`
-3. On first launch, you can start a 30-day trial with all features unlocked
+3. On first launch the Sign-In dialog opens. Click **Sign in via browser** — your browser opens `tiaopenessmanager.ch/sign-in` where you enter your email and the 6-digit code we send you. After confirmation the dialog closes and the application unlocks.
+4. After signing in you can start a 30-day trial with all features unlocked, or activate a paid license.
 
 > **Note:** TIA Portal must be installed but does not need to be running.
+
+> **Note:** You stay signed in across application restarts. Use **Settings → Manage License → Sign out** (Account section at the top of the License window) to release the current machine binding.
 
 ### Add your Windows user to "Siemens TIA Openness"
 
@@ -56,6 +59,8 @@ There are two ways to connect:
 
 > **Tip:** Attaching is faster since the project doesn't need to be reloaded.
 
+> **Tip:** No project yet? Click **New TIA Project…** in the Welcome tab to scaffold a project — pick the TIA Portal version inside the wizard, no prior connection required. See [User Manual → New Project Wizard](UserManual_EN.md#4-project-management).
+
 ### 2. Set Export Directory
 
 1. Switch to the **Import/Export** tab
@@ -94,6 +99,10 @@ There are two ways to connect:
 - Explore the **Preview Diff** function to compare changes
 - Use **Find Unused Blocks** to identify unused blocks
 - Set up **Protected Items** to prevent important blocks from being overwritten
+<!-- feature:eplan start -->
+- Activate the optional **EPLAN Electric P8** add-on (License → Add-ons → EPLAN) to open and export `.elk` projects without leaving the manager — see User Manual section "EPLAN Integration (Add-on)"
+<!-- feature:eplan end -->
+- Try **Hardware Simulation** (Trial and Enterprise plans) to drive simulated tag values into a running PLCSim Advanced instance with constant/ramp/sine/square/triangle/random functions, force overrides, watch lists and linker rules — see User Manual section "Hardware Simulation"
 
 ---
 

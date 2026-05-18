@@ -12,9 +12,12 @@
 
 1. Entpacken Sie das TiaOpennessManager-Archiv in einen Ordner Ihrer Wahl
 2. Starten Sie `TiaOpennessManager.V3.exe`
-3. Beim ersten Start können Sie eine 30-tägige Testversion mit allen Funktionen starten
+3. Beim ersten Start öffnet sich der Anmelde-Dialog. Klicken Sie auf **Sign in via browser** — der Browser öffnet `tiaopenessmanager.ch/sign-in`, wo Sie Ihre E-Mail-Adresse und den per E-Mail zugesendeten 6-stelligen Code eingeben. Nach erfolgreicher Browser-Bestätigung schliesst sich der Dialog und die Anwendung ist freigeschaltet.
+4. Nach der Anmeldung können Sie eine 30-tägige Testversion mit allen Funktionen starten oder eine Bezahllizenz aktivieren.
 
 > **Hinweis:** TIA Portal muss installiert sein, aber muss nicht geöffnet sein.
+
+> **Hinweis:** Sie bleiben über App-Neustarts hinweg angemeldet. Über **Einstellungen → Lizenz verwalten → Sign out** (im Konto-Bereich oben im Lizenz-Fenster) lösen Sie die aktuelle Maschinen-Bindung wieder.
 
 ### Windows-Benutzer zur Gruppe "Siemens TIA Openness" hinzufügen
 
@@ -56,6 +59,8 @@ Es gibt zwei Möglichkeiten, sich zu verbinden:
 
 > **Tipp:** Das Verbinden ist schneller, da das Projekt nicht erneut geladen werden muss.
 
+> **Tipp:** Noch kein Projekt? Klicken Sie im Willkommen-Tab auf **Neues TIA-Projekt…** — TIA-Portal-Version direkt im Wizard wählen, keine vorherige Verbindung erforderlich. Siehe [Benutzerhandbuch → Neues-Projekt-Wizard](UserManual_DE.md#4-projekt-management).
+
 ### 2. Export-Verzeichnis festlegen
 
 1. Wechseln Sie zum **Import/Export** Tab
@@ -94,6 +99,10 @@ Es gibt zwei Möglichkeiten, sich zu verbinden:
 - Erkunden Sie die **Preview Diff** Funktion zum Vergleichen von Änderungen
 - Nutzen Sie **Find Unused Blocks** um ungenutzte Bausteine zu finden
 - Richten Sie **Protected Items** ein, um wichtige Blöcke vor Überschreiben zu schützen
+<!-- feature:eplan start -->
+- Aktivieren Sie das optionale **EPLAN-Electric-P8**-Add-on (Lizenz → Add-ons → EPLAN), um `.elk`-Projekte ohne Verlassen des Managers zu öffnen und zu exportieren — siehe Benutzerhandbuch-Abschnitt „EPLAN-Integration (Add-on)"
+<!-- feature:eplan end -->
+- Probieren Sie **Hardware-Simulation** (Trial- und Enterprise-Abonnements) aus, um simulierte Tag-Werte in eine laufende PLCSim-Advanced-Instanz zu schreiben — mit Constant/Ramp/Sine/Square/Triangle/Random-Funktionen, Force-Overrides, Watch-Listen und Linker-Regeln — siehe Benutzerhandbuch-Abschnitt „Hardware-Simulation"
 
 ---
 
