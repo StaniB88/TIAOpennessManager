@@ -1,162 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>4.0.0</version>
-    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.0/TiaOpennessManager_Setup_4.0.0.exe</url>
+    <version>4.0.1</version>
+    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.1/TiaOpennessManager_Setup_4.0.1.exe</url>
     <changelog>https://github.com/StaniB88/TIAOpennessManager/blob/main/CHANGELOG.md</changelog>
-    <release_date>2026-05-18</release_date>
+    <release_date>2026-05-20</release_date>
     <body>## What&apos;s Changed
 
-### Updates
-- **Updates** — Installing a downloaded update now shows a progress window so the install is visible instead of running fully in the background.
-
-### Settings
-- **Settings** — One unified Settings window replaces four separate dialogs, with a left-side category tree, top search box, and gear icons that deep-link from AI Chat, Import/Export and Git directly into the matching section.
-- **Appearance** — New Midnight theme mode with true-black canvas and panels, tuned for OLED displays.
-
-### Licensing
-- **Licensing** — Account, plan and activation are now combined in a single License window, showing the signed-in email, Hardware ID, bound-since date, expiry, and a 30-day machine-switch counter with a warning banner when the limit is reached.
-- **Licensing** — Browser-based account sign-in is reachable from the start of every session and from the License panel inside Settings; the application stays signed in across restarts and releases the local hardware binding when you sign out.
-- **Licensing** — Trial days transfer to your account on first sign-in; legacy trials transfer automatically with a confirmation banner, and restarting trials via additional accounts on the same machine is blocked.
-- **Licensing** — Sign out asks for confirmation before releasing this machine.
-- **Licensing** — Activate and Start trial show a clear &quot;Sign in is required&quot; message when no account session is active.
-- **Licensing** — When the licensing server is unreachable at startup, the application offers Retry / Continue offline / Close instead of closing silently.
-- **Licensing** — A transient license-storage read failure surfaces a non-destructive warning instead of silently clearing the cached license, and Settings → License offers a manual trial migration option for storage failure or hardware-move recovery.
-- **Licensing** — Operational emails confirm a manual license transfer, an owner-initiated subscription cancellation, and reaching the 3/3 machine-switch limit.
-- **Licensing** — Account page in the browser lists subscription, license transfer, and account deletion next to your sign-in details.
-- **Licensing** — Volume licenses with shared seat management for organizations.
-
-### Block view
-- **Block view** — LAD, FBD, SCL and STL blocks, data blocks, UDTs and tag tables now display inline in the manager without external tools; SCL and STL networks render with full formatting, indentation, symbol scope markers, label declarations and comments.
-
-### User Guide
-- **User Guide** — Searchable, themable in-app help with sticky table of contents and syntax-highlighted code blocks.
-
-### Compare
-- **Compare** — Now opens as a workspace tab next to Import/Export with full-height side-by-side viewer instead of a narrow bottom panel.
-- **Compare** — Diff editor and minimap colors, opacity, and minimap width are customizable in Settings → Compare.
-- **Compare** — Identical blocks now render fully in both editors with no change markers, making identity visually obvious.
-- **Compare** — Apply individual sections from one side to the other via inline arrow buttons between the editors.
-- **Compare** — Blocks with both SCL and XML representations appear as separate rows in the file list; click the row of the format you want to see.
-- **Compare** — File-list filters, diff toolbar, and side panes are visible the moment the Compare tab is opened; the drop hint now appears as a subtle watermark in the empty diff area instead of covering the whole panel.
-- **Compare** — Remove a single dropped file from either side via the X button that appears when hovering over its row.
-
-### Hardware Simulation
-- **Hardware Simulation** — New workspace tab drives simulated tag values into PLCSim Advanced with a hardware topology browser, configurable engine functions (constant, ramp, sine, square, triangle, random) shown with per-kind dropdown icons, force overrides, watch lists with live values for both hardware-channel and tag-table tags, linker rules between tags whose tag-picker covers IO, marker, system and data-block variables, and F-safety auto-acknowledge handling; available on Trial and Enterprise plans.
-
-### TIA Portal
-- **TIA Portal** — Open and switch between multiple TIA Portal projects in one window; each project keeps its own tree, hardware view, online connection, and editor tabs.
-- **TIA Portal** — New Project Wizard creates a project with TIA Portal version, CPU, optional modules, network and initial blocks directly from the Welcome tab.
-
 ### Editor
-- **Editor** — New Interface tab shows DB, FB, FC, UDT and tag-table contents as a TIA-style table with all HMI attributes, expandable nested struct/UDT members and array elements with computed addresses, and language-aware comments. Members can be edited and either saved to a local XML file or uploaded back to a connected TIA Portal project; cross-reference impact is previewed before upload, compile runs automatically after upload, and any compile messages appear in a panel with click-to-jump navigation. The edit toggle is disabled with a tooltip when the block cannot be edited (know-how-protected, read-only, or its state is unknown).
-- **Editor** — Dragging an SCL, STL, UDT, DB or PLC tag-table XML file onto the workspace opens the Interface tab so members can be edited and saved straight back to the file, with no TIA Portal connection required.
-- **Editor** — Optional C# language support shows inline diagnostics in `.cs` files and lists them in a new Problems panel, each entry stamped with file name, line and column and clickable to jump straight to the source location; hover over a symbol to read type and documentation tooltips, hold Ctrl to highlight click targets and press F12 or Ctrl+Click to jump to a definition; right-click → Find References lists every call site in a new References panel; a method signature popup with active-parameter highlight appears while typing call arguments; member and symbol suggestions appear in a completion list as you type; a lightbulb in the editor margin offers quick-fixes for the diagnostic under the caret, clickable or via Ctrl+. with the chosen fix applied as a single undoable edit; F2 (or right-click → Rename Symbol) renames the symbol at the caret and every reference across the workspace via an inline overlay, with Enter to apply or Escape to cancel; Shift+Alt+F formats the whole document and Ctrl+K Ctrl+F formats the current selection through the language server. Slow lookups surface a status message after a brief delay, and F12 on a symbol in an external library or generated source opens the decompiled source as a read-only buffer.
-- **Editor** — Right-click in the code editor opens a menu with Inline Chat, Markdown Preview, Add File to Chat, Explain, Review, Change All Occurrences, Rename Symbol, Format Document, Format Selection, Go to Definition, Find References, Show File History, and standard Cut/Copy/Paste/Select All.
-- **Editor** — Language dropdown in the status bar now auto-selects the language for the open file, lists each entry with a file icon and human-readable name, and the first file opened after app start always renders with syntax highlighting.
-
-### File Explorer
-- **File Explorer** — Tree shows Git status with color-coded glyph badges (modified, added, deleted, renamed, copied, untracked, conflicted) next to each file, and folders inherit the worst child status at reduced opacity so changes deep in a subtree are visible from the root.
-- **File Explorer** — Files matched by `.gitignore` appear dimmed, and a new toolbar toggle hides them entirely on demand.
-- **File Explorer** — File-type and folder icons distinguish code, configs, images, archives, scripts and well-known folders like `src`, `docs`, `tests`, `node_modules` and `.git`.
-- **File Explorer** — Press F2 to rename a file or folder directly in the tree; for files with an extension the editor pre-selects only the stem.
-- **File Explorer** — Ctrl- and Shift-click select multiple files; pressing Delete removes them all after one confirmation.
-- **File Explorer** — Drag a file or folder onto another folder in the tree to move it.
-- **File Explorer** — Press Ctrl+F to open an inline search bar that filters the tree live and auto-expands folders containing matches; Esc closes it.
-- **File Explorer** — Right-click menu adds Copy Relative Path next to Copy Path so the path lands on the clipboard scoped to the open folder root.
-- **File Explorer** — Deleting sends files and folders to the Windows Recycle Bin and the confirmation dialog now shows the total contained entry count.
-- **File Explorer** — A new Solution panel below the file tree lists every C# project in the opened folder with its target frameworks, NuGet packages, project references and detected analyzers, refreshes automatically when `.sln` or `.csproj` files change on disk, and opens the matching project file on double-click; the panel appears only when the opened folder contains a `.sln`, so the file tree gets the full panel height for folders without one.
-- **File Explorer** — File icons in the tree and the Solution panel draw each language&apos;s actual brand glyph (C#, TypeScript, JavaScript, Python, Rust, Go, Java, Kotlin, C/C++, Ruby, PHP, Swift, Lua, R, HTML5, CSS3, JSON, YAML, XML, Markdown, Bash, PowerShell, Docker, Git, …) tinted in its brand color so file types are visible at a glance.
-- **File Explorer** — Watcher Excludes list in Settings → Files &amp; Folders → File Explorer hides additional folders from the tree on top of the defaults (`.git`, `bin`, `obj`, `node_modules`, …).
+- **Editor** — Footer language dropdown lists SCL and AWL on top under a &quot;TIA Portal Languages&quot; group, followed by the alphabetical list of every other supported syntax; the chosen language re-highlights the current tab immediately.
+- **Editor** — AWL files render with dedicated Statement-List syntax highlighting (mnemonics, comparison and arithmetic operators, comments and quoted DB names) instead of falling back to the SCL grammar.
 
 ### AI Chat
-- **AI Chat** — PLC analysis, SCL specialist and AWL conversion sub-agents start responding noticeably faster on dispatch.
-- **AI Chat Settings** — Agents section now lets you edit each agent&apos;s reference list, switch between eager and lazy loading, and migrate legacy instruction files to lazy references with one click; the migrate result reports how many references were added and how many were skipped as duplicates.
-- **AI Chat** — Chat sessions in the sidebar are grouped by workspace with an inline workspace picker; the Local tab is live, the Remote tab is reserved for upcoming versions. The AI honours the active workspace: relative file paths resolve against the workspace folder and shell commands run inside it. Opening or attaching a TIA Portal project — whether from the file picker, the connect dialog, or an AI tool call — registers the project folder as a workspace automatically.
-- **AI Chat Settings** — Tool categories for Blocks, Network, Hardware, Tags, Trace and Unit Testing now appear with localized labels and descriptions in every supported language.
-- **Inline Chat** — Asking a question about SCL code keeps the editor untouched; only explicit edit requests now offer a diff to review.
-- **AI Chat** — Status banner above the input shows progress while the conversation is being compacted.
-- **AI Chat** — Status bar above the input shows tool-call count and current context-window usage with explanatory tooltips on hover.
-- **MCP OAuth** — pre-registered OAuth clients for servers that don&apos;t allow automatic client registration.
-- **MCP OAuth** — hosted client metadata document mode for self-published client identity across servers.
-- **MCP OAuth** — cross-app authorization with a single OpenID Connect identity provider for multiple servers.
-- **MCP OAuth** — sign-out revokes server-side tokens in addition to clearing the local credential.
-- **AI Chat** — Earlier conversations that include attached files reopen correctly again.
-- **AI Chat** — Folder drop attaches a directory listing of the immediate children to the message; the entry cap is configurable in AI Chat settings (default 1000, range 100–10000).
-- **AI Chat** — Total attachment size now respects a configurable cap (set in AI Chat settings, default 100 MB) with a hint when exceeded.
-- **AI Chat** — PDF files attached via drop or `@`-mention are sent as lightweight references (filename and size) rather than inline content.
-- **Manage Language Models** — GitHub Copilot model list, request multipliers, context window and capabilities are now pulled live from the Copilot server when the window opens or Refresh is pressed, so new models and price changes appear without an app update.
-- **Manage Language Models** — OpenAI Codex, Google Gemini CLI and Antigravity OAuth model rows now display the current context window from the daily-refreshed model catalog instead of a frozen snapshot.
-- **AI Chat** — Messages typed during a response now go into the running response by default so the AI can react immediately; flip to the legacy wait behaviour in AI Chat Settings.
-- **AI Chat** — Shift+Enter while a response is streaming cancels the current response and immediately sends the typed message as a fresh turn.
+- **GitHub Copilot** — Commit-message generation and chat are ready on the first attempt after app start.
+- **AI Chat Settings** — Sub-section selection in the left tree works reliably.
 
-### Unit Testing
-- **Unit Testing** — Trend dock-tool charts pass-rate and suite duration over time and shows a per-case status heatmap, filtered by PLC, suite, case and date range with one-click &quot;Last 30 days&quot; / &quot;Last 90 days&quot; presets. Suite and case query failures show a per-section error banner above the affected chart instead of failing silently.
-- **Unit Testing** — Run History, Compare Runs, Trend, and Test Explorer tab titles now update when the application language is switched.
-- **Unit Testing** — Test Explorer flags suites whose underlying PLC block changed since the last test run with a small orange dot next to the suite name, and a new &quot;Run Affected Only&quot; context-menu entry runs only those affected suites.
-- **Unit Testing** — Each test case in the visual editor now has an expandable Metadata pane for run order, tags, priority (Low/Normal/High/Critical), owner and requirement IDs, with per-case validation messages shown directly below the affected case.
-- **Unit Testing** — SCL preview stays in sync after generating test cases from boundary values.
-- **Unit Testing** — Connection Settings dialog now honours the configured S7 TCP port, and the unused rack, slot, and TLS fields have been removed.
-- **Unit Testing** — PLCSim Tag Browser expands struct and array tags inline, including structured input/output blocks resolved against the open TIA Portal project, so individual members and elements can be searched, watched and edited.
-- **Unit Testing** — Each PLCSim instance card now carries a TIA-PLC selector so the structured input/output drill-down resolves against the right project tags when the simulated snapshot was compiled from a different PLC than the one the instance is registered under.
-- **Unit Testing** — Saved Instances list shows a counter beside the heading and scrolls after three rows so the simulation panel above stays visible when many instances are persisted.
-
-### Git
-- **Git** — The AI button in the commit toolbox generates a commit message from the staged diff, streams the result into the message box with a spinner indicator while running, and respects a markdown-aware commit-message style guide that can be set globally under Git Preferences → AI and overridden per repository under Repository Settings → AI; both editors show an EDIT/PREVIEW split so the rendered guide is visible while typing.
-- **Git** — Toolbox icons (templates, AI, conventional-commit) use the standard text foreground so they stay readable against the input background.
-- **Git** — Every repository tab open at shutdown is restored on the next launch, including the active selection, regardless of how many repositories were open.
-- **Git** — Continuing an in-progress merge auto-fills the inline commit-message box with the generated merge summary and resolved-conflict list, exposes a single Continue button with a flyout to open the full commit-message editor, keeps Sign-off / No-verify / Amend visible during the merge, and shows a spinner while the commit is in flight.
-- **Git** — Clicking a commit hash inside a conflict card jumps to that commit in the History graph.
-- **Git** — Conflict resolution opens a dedicated 3-way merge editor: MINE and THEIRS panels with syntax-highlighted code, a live result panel with accept-mine/accept-theirs/accept-both ordering and undo, navigation between conflicts, and a remaining-conflicts minimap; an external merge tool can still be launched from the conflict card flyout.
-- **Git** — A status banner across the top of the workspace identifies an in-progress cherry-pick, rebase, revert or merge with the source branch and lets you continue, skip or abort it from one place.
-- **Git** — Repository list shows the default white bookmark icon for repositories without a custom bookmark color.
-- **Git** — Open Local Repository: Group selection defaults to &quot;No Group (Uncategorized)&quot; so the field is never blank.
-- **Git** — Open Local Repository: bookmark picker renders as a compact color selector with the selected color visible.
-- **Git** — Create Branch refuses to open with a clear error when the repository has no commits yet.
-- **Git** — Splitter widths in the working-copy and revision-files panes persist between sessions.
-- **Git** — Merge Branch dialog shows the underlying git flag (`--ff-only`, `--no-ff`, `--squash`, `--no-ff --no-commit`) next to each merge option in the dropdown.
-- **Git** — Branch right-click menu hides the Create PR entry on remotes that aren&apos;t hosted on GitHub, GitLab, Gitee, Bitbucket, Gitea or Azure DevOps, and uses the same labels and trailing ellipses as the rest of the menu.
+### TIA Portal
+- **Archive Project** — Save the active TIA Portal project as an archive file with the matching `.zapXX` extension so the archive opens directly in TIA Portal; the Save Archive dialog accepts a configurable filename suffix and an optional timestamp (Settings → Files &amp; Folders → Archive Naming), the timestamp format follows the General/Git date-format setting and is shown in a live preview, and dialog title plus status messages follow the selected interface language.
 
 ### PLC Online
-- **PLC Online** — Cycle Time monitor displays the connected CPU&apos;s current, minimum and maximum cycle time with a live chart, and reattaches automatically after switching tabs or reconnecting.
-- **PLC Online** — Memory Usage panel shows load, work and retain memory totals and current usage for the connected CPU.
-- **PLC Online** — Communication with S7-1500 controllers is faster, more stable on flaky links, and ships with a smaller installer.
-- **PLC Online** — Each Watch Table row displays its own tag&apos;s live value when several tags from the same data block are subscribed together.
-- **PLC Online** — Connecting to a CPU that has no protection level configured no longer fails at the legitimation step.
-- **PLC Online** — Clear a CPU&apos;s pinned certificate from the connection bar when the connection is rejected because the certificate changed.
+- **OPC UA** — Cancel button on stuck connection attempts; unreachable servers fail in 30 seconds; background type loading lets large controllers browse immediately after connect.
 
-### Code Editor
-- **Code Editor** — Ctrl+S now saves the active editor; press Ctrl+Shift+S to save the TIA Portal project.
-- **Code Editor** — Closing a tab or the application with unsaved changes prompts to save, discard, or cancel.
-- **Code Editor** — Disconnecting from TIA Portal closes editor tabs opened from TIA, with a save prompt for any unsaved changes.
-- **Code Editor** — Uploading a TIA Portal block via Ctrl+S or the Upload button now asks for confirmation before sending changes back to the project.
-
-### Hardware
-- **Hardware** — Closing the application or disconnecting from TIA Portal with unsaved hardware changes now prompts to save, discard, or cancel.
-- **Hardware** — Saving IP addresses and PROFINET names from the Hardware tab now applies the change to the TIA Portal project.
-- **Hardware** — Per-card input and output addresses (start, end, length) for every IO module are listed below the stations grid in the same byte units as TIA Portal Device-View; the start byte is editable and Save Changes writes the update back to TIA Portal, and Refresh reloads both the stations grid and the cards pane in one click.
-
-### Keyboard Shortcuts
-- **Keyboard Shortcuts** — AI Chat agent quick-switch is now Ctrl+Alt+1..9.
-- **Keyboard Shortcuts** — Git refresh is now Ctrl+R.
-- **Keyboard Shortcuts** — Terminal toggle is now Ctrl+Ö (matches the German-layout keyboard position used by VS Code).
-- **Keyboard Shortcuts** — F1 opens the user manual from any workspace.
-- **Keyboard Shortcuts** — The keyboard shortcut overview groups bindings by area (Global, Editor, Git, AI Chat, Compare) and opens as its own resizable window.
-
-### UI
-- **UI** — Read-only data fields across CPU identity, OPC UA diagnostics, license info, hardware ID, MCP session IDs and connection details can now be selected with the mouse and copied with Ctrl+C.
-- **UI** — Tables in the OPC UA panels (Node Attributes, References, Struct Fields, Diagnostics Buffer, Event Log, Server Diagnostics, Type Definitions, Watch Table, Endpoint List) copy the selected row(s) including column headers as tab-separated values on Ctrl+C; multi-row selection with Shift / Ctrl is enabled where the panel does not depend on a single selected item.
-- **UI** — Right-click on any table, selectable text or tree node opens a context menu with Copy and Select-All actions; tables additionally offer Copy Row and Copy All as CSV, trees offer Expand All / Collapse All.
-- **UI** — Right-click on an OPC UA reference row offers Copy NodeId, Copy BrowseName, Copy as JSON, and Subscribe to the referenced node.
-- **UI** — Right-click on a Compare file-list row offers Copy Full Path, Copy Filename, Open Folder, and Remove from comparison.
-- **UI** — Right-click on a project tree block adds Copy Name and Copy Number alongside the existing menu.
-- **UI** — Right-click on a commit SHA offers short and full forms; right-click on an author shows Copy Name, Copy Email, and Copy &quot;Name &amp;lt;Email&amp;gt;&quot;.
-
-### Performance
-- **Performance** — Markdown code blocks in AI Chat now render with syntax highlighting, and large project trees and editor diffs scroll and repaint more smoothly.
-
-### Reliability
-- **Reliability** — The simulation panels stay in sync after a code update: a banner now warns when the helper process needs to be rebuilt and the application recompiles and reconnects it automatically.</body>
+### Workspace
+- **Workspace** — Bottom panel remembers its collapsed and maximized state across application restarts.</body>
     <mandatory>false</mandatory>
-    <size>338274768</size>
-    <sha256>AD29F8C7053590F00525AF4D4BA1D9C701AFF9D91BD7CE3FCB3C11827ABCD414</sha256>
+    <size>337506248</size>
+    <sha256>98C60AFEC871823F663CF40F96E913EE5BB5975FB9168452943F294540B13847</sha256>
 </item>

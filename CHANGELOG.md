@@ -1,5 +1,24 @@
 # TIA Openness Manager - Changelog
 
+## v4.0.1 (2026-05-20)
+
+### Editor
+- **Editor** — Footer language dropdown lists SCL and AWL on top under a "TIA Portal Languages" group, followed by the alphabetical list of every other supported syntax; the chosen language re-highlights the current tab immediately.
+- **Editor** — AWL files render with dedicated Statement-List syntax highlighting (mnemonics, comparison and arithmetic operators, comments and quoted DB names) instead of falling back to the SCL grammar.
+
+### AI Chat
+- **GitHub Copilot** — Commit-message generation and chat are ready on the first attempt after app start.
+- **AI Chat Settings** — Sub-section selection in the left tree works reliably.
+
+### TIA Portal
+- **Archive Project** — Save the active TIA Portal project as an archive file with the matching `.zapXX` extension so the archive opens directly in TIA Portal; the Save Archive dialog accepts a configurable filename suffix and an optional timestamp (Settings → Files & Folders → Archive Naming), the timestamp format follows the General/Git date-format setting and is shown in a live preview, and dialog title plus status messages follow the selected interface language.
+
+### PLC Online
+- **OPC UA** — Cancel button on stuck connection attempts; unreachable servers fail in 30 seconds; background type loading lets large controllers browse immediately after connect.
+
+### Workspace
+- **Workspace** — Bottom panel remembers its collapsed and maximized state across application restarts.
+
 ## v4.0.0 (2026-05-18)
 
 ### Updates
@@ -42,6 +61,7 @@
 ### TIA Portal
 - **TIA Portal** — Open and switch between multiple TIA Portal projects in one window; each project keeps its own tree, hardware view, online connection, and editor tabs.
 - **TIA Portal** — New Project Wizard creates a project with TIA Portal version, CPU, optional modules, network and initial blocks directly from the Welcome tab.
+- **TIA Portal** — Attach to a TIA Portal Multi-User local session and work with it like a normal project; the Project Tree shows a Multi-User banner with Save and Commit buttons, and Commit asks for a comment before sending changes to the Multi-User server.
 
 ### Editor
 - **Editor** — New Interface tab shows DB, FB, FC, UDT and tag-table contents as a TIA-style table with all HMI attributes, expandable nested struct/UDT members and array elements with computed addresses, and language-aware comments. Members can be edited and either saved to a local XML file or uploaded back to a connected TIA Portal project; cross-reference impact is previewed before upload, compile runs automatically after upload, and any compile messages appear in a panel with click-to-jump navigation. The edit toggle is disabled with a tooltip when the block cannot be edited (know-how-protected, read-only, or its state is unknown).
@@ -49,6 +69,12 @@
 - **Editor** — Optional C# language support shows inline diagnostics in `.cs` files and lists them in a new Problems panel, each entry stamped with file name, line and column and clickable to jump straight to the source location; hover over a symbol to read type and documentation tooltips, hold Ctrl to highlight click targets and press F12 or Ctrl+Click to jump to a definition; right-click → Find References lists every call site in a new References panel; a method signature popup with active-parameter highlight appears while typing call arguments; member and symbol suggestions appear in a completion list as you type; a lightbulb in the editor margin offers quick-fixes for the diagnostic under the caret, clickable or via Ctrl+. with the chosen fix applied as a single undoable edit; F2 (or right-click → Rename Symbol) renames the symbol at the caret and every reference across the workspace via an inline overlay, with Enter to apply or Escape to cancel; Shift+Alt+F formats the whole document and Ctrl+K Ctrl+F formats the current selection through the language server. Slow lookups surface a status message after a brief delay, and F12 on a symbol in an external library or generated source opens the decompiled source as a read-only buffer.
 - **Editor** — Right-click in the code editor opens a menu with Inline Chat, Markdown Preview, Add File to Chat, Explain, Review, Change All Occurrences, Rename Symbol, Format Document, Format Selection, Go to Definition, Find References, Show File History, and standard Cut/Copy/Paste/Select All.
 - **Editor** — Language dropdown in the status bar now auto-selects the language for the open file, lists each entry with a file icon and human-readable name, and the first file opened after app start always renders with syntax highlighting.
+- **Editor** — Nested brackets render in a stable six-colour cycle, with mismatched brackets in the error colour.
+- **Editor** — Faint vertical indent guides mark each indentation level, highlighting the line at the caret's enclosing scope.
+- **Editor** — Selecting an identifier highlights its other whole-word matches in the file.
+- **Editor** — Typing `(`, `[`, `{`, `"` or `'` inserts the matching closer; typing the closer over an auto-inserted one advances the caret; selecting text and typing an opener wraps the selection.
+- **Editor** — Font ligatures render `=>`, `!=`, `==`, `>=`, `<=`, `->`, `::` as combined glyphs when the active font supports them; a notification reports when a configured font is not installed and another is used.
+- **Editor** — Clicking a row in the Problems panel now opens the file and jumps the caret to the reported line and column, with the diagnostic span selected; the same precise jump applies to Go-to-Definition and the multi-result picker.
 
 ### File Explorer
 - **File Explorer** — Tree shows Git status with color-coded glyph badges (modified, added, deleted, renamed, copied, untracked, conflicted) next to each file, and folders inherit the worst child status at reduced opacity so changes deep in a subtree are visible from the root.
