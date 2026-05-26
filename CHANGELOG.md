@@ -1,6 +1,61 @@
 # TIA Openness Manager - Changelog
 
+## v4.0.2 (2026-05-26)
+
+### Security
+- **Security** — Hardened SCL code suggestions against tampered project files.
+
+### Licensing
+- **Licensing** — Fixed an issue where the license was sometimes not displayed correctly.
+
+### AI Chat
+- **AI Chat** — Inline-edit proposals wait for your decision before the assistant continues.
+- **AI Chat** — Analyses that read block code (search, compare, cross-references, call graph) ask before exporting blocks from TIA Portal.
+
+### Git
+- **Repositories** — Opening a repository that fails (missing folder, permission issue, network drive) now surfaces an error dialog instead of leaving an empty tab.
+- **Remote** — Right-clicking a remote opens an edit dialog where you can rename it, change its URL, and configure the SSH key in one place.
+- **Sidebar** — Sort-mode selection for local branches, remote branches, and tags now persists across repository reopen and matches upstream wording (By Name / By Committer Date / By Creator Date).
+- **Commit Graph** — A new highlighting menu in the sidebar lets you choose between four modes: all commits, the current branch only, selected commits with their ancestors, or the current branch combined with selected commits.
+- **History** — The commit-details panel can be collapsed to the bottom edge with a single click (or Ctrl+J) and reopened in a separate window so you can keep reading details while continuing to browse the history.
+
+### Application Shell
+- **Theming** — Status indicators (success / warning / error / info / safety badges, info banners, modal overlays, text selection, protected-block markers, multi-select outlines, project-tree highlights) follow the active theme and accent color, with deeper severity colors and brightened tints on Light and Midnight modes for legibility and WCAG-AA accessibility.
+- **Theming** — Secondary text on panels (file paths under Compare-view entries, block-count badges in the project tree, placeholders and soft labels across dialogs) reads clearly on dark and midnight backgrounds.
+- **Compare** — Diff colors in the Compare view now follow the active theme.
+- **Reliability** — When the application encounters an internal error, a banner now appears with an Error ID you can quote to support, and your work stays open.
+
+### PLC Online
+- **S7 Native** — Connecting to S7-1500 PLCs over PLC Online lists data blocks and expanding a block reveals its variables across supported firmware versions.
+- **OPC UA** — Writing a value to a Watch Table row reaches the PLC for variables added by drag-and-drop or context menu.
+
+### Editor
+- **Editor** — The footer language picker reliably re-applies SCL and AWL highlighting when you switch back from another syntax.
+- **Editor** — SCL code intelligence with workspace-aware completion, symbol hover, document outline, and code folding.
+- **C# Editor** — Inline parameter hints, quick-fix code actions, status-bar progress for ongoing analysis, workspace-wide symbol search (Ctrl+T), code folding, and safe two-step rename.
+- **C# Editor** — Renaming a folder updates every nested file so error markers, hovers, and symbol lists stay current; new exclusion list for ignored folders in Editor Settings.
+- **Editor** — External file changes are picked up faster.
+- **Editor settings** — Editor Settings warns when an exclusion pattern is invalid.
+- **Graphical Block View** — Function-block calls with many wrapped parameter operands lay out without input-pin labels overlapping each other.
+- **Graphical Block View** — Branch wires stay connected to the upstream contact when operands wrap across multiple lines.
+
+### Unit Testing
+- **Test runner** — Typos in YAML config files now show a warning instead of silently falling back to defaults.
+- **Simulation** — Starting a PLCSIM instance keeps the network-access mode (Single / Multiple / Softbus) that you selected in the PLCSIM Advanced Control Panel.
+- **Test Suite** — Editing the `name` at the top of a test-suite JSON and pressing Save renames the file on disk and updates the document tab in the same step; a clear error appears if another suite with that name already exists in the folder.
+
+### TIA Portal
+- **Multi-Project** — Open and attach to multiple TIA Portal projects of the same major version side-by-side; each project runs in its own isolated tab with its own project tree, the tab strip scrolls horizontally when more tabs are open than fit on screen, and attaching to a TIA Portal instance you already opened is blocked with a clear duplicate-attach message.
+- **Project Tree** — Reloading the project tree after compiling or closing-and-reopening a TIA Portal project lists all blocks for the rest of the session.
+- **Project Tree** — Reloading the project tree after a Multi-User merge performed inside TIA Portal lists all blocks reliably.
+- **Project Tree** — Reloading the project tree surfaces a clear error message when every PLC fails to load.
+- **Block Source** — Opening a block source after the project was briefly closed succeeds on the next attempt.
+- **Connect** — Connecting to TIA Portal completes on the first attempt without the dialog stalling on the loading message.
+
 ## v4.0.1 (2026-05-20)
+
+### Licensing
+- **Licensing** — Online activation of a paid subscription completes reliably on the first attempt and binds the activation code to the signed-in account and the current machine.
 
 ### Editor
 - **Editor** — Footer language dropdown lists SCL and AWL on top under a "TIA Portal Languages" group, followed by the alphabetical list of every other supported syntax; the chosen language re-highlights the current tab immediately.
@@ -15,9 +70,15 @@
 
 ### PLC Online
 - **OPC UA** — Cancel button on stuck connection attempts; unreachable servers fail in 30 seconds; background type loading lets large controllers browse immediately after connect.
+- **S7 Native** — Browsing block members in PLC Online now works when a TIA Portal project is also connected via Manager.
 
 ### Workspace
 - **Workspace** — Bottom panel remembers its collapsed and maximized state across application restarts.
+
+### Hardware Simulation
+- **Hardware Simulation** — OPC UA-Server can now be used as a hardware source. Open an OPC UA connection in the PLC Online workspace, then in Hardware Simulation pick that connection from the OPC UA source dropdown to browse the server's address space and right-click any variable to add it to a live watch list.
+- **Hardware Simulation** — Devices & Channels panel gains a view-mode selector with Hardware, Tag Tables, and OPC UA options.
+- **Hardware Simulation** — OPC UA mode shows an address-space tree with icons, search, and an Add-to-Watch action consistent with the PLC Online address-space tool.
 
 ## v4.0.0 (2026-05-18)
 
