@@ -1,39 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>4.0.3</version>
-    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.3/TiaOpennessManager_Setup_4.0.3.exe</url>
+    <version>4.0.4</version>
+    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.4/TiaOpennessManager_Setup_4.0.4.exe</url>
     <changelog>https://github.com/StaniB88/TIAOpennessManager/blob/main/CHANGELOG.md</changelog>
-    <release_date>2026-05-27</release_date>
+    <release_date>2026-05-28</release_date>
     <body>## What&apos;s Changed
 
-### Editor
-- **Editor** — UDT-typed members in the Interface view now expand to show their structure.
-- **SCL Editor** — Syntax and basic semantic problems appear in the Problems panel and as in-editor markers while you edit, for blocks opened from the project and standalone SCL files.
+### Import / Export
+- **Import/Export** — Dragging data types, tag tables, or technology objects onto the export panel now exports them.
+
+### Compare
+- **Compare** — Dragging data types or tag tables into Compare now loads them.
 
 ### Find Unused
-- **Find Unused** — Now asks you to fix compile errors before analyzing, so results stay accurate.
-- **Find Unused** — Always analyzes a fresh export now, so results always reflect the current project.
-
-### Protection
-- **Protection** — Protecting or unprotecting a folder now applies only to the device you select.
-- **Protection** — After this update, re-apply protection once in projects and profiles that already had it set.
-
-### Licensing
-- **Licensing** — Removed trial-transfer prompts and notifications.
-
-### Unit Testing
-- **Unit Testing** — Run your SCL tests on a build server and get JUnit and branded HTML reports.
-- **Unit Testing** — Test results show the measured value next to each expected value.
-- **Unit Testing** — Connection settings offer an explicit S7 Native transport with a dedicated option for running against a real PLC.
-- **Unit Testing** — The Manage button in connection settings opens the simulation instances view.
-- **Unit Testing** — Generate a ready-to-commit CI/CD pipeline for your tests from inside the app, run on demand.
-- **Unit Testing** — Generated CI/CD pipelines can now target your own self-hosted test runner.
-
-### Application Shell
-- **Project Explorer** — The reload button stays clickable after a project finishes loading.
-- **Settings** — The Additional S7DCL Export and Fingerprint Cache entries in the category tree now show their icons.
-- **Theming** — Empty checkboxes are clearer and the bottom panel divider is slimmer.</body>
+- **Find Unused** — Deleting unused tags removes them from the project and reports any that cannot be removed.
+- **Find Unused** — Warns you if the project could not be saved after removing unused items.
+- **Find Unused** — Status and dialog messages appear in your selected language.</body>
     <mandatory>false</mandatory>
-    <size>578309592</size>
-    <sha256>98C7C4BAD5F51F3F80B3DD8E297579A83AB82C9CAA4C7E1F86F52C6C845B1CF0</sha256>
+    <size>578246720</size>
+    <sha256>8304C3B01238A4968921273EAB3D8EA703843972D106E2EC2F894536D4F49CD3</sha256>
 </item>

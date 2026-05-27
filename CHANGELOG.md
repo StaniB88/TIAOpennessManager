@@ -1,5 +1,18 @@
 # TIA Openness Manager - Changelog
 
+## v4.0.4 (2026-05-28)
+
+### Import / Export
+- **Import/Export** — Dragging data types, tag tables, or technology objects onto the export panel now exports them.
+
+### Compare
+- **Compare** — Dragging data types or tag tables into Compare now loads them.
+
+### Find Unused
+- **Find Unused** — Deleting unused tags removes them from the project and reports any that cannot be removed.
+- **Find Unused** — Warns you if the project could not be saved after removing unused items.
+- **Find Unused** — Status and dialog messages appear in your selected language.
+
 ## v4.0.3 (2026-05-27)
 
 ### Editor
