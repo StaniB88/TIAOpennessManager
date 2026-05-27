@@ -1,5 +1,35 @@
 # TIA Openness Manager - Changelog
 
+## v4.0.3 (2026-05-27)
+
+### Editor
+- **Editor** — UDT-typed members in the Interface view now expand to show their structure.
+- **SCL Editor** — Syntax and basic semantic problems appear in the Problems panel and as in-editor markers while you edit, for blocks opened from the project and standalone SCL files.
+
+### Find Unused
+- **Find Unused** — Now asks you to fix compile errors before analyzing, so results stay accurate.
+- **Find Unused** — Always analyzes a fresh export now, so results always reflect the current project.
+
+### Protection
+- **Protection** — Protecting or unprotecting a folder now applies only to the device you select.
+- **Protection** — After this update, re-apply protection once in projects and profiles that already had it set.
+
+### Licensing
+- **Licensing** — Removed trial-transfer prompts and notifications.
+
+### Unit Testing
+- **Unit Testing** — Run your SCL tests on a build server and get JUnit and branded HTML reports.
+- **Unit Testing** — Test results show the measured value next to each expected value.
+- **Unit Testing** — Connection settings offer an explicit S7 Native transport with a dedicated option for running against a real PLC.
+- **Unit Testing** — The Manage button in connection settings opens the simulation instances view.
+- **Unit Testing** — Generate a ready-to-commit CI/CD pipeline for your tests from inside the app, run on demand.
+- **Unit Testing** — Generated CI/CD pipelines can now target your own self-hosted test runner.
+
+### Application Shell
+- **Project Explorer** — The reload button stays clickable after a project finishes loading.
+- **Settings** — The Additional S7DCL Export and Fingerprint Cache entries in the category tree now show their icons.
+- **Theming** — Empty checkboxes are clearer and the bottom panel divider is slimmer.
+
 ## v4.0.2 (2026-05-26)
 
 ### Security

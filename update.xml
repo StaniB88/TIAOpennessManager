@@ -1,61 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>4.0.2</version>
-    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.2/TiaOpennessManager_Setup_4.0.2.exe</url>
+    <version>4.0.3</version>
+    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.3/TiaOpennessManager_Setup_4.0.3.exe</url>
     <changelog>https://github.com/StaniB88/TIAOpennessManager/blob/main/CHANGELOG.md</changelog>
-    <release_date>2026-05-26</release_date>
+    <release_date>2026-05-27</release_date>
     <body>## What&apos;s Changed
 
-### Security
-- **Security** — Hardened SCL code suggestions against tampered project files.
+### Editor
+- **Editor** — UDT-typed members in the Interface view now expand to show their structure.
+- **SCL Editor** — Syntax and basic semantic problems appear in the Problems panel and as in-editor markers while you edit, for blocks opened from the project and standalone SCL files.
+
+### Find Unused
+- **Find Unused** — Now asks you to fix compile errors before analyzing, so results stay accurate.
+- **Find Unused** — Always analyzes a fresh export now, so results always reflect the current project.
+
+### Protection
+- **Protection** — Protecting or unprotecting a folder now applies only to the device you select.
+- **Protection** — After this update, re-apply protection once in projects and profiles that already had it set.
 
 ### Licensing
-- **Licensing** — Fixed an issue where the license was sometimes not displayed correctly.
-
-### AI Chat
-- **AI Chat** — Inline-edit proposals wait for your decision before the assistant continues.
-- **AI Chat** — Analyses that read block code (search, compare, cross-references, call graph) ask before exporting blocks from TIA Portal.
-
-### Git
-- **Repositories** — Opening a repository that fails (missing folder, permission issue, network drive) now surfaces an error dialog instead of leaving an empty tab.
-- **Remote** — Right-clicking a remote opens an edit dialog where you can rename it, change its URL, and configure the SSH key in one place.
-- **Sidebar** — Sort-mode selection for local branches, remote branches, and tags now persists across repository reopen and matches upstream wording (By Name / By Committer Date / By Creator Date).
-- **Commit Graph** — A new highlighting menu in the sidebar lets you choose between four modes: all commits, the current branch only, selected commits with their ancestors, or the current branch combined with selected commits.
-- **History** — The commit-details panel can be collapsed to the bottom edge with a single click (or Ctrl+J) and reopened in a separate window so you can keep reading details while continuing to browse the history.
-
-### Application Shell
-- **Theming** — Status indicators (success / warning / error / info / safety badges, info banners, modal overlays, text selection, protected-block markers, multi-select outlines, project-tree highlights) follow the active theme and accent color, with deeper severity colors and brightened tints on Light and Midnight modes for legibility and WCAG-AA accessibility.
-- **Theming** — Secondary text on panels (file paths under Compare-view entries, block-count badges in the project tree, placeholders and soft labels across dialogs) reads clearly on dark and midnight backgrounds.
-- **Compare** — Diff colors in the Compare view now follow the active theme.
-- **Reliability** — When the application encounters an internal error, a banner now appears with an Error ID you can quote to support, and your work stays open.
-
-### PLC Online
-- **S7 Native** — Connecting to S7-1500 PLCs over PLC Online lists data blocks and expanding a block reveals its variables across supported firmware versions.
-- **OPC UA** — Writing a value to a Watch Table row reaches the PLC for variables added by drag-and-drop or context menu.
-
-### Editor
-- **Editor** — The footer language picker reliably re-applies SCL and AWL highlighting when you switch back from another syntax.
-- **Editor** — SCL code intelligence with workspace-aware completion, symbol hover, document outline, and code folding.
-- **C# Editor** — Inline parameter hints, quick-fix code actions, status-bar progress for ongoing analysis, workspace-wide symbol search (Ctrl+T), code folding, and safe two-step rename.
-- **C# Editor** — Renaming a folder updates every nested file so error markers, hovers, and symbol lists stay current; new exclusion list for ignored folders in Editor Settings.
-- **Editor** — External file changes are picked up faster.
-- **Editor settings** — Editor Settings warns when an exclusion pattern is invalid.
-- **Graphical Block View** — Function-block calls with many wrapped parameter operands lay out without input-pin labels overlapping each other.
-- **Graphical Block View** — Branch wires stay connected to the upstream contact when operands wrap across multiple lines.
+- **Licensing** — Removed trial-transfer prompts and notifications.
 
 ### Unit Testing
-- **Test runner** — Typos in YAML config files now show a warning instead of silently falling back to defaults.
-- **Simulation** — Starting a PLCSIM instance keeps the network-access mode (Single / Multiple / Softbus) that you selected in the PLCSIM Advanced Control Panel.
-- **Test Suite** — Editing the `name` at the top of a test-suite JSON and pressing Save renames the file on disk and updates the document tab in the same step; a clear error appears if another suite with that name already exists in the folder.
+- **Unit Testing** — Run your SCL tests on a build server and get JUnit and branded HTML reports.
+- **Unit Testing** — Test results show the measured value next to each expected value.
+- **Unit Testing** — Connection settings offer an explicit S7 Native transport with a dedicated option for running against a real PLC.
+- **Unit Testing** — The Manage button in connection settings opens the simulation instances view.
+- **Unit Testing** — Generate a ready-to-commit CI/CD pipeline for your tests from inside the app, run on demand.
+- **Unit Testing** — Generated CI/CD pipelines can now target your own self-hosted test runner.
 
-### TIA Portal
-- **Multi-Project** — Open and attach to multiple TIA Portal projects of the same major version side-by-side; each project runs in its own isolated tab with its own project tree, the tab strip scrolls horizontally when more tabs are open than fit on screen, and attaching to a TIA Portal instance you already opened is blocked with a clear duplicate-attach message.
-- **Project Tree** — Reloading the project tree after compiling or closing-and-reopening a TIA Portal project lists all blocks for the rest of the session.
-- **Project Tree** — Reloading the project tree after a Multi-User merge performed inside TIA Portal lists all blocks reliably.
-- **Project Tree** — Reloading the project tree surfaces a clear error message when every PLC fails to load.
-- **Block Source** — Opening a block source after the project was briefly closed succeeds on the next attempt.
-- **Connect** — Connecting to TIA Portal completes on the first attempt without the dialog stalling on the loading message.</body>
+### Application Shell
+- **Project Explorer** — The reload button stays clickable after a project finishes loading.
+- **Settings** — The Additional S7DCL Export and Fingerprint Cache entries in the category tree now show their icons.
+- **Theming** — Empty checkboxes are clearer and the bottom panel divider is slimmer.</body>
     <mandatory>false</mandatory>
-    <size>338540544</size>
-    <sha256>7A9D5D8C112510DFDFDEBD373EBC68D031365F451A37DFA409C8E4CA3BB413CE</sha256>
+    <size>578309592</size>
+    <sha256>98C7C4BAD5F51F3F80B3DD8E297579A83AB82C9CAA4C7E1F86F52C6C845B1CF0</sha256>
 </item>
