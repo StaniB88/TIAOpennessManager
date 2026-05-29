@@ -1,5 +1,27 @@
 # TIA Openness Manager - Changelog
 
+## v4.0.5 (2026-05-28)
+
+### Import / Export
+- **Import** — A block that cannot be created now stops the import immediately and is named in the summary.
+- **Export** — Exporting UDTs, code blocks, and tag tables on TIA Portal versions before V18 now succeeds.
+- **Import/Export** — A Software Unit keeps its namespace, author, and comment across export and re-import.
+- **Import** — Importing several Software Units at once keeps each unit's content in its own unit.
+
+### Project Explorer
+- **Project Explorer** — Software units show their namespace next to the name.
+
+### Editor
+- **Source view** — UDT and tag table source errors include a clear reason.
+- **SCL editor** — Code suggestions now include block and data-type names from the open TIA project.
+- **SCL editor** — Region names with multiple words are recognised correctly in the Problems panel.
+
+### Dialogs
+- **Dialogs** — Press Enter to confirm a dialog and Escape to close it.
+
+### Safety
+- **Safety** — On TIA Portal V15 and V16, safety login now shows a clear message asking you to log in directly in TIA Portal.
+
 ## v4.0.4 (2026-05-28)
 
 ### Import / Export
