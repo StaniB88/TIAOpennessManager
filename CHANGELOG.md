@@ -1,5 +1,24 @@
 # TIA Openness Manager - Changelog
 
+## v4.0.6 (2026-06-01)
+
+### Import / Export
+- **Export** — Exporting code blocks, data types, tag tables, and technology objects succeeds even when an item or folder name contains special characters.
+- **Export** — The export summary ignores blocks that TIA itself does not allow to be exported.
+
+### Editor
+- **Source view** — Opening and exporting code blocks reliably shows their source instead of an empty block.
+
+### OPC UA
+- **Watch table** — Loading a saved watch table works again, and an invalid file shows a short notice instead of an error.
+
+### Licensing
+- **Licensing** — The license dialog opens the website to view all plans and subscribe.
+- **Licensing** — The license dialog shows a clear message when the subscription portal cannot be opened.
+
+### Settings
+- **Settings** — The settings window opens in front of the main window.
+
 ## v4.0.5 (2026-05-28)
 
 ### Import / Export

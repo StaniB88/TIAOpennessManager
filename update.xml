@@ -1,31 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>4.0.5</version>
-    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.5/TiaOpennessManager_Setup_4.0.5.exe</url>
+    <version>4.0.6</version>
+    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.6/TiaOpennessManager_Setup_4.0.6.exe</url>
     <changelog>https://github.com/StaniB88/TIAOpennessManager/blob/main/CHANGELOG.md</changelog>
-    <release_date>2026-05-29</release_date>
+    <release_date>2026-06-01</release_date>
     <body>## What&apos;s Changed
 
 ### Import / Export
-- **Import** — A block that cannot be created now stops the import immediately and is named in the summary.
-- **Export** — Exporting UDTs, code blocks, and tag tables on TIA Portal versions before V18 now succeeds.
-- **Import/Export** — A Software Unit keeps its namespace, author, and comment across export and re-import.
-- **Import** — Importing several Software Units at once keeps each unit&apos;s content in its own unit.
-
-### Project Explorer
-- **Project Explorer** — Software units show their namespace next to the name.
+- **Export** — Exporting code blocks, data types, tag tables, and technology objects succeeds even when an item or folder name contains special characters.
+- **Export** — The export summary ignores blocks that TIA itself does not allow to be exported.
 
 ### Editor
-- **Source view** — UDT and tag table source errors include a clear reason.
-- **SCL editor** — Code suggestions now include block and data-type names from the open TIA project.
-- **SCL editor** — Region names with multiple words are recognised correctly in the Problems panel.
+- **Source view** — Opening and exporting code blocks reliably shows their source instead of an empty block.
 
-### Dialogs
-- **Dialogs** — Press Enter to confirm a dialog and Escape to close it.
+### OPC UA
+- **Watch table** — Loading a saved watch table works again, and an invalid file shows a short notice instead of an error.
 
-### Safety
-- **Safety** — On TIA Portal V15 and V16, safety login now shows a clear message asking you to log in directly in TIA Portal.</body>
+### Licensing
+- **Licensing** — The license dialog opens the website to view all plans and subscribe.
+- **Licensing** — The license dialog shows a clear message when the subscription portal cannot be opened.
+
+### Settings
+- **Settings** — The settings window opens in front of the main window.</body>
     <mandatory>false</mandatory>
-    <size>578283704</size>
-    <sha256>5B317BCF835F5DA144D97712A9FACCDB7A0B82E123FD9D848EE70EBE42540621</sha256>
+    <size>578252288</size>
+    <sha256>DBC804607133915E76133BD364F4D085057066D6627CCA5839CE6D80299FD87A</sha256>
 </item>
