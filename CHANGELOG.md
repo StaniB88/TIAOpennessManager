@@ -1,5 +1,30 @@
 # TIA Openness Manager - Changelog
 
+## v4.0.7 (2026-06-02)
+
+### Find Unused
+- **Find Unused** — Deleting a selected unused tag completes reliably.
+
+### Import / Export
+- **Export** — HMI screens, tag tables, and scripts stored in subfolders now export on TIA Portal versions before V18.
+- **Export** — The export summary lists any HMI items that could not be exported.
+
+### Editor
+- **SCL editor** — Flags a control-flow block that is missing a required keyword or its closing keyword.
+
+### AI Chat
+- **AI Chat** — Converting AWL/STL blocks to SCL is checked against more conversion pitfalls.
+- **AI Chat** — The assistant confirms before deleting or overwriting blocks and devices, and warns on safety blocks.
+
+### Setup
+- **Setup** — On TIA Portal V15 to V17, connecting no longer requires confirming a prompt on every launch.
+
+### Vault
+- **Vault** — Blocks assigned a vault password are marked in the project tree as soon as the vault is unlocked.
+
+### Licensing
+- **Licensing** — Your subscription plan is shown correctly after starting the app while the licensing server is unreachable.
+
 ## v4.0.6 (2026-06-01)
 
 ### Import / Export

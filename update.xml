@@ -1,28 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>4.0.6</version>
-    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.6/TiaOpennessManager_Setup_4.0.6.exe</url>
+    <version>4.0.7</version>
+    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.7/TiaOpennessManager_Setup_4.0.7.exe</url>
     <changelog>https://github.com/StaniB88/TIAOpennessManager/blob/main/CHANGELOG.md</changelog>
-    <release_date>2026-06-01</release_date>
+    <release_date>2026-06-02</release_date>
     <body>## What&apos;s Changed
 
+### Find Unused
+- **Find Unused** — Deleting a selected unused tag completes reliably.
+
 ### Import / Export
-- **Export** — Exporting code blocks, data types, tag tables, and technology objects succeeds even when an item or folder name contains special characters.
-- **Export** — The export summary ignores blocks that TIA itself does not allow to be exported.
+- **Export** — HMI screens, tag tables, and scripts stored in subfolders now export on TIA Portal versions before V18.
+- **Export** — The export summary lists any HMI items that could not be exported.
 
 ### Editor
-- **Source view** — Opening and exporting code blocks reliably shows their source instead of an empty block.
+- **SCL editor** — Flags a control-flow block that is missing a required keyword or its closing keyword.
 
-### OPC UA
-- **Watch table** — Loading a saved watch table works again, and an invalid file shows a short notice instead of an error.
+### AI Chat
+- **AI Chat** — Converting AWL/STL blocks to SCL is checked against more conversion pitfalls.
+- **AI Chat** — The assistant confirms before deleting or overwriting blocks and devices, and warns on safety blocks.
+
+### Setup
+- **Setup** — On TIA Portal V15 to V17, connecting no longer requires confirming a prompt on every launch.
+
+### Vault
+- **Vault** — Blocks assigned a vault password are marked in the project tree as soon as the vault is unlocked.
 
 ### Licensing
-- **Licensing** — The license dialog opens the website to view all plans and subscribe.
-- **Licensing** — The license dialog shows a clear message when the subscription portal cannot be opened.
-
-### Settings
-- **Settings** — The settings window opens in front of the main window.</body>
+- **Licensing** — Your subscription plan is shown correctly after starting the app while the licensing server is unreachable.</body>
     <mandatory>false</mandatory>
-    <size>578252288</size>
-    <sha256>DBC804607133915E76133BD364F4D085057066D6627CCA5839CE6D80299FD87A</sha256>
+    <size>578506784</size>
+    <sha256>692E6220EFC0DA975565432A8866658B6BCAE682AF2A83436E80C8264C362C04</sha256>
 </item>
