@@ -1,5 +1,19 @@
 # TIA Openness Manager - Changelog
 
+## v4.0.8 (2026-06-05)
+
+### Import / Export
+- **Export** — Projects with more than one HMI export every HMI.
+- **Import** — Importing HMI items applies to the HMI you selected.
+- **Export** — Drag HMI screens, tag tables, and scripts from the project tree onto the export or compare panel.
+
+### Find Unused
+- **Find Unused** — Deleting unused items shows TIA Portal as in use for the whole operation, whether you delete a single item or a full category.
+
+### Editor
+- **SCL editor** — Flags a missing semicolon, an assignment with no value, and an operator with no operand.
+- **Editor** — Double-clicking an HMI tag table opens it in the editor.
+
 ## v4.0.7 (2026-06-02)
 
 ### Find Unused

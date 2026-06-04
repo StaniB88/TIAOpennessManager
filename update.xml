@@ -1,34 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>4.0.7</version>
-    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.7/TiaOpennessManager_Setup_4.0.7.exe</url>
+    <version>4.0.8</version>
+    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.8/TiaOpennessManager_Setup_4.0.8.exe</url>
     <changelog>https://github.com/StaniB88/TIAOpennessManager/blob/main/CHANGELOG.md</changelog>
-    <release_date>2026-06-02</release_date>
+    <release_date>2026-06-05</release_date>
     <body>## What&apos;s Changed
 
-### Find Unused
-- **Find Unused** — Deleting a selected unused tag completes reliably.
-
 ### Import / Export
-- **Export** — HMI screens, tag tables, and scripts stored in subfolders now export on TIA Portal versions before V18.
-- **Export** — The export summary lists any HMI items that could not be exported.
+- **Export** — Projects with more than one HMI export every HMI.
+- **Import** — Importing HMI items applies to the HMI you selected.
+- **Export** — Drag HMI screens, tag tables, and scripts from the project tree onto the export or compare panel.
+
+### Find Unused
+- **Find Unused** — Deleting unused items shows TIA Portal as in use for the whole operation, whether you delete a single item or a full category.
 
 ### Editor
-- **SCL editor** — Flags a control-flow block that is missing a required keyword or its closing keyword.
-
-### AI Chat
-- **AI Chat** — Converting AWL/STL blocks to SCL is checked against more conversion pitfalls.
-- **AI Chat** — The assistant confirms before deleting or overwriting blocks and devices, and warns on safety blocks.
-
-### Setup
-- **Setup** — On TIA Portal V15 to V17, connecting no longer requires confirming a prompt on every launch.
-
-### Vault
-- **Vault** — Blocks assigned a vault password are marked in the project tree as soon as the vault is unlocked.
-
-### Licensing
-- **Licensing** — Your subscription plan is shown correctly after starting the app while the licensing server is unreachable.</body>
+- **SCL editor** — Flags a missing semicolon, an assignment with no value, and an operator with no operand.
+- **Editor** — Double-clicking an HMI tag table opens it in the editor.</body>
     <mandatory>false</mandatory>
-    <size>578506784</size>
-    <sha256>692E6220EFC0DA975565432A8866658B6BCAE682AF2A83436E80C8264C362C04</sha256>
+    <size>578196504</size>
+    <sha256>852CF61943CE073AE2A64DA18494A8BC607696AF2D97D55C80BFA00ACDC56BBB</sha256>
 </item>
