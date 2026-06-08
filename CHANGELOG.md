@@ -1,5 +1,20 @@
 # TIA Openness Manager - Changelog
 
+## v4.0.9 (2026-06-08)
+
+### Find Unused
+- **Find Unused** — A function block that is never called is now reported as unused even when its data is still referenced elsewhere.
+
+### Editor
+- **SCL editor** — Accepts hardware addresses and pointer constants without marking them as errors.
+- **Editor** — Opens large exported files.
+
+### Multi-User
+- **Multi-User** — Projects opened as a local session can be saved.
+
+### HMI
+- **HMI** — Edit an HMI tag table in the editor and send your changes to TIA.
+
 ## v4.0.8 (2026-06-05)
 
 ### Import / Export

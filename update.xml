@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>4.0.8</version>
-    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.8/TiaOpennessManager_Setup_4.0.8.exe</url>
+    <version>4.0.9</version>
+    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.9/TiaOpennessManager_Setup_4.0.9.exe</url>
     <changelog>https://github.com/StaniB88/TIAOpennessManager/blob/main/CHANGELOG.md</changelog>
-    <release_date>2026-06-05</release_date>
+    <release_date>2026-06-08</release_date>
     <body>## What&apos;s Changed
 
-### Import / Export
-- **Export** — Projects with more than one HMI export every HMI.
-- **Import** — Importing HMI items applies to the HMI you selected.
-- **Export** — Drag HMI screens, tag tables, and scripts from the project tree onto the export or compare panel.
-
 ### Find Unused
-- **Find Unused** — Deleting unused items shows TIA Portal as in use for the whole operation, whether you delete a single item or a full category.
+- **Find Unused** — A function block that is never called is now reported as unused even when its data is still referenced elsewhere.
 
 ### Editor
-- **SCL editor** — Flags a missing semicolon, an assignment with no value, and an operator with no operand.
-- **Editor** — Double-clicking an HMI tag table opens it in the editor.</body>
+- **SCL editor** — Accepts hardware addresses and pointer constants without marking them as errors.
+- **Editor** — Opens large exported files.
+
+### Multi-User
+- **Multi-User** — Projects opened as a local session can be saved.
+
+### HMI
+- **HMI** — Edit an HMI tag table in the editor and send your changes to TIA.</body>
     <mandatory>false</mandatory>
-    <size>578196504</size>
-    <sha256>852CF61943CE073AE2A64DA18494A8BC607696AF2D97D55C80BFA00ACDC56BBB</sha256>
+    <size>386661920</size>
+    <sha256>C7202BFCA9BD67AE3FC5EA7D348639FF8C81AA55B399B8835360C6EF73EFF6F0</sha256>
 </item>
