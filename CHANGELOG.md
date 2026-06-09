@@ -1,5 +1,11 @@
 # TIA Openness Manager - Changelog
 
+## v4.0.10 (2026-06-10)
+
+### AI Chat
+- **AI Chat** — Agent memory semantic search works with Google agents.
+- **AI Chat** — Embeddings for agent memory can be switched off per agent.
+
 ## v4.0.9 (2026-06-08)
 
 ### Find Unused

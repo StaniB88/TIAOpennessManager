@@ -1,24 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>4.0.9</version>
-    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.9/TiaOpennessManager_Setup_4.0.9.exe</url>
+    <version>4.0.10</version>
+    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.10/TiaOpennessManager_Setup_4.0.10.exe</url>
     <changelog>https://github.com/StaniB88/TIAOpennessManager/blob/main/CHANGELOG.md</changelog>
-    <release_date>2026-06-08</release_date>
+    <release_date>2026-06-10</release_date>
     <body>## What&apos;s Changed
 
-### Find Unused
-- **Find Unused** — A function block that is never called is now reported as unused even when its data is still referenced elsewhere.
-
-### Editor
-- **SCL editor** — Accepts hardware addresses and pointer constants without marking them as errors.
-- **Editor** — Opens large exported files.
-
-### Multi-User
-- **Multi-User** — Projects opened as a local session can be saved.
-
-### HMI
-- **HMI** — Edit an HMI tag table in the editor and send your changes to TIA.</body>
+### AI Chat
+- **AI Chat** — Agent memory semantic search works with Google agents.
+- **AI Chat** — Embeddings for agent memory can be switched off per agent.</body>
     <mandatory>false</mandatory>
-    <size>386661920</size>
-    <sha256>C7202BFCA9BD67AE3FC5EA7D348639FF8C81AA55B399B8835360C6EF73EFF6F0</sha256>
+    <size>386553608</size>
+    <sha256>0D83CF2F82BC8D2C42591679D8DF536C6E23052D5FB1AC100AA7CCE7A52F2A9D</sha256>
 </item>
