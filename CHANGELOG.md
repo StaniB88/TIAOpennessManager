@@ -1,5 +1,13 @@
 # TIA Openness Manager - Changelog
 
+## v4.0.11 (2026-06-11)
+
+### AI Chat
+- **AI Chat** — The built-in Siemens reference guides are now available to every agent automatically — no setup needed, and updates add new guides by themselves.
+- **AI Chat** — Simpler knowledge settings: one shared list for your own reference files, plus per-agent tick boxes for the built-in guides.
+- **AI Chat** — Fixed repeated "Context compacted" messages flooding the conversation in long sessions.
+- **AI Chat** — AI code edits in the editor, unit test suites, and files now apply more reliably.
+
 ## v4.0.10 (2026-06-10)
 
 ### AI Chat

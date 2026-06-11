@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>4.0.10</version>
-    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.10/TiaOpennessManager_Setup_4.0.10.exe</url>
+    <version>4.0.11</version>
+    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.11/TiaOpennessManager_Setup_4.0.11.exe</url>
     <changelog>https://github.com/StaniB88/TIAOpennessManager/blob/main/CHANGELOG.md</changelog>
-    <release_date>2026-06-10</release_date>
+    <release_date>2026-06-11</release_date>
     <body>## What&apos;s Changed
 
 ### AI Chat
-- **AI Chat** — Agent memory semantic search works with Google agents.
-- **AI Chat** — Embeddings for agent memory can be switched off per agent.</body>
+- **AI Chat** — The built-in Siemens reference guides are now available to every agent automatically — no setup needed, and updates add new guides by themselves.
+- **AI Chat** — Simpler knowledge settings: one shared list for your own reference files, plus per-agent tick boxes for the built-in guides.
+- **AI Chat** — Fixed repeated &quot;Context compacted&quot; messages flooding the conversation in long sessions.
+- **AI Chat** — AI code edits in the editor, unit test suites, and files now apply more reliably.</body>
     <mandatory>false</mandatory>
-    <size>386553608</size>
-    <sha256>0D83CF2F82BC8D2C42591679D8DF536C6E23052D5FB1AC100AA7CCE7A52F2A9D</sha256>
+    <size>386192888</size>
+    <sha256>15BAD6F819DE95D6FD1785E4D3DAD1436FE1F33B43E461C47F476FB0933A7F80</sha256>
 </item>
