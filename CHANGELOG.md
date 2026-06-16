@@ -1,5 +1,14 @@
 # TIA Openness Manager - Changelog
 
+## v4.0.12 (2026-06-16)
+
+### AI Chat
+- **AI Chat** — Fixed an error when turning on thinking with Opus 4.7 and 4.8 models.
+- **AI Chat** — Shows the reason when the model declines a request.
+
+### Welcome
+- **Welcome page** — A banner now takes you straight to AnyAutomation Studio.
+
 ## v4.0.11 (2026-06-11)
 
 ### AI Chat
