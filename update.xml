@@ -1,18 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>4.0.12</version>
-    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.12/TiaOpennessManager_Setup_4.0.12.exe</url>
+    <version>4.0.13</version>
+    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.13/TiaOpennessManager_Setup_4.0.13.exe</url>
     <changelog>https://github.com/StaniB88/TIAOpennessManager/blob/main/CHANGELOG.md</changelog>
-    <release_date>2026-06-16</release_date>
+    <release_date>2026-06-18</release_date>
     <body>## What&apos;s Changed
 
-### AI Chat
-- **AI Chat** — Fixed an error when turning on thinking with Opus 4.7 and 4.8 models.
-- **AI Chat** — Shows the reason when the model declines a request.
+### Export
+- **Export** — S7-DCL files update again when you export a block a second time.
 
-### Welcome
-- **Welcome page** — A banner now takes you straight to AnyAutomation Studio.</body>
+### Import
+- **Import** — Import a block from an S7-DCL file by dragging it in or selecting it.
+
+### Git
+- **Diff View** — Fixed a crash when selecting text in the diff.
+- **Diff View** — Fixed the app freezing on files without a trailing newline when syntax highlighting is on.
+- **Sidebar** — Merge a tag into the current branch from its right-click menu.
+
+### Project Explorer
+- **Project tree** — Folder and file names display reliably while the tree refreshes.
+
+### Import / Export
+- **File tree** — Folder and file names display reliably while the tree refreshes.</body>
     <mandatory>false</mandatory>
-    <size>293920040</size>
-    <sha256>898A3EEECC2210D7E17EFB6B81F942F4266FC90536DEF7493F330D50F91AE1C5</sha256>
+    <size>295847328</size>
+    <sha256>BE8F03E50687B7D3382A2AA61A7ACD4874F41DB727783A9B1FBDE5BAE218A35A</sha256>
 </item>

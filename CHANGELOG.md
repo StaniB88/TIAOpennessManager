@@ -1,5 +1,24 @@
 # TIA Openness Manager - Changelog
 
+## v4.0.13 (2026-06-18)
+
+### Export
+- **Export** — S7-DCL files update again when you export a block a second time.
+
+### Import
+- **Import** — Import a block from an S7-DCL file by dragging it in or selecting it.
+
+### Git
+- **Diff View** — Fixed a crash when selecting text in the diff.
+- **Diff View** — Fixed the app freezing on files without a trailing newline when syntax highlighting is on.
+- **Sidebar** — Merge a tag into the current branch from its right-click menu.
+
+### Project Explorer
+- **Project tree** — Folder and file names display reliably while the tree refreshes.
+
+### Import / Export
+- **File tree** — Folder and file names display reliably while the tree refreshes.
+
 ## v4.0.12 (2026-06-16)
 
 ### AI Chat
