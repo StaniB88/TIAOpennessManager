@@ -1,216 +1,90 @@
-# TIA Openness Manager V3
+# TIA Openness Manager
 
-**Streamline Your Siemens TIA Portal Workflow**
+**Available and supported for TIA Portal V15–V21 — with [AnyAutomation Studio](https://anyautomation.ch/studio) as the next step for new and advanced workflows.**
 
-[![Website](https://img.shields.io/badge/Website-tiaopenessmanager.ch-blue)](https://tiaopenessmanager.ch/)
-[![Version](https://img.shields.io/badge/Version-4.0.13-green)](CHANGELOG.md)
-[![TIA Portal](https://img.shields.io/badge/TIA%20Portal-V15--V21-orange)]()
-[![Platform](https://img.shields.io/badge/Platform-Windows%20x64-lightgrey)]()
-
----
-
-## What is TIA Openness Manager?
-
-TIA Openness Manager is a productivity tool for Siemens TIA Portal developers that transforms how you export, import, compare, and protect PLC program blocks. Hour-long manual tasks become single-click operations — and you get AI, OPC UA, encrypted vaults, and version control on top.
-
-**V3 Highlights**
-
-- Process-separated design — a UI crash never takes down your TIA Portal connection
-- Modern dark-theme UI built from the ground up
-- Built-in **OPC UA Client** for live PLC data
-- **AI Chat** with context folders, git integration, skills, and custom agents
-- **Password Vault** for encrypted know-how protection credentials
-- **Project Library Management** with full MCP integration
-- **Unit Testing** (Beta, requires PLCSIM Advanced V3.0+)
-- TIA Portal V21 support
+[![AnyAutomation Studio](https://img.shields.io/badge/Next%20Step-AnyAutomation%20Studio-7C3AED)](https://anyautomation.ch/studio)
+[![Download Manager](https://img.shields.io/badge/Download-Openness%20Manager-22C55E)](https://github.com/StaniB88/TIAOpennessManager/releases/latest)
+[![Latest Release](https://img.shields.io/badge/Release-v4.0.13-lightgrey)](CHANGELOG.md)
 
 ---
 
-## Features
+## TIA Openness Manager — and AnyAutomation Studio
 
-### Import & Export
+Thank you to everyone who uses, stars, and supports TIA Openness Manager.
 
-- **Bulk Operations** — export or import hundreds of blocks at once
-- **XML, SCL, and S7DCL** — all standard TIA Portal formats supported
-- **S7DCL (V20+)** — text-based format for clean version control
-- **Folder Structure Preserved** — your TIA hierarchy stays intact
-- **Auto-Compile & Save** — automatic compilation after import
+**The Openness Manager stays available and supported** — download, account management, and support keep working as usual, with TIA Portal V15–V21. If you prefer the Manager, you can keep using it.
 
-### Find Unused Blocks
+At the same time, **[AnyAutomation Studio](https://anyautomation.ch/studio)** is where new development now focuses. Every feature you know — export/import, compare, find-unused, protection, vault, OPC UA, AI Chat, unit testing — has been rebuilt there as a complete code-first engineering IDE, with much more on top. For new and more advanced workflows, Studio is the place to look.
 
-![Find Unused](screenshots/FindUnused.png)
+### Try AnyAutomation Studio
 
-- **Dead Code Detection** — blocks not called by any OB
-- **Call-Graph Analysis** — based on actual calls, not just references
-- **Safety Block Support** — F_FB, F_FC, F_DB, F_OB all included
-- **Export or Delete** — CSV report or direct cleanup in TIA Portal
+- **Get it:** [Download the latest Studio release](https://github.com/StaniB88/AnyAutomationStudio/releases/latest) — pick `AnyAutomationStudioUserSetup-x64-*.exe` (per-user, recommended) or the system-wide setup.
+- **Learn more:** [anyautomation.ch/studio](https://anyautomation.ch/studio)
+- **Docs:** [anyautomation.ch/docs](https://anyautomation.ch/docs)
 
-### Difference Comparison
+---
 
-![Compare](screenshots/Compare.png)
+## What AnyAutomation Studio Adds
 
-- **Fingerprint-Based** — fast diff without full re-export
-- Detects modified, new, and deleted blocks
-- **Line-by-Line Diff** viewer
-- **Selective Re-Export** — export only what changed
+Everything from TIA Openness Manager, rebuilt in a full editor workbench — plus major new capabilities:
 
-### Code Editor
+- **Agentic workflow** — a dedicated Agents window runs AI agent sessions for you: hand off a task, run several sessions in parallel against local or remote projects, then review and apply each session's changes. On top of that, **AI Cascade** is a project-wide assistant that reads your whole project to ask, generate, and refactor with full context.
+- **Multi-User engineering** — open, edit, and commit a TIA Multi-User session entirely inside Studio, without keeping TIA Portal open. Upload a single-user project to a TIA Project Server and check it out, so a whole team works on one project together.
+- **Unit Testing, leveled up** — write, run, and evaluate SCL unit tests against PLCSIM Advanced **or a real S7 PLC**, with AI-authored test cases, boundary generation, Visual / JSON / SCL editing, persisted pass/fail history, and **CI/CD** integration.
+- **Forge** — a reusable Block Type Library: capture blocks from a project, organise them into folders, and deploy the whole library into any connected PLC, with the folder structure recreated as PLC groups.
 
-![Editor](screenshots/Editor.png)
+---
 
-Integrated SCL editor with syntax highlighting, search & replace, and inline diff view. Edit exported blocks without leaving the app.
+## Everything in One Workspace
 
-### Protection System
+| Capability | What it does |
+|---|---|
+| **AI Cascade** | Project-wide AI assistant — ask, generate, refactor with full context (MCP, multi-provider). |
+| **Agents Window** | Run multiple AI agent sessions in parallel, local or remote; review and apply changes. |
+| **TIA Portal** | Analyse, export, compare, and generate blocks programmatically (V15–V21, Openness). |
+| **Multi-User** | Open, edit, and commit TIA Multi-User sessions; upload and check out from a TIA Project Server. |
+| **PLC Online** | Live to the controller — watch and write values without TIA Portal open (S7, OPC UA). |
+| **Hardware Simulation** | Spin up and control PLCSIM Advanced instances — no physical hardware. |
+| **Unit Testing** | SCL unit tests on PLCSIM or real hardware, AI-authored, with CI/CD. |
+| **Forge** | Reusable block-type library — capture, organise, deploy into a PLC. |
+| **OPC UA** | Browse the address space, read/write, live subscriptions. |
+| **Trace** | Oscilloscope-style live signal trace and dashboards. |
+| **Import / Export** | Bulk export/import with folder structure, compile, and diff. |
+| **Find Unused** | Detect and clean up unreferenced blocks across the project. |
+| **Password Vault** | AES-256 encrypted vault for know-how-protection passwords. |
+| **Git Client** | Full version control for your automation project. |
+| **EPLAN Connector** | Bridge to EPLAN for electrical-engineering data exchange. |
 
-![Protection](screenshots/Protection.png)
+Available in 14 display languages.
 
-- **Block Protection** prevents accidental overwrites of critical blocks
-- **Protection Profiles** — save and load configurations
-- **Visual Indicators** — protected items clearly marked in the tree
+---
 
-### Password Vault
+## Plans
 
-![Vault](screenshots/Vault.png)
-![Vault Protected](screenshots/Vault_Protected.png)
+Basic · Pro · Pro+ · Enterprise — monthly or yearly, in CHF, cancel any time. See the full comparison at [anyautomation.ch/studio](https://anyautomation.ch/studio#studio-pricing).
 
-- **AES-256-GCM encrypted vault** for TIA Portal know-how protection passwords
-- **Single Master Password** protects all vault entries
-- **Bulk Protect / Unprotect** — apply or remove know-how protection on all assigned blocks at once
-- **Crash Recovery** — blocks left unprotected during a crash are automatically re-protected on next launch
+---
 
-### Unit Testing (Beta)
+## TIA Openness Manager Download (v4.0.13)
 
-![Unit Testing](screenshots/UnitTesting.png)
+TIA Openness Manager v4.0.13 remains available and supported for existing users and keeps working with TIA Portal V15–V21.
 
-Define test cases for SCL blocks with expected inputs and outputs. Run tests against a live PLCSIM Advanced instance and see pass/fail at a glance. Catch regressions before they reach your PLC.
+- **Installer:** [TiaOpennessManager_Setup_4.0.13.exe](https://github.com/StaniB88/TIAOpennessManager/releases/tag/v4.0.13)
+- **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
-> Requires **PLCSIM Advanced V3.0+** (separate Siemens license).
-
-### Project Library Management
-
-![File Explorer](screenshots/FileExplorer.png)
-
-- **Master Copy Creation** — copy blocks into the Project Library for reuse
-- **Export Library Types** — as versioned XML files
-- **Folder Organization** — create, rename, delete library items
-- **Automatic Cleanup** — remove unused types and versions
-
-### HMI Support
-
-- Export / import HMI screens and templates
-- Full HMI tag table support
-- VB Scripts and script functions
-- Text and graphic lists (multi-language)
-- **WinCC Unified** support
-
-### Hardware Management
-
-- Device overview — PLCs, HMIs, Drives, Switches
-- Network info — PROFINET names, IP addresses, firmware versions
-- Export device, module, and network configuration as XML
-- CSV export for documentation
-
-### OPC UA Client
-
-![OPC UA Client](screenshots/OPCUA.png)
-
-- **Direct Connection** to any OPC UA server by endpoint URL
-- **Auto-Discovery** — detects PLC OPC UA endpoints from the connected TIA Portal project
-- **Address Space Browser** — full tree view
-- **Watch Table** — read, write, and live-subscribe to variables
-- **Save / Load Configurations** and export watch data as CSV or JSON
-
-### AI Chat & MCP Integration
-
-![AI Chat](screenshots/AIChat.png)
-
-- **Built-in AI Chat** with context folders, file attachments, and session history
-- **MCP Server** — connect any MCP-compatible AI assistant to your TIA Portal project
-- **Code Generation** — AI writes SCL blocks, DBs, UDTs, and tag tables, with direct import into TIA Portal
-- **Git Integration** — the AI is aware of your repo (status, commit, push, pull, diff)
-- **Skills & Agents** — custom prompt commands and AI personas
-- **Embedded Terminal** with MCP tooling
-- **Library Tools** — 7 dedicated AI tools for the Project Library
-- **OPC UA Tools** — 8 dedicated AI tools for live PLC data
-
-### Version Control
-
-![Version Control](screenshots/VersionControl.png)
-
-Inline git integration — browse project history, commit, push, pull, and diff without leaving the app.
+> Looking for the newest and most advanced features? That's where AnyAutomation Studio focuses — [take a look](https://anyautomation.ch/studio).
 
 ---
 
 ## Supported TIA Portal Versions
 
-| Version | Status |
-|---------|--------|
-| V15 | Supported |
-| V16 | Supported |
-| V17 | Supported |
-| V18 | Fully Supported |
-| V19 | Fully Supported |
-| V20 | Fully Supported |
-| V21 | Fully Supported |
-
----
-
-## System Requirements
-
-- **OS:** Windows 10 / 11 (64-bit)
-- **Installer:** Self-contained — all dependencies bundled, no separate runtime to install
-- **TIA Portal:** V15, V16, V17, V18, V19, V20, or V21 installed
-- **Permissions:** TIA Portal Openness API access configured
-- **Optional:** PLCSIM Advanced V3.0+ for SCL Unit Testing
-
----
-
-## Installation
-
-1. Download the latest installer from [Releases](https://github.com/StaniB88/TIAOpennessManager/releases)
-2. Run the installer and follow the setup wizard
-3. Launch TIA Openness Manager from the Start Menu
-4. Connect to your TIA Portal project (Open or Attach)
-
-**Free Trial:** New users get a 30-day trial with all features unlocked.
-
----
-
-## Quick Start
-
-1. **Open or Attach** a TIA Portal project
-2. **Browse** your PLC blocks in the project tree
-3. **Select** the blocks you want to work on
-4. **Export** as XML, SCL, or S7DCL — or **Import** back with a single click
-
-See the [User Guide](User_Guide/) for detailed documentation.
-
----
-
-## Languages
-
-English · Deutsch · Français · Italiano
-
----
-
-## Documentation
-
-- [User Manual (EN)](User_Guide/UserManual_EN.md) · [User Manual (DE)](User_Guide/UserManual_DE.md)
-- [Quick Start (EN)](User_Guide/QuickStart_EN.md) · [Quick Start (DE)](User_Guide/QuickStart_DE.md)
-- [Feature Overview](User_Guide/Features_EN.md)
-- [Changelog](CHANGELOG.md)
-
----
-
-## Auto-Update
-
-TIA Openness Manager checks for updates on startup and notifies you when a new version is available. Updates can be disabled in Settings.
+V15 · V16 · V17 · V18 · V19 · V20 · V21
 
 ---
 
 ## Support
 
-- **Website:** [tiaopenessmanager.ch](https://tiaopenessmanager.ch/)
+- **Website:** [anyautomation.ch](https://anyautomation.ch/)
 - **Email:** support@tiaopenessmanager.ch
 - **Issues:** [GitHub Issues](https://github.com/StaniB88/TIAOpennessManager/issues)
 
