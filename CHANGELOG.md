@@ -1,5 +1,16 @@
 # TIA Openness Manager - Changelog
 
+## v4.0.14 (2026-06-24)
+
+### Import
+- **Import** — Stops with a clear message naming both files when two files in the folder target the same block or data type.
+
+### Import / Export
+- **File tree** — A new Refresh button rescans the folder to pick up files added outside the app.
+
+### Licensing
+- **Trial** — Shows a clear message to subscribe when a trial isn't available for your email address.
+
 ## v4.0.13 (2026-06-18)
 
 ### Export

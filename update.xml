@@ -1,28 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>4.0.13</version>
-    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.13/TiaOpennessManager_Setup_4.0.13.exe</url>
+    <version>4.0.14</version>
+    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.14/TiaOpennessManager_Setup_4.0.14.exe</url>
     <changelog>https://github.com/StaniB88/TIAOpennessManager/blob/main/CHANGELOG.md</changelog>
-    <release_date>2026-06-18</release_date>
+    <release_date>2026-06-24</release_date>
     <body>## What&apos;s Changed
 
-### Export
-- **Export** — S7-DCL files update again when you export a block a second time.
-
 ### Import
-- **Import** — Import a block from an S7-DCL file by dragging it in or selecting it.
-
-### Git
-- **Diff View** — Fixed a crash when selecting text in the diff.
-- **Diff View** — Fixed the app freezing on files without a trailing newline when syntax highlighting is on.
-- **Sidebar** — Merge a tag into the current branch from its right-click menu.
-
-### Project Explorer
-- **Project tree** — Folder and file names display reliably while the tree refreshes.
+- **Import** — Stops with a clear message naming both files when two files in the folder target the same block or data type.
 
 ### Import / Export
-- **File tree** — Folder and file names display reliably while the tree refreshes.</body>
+- **File tree** — A new Refresh button rescans the folder to pick up files added outside the app.
+
+### Licensing
+- **Trial** — Shows a clear message to subscribe when a trial isn&apos;t available for your email address.</body>
     <mandatory>false</mandatory>
-    <size>295847328</size>
-    <sha256>BE8F03E50687B7D3382A2AA61A7ACD4874F41DB727783A9B1FBDE5BAE218A35A</sha256>
+    <size>295644656</size>
+    <sha256>26ADB3D924F8B67B38060ABB06AC76993B7B478B68FD531506CFBCAC393A2DEA</sha256>
 </item>

@@ -4,7 +4,7 @@
 
 [![AnyAutomation Studio](https://img.shields.io/badge/Next%20Step-AnyAutomation%20Studio-7C3AED)](https://anyautomation.ch/studio)
 [![Download Manager](https://img.shields.io/badge/Download-Openness%20Manager-22C55E)](https://github.com/StaniB88/TIAOpennessManager/releases/latest)
-[![Latest Release](https://img.shields.io/badge/Release-v4.0.13-lightgrey)](CHANGELOG.md)
+[![Latest Release](https://img.shields.io/badge/Release-v4.0.14-lightgrey)](CHANGELOG.md)
 
 ---
 
