@@ -65,14 +65,59 @@ Basic · Pro · Pro+ · Enterprise — monthly or yearly, in CHF, cancel any tim
 
 ---
 
-## TIA Openness Manager Download (v4.0.13)
+## TIA Openness Manager Download (v4.0.14)
 
-TIA Openness Manager v4.0.13 remains available and supported for existing users and keeps working with TIA Portal V15–V21.
+TIA Openness Manager v4.0.14 remains available and supported for existing users and keeps working with TIA Portal V15–V21.
 
-- **Installer:** [TiaOpennessManager_Setup_4.0.13.exe](https://github.com/StaniB88/TIAOpennessManager/releases/tag/v4.0.13)
+- **Installer:** [TiaOpennessManager_Setup_4.0.14.exe](https://github.com/StaniB88/TIAOpennessManager/releases/tag/v4.0.14)
 - **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
 > Looking for the newest and most advanced features? That's where AnyAutomation Studio focuses — [take a look](https://anyautomation.ch/studio).
+
+---
+
+## Screenshots
+
+**Find Unused** — Detect and clean up unreferenced blocks across the project.
+
+![Find Unused](screenshots/FindUnused.png)
+
+**Compare** — Fingerprint-based diff of block changes.
+
+![Compare](screenshots/Compare.png)
+
+**Editor** — Edit exported blocks with SCL syntax highlighting.
+
+![Editor](screenshots/Editor.png)
+
+**Protection** — Protect blocks from accidental overwrites.
+
+![Protection](screenshots/Protection.png)
+
+**Password Vault** — AES-256 encrypted vault for know-how-protection passwords.
+
+![Vault](screenshots/Vault.png)
+![Vault Protected](screenshots/Vault_Protected.png)
+
+**Unit Testing** — SCL unit tests on PLCSIM or real hardware.
+
+![Unit Testing](screenshots/UnitTesting.png)
+
+**Import / Export** — Bulk export/import with folder structure, compile, and diff.
+
+![File Explorer](screenshots/FileExplorer.png)
+
+**OPC UA Client** — Browse the address space, read/write, live subscriptions.
+
+![OPC UA Client](screenshots/OPCUA.png)
+
+**AI Chat** — Context folders, git integration, skills, and agents.
+
+![AI Chat](screenshots/AIChat.png)
+
+**Git Client** — Full version control for your automation project.
+
+![Version Control](screenshots/VersionControl.png)
 
 ---
 
