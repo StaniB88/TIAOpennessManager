@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>4.0.14</version>
-    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.14/TiaOpennessManager_Setup_4.0.14.exe</url>
+    <version>4.0.15</version>
+    <url>https://github.com/StaniB88/TIAOpennessManager/releases/download/v4.0.15/TiaOpennessManager_Setup_4.0.15.exe</url>
     <changelog>https://github.com/StaniB88/TIAOpennessManager/blob/main/CHANGELOG.md</changelog>
-    <release_date>2026-06-24</release_date>
+    <release_date>2026-07-02</release_date>
     <body>## What&apos;s Changed
 
+### AI Assistant
+- **SCL Expert** — Creates and exports PLC data types as editable .udt source files where supported.
+
+### Export
+- **Export** — Export PLC data types as editable .udt source files.
+
 ### Import
-- **Import** — Stops with a clear message naming both files when two files in the folder target the same block or data type.
+- **Import** — Import PLC data types from .udt source files.
 
-### Import / Export
-- **File tree** — A new Refresh button rescans the folder to pick up files added outside the app.
-
-### Licensing
-- **Trial** — Shows a clear message to subscribe when a trial isn&apos;t available for your email address.</body>
+### PLC Online
+- **Watch Table** — Import your monitored variables from a CSV or JSON file.</body>
     <mandatory>false</mandatory>
-    <size>295644656</size>
-    <sha256>26ADB3D924F8B67B38060ABB06AC76993B7B478B68FD531506CFBCAC393A2DEA</sha256>
+    <size>296303544</size>
+    <sha256>67AF0336F3D2B1445381FCAED36A07BD43F68CD65B19A9CE0F681EAD64BFA4F3</sha256>
 </item>

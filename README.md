@@ -4,7 +4,7 @@
 
 [![AnyAutomation Studio](https://img.shields.io/badge/Next%20Step-AnyAutomation%20Studio-7C3AED)](https://anyautomation.ch/studio)
 [![Download Manager](https://img.shields.io/badge/Download-Openness%20Manager-22C55E)](https://github.com/StaniB88/TIAOpennessManager/releases/latest)
-[![Latest Release](https://img.shields.io/badge/Release-v4.0.14-lightgrey)](CHANGELOG.md)
+[![Latest Release](https://img.shields.io/badge/Release-v4.0.15-lightgrey)](CHANGELOG.md)
 
 ---
 
@@ -65,11 +65,11 @@ Basic · Pro · Pro+ · Enterprise — monthly or yearly, in CHF, cancel any tim
 
 ---
 
-## TIA Openness Manager Download (v4.0.14)
+## TIA Openness Manager Download (v4.0.15)
 
-TIA Openness Manager v4.0.14 remains available and supported for existing users and keeps working with TIA Portal V15–V21.
+TIA Openness Manager v4.0.15 remains available and supported for existing users and keeps working with TIA Portal V15–V21.
 
-- **Installer:** [TiaOpennessManager_Setup_4.0.14.exe](https://github.com/StaniB88/TIAOpennessManager/releases/tag/v4.0.14)
+- **Installer:** [TiaOpennessManager_Setup_4.0.15.exe](https://github.com/StaniB88/TIAOpennessManager/releases/tag/v4.0.15)
 - **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
 > Looking for the newest and most advanced features? That's where AnyAutomation Studio focuses — [take a look](https://anyautomation.ch/studio).

@@ -1,5 +1,19 @@
 # TIA Openness Manager - Changelog
 
+## v4.0.15 (2026-07-02)
+
+### AI Assistant
+- **SCL Expert** — Creates and exports PLC data types as editable .udt source files where supported.
+
+### Export
+- **Export** — Export PLC data types as editable .udt source files.
+
+### Import
+- **Import** — Import PLC data types from .udt source files.
+
+### PLC Online
+- **Watch Table** — Import your monitored variables from a CSV or JSON file.
+
 ## v4.0.14 (2026-06-24)
 
 ### Import
